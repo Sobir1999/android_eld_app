@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#61CFDD</color>
+
+    <color name="colorBackgroundMainView">#E3E3E3</color>
+
+    <color name="colorStatusOFF">#DAD9DC</color>
+    <color name="colorStatusOFFBold">#D2D2D3</color>
+    <color name="colorStatusSB">#F4E879</color>
+    <color name="colorStatusSBBold">#E3D769</color>
+    <color name="colorStatusDR">#A9D37A</color>
+    <color name="colorStatusDRBold">#9DC86C</color>
+    <color name="colorStatusON">#4CA5EC</color>
+    <color name="colorStatusONBold">#4196DA</color>
+
+    <color name="colorActionText">#61CFDD</color>
+    <color name="alertColor">#EC3434</color>
+</resources>

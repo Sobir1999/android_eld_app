@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CustomView">
+        <attr name="image" format="reference" />
+        <attr name="status" format="string" />
+        <attr name="color" format="color|reference" />
+        <attr name="title" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="CustomRulerChart">
+        <attr name="screenWidth" format="integer" />
+        <attr name="screenHeight" format="integer"/>
+    </declare-styleable>
+</resources>
