@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/iosix_eld-eld-v2-android-ble-api-c158ff8e7cd9.iml" filepath="$PROJECT_DIR$/.idea/iosix_eld-eld-v2-android-ble-api-c158ff8e7cd9.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/EldBleLib-release/iosix_eld-eld-v2-android-ble-api-c158ff8e7cd9.EldBleLib-release.iml" filepath="$PROJECT_DIR$/.idea/modules/EldBleLib-release/iosix_eld-eld-v2-android-ble-api-c158ff8e7cd9.EldBleLib-release.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/iosix_eld-eld-v2-android-ble-api-c158ff8e7cd9.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/iosix_eld-eld-v2-android-ble-api-c158ff8e7cd9.app.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,140 @@
+v1.0.0 Initial Release 07-26-2017
+- Draft release to obtain feedback
+
+v1.0.5  11/10/2017
+- added scanForElds to provide a list 
+- added additional connectToEld method to allow client to specify eld to connnect to
+
+v1.0.6 11/29/2017
+- Fixed issue with sending multiple write commands to the ELD (ReqRecord, DelRecord etc)
+there was a bug that would cause the API to block after 10 write request 
+- Added capability to upload debug information to the IOSiXservers  - RequestDebugData
+App should provide a capablity for the users to upload debug data to help with debugging
+vehicle connectivity issues. Sample app shows usage
+- Sample app includes an example showing how to request data from the cached buffer records 
+
+v1.0.7 11/29/2017
+- Fixed issue with cached periodic records instantiation 
+
+v1.0.8 11/29/2017
+- Eliminated app update binary resource as it is now downloaded from the server dynamically as needed
+
+v1.0.9 12/12/2017
+- Added SetVin method to allow for a manual VIN
+- Timing updates for LTE radio/BLE coexistence
+
+v1.0.10
+- Refactored deprecated download filename method for UpdateFirmware that was causing a file download exception for some
+customers (any app that was built with SDK target version 24 or higher)
+- Now FirmwareUpdate will abort on a disconnect
+- In fimrware update fatal exception messages are passed to the callback for troubleshooting
+- Added API version method so we can retrieve API version from app - String GetApiVersion()
+
+v1.0.11
+- On Samsung Tab E disconnect resulted in a subsequent reconnect call in the callback
+Thanks to Zack for identifying that clearing writeNotification on disconnect prevents this 
+so this release implements the change
+
+v1.0.12
+- Fixed PeriodicCachedRecord missing getUnixTime method
+- Changed firmwware update url from https to http as some android phones were pausing downloads due to cert chain issues
+
+v1.0.13
+- Added firmwareVersion parameter to StartUpdate - allows app to request a specific version for firmware update
+- Added ResetEld method - allows app to reset the ELD (will disconnect the session)
+
+v1.0.14 02/08/2018
+- Added Parsing for fuel records. See JavaDoc FuelDataRecord documentation
+
+v1.0.15 02/16/2018
+- Added Motionstart and Motionstop classes for cached data
+- Added ConnectToEld method to allow app to pass in a Bluetooth device object
+
+v1.0.16 06/05/2018
+- Now blank values (when data is not available) are initialized with -1 instead of 0 to allow for 
+easier detection if failures
+
+v1.0.17 10/16/2018
+- Added EnableDTCData method to enable DTC processing. When a diagnostic code is detected api will invoke a
+callback to notify the app of the dtc the data will be in the form of a Json string that can be decoded by the
+client app. Please see the sample app for the callback sample and the javadoc documentation
+- Added DisableWiFi method to shut off WiFi on the Eld
+
+v1.0.21 12/18/2018
+- Added parsing for Engineon2 and Engineoff2 records - these are enhanced engine event records that include odometer and engine hours
+- Added sequence number checking for Bluetooth packets so dropped packets can be detected 
+
+v1.0.22 2/27/2019
+- Added Ability to request Raw Diagnsotic String so parsing can be done locally if needed - This simply returns the string as obtained in the DTC broadcast
+- Added Following Records: (Please see javadoc for details)
+	DriverBehavior
+	EngineParameters
+	TransmissionParameters
+	EmissionsParameters
+
+v1.0.23 2/27/2019
+- Fixed incorrect bounds checking on GetRecord and DeleteRecord
+
+v1.0.24 10/14/2019
+- Fixed periodic data interval control via SetRecordingInterval()
+- Fixed data parsing bugs in Emissions, Fuel records
+
+v1.0.25 1/20/2020
+- Fixed a bug that could prevent reconnecting with an ELD without power cycleing the device
+- Added automatic Debug Requests
+- Updated internal web traffic to HTTPS
+
+v1.0.26 2/5/2020
+- Added automatic Bluetooth watchdog reset to improve disconnect handling in ELD firmware 304 or newer
+
+v1.0.27 2/19/2020
+- Added StartUpdateLocal() to enable flashing of firmware to an eld from the phone's filesystem instead of automatically downloading from IOSiX servers
+
+v1.1.0 3/24/2020
+- Fixed Gatt disconnect/close timing issues by moving gatt close into the disconnect callback
+- Fixed ArrayIndexOutOfBoundsException when parsing eld records with empty parameters
+- Fixed Bluetooth rx code dropping partial messages on signed byte overflow
+- Removed automatic watchdogReset, changed to user control so it can be synchronized with other library calls
+- Added delay to all Bluetooth transmits to ensure messages are received by the ELD
+- Modified some methods to return EldBleError type rather than boolean for clarity
+- Updated sample app with firmware upgrade from local filesystem and 
+
+v1.1.1 4/10/2020
+- Fixed handling of Bluetooth disconnections when Bluetooth is disabled
+
+v1.1.2 5/8/2020
+- Fixed a bug where the API wouldn't recieve data from an ELD after updating its firmware
+- Improved debug request handling
+
+v1.1.3 5/18/2020
+- Removed automatic debug requests when the engine has been on for 1 minute
+- Fixed EldCachedNewVinRecord parsing
+- Changed Bluetooth adapter state BroadcastReceiver to register on connect and unregister on disconnect
+- Bluetooth characteristic writes now wait for the previous write to complete
+- Fixed latitude spelling
+
+v1.1.4  7/9/2020
+- Fixed issue uploading debug reports to IOSiX backend
+- Fixed exceptions caused by registering and unregistering Bluetooth broadcast receiver in an unexpected state
+- Updated sample app with option to specify firmware version when updating
+
+v1.1.5  7/30/2020
+- Fixed issue where debug logs could be uploaded with missing data
+- Added logic to prevent exceptions when registering and unregistering BluetoothStateReceiver
+
+v1.1.6 8/11/2020
+- Added ability to set the starting odometer value (requires firmware 315+)
+- Fixed a variety of mispellings throught the API
+- Added extra error handling when attempting to request/delete records from the ELD
+- Improved efficiency of bluetooth requests
+- Updated javadoc to be more accurate, helpful, and consistent
+- Updated sample app to demo the new SetOdometer() method
+
+v1.2.0 10/23/2020
+- Renamed files for consistency/brevity
+- Added a EldFuelIndicatorStates for clarification and ease of use
+- Updated units for additional record parameters
+- Updated documentation for backup RAM storage in firmware 316
+- Made callback classes not static
+- Added SetTime() for use in firmware 316
+
