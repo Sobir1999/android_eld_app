@@ -27,6 +27,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,6 +41,7 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.iosix.eldblelib.EldBleConnectionStateChangeCallback;
 import com.iosix.eldblelib.EldBleDataCallback;
@@ -73,11 +75,16 @@ import com.iosix.eldblesample.models.MessageModel;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+
+import io.reactivex.rxjava3.core.Observable;
+
+import static com.iosix.eldblesample.R.anim.fade_out_custom_expanded;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -114,21 +121,12 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
 
     @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-
-        }
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String lang = loadLocal();
-        setLocale(lang);
+        setLocale(loadLocal());
 
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
@@ -167,6 +165,9 @@ public class MainActivity extends AppCompatActivity {
         getDrawerTouchEvent();
 
         setLanguageDialog();
+
+        Log.d("TAG", "onCreate: oncreate MainActivity");
+
     }
 
     private void setLanguageDialog() {
@@ -247,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // todo save documents
+
             }
         });
     }
@@ -263,6 +264,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 visiblityViewCons.setVisibility(View.VISIBLE);
+//                visiblityViewCons.set(fade_out_custom_expanded);
 
             }
         });
@@ -287,6 +289,11 @@ public class MainActivity extends AppCompatActivity {
                 visiblityViewCons.setVisibility(View.VISIBLE);
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     @Override

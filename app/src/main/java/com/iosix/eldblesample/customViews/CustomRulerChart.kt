@@ -1,51 +1,50 @@
 package com.iosix.eldblesample.customViews
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
-import android.content.res.TypedArray
 import android.graphics.*
-import android.os.Build
 import android.text.TextPaint
+import android.text.format.Time
 import android.util.AttributeSet
-import android.view.Display
 import android.view.View
-import android.view.WindowManager
-import androidx.annotation.RequiresApi
 import com.iosix.eldblesample.R
+import java.util.*
 
 @SuppressLint("Recycle")
-class CustomRulerChart(context: Context?, attrs: AttributeSet) : View(context, attrs) {
-    var table_paint = Paint()
-    var table_time_paint = TextPaint()
-    var table_time_paint_tex = TextPaint()
-    var table_text_paint = TextPaint()
-    val vm = context?.getSystemService(Context.WINDOW_SERVICE) as (WindowManager)
-    var SCREEN_WIDTH : Int? = 0
+class CustomRulerChart(context: Context?, attrs: AttributeSet) : View(context, attrs), Runnable {
 
-    val point = Point()
+    private val DELAY_TIME_MILLIS = 1000L
+    private var updateView = false
+    private val count: Long? = null
+    private val endX = 0f
+    private val endY = 0f
+
+    var canvas: Canvas? = null
+
+    var table_paint = Paint()
+    var table_time_paint = Paint()
+    var table_time_paint_tex = Paint()
+    var table_text_paint = Paint()
+
     val orientation = context?.resources?.configuration?.orientation
 
-    var CUSTOM_WIDTH = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-        vm.currentWindowMetrics.bounds.width()
+    var CUSTOM_WIDTH = if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        context?.getResources()?.getDisplayMetrics()?.heightPixels
     } else {
-        point.x * 1000
+        context?.getResources()?.getDisplayMetrics()?.widthPixels
     }
-
-//    val CUSTOM_WIDTH = 1000f
 
     val START_POINT_X = 100.0f
     val START_POINT_Y = 50.0f
 
-    var CUSTOM_TABLE_WIDTH = CUSTOM_WIDTH - 2.5f * START_POINT_X
+    var CUSTOM_TABLE_WIDTH = CUSTOM_WIDTH!! - 2.5f * START_POINT_X
 
     val CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 3
     val CUSTOM_TABLE_ROW_WIDTH = CUSTOM_TABLE_WIDTH / 24
 
     init {
         val attributes = context?.obtainStyledAttributes(attrs, R.styleable.CustomRulerChart)
-//        SCREEN_WIDTH = attributes?.getInteger(R.styleable.CustomRulerChart_screenWidth, 300)
         attributes?.recycle()
 
     }
@@ -53,18 +52,20 @@ class CustomRulerChart(context: Context?, attrs: AttributeSet) : View(context, a
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
-            onDrawTable(canvas)
-            onDrawText(canvas)
+        onDrawTable(canvas)
+        onDrawText(canvas)
+
+        drawLineProgress(canvas, 0)
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         CUSTOM_WIDTH = w
+
+        invalidate()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val timeFontMetrics = table_time_paint.fontMetrics
-        val textFontMetrics = table_text_paint.fontMetrics
 
         val desiredWidth = Math.round(START_POINT_X + START_POINT_X + CUSTOM_TABLE_WIDTH + paddingRight + paddingLeft)
         val desiredHeight = Math.round(START_POINT_Y + CUSTOM_TABLE_HEIGHT + paddingTop + paddingBottom)
@@ -96,120 +97,120 @@ class CustomRulerChart(context: Context?, attrs: AttributeSet) : View(context, a
         table_paint.strokeWidth = 1.0f
 
         canvas?.drawRect(
-                START_POINT_X,
-                START_POINT_Y,
-                START_POINT_X + CUSTOM_TABLE_WIDTH,
-                START_POINT_Y + CUSTOM_TABLE_HEIGHT,
-                table_paint
+            START_POINT_X,
+            START_POINT_Y,
+            START_POINT_X + CUSTOM_TABLE_WIDTH,
+            START_POINT_Y + CUSTOM_TABLE_HEIGHT,
+            table_paint
         )
 
         for (i in 1..23) {
             canvas?.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i,
-                    START_POINT_Y,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i,
-                    START_POINT_Y + CUSTOM_TABLE_HEIGHT,
-                    table_paint
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i,
+                START_POINT_Y,
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i,
+                START_POINT_Y + CUSTOM_TABLE_HEIGHT,
+                table_paint
             )
         }
 
         for (i in 1..3) {
             canvas?.drawLine(
-                    START_POINT_X,
-                    START_POINT_Y + i * CUSTOM_TABLE_HEIGHT / 4,
-                    START_POINT_X + CUSTOM_TABLE_WIDTH,
-                    START_POINT_Y + i * CUSTOM_TABLE_HEIGHT / 4,
-                    table_paint
+                START_POINT_X,
+                START_POINT_Y + i * CUSTOM_TABLE_HEIGHT / 4,
+                START_POINT_X + CUSTOM_TABLE_WIDTH,
+                START_POINT_Y + i * CUSTOM_TABLE_HEIGHT / 4,
+                table_paint
             )
         }
 
         for (i in 0..23) {
             canvas?.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
-                    START_POINT_Y,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
-                    START_POINT_Y + CUSTOM_TABLE_HEIGHT / 16,
-                    table_paint
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
+                START_POINT_Y,
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
+                START_POINT_Y + CUSTOM_TABLE_HEIGHT / 16,
+                table_paint
             )
             canvas?.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
-                    START_POINT_Y,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
-                    START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8,
-                    table_paint
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
+                START_POINT_Y,
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
+                START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8,
+                table_paint
             )
             canvas?.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
-                    START_POINT_Y,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
-                    START_POINT_Y + CUSTOM_TABLE_HEIGHT / 16,
-                    table_paint
-            )
-
-            canvas?.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
-                    START_POINT_Y + CUSTOM_TABLE_HEIGHT / 4,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
-                    START_POINT_Y + CUSTOM_TABLE_HEIGHT / 4 + CUSTOM_TABLE_HEIGHT / 16,
-                    table_paint
-            )
-            canvas?.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
-                    START_POINT_Y + CUSTOM_TABLE_HEIGHT / 4,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
-                    START_POINT_Y + CUSTOM_TABLE_HEIGHT / 4 + CUSTOM_TABLE_HEIGHT / 8,
-                    table_paint
-            )
-            canvas?.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
-                    START_POINT_Y + CUSTOM_TABLE_HEIGHT / 4,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
-                    START_POINT_Y + CUSTOM_TABLE_HEIGHT / 4 + CUSTOM_TABLE_HEIGHT / 16,
-                    table_paint
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
+                START_POINT_Y,
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
+                START_POINT_Y + CUSTOM_TABLE_HEIGHT / 16,
+                table_paint
             )
 
             canvas?.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
-                    START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 4 - CUSTOM_TABLE_HEIGHT / 16,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
-                    START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 4,
-                    table_paint
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
+                START_POINT_Y + CUSTOM_TABLE_HEIGHT / 4,
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
+                START_POINT_Y + CUSTOM_TABLE_HEIGHT / 4 + CUSTOM_TABLE_HEIGHT / 16,
+                table_paint
             )
             canvas?.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
-                    START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 4 - CUSTOM_TABLE_HEIGHT / 8,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
-                    START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 4,
-                    table_paint
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
+                START_POINT_Y + CUSTOM_TABLE_HEIGHT / 4,
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
+                START_POINT_Y + CUSTOM_TABLE_HEIGHT / 4 + CUSTOM_TABLE_HEIGHT / 8,
+                table_paint
             )
             canvas?.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
-                    START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 4 - CUSTOM_TABLE_HEIGHT / 16,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
-                    START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 4,
-                    table_paint
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
+                START_POINT_Y + CUSTOM_TABLE_HEIGHT / 4,
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
+                START_POINT_Y + CUSTOM_TABLE_HEIGHT / 4 + CUSTOM_TABLE_HEIGHT / 16,
+                table_paint
             )
 
             canvas?.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
-                    START_POINT_Y + CUSTOM_TABLE_HEIGHT - CUSTOM_TABLE_HEIGHT / 16,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
-                    START_POINT_Y + CUSTOM_TABLE_HEIGHT,
-                    table_paint
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
+                START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 4 - CUSTOM_TABLE_HEIGHT / 16,
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
+                START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 4,
+                table_paint
             )
             canvas?.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
-                    START_POINT_Y + CUSTOM_TABLE_HEIGHT - CUSTOM_TABLE_HEIGHT / 8,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
-                    START_POINT_Y + CUSTOM_TABLE_HEIGHT,
-                    table_paint
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
+                START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 4 - CUSTOM_TABLE_HEIGHT / 8,
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
+                START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 4,
+                table_paint
             )
             canvas?.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
-                    START_POINT_Y + CUSTOM_TABLE_HEIGHT - CUSTOM_TABLE_HEIGHT / 16,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
-                    START_POINT_Y + CUSTOM_TABLE_HEIGHT,
-                    table_paint
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
+                START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 4 - CUSTOM_TABLE_HEIGHT / 16,
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
+                START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 4,
+                table_paint
+            )
+
+            canvas?.drawLine(
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
+                START_POINT_Y + CUSTOM_TABLE_HEIGHT - CUSTOM_TABLE_HEIGHT / 16,
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
+                START_POINT_Y + CUSTOM_TABLE_HEIGHT,
+                table_paint
+            )
+            canvas?.drawLine(
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
+                START_POINT_Y + CUSTOM_TABLE_HEIGHT - CUSTOM_TABLE_HEIGHT / 8,
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
+                START_POINT_Y + CUSTOM_TABLE_HEIGHT,
+                table_paint
+            )
+            canvas?.drawLine(
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
+                START_POINT_Y + CUSTOM_TABLE_HEIGHT - CUSTOM_TABLE_HEIGHT / 16,
+                START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
+                START_POINT_Y + CUSTOM_TABLE_HEIGHT,
+                table_paint
             )
         }
     }
@@ -224,43 +225,113 @@ class CustomRulerChart(context: Context?, attrs: AttributeSet) : View(context, a
 
         table_text_paint.color = Color.BLACK
         table_text_paint.textSize = 26f
+        table_text_paint.strokeWidth = 3f
 
         for (i in 0..24) {
             if (i == 0 || i == 24) {
                 canvas?.drawText(
-                        "M",
-                        START_POINT_X - time_size / 2 + CUSTOM_TABLE_ROW_WIDTH * i,
-                        START_POINT_Y - 5f,
-                        table_time_paint_tex
+                    "M",
+                    START_POINT_X - time_size / 2 + CUSTOM_TABLE_ROW_WIDTH * i,
+                    START_POINT_Y - 5f,
+                    table_time_paint_tex
                 )
             } else if (i == 12) {
                 canvas?.drawText(
-                        "N",
-                        START_POINT_X - time_size / 2 + CUSTOM_TABLE_ROW_WIDTH * i,
-                        START_POINT_Y - 5f,
-                        table_time_paint_tex
+                    "N",
+                    START_POINT_X - time_size / 2 + CUSTOM_TABLE_ROW_WIDTH * i,
+                    START_POINT_Y - 5f,
+                    table_time_paint_tex
                 )
             } else {
                 canvas?.drawText(
-                        "${i % 12}",
-                        START_POINT_X - time_size / 2 + CUSTOM_TABLE_ROW_WIDTH * i,
-                        START_POINT_Y - 5f,
-                        table_time_paint
+                    "${i % 12}",
+                    START_POINT_X - time_size / 2 + CUSTOM_TABLE_ROW_WIDTH * i,
+                    START_POINT_Y - 5f,
+                    table_time_paint
                 )
             }
         }
 
 
 
-        canvas?.drawText("OFF", START_POINT_X/2 - 20.0f, START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8, table_text_paint)
-        canvas?.drawText("00:00", START_POINT_X + CUSTOM_TABLE_WIDTH + 10.0f, START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8, table_text_paint)
-        canvas?.drawText("SB", START_POINT_X/2 - 20.0f, START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 8, table_text_paint)
-        canvas?.drawText("00:00", START_POINT_X + CUSTOM_TABLE_WIDTH + 10.0f, START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 8, table_text_paint)
-        canvas?.drawText("DR", START_POINT_X/2 - 20.0f, START_POINT_Y + 5 * CUSTOM_TABLE_HEIGHT / 8, table_text_paint)
-        canvas?.drawText("00:00", START_POINT_X + CUSTOM_TABLE_WIDTH + 10.0f, START_POINT_Y + 5 * CUSTOM_TABLE_HEIGHT / 8, table_text_paint)
-        canvas?.drawText("ON", START_POINT_X/2 - 20.0f, START_POINT_Y + 7 * CUSTOM_TABLE_HEIGHT / 8, table_text_paint)
-        canvas?.drawText("00:00", START_POINT_X + CUSTOM_TABLE_WIDTH + 10.0f, START_POINT_Y + 7 * CUSTOM_TABLE_HEIGHT / 8, table_text_paint)
+        canvas?.drawText(
+            "OFF",
+            START_POINT_X / 2 - 20.0f,
+            START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8,
+            table_text_paint
+        )
+        canvas?.drawText(
+            "00:00",
+            START_POINT_X + CUSTOM_TABLE_WIDTH + 10.0f,
+            START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8,
+            table_text_paint
+        )
+        canvas?.drawText(
+            "SB",
+            START_POINT_X / 2 - 20.0f,
+            START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 8,
+            table_text_paint
+        )
+        canvas?.drawText(
+            "00:00",
+            START_POINT_X + CUSTOM_TABLE_WIDTH + 10.0f,
+            START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 8,
+            table_text_paint
+        )
+        canvas?.drawText(
+            "DR",
+            START_POINT_X / 2 - 20.0f,
+            START_POINT_Y + 5 * CUSTOM_TABLE_HEIGHT / 8,
+            table_text_paint
+        )
+        canvas?.drawText(
+            "00:00",
+            START_POINT_X + CUSTOM_TABLE_WIDTH + 10.0f,
+            START_POINT_Y + 5 * CUSTOM_TABLE_HEIGHT / 8,
+            table_text_paint
+        )
+        canvas?.drawText(
+            "ON",
+            START_POINT_X / 2 - 20.0f,
+            START_POINT_Y + 7 * CUSTOM_TABLE_HEIGHT / 8,
+            table_text_paint
+        )
+        canvas?.drawText(
+            "00:00",
+            START_POINT_X + CUSTOM_TABLE_WIDTH + 10.0f,
+            START_POINT_Y + 7 * CUSTOM_TABLE_HEIGHT / 8,
+            table_text_paint
+        )
     }
 
-    private fun onDrawTableHorizantal(canvas: Canvas?){}
+    private fun drawLineProgress(canvas: Canvas?, row: Int) {
+        val time = Time()
+        time.setToNow()
+
+        val i: Long = (time.hour * 3600 + time.minute * 60 + time.second).toLong()
+
+        canvas?.drawLine(
+            START_POINT_X,
+            START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8,
+            START_POINT_X + i*8/CUSTOM_TABLE_WIDTH,
+            START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8,
+            table_paint
+        );
+
+        invalidate()
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        updateView = true
+    }
+
+    override fun onDetachedFromWindow() {
+        updateView = false
+        super.onDetachedFromWindow()
+    }
+
+    override fun run() {
+        drawLineProgress(canvas, 0)
+    }
 }

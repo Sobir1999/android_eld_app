@@ -33,8 +33,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="radio_checked_radio" />
-                            <entry key="sourceFile" value="C:\Users\Axrorbek\AndroidStudioProjects\iosix_eld-eld-v2-android-ble-api-c158ff8e7cd9" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="logo" />
+                            <entry key="sourceFile" value="C:\Users\Axrorbek\Downloads\Telegram Desktop\Logo Svg.svg" />
                           </map>
                         </option>
                       </PersistentState>
