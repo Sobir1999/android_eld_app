@@ -6,19 +6,20 @@ import android.os.AsyncTask;
 import androidx.lifecycle.LiveData;
 
 import com.iosix.eldblesample.roomDatabase.daos.StatusTruckDao;
-import com.iosix.eldblesample.roomDatabase.database.StatusRoomDatabase;
+import com.iosix.eldblesample.roomDatabase.database.StatusTruckRoomDatabase;
 import com.iosix.eldblesample.roomDatabase.entities.TruckStatusEntity;
 
 import java.util.List;
 
-public class StatusTableRepository {
+public class StatusTableRepositories {
+
     private StatusTruckDao mStatusDao;
     private LiveData<List<TruckStatusEntity>> mAllStatus;
 
-    public StatusTableRepository(Application application) {
-        StatusRoomDatabase db = new StatusRoomDatabase.getINSTANCE(application);
-        mStatusDao = db.statusTruckDao();
-        mAllStatus = mStatusDao.getAllStatus();
+    public StatusTableRepositories(Application application) {
+//        StatusTruckRoomDatabase db = new StatusTruckRoomDatabase.getINSTANCE(application);
+//        mStatusDao = db.statusTruckDao();
+//        mAllStatus = mStatusDao.getAllStatus();
     }
 
     public LiveData<List<TruckStatusEntity>> getmAllStatus() {
@@ -26,7 +27,7 @@ public class StatusTableRepository {
     }
 
     public void insertStatus(TruckStatusEntity entity) {
-
+        new insertStatusAsync(mStatusDao).execute(entity);
     }
 
     private static class insertStatusAsync extends AsyncTask<TruckStatusEntity, Void, Void> {

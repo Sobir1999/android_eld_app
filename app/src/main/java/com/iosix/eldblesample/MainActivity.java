@@ -5,6 +5,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -25,6 +26,9 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -38,11 +42,15 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.iosix.eldblelib.EldBleConnectionStateChangeCallback;
 import com.iosix.eldblelib.EldBleDataCallback;
 import com.iosix.eldblelib.EldBleError;
@@ -53,6 +61,7 @@ import com.iosix.eldblelib.EldBufferRecord;
 import com.iosix.eldblelib.EldCachedNewTimeRecord;
 import com.iosix.eldblelib.EldCachedNewVinRecord;
 import com.iosix.eldblelib.EldCachedPeriodicRecord;
+import com.iosix.eldblelib.EldDataRecord;
 import com.iosix.eldblelib.EldDriverBehaviorRecord;
 import com.iosix.eldblelib.EldDtcCallback;
 import com.iosix.eldblelib.EldEmissionsRecord;
@@ -69,6 +78,7 @@ import com.iosix.eldblesample.customViews.StatusCustomButtonView;
 import com.iosix.eldblesample.dialogs.ConnectToEldDialog;
 import com.iosix.eldblesample.dialogs.EditLanguageDialog;
 import com.iosix.eldblesample.dialogs.SearchEldDeviceDialog;
+import com.iosix.eldblesample.gps.GPSTracker;
 import com.iosix.eldblesample.interfaces.AlertDialogItemClickInterface;
 import com.iosix.eldblesample.interfaces.EditLanguageDialogListener;
 import com.iosix.eldblesample.models.MessageModel;
@@ -76,29 +86,31 @@ import com.iosix.eldblesample.models.MessageModel;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
-import io.reactivex.rxjava3.core.Observable;
-
-import static com.iosix.eldblesample.R.anim.fade_out_custom_expanded;
-
 public class MainActivity extends AppCompatActivity {
 
-    private String[] country = { "English", "Spain", "French"};
+    private String[] country = {"English", "Spain", "French"};
 
     private DrawerLayout drawerLayout;
     private Toolbar activity_main_toolbar;
     private RecyclerViewLastAdapter lastAdapter;
     private RecyclerView last_recycler_view;
     private CustomRulerChart customRulerChart;
-    private StatusCustomButtonView off, sb, dr, on;
+    private CardView off, sb, dr, on;
     private ConstraintLayout visiblityViewCons;
     private Button cancel, save;
     private Switch nightModeSwitch;
+    FusedLocationProviderClient fusedLocationProviderClient;
+
+    private double latitude;
+    private double longtitude;
 
     String MAC;
     private int updateSelection;
@@ -120,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String Key_ISNIGHTMODE = "isNightMODE";
     private SharedPreferences sharedPreferences;
 
+    @SuppressLint("VisibleForTests")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,6 +146,8 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawer_layout);
         last_recycler_view = findViewById(R.id.idRecyclerView);
         customRulerChart = findViewById(R.id.idCustomChart);
+
+        fusedLocationProviderClient = new FusedLocationProviderClient(MainActivity.this);
 
         onClickCustomBtn();
         onClickVisiblityCanAndSaveBtn();
@@ -158,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Required to allow bluetooth scanning
         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
 
         mEldManager = EldManager.GetEldManager(this, "123456789A");
 
@@ -166,8 +182,55 @@ public class MainActivity extends AppCompatActivity {
 
         setLanguageDialog();
 
-        Log.d("TAG", "onCreate: oncreate MainActivity");
+        createlocalFolder();
 
+    }
+
+    private void createlocalFolder() {
+        if (checkPermission()) {
+            File myDir = new File(Environment.getExternalStorageDirectory() + "/FastLogz");
+            File image = new File(Environment.getExternalStorageDirectory() + "/FastLogz/Images");
+            File documents = new File(Environment.getExternalStorageDirectory() + "/FastLogz/Documents");
+            if (!myDir.exists()) {
+                myDir.mkdirs();
+                image.mkdirs();
+                documents.mkdirs();
+            } else {
+                Log.d("TAG", "createlocalFolser: Not created");
+            }
+        } else {
+            requestPermission();
+        }
+    }
+
+    private boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (result == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void requestPermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            Toast.makeText(MainActivity.this, "Write External Storage permission allows us to do store images. Please allow this permission in App Settings.", Toast.LENGTH_LONG).show();
+        } else {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 100:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.e("value", "Permission Granted, Now you can use local drive .");
+                } else {
+                    Log.e("value", "Permission Denied, You cannot use local drive .");
+                }
+                break;
+        }
     }
 
     private void setLanguageDialog() {
@@ -234,9 +297,47 @@ public class MainActivity extends AppCompatActivity {
         return pref.getString("lan", "en");
     }
 
-    private void onClickVisiblityCanAndSaveBtn(){
+    private void onClickVisiblityCanAndSaveBtn() {
         save = findViewById(R.id.idVisButtonSave);
         cancel = findViewById(R.id.idVisButtonCancel);
+        TextView findLocation = findViewById(R.id.idLoactionIcon);
+        final EditText editLocation = findViewById(R.id.idLocationEdit);
+
+        findLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("IGA", "onClick: Searching...");
+                if (checkGrantResults(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, new int[]{1})) {
+                    Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
+                    try {
+                        List<Address> addresses = geocoder.getFromLocation(latitude, longtitude, 1);
+                        Address obj = addresses.get(0);
+                        String add = obj.getCountryName();
+                        add = add + ", " + obj.getSubAdminArea();
+//                                    add = add + ", " + obj.getLocality();
+//                                    add = add + "\n" + obj.getAdminArea();
+//                                    add = add + "\n" + obj.getPostalCode();
+//                                    add = add + "\n" + obj.getSubAdminArea();
+//                                    add = add + "\n" + obj.getLocality();
+//                                    add = add + "\n" + obj.getSubThoroughfare();
+
+                        editLocation.setText(add);
+                        Log.v("IGA", "Address" + add);
+                        // Toast.makeText(this, "Address=>" + add,
+                        // Toast.LENGTH_SHORT).show();
+
+                        // TennisAppActivity.showDialog(add);
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+                }
+
+            }
+        });
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -254,10 +355,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onClickCustomBtn() {
-        off = findViewById(R.id.statusOFF);
-        sb = findViewById(R.id.statusSB);
-        dr = findViewById(R.id.statusDR);
-        on = findViewById(R.id.statusON);
+        off = findViewById(R.id.cardOff);
+//        sb = findViewById(R.id.cardSB);
+//        dr = findViewById(R.id.statusDR);
+//        on = findViewById(R.id.statusON);
         visiblityViewCons = findViewById(R.id.idVisibilityViewCons);
 
         off.setOnClickListener(new View.OnClickListener() {
@@ -265,30 +366,30 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 visiblityViewCons.setVisibility(View.VISIBLE);
 //                visiblityViewCons.set(fade_out_custom_expanded);
-
+                off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFFBold));
             }
         });
 
-        sb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                visiblityViewCons.setVisibility(View.VISIBLE);
-            }
-        });
-
-        dr.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                visiblityViewCons.setVisibility(View.VISIBLE);
-            }
-        });
-
-        on.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                visiblityViewCons.setVisibility(View.VISIBLE);
-            }
-        });
+//        sb.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                visiblityViewCons.setVisibility(View.VISIBLE);
+//            }
+//        });
+//
+//        dr.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                visiblityViewCons.setVisibility(View.VISIBLE);
+//            }
+//        });
+//
+//        on.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                visiblityViewCons.setVisibility(View.VISIBLE);
+//            }
+//        });
     }
 
     @Override
@@ -416,19 +517,6 @@ public class MainActivity extends AppCompatActivity {
                     mEldManager.EnableBluetooth(REQUEST_BT_ENABLE);
 
                 searchEldDeviceDialog.show();
-//                final ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this, "", "Please wait...");
-//                new Thread() {
-//                    public void run() {
-//                        try{
-//                            //your code here.....
-//                        }
-//                        catch (Exception e) {
-//                            Log.e("tag", e.getMessage());
-//                        }
-//                        // dismiss the progress dialog
-//                        progressDialog.dismiss();
-//                    }
-//                }.start();
             }
         });
     }
@@ -977,6 +1065,9 @@ public class MainActivity extends AppCompatActivity {
 //                        mDataView.append(" Latitude: " + Double.toString(((EldDataRecord) (dataRec)).getLatitude()));
 //                        mDataView.append(" Longitude: " + Double.toString(((EldDataRecord) (dataRec)).getLongitude()));
 //                        mDataView.append(" Firmware: " + ((EldDataRecord) (dataRec)).getFirmwareVersion() + "\n");
+
+                        latitude = ((EldDataRecord) dataRec).getLatitude();
+                        longtitude = ((EldDataRecord) dataRec).getLongitude();
 
                     } else if (RecordType == EldBroadcastTypes.ELD_CACHED_RECORD) {
                         //Shows how to get to the specific record types created based on the broadcast info

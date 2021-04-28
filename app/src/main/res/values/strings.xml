@@ -5,4 +5,13 @@
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
     <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
     <string name="loading">Loading...</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="off_duty">Off Duty</string>
+    <string name="sb">SB</string>
+    <string name="sleeper_berth">Sleeper Berth</string>
+    <string name="dr">DR</string>
+    <string name="driving">Driving</string>
+    <string name="on">ON</string>
+    <string name="on_duty">ON Duty</string>
 </resources>

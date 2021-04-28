@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.util.AttributeSet
+import android.view.LayoutInflater
+import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -32,9 +34,13 @@ class StatusCustomButtonView(context: Context, attrs: AttributeSet): LinearLayou
         attributes.recycle()
     }
 
-    fun setShowText(color: Int) {
+    fun setColorCustom(color: Int) {
         this.color = color
         invalidate()
-        requestLayout()
+    }
+
+    override fun setBackgroundColor(color: Int) {
+        super.setBackgroundColor(color)
+        this.color = color
     }
 }

@@ -6,43 +6,47 @@ import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.room.Database;
+import androidx.room.DatabaseConfiguration;
+import androidx.room.InvalidationTracker;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
+import androidx.sqlite.db.SupportSQLiteOpenHelper;
 
 import com.iosix.eldblesample.roomDatabase.daos.StatusTruckDao;
 import com.iosix.eldblesample.roomDatabase.entities.TruckStatusEntity;
 
 @Database(entities = {TruckStatusEntity.class}, version = 1)
-public abstract class StatusRoomDatabase extends RoomDatabase {
+public abstract class StatusTruckRoomDatabase extends RoomDatabase {
 
     public abstract StatusTruckDao statusTruckDao();
-    private static StatusRoomDatabase Instance;
 
-    public static synchronized StatusRoomDatabase getINSTANCE(final Context context) {
-        synchronized (StatusRoomDatabase.class) {
-            if (Instance == null) {
-                Room.databaseBuilder(context.getApplicationContext(), StatusRoomDatabase.class, "status_database")
+    private static StatusTruckRoomDatabase INSTANCE;
+
+    public static synchronized StatusTruckRoomDatabase getINSTANCE(final Context context) {
+        synchronized (StatusTruckRoomDatabase.class) {
+            if (INSTANCE == null) {
+                INSTANCE = Room.databaseBuilder(context.getApplicationContext(), StatusTruckRoomDatabase.class, "status_database")
                         .fallbackToDestructiveMigration()
                         .addCallback(roomCallback)
                         .build();
             }
         }
-        return Instance;
+        return INSTANCE;
     }
 
     private static RoomDatabase.Callback roomCallback = new RoomDatabase.Callback() {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
-            new PopulateDBAsyncTask(Instance).execute();
+            new PopulateDBAsyncTask(INSTANCE).execute();
         }
     };
 
     private static class PopulateDBAsyncTask extends AsyncTask<Void, Void, Void> {
         private StatusTruckDao dao;
 
-        private PopulateDBAsyncTask(StatusRoomDatabase db) {
+        private PopulateDBAsyncTask(StatusTruckRoomDatabase db) {
             dao = db.statusTruckDao();
         }
 

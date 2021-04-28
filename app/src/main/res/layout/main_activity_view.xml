@@ -101,57 +101,64 @@
                 android:layout_height="wrap_content"
                 tools:ignore="MissingConstraints">
 
-                <com.iosix.eldblesample.customViews.StatusCustomButtonView
-                    android:id="@+id/statusOFF"
-                    app:image="@drawable/ic_baseline_power_settings_new_24"
+                <include
+                    android:id="@+id/idIcludeOff"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toLeftOf="@+id/statusSB"
-                    app:title="OFF Duty"
-                    app:status="OFF"
-                    app:color="@color/colorStatusOFF"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:ignore="MissingConstraints" />
+                    layout="@layout/custom_button_off_item" />
 
-                <com.iosix.eldblesample.customViews.StatusCustomButtonView
-                    android:id="@+id/statusSB"
-                    app:image="@drawable/ic_baseline_power_settings_new_24"
-                    app:layout_constraintLeft_toRightOf="@+id/statusOFF"
-                    app:layout_constraintRight_toLeftOf="@+id/statusDR"
-                    app:title="Sleeper Berth"
-                    app:status="SB"
-                    app:color="@color/colorStatusSB"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:ignore="MissingConstraints" />
+<!--                <com.iosix.eldblesample.customViews.StatusCustomButtonView-->
+<!--                    android:id="@+id/statusOFF"-->
+<!--                    app:image="@drawable/ic_baseline_power_settings_new_24"-->
+<!--                    app:layout_constraintLeft_toLeftOf="parent"-->
+<!--                    app:layout_constraintRight_toLeftOf="@+id/statusSB"-->
+<!--                    app:title="OFF Duty"-->
+<!--                    app:status="OFF"-->
+<!--                    app:color="@color/colorStatusOFF"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    tools:ignore="MissingConstraints" />-->
 
-                <com.iosix.eldblesample.customViews.StatusCustomButtonView
-                    android:id="@+id/statusDR"
-                    app:image="@drawable/ic_baseline_power_settings_new_24"
-                    app:layout_constraintLeft_toRightOf="@+id/statusSB"
-                    app:layout_constraintRight_toLeftOf="@+id/statusON"
-                    app:title="Driving"
-                    app:status="DR"
-                    app:color="@color/colorStatusDR"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:ignore="MissingConstraints" />
+<!--                <com.iosix.eldblesample.customViews.StatusCustomButtonView-->
+<!--                    android:id="@+id/statusSB"-->
+<!--                    app:image="@drawable/ic_baseline_power_settings_new_24"-->
+<!--                    app:layout_constraintLeft_toRightOf="@+id/statusOFF"-->
+<!--                    app:layout_constraintRight_toLeftOf="@+id/statusDR"-->
+<!--                    app:title="Sleeper Berth"-->
+<!--                    app:status="SB"-->
+<!--                    app:color="@color/colorStatusSB"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    tools:ignore="MissingConstraints" />-->
 
-                <com.iosix.eldblesample.customViews.StatusCustomButtonView
-                    android:id="@+id/statusON"
-                    app:image="@drawable/ic_baseline_power_settings_new_24"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintLeft_toRightOf="@+id/statusDR"
-                    app:title="ON Duty"
-                    app:status="ON"
-                    app:color="@color/colorStatusON"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:ignore="MissingConstraints" />
+<!--                <com.iosix.eldblesample.customViews.StatusCustomButtonView-->
+<!--                    android:id="@+id/statusDR"-->
+<!--                    app:image="@drawable/ic_baseline_power_settings_new_24"-->
+<!--                    app:layout_constraintLeft_toRightOf="@+id/statusSB"-->
+<!--                    app:layout_constraintRight_toLeftOf="@+id/statusON"-->
+<!--                    app:title="Driving"-->
+<!--                    app:status="DR"-->
+<!--                    app:color="@color/colorStatusDR"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    tools:ignore="MissingConstraints" />-->
+
+<!--                <com.iosix.eldblesample.customViews.StatusCustomButtonView-->
+<!--                    android:id="@+id/statusON"-->
+<!--                    app:image="@drawable/ic_baseline_power_settings_new_24"-->
+<!--                    app:layout_constraintRight_toRightOf="parent"-->
+<!--                    app:layout_constraintLeft_toRightOf="@+id/statusDR"-->
+<!--                    app:title="ON Duty"-->
+<!--                    app:status="ON"-->
+<!--                    app:color="@color/colorStatusON"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    tools:ignore="MissingConstraints" />-->
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

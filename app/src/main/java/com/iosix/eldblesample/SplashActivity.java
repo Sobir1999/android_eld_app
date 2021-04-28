@@ -13,6 +13,7 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         setContentView(R.layout.activity_main2);
 
 
@@ -21,9 +22,9 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+
                 startActivity(intent);
                 finish();
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         }, 3000);
 
