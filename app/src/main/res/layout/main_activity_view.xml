@@ -96,70 +96,197 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/idStatusButton"
                 app:layout_constraintTop_toBottomOf="@id/idChangeStatus"
+                android:nestedScrollingEnabled="true"
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:ignore="MissingConstraints">
 
-                <include
-                    android:id="@+id/idIcludeOff"
+                <LinearLayout
+                    android:id="@+id/idIncludeOff"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:gravity="center_horizontal"
+                    app:layout_constraintRight_toLeftOf="@id/idIncludeSb"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    layout="@layout/custom_button_off_item" />
+                    android:orientation="vertical" >
 
-<!--                <com.iosix.eldblesample.customViews.StatusCustomButtonView-->
-<!--                    android:id="@+id/statusOFF"-->
-<!--                    app:image="@drawable/ic_baseline_power_settings_new_24"-->
-<!--                    app:layout_constraintLeft_toLeftOf="parent"-->
-<!--                    app:layout_constraintRight_toLeftOf="@+id/statusSB"-->
-<!--                    app:title="OFF Duty"-->
-<!--                    app:status="OFF"-->
-<!--                    app:color="@color/colorStatusOFF"-->
-<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    tools:ignore="MissingConstraints" />-->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardOff"
+                        app:cardBackgroundColor="@color/colorStatusOFF"
+                        app:cardCornerRadius="10dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp">
 
-<!--                <com.iosix.eldblesample.customViews.StatusCustomButtonView-->
-<!--                    android:id="@+id/statusSB"-->
-<!--                    app:image="@drawable/ic_baseline_power_settings_new_24"-->
-<!--                    app:layout_constraintLeft_toRightOf="@+id/statusOFF"-->
-<!--                    app:layout_constraintRight_toLeftOf="@+id/statusDR"-->
-<!--                    app:title="Sleeper Berth"-->
-<!--                    app:status="SB"-->
-<!--                    app:color="@color/colorStatusSB"-->
-<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    tools:ignore="MissingConstraints" />-->
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
 
-<!--                <com.iosix.eldblesample.customViews.StatusCustomButtonView-->
-<!--                    android:id="@+id/statusDR"-->
-<!--                    app:image="@drawable/ic_baseline_power_settings_new_24"-->
-<!--                    app:layout_constraintLeft_toRightOf="@+id/statusSB"-->
-<!--                    app:layout_constraintRight_toLeftOf="@+id/statusON"-->
-<!--                    app:title="Driving"-->
-<!--                    app:status="DR"-->
-<!--                    app:color="@color/colorStatusDR"-->
-<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    tools:ignore="MissingConstraints" />-->
+                            <ImageView
+                                android:id="@+id/imageOff"
+                                android:src="@drawable/ic_baseline_power_settings_new_24"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
 
-<!--                <com.iosix.eldblesample.customViews.StatusCustomButtonView-->
-<!--                    android:id="@+id/statusON"-->
-<!--                    app:image="@drawable/ic_baseline_power_settings_new_24"-->
-<!--                    app:layout_constraintRight_toRightOf="parent"-->
-<!--                    app:layout_constraintLeft_toRightOf="@+id/statusDR"-->
-<!--                    app:title="ON Duty"-->
-<!--                    app:status="ON"-->
-<!--                    app:color="@color/colorStatusON"-->
-<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    tools:ignore="MissingConstraints" />-->
+                            <TextView
+                                android:id="@+id/statusOff"
+                                android:textStyle="bold"
+                                android:text="@string/off"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
 
+                    <TextView
+                        android:id="@+id/titleOff"
+                        android:text="@string/off_duty"
+                        android:layout_marginTop="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/idIncludeSb"
+                    app:layout_constraintLeft_toRightOf="@id/idIncludeOff"
+                    app:layout_constraintRight_toLeftOf="@id/idIncludeDr"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardSB"
+                        app:cardBackgroundColor="@color/colorStatusSB"
+                        app:cardCornerRadius="10dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp">
+
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <ImageView
+                                android:id="@+id/imageSB"
+                                android:src="@drawable/ic_baseline_power_settings_new_24"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+                            <TextView
+                                android:id="@+id/statusSB"
+                                android:textStyle="bold"
+                                android:text="@string/sb"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        android:id="@+id/titleSB"
+                        android:text="@string/sleeper_berth"
+                        android:layout_marginTop="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:gravity="center_horizontal"
+                    app:layout_constraintLeft_toRightOf="@id/idIncludeSb"
+                    app:layout_constraintRight_toLeftOf="@id/idIncludeOn"
+                    android:id="@+id/idIncludeDr"
+                    layout="@layout/custom_button_dr_item"
+                    android:orientation="vertical" >
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardDR"
+                        app:cardBackgroundColor="@color/colorStatusDR"
+                        app:cardCornerRadius="10dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp">
+
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <ImageView
+                                android:id="@+id/imageDR"
+                                android:src="@drawable/ic_baseline_power_settings_new_24"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+                            <TextView
+                                android:id="@+id/statusDR"
+                                android:textStyle="bold"
+                                android:text="@string/dr"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        android:id="@+id/titleDR"
+                        android:text="@string/driving"
+                        android:layout_marginTop="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/idIncludeOn"
+                    android:gravity="center_horizontal"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/idIncludeDr"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    layout="@layout/custom_button_on_item"
+                    android:orientation="vertical" >
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardON"
+                        app:cardBackgroundColor="@color/colorStatusON"
+                        app:cardCornerRadius="10dp"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp">
+
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <ImageView
+                                android:id="@+id/imageON"
+                                android:src="@drawable/ic_baseline_power_settings_new_24"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+                            <TextView
+                                android:id="@+id/status"
+                                android:textStyle="bold"
+                                android:text="@string/on"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        android:id="@+id/title"
+                        android:text="@string/on_duty"
+                        android:layout_marginTop="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout

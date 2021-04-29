@@ -2,6 +2,7 @@ package com.iosix.eldblesample.roomDatabase.entities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringDef;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -11,7 +12,7 @@ public class TruckStatusEntity {
     @PrimaryKey(autoGenerate = true)
     private int id;
     @ColumnInfo(name = "status")
-    private String status;
+    private String status = "off";
     @ColumnInfo(name = "location")
     @Nullable
     private String location;
@@ -30,7 +31,7 @@ public class TruckStatusEntity {
     @ColumnInfo(name = "year")
     private int year;
 
-    public TruckStatusEntity(int id, String status, @Nullable String location, @Nullable String note, @Nullable String document, int time, @NonNull String day, int year) {
+    public TruckStatusEntity(String status, @Nullable String location, @Nullable String note, @Nullable String document, int time, @NonNull String day, int year) {
         this.id = id;
         this.status = status;
         this.location = location;

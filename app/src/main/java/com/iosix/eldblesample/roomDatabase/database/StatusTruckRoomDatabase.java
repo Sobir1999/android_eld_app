@@ -1,17 +1,13 @@
 package com.iosix.eldblesample.roomDatabase.database;
 
-import android.app.Application;
 import android.content.Context;
 import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.room.Database;
-import androidx.room.DatabaseConfiguration;
-import androidx.room.InvalidationTracker;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
-import androidx.sqlite.db.SupportSQLiteOpenHelper;
 
 import com.iosix.eldblesample.roomDatabase.daos.StatusTruckDao;
 import com.iosix.eldblesample.roomDatabase.entities.TruckStatusEntity;
@@ -52,7 +48,7 @@ public abstract class StatusTruckRoomDatabase extends RoomDatabase {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            dao.insertStatus(new TruckStatusEntity(0, "OFF", "Tashkent", "Qale Toshkent", null, 120, "Apr 27", 2021));
+            dao.insertStatus(new TruckStatusEntity("OFF", "Tashkent", "Qale Toshkent", null, 120, "Apr 27", 2021));
             return null;
         }
     }

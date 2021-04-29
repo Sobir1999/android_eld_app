@@ -4,6 +4,7 @@ import android.app.Application;
 import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
+import androidx.room.Room;
 
 import com.iosix.eldblesample.roomDatabase.daos.StatusTruckDao;
 import com.iosix.eldblesample.roomDatabase.database.StatusTruckRoomDatabase;
@@ -17,9 +18,9 @@ public class StatusTableRepositories {
     private LiveData<List<TruckStatusEntity>> mAllStatus;
 
     public StatusTableRepositories(Application application) {
-//        StatusTruckRoomDatabase db = new StatusTruckRoomDatabase.getINSTANCE(application);
-//        mStatusDao = db.statusTruckDao();
-//        mAllStatus = mStatusDao.getAllStatus();
+        StatusTruckRoomDatabase db = StatusTruckRoomDatabase.getINSTANCE(application);
+        mStatusDao = db.statusTruckDao();
+        mAllStatus = mStatusDao.getAllStatus();
     }
 
     public LiveData<List<TruckStatusEntity>> getmAllStatus() {

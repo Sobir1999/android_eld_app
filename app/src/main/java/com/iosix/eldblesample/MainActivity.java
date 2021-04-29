@@ -28,7 +28,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -42,15 +41,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.iosix.eldblelib.EldBleConnectionStateChangeCallback;
 import com.iosix.eldblelib.EldBleDataCallback;
 import com.iosix.eldblelib.EldBleError;
@@ -74,11 +70,10 @@ import com.iosix.eldblelib.EldScanObject;
 import com.iosix.eldblelib.EldTransmissionRecord;
 import com.iosix.eldblesample.adapters.RecyclerViewLastAdapter;
 import com.iosix.eldblesample.customViews.CustomRulerChart;
-import com.iosix.eldblesample.customViews.StatusCustomButtonView;
 import com.iosix.eldblesample.dialogs.ConnectToEldDialog;
 import com.iosix.eldblesample.dialogs.EditLanguageDialog;
 import com.iosix.eldblesample.dialogs.SearchEldDeviceDialog;
-import com.iosix.eldblesample.gps.GPSTracker;
+import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.interfaces.AlertDialogItemClickInterface;
 import com.iosix.eldblesample.interfaces.EditLanguageDialogListener;
 import com.iosix.eldblesample.models.MessageModel;
@@ -107,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
     private ConstraintLayout visiblityViewCons;
     private Button cancel, save;
     private Switch nightModeSwitch;
-    FusedLocationProviderClient fusedLocationProviderClient;
+    private int current_status = EnumsConstants.STATUS_OFF;
 
     private double latitude;
     private double longtitude;
@@ -146,8 +141,6 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawer_layout);
         last_recycler_view = findViewById(R.id.idRecyclerView);
         customRulerChart = findViewById(R.id.idCustomChart);
-
-        fusedLocationProviderClient = new FusedLocationProviderClient(MainActivity.this);
 
         onClickCustomBtn();
         onClickVisiblityCanAndSaveBtn();
@@ -356,9 +349,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void onClickCustomBtn() {
         off = findViewById(R.id.cardOff);
-//        sb = findViewById(R.id.cardSB);
-//        dr = findViewById(R.id.statusDR);
-//        on = findViewById(R.id.statusON);
+        sb = findViewById(R.id.cardSB);
+        dr = findViewById(R.id.cardDR);
+        on = findViewById(R.id.cardON);
         visiblityViewCons = findViewById(R.id.idVisibilityViewCons);
 
         off.setOnClickListener(new View.OnClickListener() {
@@ -370,26 +363,26 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        sb.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                visiblityViewCons.setVisibility(View.VISIBLE);
-//            }
-//        });
-//
-//        dr.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                visiblityViewCons.setVisibility(View.VISIBLE);
-//            }
-//        });
-//
-//        on.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                visiblityViewCons.setVisibility(View.VISIBLE);
-//            }
-//        });
+        sb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                visiblityViewCons.setVisibility(View.VISIBLE);
+            }
+        });
+
+        dr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                visiblityViewCons.setVisibility(View.VISIBLE);
+            }
+        });
+
+        on.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                visiblityViewCons.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     @Override
