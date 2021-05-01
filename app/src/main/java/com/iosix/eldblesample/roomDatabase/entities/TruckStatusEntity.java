@@ -12,7 +12,7 @@ public class TruckStatusEntity {
     @PrimaryKey(autoGenerate = true)
     private int id;
     @ColumnInfo(name = "status")
-    private String status = "off";
+    private int status = 0;
     @ColumnInfo(name = "location")
     @Nullable
     private String location;
@@ -24,29 +24,29 @@ public class TruckStatusEntity {
     private String document;
     @ColumnInfo(name = "time")
     @NonNull
-    private int time;
-    @ColumnInfo(name = "day")
-    @NonNull
-    private String day;
-    @ColumnInfo(name = "year")
-    private int year;
+    private String time;
 
-    public TruckStatusEntity(String status, @Nullable String location, @Nullable String note, @Nullable String document, int time, @NonNull String day, int year) {
-        this.id = id;
+    public TruckStatusEntity(int status, @Nullable String location, @Nullable String note, @Nullable String document, @NonNull String time) {
         this.status = status;
         this.location = location;
         this.note = note;
         this.document = document;
         this.time = time;
-        this.day = day;
-        this.year = year;
     }
 
-    public String getStatus() {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 
@@ -77,36 +77,12 @@ public class TruckStatusEntity {
         this.document = document;
     }
 
-    public int getTime() {
+    @NonNull
+    public String getTime() {
         return time;
     }
 
-    public void setTime(int time) {
+    public void setTime(@NonNull String time) {
         this.time = time;
-    }
-
-    @NonNull
-    public String getDay() {
-        return day;
-    }
-
-    public void setDay(@NonNull String day) {
-        this.day = day;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 }

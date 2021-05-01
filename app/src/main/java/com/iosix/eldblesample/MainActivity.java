@@ -11,6 +11,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -77,12 +79,15 @@ import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.interfaces.AlertDialogItemClickInterface;
 import com.iosix.eldblesample.interfaces.EditLanguageDialogListener;
 import com.iosix.eldblesample.models.MessageModel;
+import com.iosix.eldblesample.roomDatabase.entities.TruckStatusEntity;
+import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
@@ -127,6 +132,8 @@ public class MainActivity extends AppCompatActivity {
     public static final String Key_ISNIGHTMODE = "isNightMODE";
     private SharedPreferences sharedPreferences;
 
+    private StatusDaoViewModel statusDaoViewModel;
+
     @SuppressLint("VisibleForTests")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,19 +145,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        statusDaoViewModel = new StatusDaoViewModel(this.getApplication());
+
         drawerLayout = findViewById(R.id.drawer_layout);
         last_recycler_view = findViewById(R.id.idRecyclerView);
         customRulerChart = findViewById(R.id.idCustomChart);
 
-        onClickCustomBtn();
-        onClickVisiblityCanAndSaveBtn();
-
-        findViewById(R.id.idDocumentIcon).setOnClickListener(new View.OnClickListener() {
+        statusDaoViewModel = ViewModelProviders.of(this).get(StatusDaoViewModel.class);
+        statusDaoViewModel.getmAllStatus().observe(this, new Observer<List<TruckStatusEntity>>() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("application/*");
-                startActivityForResult(intent, 0);
+            public void onChanged(List<TruckStatusEntity> truckStatusEntities) {
+                for (int i = 0; i < truckStatusEntities.size(); i++) {
+                    Log.d("STATUS", "onChanged: " + truckStatusEntities.get(i).getStatus() + "\n" + truckStatusEntities.get(i).getTime());
+                }
             }
         });
 
@@ -169,6 +176,9 @@ public class MainActivity extends AppCompatActivity {
         requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
 
         mEldManager = EldManager.GetEldManager(this, "123456789A");
+
+        onClickCustomBtn();
+        onClickVisiblityCanAndSaveBtn();
 
         getDrawerToggleEvent();
         getDrawerTouchEvent();
@@ -302,11 +312,12 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("IGA", "onClick: Searching...");
                 if (checkGrantResults(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, new int[]{1})) {
                     Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
-                    try {
-                        List<Address> addresses = geocoder.getFromLocation(latitude, longtitude, 1);
-                        Address obj = addresses.get(0);
-                        String add = obj.getCountryName();
-                        add = add + ", " + obj.getSubAdminArea();
+                    if (latitude != 0 && longtitude != 0) {
+                        try {
+                            List<Address> addresses = geocoder.getFromLocation(latitude, longtitude, 1);
+                            Address obj = addresses.get(0);
+                            String add = obj.getCountryName();
+                            add = add + ", " + obj.getSubAdminArea();
 //                                    add = add + ", " + obj.getLocality();
 //                                    add = add + "\n" + obj.getAdminArea();
 //                                    add = add + "\n" + obj.getPostalCode();
@@ -314,21 +325,29 @@ public class MainActivity extends AppCompatActivity {
 //                                    add = add + "\n" + obj.getLocality();
 //                                    add = add + "\n" + obj.getSubThoroughfare();
 
-                        editLocation.setText(add);
-                        Log.v("IGA", "Address" + add);
-                        // Toast.makeText(this, "Address=>" + add,
-                        // Toast.LENGTH_SHORT).show();
-
-                        // TennisAppActivity.showDialog(add);
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            editLocation.setText(add);
+                            editLocation.setClickable(false);
+                        } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                            Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(MainActivity.this, "Failed to detect location", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
                 }
 
+            }
+        });
+
+        findViewById(R.id.idDocumentIcon).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("application/*");
+                startActivityForResult(intent, 0);
             }
         });
 
@@ -342,7 +361,12 @@ public class MainActivity extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                visiblityViewCons.setVisibility(View.GONE);
+                off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
+                sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
+                dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
+                on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
+                statusDaoViewModel.insertStatus(new TruckStatusEntity(current_status, editLocation.getText().toString(), "Note", null, Calendar.getInstance().getTime() + ""));
             }
         });
     }
@@ -358,8 +382,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 visiblityViewCons.setVisibility(View.VISIBLE);
-//                visiblityViewCons.set(fade_out_custom_expanded);
                 off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFFBold));
+                sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
+                dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
+                on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
+                current_status = EnumsConstants.STATUS_OFF;
             }
         });
 
@@ -367,6 +394,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 visiblityViewCons.setVisibility(View.VISIBLE);
+                off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
+                sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSBBold));
+                dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
+                on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
+                current_status = EnumsConstants.STATUS_SB;
             }
         });
 
@@ -374,6 +406,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 visiblityViewCons.setVisibility(View.VISIBLE);
+                off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
+                sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
+                dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDRBold));
+                on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
+                current_status = EnumsConstants.STATUS_DR;
             }
         });
 
@@ -381,6 +418,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 visiblityViewCons.setVisibility(View.VISIBLE);
+                off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
+                sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
+                dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
+                on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusONBold));
+                current_status = EnumsConstants.STATUS_ON;
             }
         });
     }

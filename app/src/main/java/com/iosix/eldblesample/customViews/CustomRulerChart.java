@@ -1,16 +1,16 @@
 package com.iosix.eldblesample.customViews;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import java.sql.Time;
+import java.util.Calendar;
 
 public class CustomRulerChart extends View {
     private Paint table_paint = new Paint();
@@ -27,6 +27,9 @@ public class CustomRulerChart extends View {
 
     private float CUSTOM_TABLE_HEIGHT;
     private float CUSTOM_TABLE_ROW_WIDTH;
+
+    private Handler handler = new Handler();
+    private int currentDate;
 
 
     public CustomRulerChart(Context context) {
@@ -310,15 +313,20 @@ public class CustomRulerChart extends View {
     }
 
     private void drawLineProgress(Canvas canvas, int row) {
-//        Time time = new Time();
-//        time.set()
-//
-//        val i: Long = (time.hour * 3600 + time.minute * 60 + time.second).toLong()
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                int hour = Calendar.getInstance().getTime().getHours();
+                int minut = Calendar.getInstance().getTime().getMinutes();
+                int second = Calendar.getInstance().getTime().getSeconds();
+                currentDate = hour*3600 + minut*60 + second;
+            }
+        }, 5000);
 
         canvas.drawLine(
                 START_POINT_X,
                 START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8,
-                START_POINT_X + 34567 * 8 / CUSTOM_TABLE_WIDTH,
+                START_POINT_X + currentDate * 8 / CUSTOM_TABLE_WIDTH,
                 START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8,
                 table_paint
         );
