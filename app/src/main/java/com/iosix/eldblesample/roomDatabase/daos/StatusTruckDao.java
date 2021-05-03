@@ -18,4 +18,7 @@ public interface StatusTruckDao {
 
     @Query("Select * from status_table")
     LiveData<List<TruckStatusEntity>> getAllStatus();
+
+//    @Query("Select * From status_table where today in time")
+//    LiveData<List<TruckStatusEntity>> getTodayAll(String today);
 }

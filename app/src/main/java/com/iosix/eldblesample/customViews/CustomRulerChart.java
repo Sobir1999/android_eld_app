@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -69,6 +70,7 @@ public class CustomRulerChart extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         CUSTOM_WIDTH = w;
+        invalidate();
     }
 
     @Override
@@ -313,6 +315,7 @@ public class CustomRulerChart extends View {
     }
 
     private void drawLineProgress(Canvas canvas, int row) {
+
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -320,16 +323,19 @@ public class CustomRulerChart extends View {
                 int minut = Calendar.getInstance().getTime().getMinutes();
                 int second = Calendar.getInstance().getTime().getSeconds();
                 currentDate = hour*3600 + minut*60 + second;
+                Log.d("TAG", "run: " + hour + " " + minut + " " + second);
             }
         }, 5000);
 
         canvas.drawLine(
                 START_POINT_X,
                 START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8,
-                START_POINT_X + currentDate * 8 / CUSTOM_TABLE_WIDTH,
+                START_POINT_X + (currentDate*8) / CUSTOM_TABLE_WIDTH,
                 START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8,
                 table_paint
         );
+
+//        Log.d("TAG", "drawLineProgress: " + START_POINT_X + (86400*16f) / CUSTOM_TABLE_WIDTH + " " + CUSTOM_TABLE_WIDTH);
 
         invalidate();
     }

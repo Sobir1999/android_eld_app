@@ -7,13 +7,13 @@
     <color name="colorBackgroundMainView">#E3E3E3</color>
 
     <color name="colorStatusOFF">#DAD9DC</color>
-    <color name="colorStatusOFFBold">#B6B6B8</color>
+    <color name="colorStatusOFFBold">#B3B3B3</color>
     <color name="colorStatusSB">#F4E879</color>
-    <color name="colorStatusSBBold">#E3D769</color>
-    <color name="colorStatusDR">#A9D37A</color>
-    <color name="colorStatusDRBold">#9DC86C</color>
-    <color name="colorStatusON">#4CA5EC</color>
-    <color name="colorStatusONBold">#4196DA</color>
+    <color name="colorStatusSBBold">#CCC056</color>
+    <color name="colorStatusDR">#B4E380</color>
+    <color name="colorStatusDRBold">#90BC5E</color>
+    <color name="colorStatusON">#5CACEC</color>
+    <color name="colorStatusONBold">#3A88C6</color>
 
     <color name="colorActionText">#61CFDD</color>
     <color name="alertColor">#EC3434</color>

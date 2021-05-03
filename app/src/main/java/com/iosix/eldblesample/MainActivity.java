@@ -43,6 +43,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -186,7 +187,17 @@ public class MainActivity extends AppCompatActivity {
         setLanguageDialog();
 
         createlocalFolder();
+        setTodayAttr();
+    }
 
+    @SuppressLint("SetTextI18n")
+    private void setTodayAttr() {
+        String today = Calendar.getInstance().getTime() + "";
+        TextView day = findViewById(R.id.idTableDay);
+        TextView month = findViewById(R.id.idTableMonth);
+
+        day.setText(today.split(" ")[0]);
+        month.setText(today.split(" ")[1] + " " + today.split(" ")[2]);
     }
 
     private void createlocalFolder() {
@@ -367,8 +378,31 @@ public class MainActivity extends AppCompatActivity {
                 dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
                 on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
                 statusDaoViewModel.insertStatus(new TruckStatusEntity(current_status, editLocation.getText().toString(), "Note", null, Calendar.getInstance().getTime() + ""));
+
+                setTopLastPos(current_status);
             }
         });
+    }
+
+    private void setTopLastPos(int lastPos) {
+        CardView cardView = findViewById(R.id.idCardStatus);
+        ImageView icon = findViewById(R.id.idStatusImage);
+        TextView statusText = findViewById(R.id.idStatusText);
+        TextView statusTime = findViewById(R.id.idStatusTime);
+
+        if (lastPos == 3) {
+            cardView.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
+            statusText.setText(R.string.on);
+        } else if (lastPos == 1) {
+            cardView.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
+            statusText.setText(R.string.sb);
+        } else if (lastPos == 2) {
+            cardView.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
+            statusText.setText(R.string.dr);
+        } else {
+            cardView.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
+            statusText.setText(R.string.off);
+        }
     }
 
     private void onClickCustomBtn() {
