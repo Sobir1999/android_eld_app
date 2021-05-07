@@ -25,13 +25,25 @@ public class TruckStatusEntity {
     @ColumnInfo(name = "time")
     @NonNull
     private String time;
+    @ColumnInfo(name = "seconds")
+    @NonNull
+    private int seconds;
 
-    public TruckStatusEntity(int status, @Nullable String location, @Nullable String note, @Nullable String document, @NonNull String time) {
+    public TruckStatusEntity(int status, @Nullable String location, @Nullable String note, @Nullable String document, @NonNull String time, int seconds) {
         this.status = status;
         this.location = location;
         this.note = note;
         this.document = document;
         this.time = time;
+        this.seconds = seconds;
+    }
+
+    public int getSeconds() {
+        return seconds;
+    }
+
+    public void setSeconds(int seconds) {
+        this.seconds = seconds;
     }
 
     public int getId() {

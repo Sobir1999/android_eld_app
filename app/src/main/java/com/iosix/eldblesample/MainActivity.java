@@ -20,6 +20,9 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -49,7 +52,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
 import com.iosix.eldblelib.EldBleConnectionStateChangeCallback;
 import com.iosix.eldblelib.EldBleDataCallback;
 import com.iosix.eldblelib.EldBleError;
@@ -77,10 +79,13 @@ import com.iosix.eldblesample.dialogs.ConnectToEldDialog;
 import com.iosix.eldblesample.dialogs.EditLanguageDialog;
 import com.iosix.eldblesample.dialogs.SearchEldDeviceDialog;
 import com.iosix.eldblesample.enums.EnumsConstants;
+import com.iosix.eldblesample.fragments.LGDDFragment;
 import com.iosix.eldblesample.interfaces.AlertDialogItemClickInterface;
 import com.iosix.eldblesample.interfaces.EditLanguageDialogListener;
 import com.iosix.eldblesample.models.MessageModel;
+import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.TruckStatusEntity;
+import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
 
 import org.greenrobot.eventbus.EventBus;
@@ -109,6 +114,8 @@ public class MainActivity extends AppCompatActivity {
     private Button cancel, save;
     private Switch nightModeSwitch;
     private int current_status = EnumsConstants.STATUS_OFF;
+    private String time = "" + Calendar.getInstance().getTime();
+    private String today = time.split(" ")[1] + " " + time.split(" ")[2];
 
     private double latitude;
     private double longtitude;
@@ -131,9 +138,12 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String MyPREFERENCES = "nightModePrefs";
     public static final String Key_ISNIGHTMODE = "isNightMODE";
+    public static final String My_LAST_STATUS = "myLastStatus";
+    public static final String My_LAST_STATUS_KEY = "myLastStatusKey";
     private SharedPreferences sharedPreferences;
 
     private StatusDaoViewModel statusDaoViewModel;
+    private DayDaoViewModel daoViewModel;
 
     @SuppressLint("VisibleForTests")
     @Override
@@ -146,24 +156,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        statusDaoViewModel = new StatusDaoViewModel(this.getApplication());
+        optimizeViewModels();
 
         drawerLayout = findViewById(R.id.drawer_layout);
         last_recycler_view = findViewById(R.id.idRecyclerView);
         customRulerChart = findViewById(R.id.idCustomChart);
 
-        statusDaoViewModel = ViewModelProviders.of(this).get(StatusDaoViewModel.class);
-        statusDaoViewModel.getmAllStatus().observe(this, new Observer<List<TruckStatusEntity>>() {
-            @Override
-            public void onChanged(List<TruckStatusEntity> truckStatusEntities) {
-                for (int i = 0; i < truckStatusEntities.size(); i++) {
-                    Log.d("STATUS", "onChanged: " + truckStatusEntities.get(i).getStatus() + "\n" + truckStatusEntities.get(i).getTime());
-                }
-            }
-        });
-
         //Last Days Recycler Adapter
-        lastAdapter = new RecyclerViewLastAdapter();
+        lastAdapter = new RecyclerViewLastAdapter(this);
         last_recycler_view.setLayoutManager(new LinearLayoutManager(this));
         last_recycler_view.setAdapter(lastAdapter);
 
@@ -188,6 +188,61 @@ public class MainActivity extends AppCompatActivity {
 
         createlocalFolder();
         setTodayAttr();
+
+        clickLGDDButtons();
+    }
+
+    private LGDDFragment lgddFragment;
+
+    private void clickLGDDButtons() {
+        Button log, general, doc, dvir;
+        log = findViewById(R.id.idTableBtnLog);
+        general = findViewById(R.id.idTableBtnGeneral);
+        doc = findViewById(R.id.idTableBtnDocs);
+        dvir = findViewById(R.id.idTableBtnDVIR);
+
+        log.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                loadLGDDFragment(new LGDDFragment());
+            }
+        });
+    }
+
+    private void loadLGDDFragment(Fragment fragment) {
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        fragmentTransaction.replace(R.id.drawer_layout, fragment);
+        fragmentTransaction.commit(); // save the changes
+    }
+
+    private void optimizeViewModels() {
+        statusDaoViewModel = new StatusDaoViewModel(this.getApplication());
+        daoViewModel = new DayDaoViewModel(this.getApplication());
+
+        statusDaoViewModel = ViewModelProviders.of(this).get(StatusDaoViewModel.class);
+        statusDaoViewModel.getmAllStatus().observe(this, new Observer<List<TruckStatusEntity>>() {
+            @Override
+            public void onChanged(List<TruckStatusEntity> truckStatusEntities) {
+                for (int i = 0; i < truckStatusEntities.size(); i++) {
+                    Log.d("STATUS", "onChanged: " + truckStatusEntities.get(i).getStatus() + "\n" + truckStatusEntities.get(i).getTime() + "\n" + truckStatusEntities.get(i).getSeconds());
+                }
+                setTopLastPos(truckStatusEntities.isEmpty() ? current_status : truckStatusEntities.get(truckStatusEntities.size() - 1).getStatus());
+            }
+        });
+
+        daoViewModel.insertDay(new DayEntity(today, time.split(" ")[0]));
+
+        daoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
+        daoViewModel.getMgetAllDays().observe(this, new Observer<List<DayEntity>>() {
+            @Override
+            public void onChanged(List<DayEntity> dayEntities) {
+                for (int i = 0; i < dayEntities.size(); i++) {
+                    Log.d("DAY", "onChanged: " + dayEntities.get(i).getDay() + " " + dayEntities.get(i).getDay_name() + " " + dayEntities.get(i).getId());
+                }
+//                lastAdapter.setDayEntities(dayEntities);
+            }
+        });
     }
 
     @SuppressLint("SetTextI18n")
@@ -282,6 +337,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private int getCurrentSeconds() {
+        int hour = Calendar.getInstance().getTime().getHours();
+        int minute = Calendar.getInstance().getTime().getMinutes();
+        int second = Calendar.getInstance().getTime().getSeconds();
+        return hour * 3600 + minute * 60 + second;
+    }
+
     public void setLocale(String lang) {
         Locale myLocale = new Locale(lang);
         Resources res = getResources();
@@ -316,6 +378,8 @@ public class MainActivity extends AppCompatActivity {
         cancel = findViewById(R.id.idVisButtonCancel);
         TextView findLocation = findViewById(R.id.idLoactionIcon);
         final EditText editLocation = findViewById(R.id.idLocationEdit);
+        sharedPreferences = getSharedPreferences(My_LAST_STATUS, Context.MODE_PRIVATE);
+
 
         findLocation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -366,6 +430,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 visiblityViewCons.setVisibility(View.GONE);
+                off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
+                sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
+                dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
+                on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
             }
         });
 
@@ -377,9 +445,7 @@ public class MainActivity extends AppCompatActivity {
                 sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
                 dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
                 on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
-                statusDaoViewModel.insertStatus(new TruckStatusEntity(current_status, editLocation.getText().toString(), "Note", null, Calendar.getInstance().getTime() + ""));
-
-                setTopLastPos(current_status);
+                statusDaoViewModel.insertStatus(new TruckStatusEntity(current_status, editLocation.getText().toString(), "Note", null, today, getCurrentSeconds()));
             }
         });
     }

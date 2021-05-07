@@ -9,9 +9,18 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.iosix.eldblesample.models.ExampleModel;
+import com.iosix.eldblesample.models.ExampleTimeModel;
+
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 public class CustomRulerChart extends View {
     private Paint table_paint = new Paint();
@@ -32,6 +41,15 @@ public class CustomRulerChart extends View {
     private Handler handler = new Handler();
     private int currentDate;
 
+    private ArrayList<ExampleTimeModel> arrayList = new ArrayList<ExampleTimeModel>(){{
+        add(new ExampleTimeModel(0, 4343));
+        add(new ExampleTimeModel(2, 5000));
+        add(new ExampleTimeModel(1, 10000));
+        add(new ExampleTimeModel(3, 30000));
+        add(new ExampleTimeModel(0, 45000));
+        add(new ExampleTimeModel(3, 65000));
+        add(new ExampleTimeModel(1, 86399));
+    }};
 
     public CustomRulerChart(Context context) {
         super(context);
@@ -64,6 +82,7 @@ public class CustomRulerChart extends View {
         onDrawTable(canvas);
         onDrawText(canvas);
         drawLineProgress(canvas, 0);
+        drawLine(canvas, arrayList);
     }
 
     @Override
@@ -323,7 +342,6 @@ public class CustomRulerChart extends View {
                 int minut = Calendar.getInstance().getTime().getMinutes();
                 int second = Calendar.getInstance().getTime().getSeconds();
                 currentDate = hour*3600 + minut*60 + second;
-                Log.d("TAG", "run: " + hour + " " + minut + " " + second);
             }
         }, 5000);
 
@@ -335,8 +353,28 @@ public class CustomRulerChart extends View {
                 table_paint
         );
 
-//        Log.d("TAG", "drawLineProgress: " + START_POINT_X + (86400*16f) / CUSTOM_TABLE_WIDTH + " " + CUSTOM_TABLE_WIDTH);
-
         invalidate();
+    }
+
+    private void drawLine(Canvas canvas, ArrayList<ExampleTimeModel> arrayList) {
+        table_paint.setColor(Color.RED);
+        table_paint.setStrokeWidth(2);
+        float startX = START_POINT_X;
+        float endX = 0;
+        float endY = 0;
+
+        for (int i=0; i<arrayList.size(); i++) {
+            endX = START_POINT_X + (arrayList.get(i).getTime()*8)/CUSTOM_TABLE_WIDTH;
+            endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT/8 + (CUSTOM_TABLE_HEIGHT*arrayList.get(i).getStatus())/4;
+            canvas.drawLine(startX, endY, endX, endY, table_paint);
+            if (i > 0) {
+                float verX = START_POINT_X + (arrayList.get(i-1).getTime()*8)/CUSTOM_TABLE_WIDTH;
+                float verStartY = START_POINT_Y + CUSTOM_TABLE_HEIGHT/8 + (CUSTOM_TABLE_HEIGHT*arrayList.get(i-1).getStatus())/4;
+                float verEndY = START_POINT_Y + CUSTOM_TABLE_HEIGHT/8 + (CUSTOM_TABLE_HEIGHT*arrayList.get(i).getStatus())/4;
+                canvas.drawLine(verX, verStartY, verX, verEndY, table_paint);
+            }
+            startX = endX;
+        }
+
     }
 }
