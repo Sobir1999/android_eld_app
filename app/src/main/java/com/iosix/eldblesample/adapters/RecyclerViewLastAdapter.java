@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.iosix.eldblesample.R;
+import com.iosix.eldblesample.customViews.CustomRulerChart;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 
@@ -58,21 +59,35 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
 
     @Override
     public int getItemCount() {
-        Log.d("DATA", "getItemCount: " + dayEntities.size());
         return dayEntities.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView day, day_week;
+        View clickable;
+        CustomRulerChart customRulerChart;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             day = itemView.findViewById(R.id.idTableDay);
             day_week = itemView.findViewById(R.id.idTableMonth);
+            clickable = itemView.findViewById(R.id.idCLickableView);
+            customRulerChart = itemView.findViewById(R.id.idLastDaysTable);
+            itemsClicked();
         }
 
         void onBind(DayEntity dayEntity) {
             day.setText(dayEntity.getDay_name());
             day_week.setText(dayEntity.getDay());
+        }
+
+        private void itemsClicked() {
+            clickable.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    customRulerChart.setVisibility(customRulerChart.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
+                }
+            });
         }
     }
 }

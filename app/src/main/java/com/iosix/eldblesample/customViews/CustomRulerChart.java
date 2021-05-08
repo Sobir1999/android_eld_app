@@ -40,6 +40,7 @@ public class CustomRulerChart extends View {
 
     private Handler handler = new Handler();
     private int currentDate;
+    private Canvas canvas;
 
     private ArrayList<ExampleTimeModel> arrayList = new ArrayList<ExampleTimeModel>(){{
         add(new ExampleTimeModel(0, 4343));
@@ -67,6 +68,8 @@ public class CustomRulerChart extends View {
     }
 
     private void init(Context context) {
+        canvas = new Canvas();
+
         CUSTOM_WIDTH = context.getResources().getDisplayMetrics().widthPixels;
 
         CUSTOM_TABLE_WIDTH = CUSTOM_WIDTH - 2.5f * START_POINT_X;
@@ -78,11 +81,11 @@ public class CustomRulerChart extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
+        this.canvas = canvas;
         onDrawTable(canvas);
         onDrawText(canvas);
-        drawLineProgress(canvas, 0);
-        drawLine(canvas, arrayList);
+//        drawLineProgress(canvas, 0);
+//        drawLine(canvas, arrayList);
     }
 
     @Override
@@ -333,7 +336,8 @@ public class CustomRulerChart extends View {
         );
     }
 
-    private void drawLineProgress(Canvas canvas, int row) {
+    public void drawLineProgress(int row) {
+        super.draw(canvas);
 
         handler.postDelayed(new Runnable() {
             @Override

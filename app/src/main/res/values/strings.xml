@@ -14,4 +14,11 @@
     <string name="driving">Driving</string>
     <string name="on">ON</string>
     <string name="on_duty">ON Duty</string>
+    <string name="previous_log">Previous Log</string>
+    <string name="next_log">Next Log</string>
+    <string name="change_status">Change Status</string>
+    <string name="today">Today</string>
+    <string name="recap">RECAP</string>
+    <string name="no_dvir">No DVIR</string>
+    <string name="check_all">CHECK ALL</string>
 </resources>

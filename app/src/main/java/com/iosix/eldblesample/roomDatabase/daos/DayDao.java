@@ -19,6 +19,6 @@ public interface DayDao {
     @Query("Select * From day_table")
     LiveData<List<DayEntity>> getAllDays();
 
-//    @Query("Delete From day_table where id = id")
-//    void deleteDayById(int ids);
+    @Query("Delete From day_table")
+    void deleteAllDay();
 }

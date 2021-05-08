@@ -11,8 +11,10 @@ import androidx.room.PrimaryKey;
 public class TruckStatusEntity {
     @PrimaryKey(autoGenerate = true)
     private int id;
-    @ColumnInfo(name = "status")
-    private int status = 0;
+    @ColumnInfo(name = "from_status")
+    private int from_status = 0;
+    @ColumnInfo(name = "to_status")
+    private int to_status = 0;
     @ColumnInfo(name = "location")
     @Nullable
     private String location;
@@ -29,13 +31,30 @@ public class TruckStatusEntity {
     @NonNull
     private int seconds;
 
-    public TruckStatusEntity(int status, @Nullable String location, @Nullable String note, @Nullable String document, @NonNull String time, int seconds) {
-        this.status = status;
+    public TruckStatusEntity(int from_status, int to_status, @Nullable String location, @Nullable String note, @Nullable String document, @NonNull String time, int seconds) {
+        this.from_status = from_status;
+        this.to_status = to_status;
         this.location = location;
         this.note = note;
         this.document = document;
         this.time = time;
         this.seconds = seconds;
+    }
+
+    public int getFrom_status() {
+        return from_status;
+    }
+
+    public void setFrom_status(int from_status) {
+        this.from_status = from_status;
+    }
+
+    public int getTo_status() {
+        return to_status;
+    }
+
+    public void setTo_status(int to_status) {
+        this.to_status = to_status;
     }
 
     public int getSeconds() {
@@ -52,14 +71,6 @@ public class TruckStatusEntity {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
     }
 
     @Nullable

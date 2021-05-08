@@ -53,8 +53,6 @@ public abstract class StatusTruckRoomDatabase extends RoomDatabase {
 
         @Override
         protected Void doInBackground(Void... voids) {
-//            dao.insertStatus(new TruckStatusEntity(0, "Tashkent", "Qale Toshkent", null, "Apr 27" + 2021));
-//            dayAndStatusDao.insertDay(new DayEntity("Today"));
             return null;
         }
     }

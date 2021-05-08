@@ -11,6 +11,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,9 +23,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -42,6 +42,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -102,8 +103,6 @@ import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
-    private String[] country = {"English", "Spain", "French"};
-
     private DrawerLayout drawerLayout;
     private Toolbar activity_main_toolbar;
     private RecyclerViewLastAdapter lastAdapter;
@@ -114,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
     private Button cancel, save;
     private Switch nightModeSwitch;
     private int current_status = EnumsConstants.STATUS_OFF;
+    private int last_status;
     private String time = "" + Calendar.getInstance().getTime();
     private String today = time.split(" ")[1] + " " + time.split(" ")[2];
 
@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
     private StatusDaoViewModel statusDaoViewModel;
     private DayDaoViewModel daoViewModel;
 
-    @SuppressLint("VisibleForTests")
+    @SuppressLint({"VisibleForTests", "ResourceAsColor"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -153,6 +153,9 @@ public class MainActivity extends AppCompatActivity {
         setLocale(loadLocal());
 
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        Window w = getWindow();
+        w.setStatusBarColor(R.color.colorPrimaryDark);
+
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
@@ -161,10 +164,11 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawer_layout);
         last_recycler_view = findViewById(R.id.idRecyclerView);
         customRulerChart = findViewById(R.id.idCustomChart);
+        customRulerChart.drawLineProgress(0);
 
         //Last Days Recycler Adapter
         lastAdapter = new RecyclerViewLastAdapter(this);
-        last_recycler_view.setLayoutManager(new LinearLayoutManager(this));
+        last_recycler_view.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true));
         last_recycler_view.setAdapter(lastAdapter);
 
         // Set the toolbar
@@ -192,8 +196,6 @@ public class MainActivity extends AppCompatActivity {
         clickLGDDButtons();
     }
 
-    private LGDDFragment lgddFragment;
-
     private void clickLGDDButtons() {
         Button log, general, doc, dvir;
         log = findViewById(R.id.idTableBtnLog);
@@ -204,16 +206,38 @@ public class MainActivity extends AppCompatActivity {
         log.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                loadLGDDFragment(new LGDDFragment());
+                loadLGDDFragment(LGDDFragment.newInstance(0));
+            }
+        });
+
+        general.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadLGDDFragment(LGDDFragment.newInstance(1));
+            }
+        });
+
+        doc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadLGDDFragment(LGDDFragment.newInstance(2));
+            }
+        });
+
+        dvir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadLGDDFragment(LGDDFragment.newInstance(3));
             }
         });
     }
 
     private void loadLGDDFragment(Fragment fragment) {
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        fragmentTransaction.addToBackStack("fragment");
         fragmentTransaction.replace(R.id.drawer_layout, fragment);
-        fragmentTransaction.commit(); // save the changes
+        fragmentTransaction.commit();
     }
 
     private void optimizeViewModels() {
@@ -225,9 +249,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(List<TruckStatusEntity> truckStatusEntities) {
                 for (int i = 0; i < truckStatusEntities.size(); i++) {
-                    Log.d("STATUS", "onChanged: " + truckStatusEntities.get(i).getStatus() + "\n" + truckStatusEntities.get(i).getTime() + "\n" + truckStatusEntities.get(i).getSeconds());
+                    Log.d("STATUS", "onChanged: " + truckStatusEntities.get(i).getFrom_status() + " " + truckStatusEntities.get(i).getTo_status() + "\n" + truckStatusEntities.get(i).getTime() + "\n" + truckStatusEntities.get(i).getSeconds());
                 }
-                setTopLastPos(truckStatusEntities.isEmpty() ? current_status : truckStatusEntities.get(truckStatusEntities.size() - 1).getStatus());
+
+                if (truckStatusEntities.size() != 0) {
+                    last_status = truckStatusEntities.get(truckStatusEntities.size() - 1).getTo_status();
+                    setTopLastPos(last_status);
+                } else {
+                    last_status = EnumsConstants.STATUS_OFF;
+                    setTopLastPos(last_status);
+                }
             }
         });
 
@@ -243,16 +274,16 @@ public class MainActivity extends AppCompatActivity {
 //                lastAdapter.setDayEntities(dayEntities);
             }
         });
+
     }
 
     @SuppressLint("SetTextI18n")
     private void setTodayAttr() {
-        String today = Calendar.getInstance().getTime() + "";
         TextView day = findViewById(R.id.idTableDay);
         TextView month = findViewById(R.id.idTableMonth);
 
-        day.setText(today.split(" ")[0]);
-        month.setText(today.split(" ")[1] + " " + today.split(" ")[2]);
+        day.setText(time.split(" ")[0]);
+        month.setText(today);
     }
 
     private void createlocalFolder() {
@@ -384,7 +415,6 @@ public class MainActivity extends AppCompatActivity {
         findLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("IGA", "onClick: Searching...");
                 if (checkGrantResults(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, new int[]{1})) {
                     Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
                     if (latitude != 0 && longtitude != 0) {
@@ -393,12 +423,6 @@ public class MainActivity extends AppCompatActivity {
                             Address obj = addresses.get(0);
                             String add = obj.getCountryName();
                             add = add + ", " + obj.getSubAdminArea();
-//                                    add = add + ", " + obj.getLocality();
-//                                    add = add + "\n" + obj.getAdminArea();
-//                                    add = add + "\n" + obj.getPostalCode();
-//                                    add = add + "\n" + obj.getSubAdminArea();
-//                                    add = add + "\n" + obj.getLocality();
-//                                    add = add + "\n" + obj.getSubThoroughfare();
 
                             editLocation.setText(add);
                             editLocation.setClickable(false);
@@ -445,7 +469,8 @@ public class MainActivity extends AppCompatActivity {
                 sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
                 dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
                 on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
-                statusDaoViewModel.insertStatus(new TruckStatusEntity(current_status, editLocation.getText().toString(), "Note", null, today, getCurrentSeconds()));
+                statusDaoViewModel.insertStatus(new TruckStatusEntity(last_status, current_status, editLocation.getText().toString(), "Note", null, today, getCurrentSeconds()));
+//                lastStatusViewModel.insertLastStatus(new LastPositionChangeEntity(current_status));
             }
         });
     }
@@ -459,12 +484,15 @@ public class MainActivity extends AppCompatActivity {
         if (lastPos == 3) {
             cardView.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
             statusText.setText(R.string.on);
+            icon.setImageResource(R.drawable.power);
         } else if (lastPos == 1) {
             cardView.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
             statusText.setText(R.string.sb);
+            icon.setImageResource(R.drawable.sleeping);
         } else if (lastPos == 2) {
             cardView.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
             statusText.setText(R.string.dr);
+            icon.setImageResource(R.drawable.driving);
         } else {
             cardView.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
             statusText.setText(R.string.off);
@@ -525,11 +553,6 @@ public class MainActivity extends AppCompatActivity {
                 current_status = EnumsConstants.STATUS_ON;
             }
         });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
     }
 
     @Override
@@ -994,7 +1017,6 @@ public class MainActivity extends AppCompatActivity {
             alertDialog.show();
         }
     }
-
 
     public void onReqRecordClicked(View v) {
         if (v.getId() == R.id.reqButton) {

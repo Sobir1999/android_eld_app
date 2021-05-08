@@ -24,6 +24,8 @@
         <TextView
             android:id="@+id/idTableDay"
             android:text="Wed"
+            android:drawablePadding="5dp"
+            style="@style/TextAppearance.AppCompat.Subhead"
             android:drawableLeft="@drawable/ic_baseline_edit_24"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -66,7 +68,9 @@
 
         <TextView
             android:id="@+id/idTableDvir"
-            android:text="No DVIR"
+            android:text="@string/no_dvir"
+            android:drawablePadding="5dp"
+            style="@style/TextAppearance.AppCompat.Subhead"
             app:layout_constraintLeft_toRightOf="@id/idTableTime"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -85,6 +89,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:ignore="MissingConstraints" />
+
+        <View
+            android:id="@+id/idCLickableView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/idTableDvir"
+            app:layout_constraintLeft_toRightOf="@id/idTableDay"
+            android:layout_width="0dp"
+            android:layout_height="0dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
