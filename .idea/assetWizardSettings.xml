@@ -24,7 +24,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\Axrorbek\AppData\Local\Temp\ic_android_black_24dp.xml" />
+                                                <entry key="imagePath" value="C:\Users\User\AppData\Local\Temp\ic_android_black_24dp.xml" />
                                                 <entry key="opacityPercent" value="60" />
                                               </map>
                                             </option>
@@ -37,8 +37,8 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\Axrorbek\Downloads\Telegram Desktop\ded.png" />
-                                                <entry key="opacityPercent" value="60" />
+                                                <entry key="imagePath" value="C:\Users\User\Downloads\edit.png" />
+                                                <entry key="opacityPercent" value="80" />
                                                 <entry key="paddingPercent" value="5" />
                                               </map>
                                             </option>
@@ -72,8 +72,10 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="C:\Users\Axrorbek\Downloads\Telegram Desktop\ded.png" />
-                                      <entry key="outputName" value="sleeping" />
+                                      <entry key="imageAsset" value="C:\Users\User\Downloads\edit.png" />
+                                      <entry key="outputName" value="edit" />
+                                      <entry key="theme" value="CUSTOM" />
+                                      <entry key="themeColor" value="03a9f4" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -89,7 +91,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="imagePath" value="C:\Users\Axrorbek\AppData\Local\Temp\ic_android_black_24dp.xml" />
+                                                <entry key="imagePath" value="C:\Users\User\AppData\Local\Temp\ic_android_black_24dp.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -144,7 +146,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\Axrorbek\AppData\Local\Temp\ic_android_black_24dp.xml" />
+                                                <entry key="imagePath" value="C:\Users\User\AppData\Local\Temp\ic_android_black_24dp.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -188,7 +190,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\Axrorbek\AppData\Local\Temp\ic_android_black_24dp.xml" />
+                                                <entry key="imagePath" value="C:\Users\User\AppData\Local\Temp\ic_android_black_24dp.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -252,7 +254,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="imagePath" value="C:\Users\Axrorbek\AppData\Local\Temp\ic_android_black_24dp.xml" />
+                                                <entry key="imagePath" value="C:\Users\User\AppData\Local\Temp\ic_android_black_24dp.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -326,7 +328,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/coronavirus/baseline_coronavirus_24.xml" />
+                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/expand_more/baseline_expand_more_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -336,8 +338,8 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="ff3b24" />
-                            <entry key="outputName" value="alert_dvir" />
+                            <entry key="color" value="353333" />
+                            <entry key="outputName" value="ic_baseline_expand_more_24" />
                             <entry key="sourceFile" value="C:\Users\Axrorbek\Downloads\Telegram Desktop\Logo Svg.svg" />
                           </map>
                         </option>
