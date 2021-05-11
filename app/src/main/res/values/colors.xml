@@ -17,4 +17,6 @@
 
     <color name="colorActionText">#61CFDD</color>
     <color name="alertColor">#EC3434</color>
+
+    <color name="example">#1A8DE8</color>
 </resources>

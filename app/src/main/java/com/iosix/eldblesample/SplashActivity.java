@@ -16,7 +16,6 @@ public class SplashActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         setContentView(R.layout.activity_main2);
 
-
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override

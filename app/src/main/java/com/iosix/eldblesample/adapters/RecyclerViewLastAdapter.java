@@ -1,18 +1,14 @@
 package com.iosix.eldblesample.adapters;
 
-import android.app.Application;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.iosix.eldblesample.R;
@@ -24,25 +20,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLastAdapter.ViewHolder> {
-    private List<DayEntity> dayEntities = new ArrayList<>();
-    private Context context;
-    private DayDaoViewModel daoViewModel;
+    private List<DayEntity> dayEntities;
 
-    public RecyclerViewLastAdapter(Context context) {
-        this.context = context;
-        daoViewModel = new DayDaoViewModel((Application) context.getApplicationContext());
+    public RecyclerViewLastAdapter(Context context, DayDaoViewModel daoViewModel) {
+        dayEntities = new ArrayList<>();
 
-        daoViewModel = ViewModelProviders.of((FragmentActivity) context).get(DayDaoViewModel.class);
         daoViewModel.getMgetAllDays().observe((LifecycleOwner) context, new Observer<List<DayEntity>>() {
             @Override
             public void onChanged(List<DayEntity> dayEntities) {
                 RecyclerViewLastAdapter.this.dayEntities = dayEntities;
             }
         });
-    }
-
-    public void setDayEntities(List<DayEntity> dayEntities) {
-        this.dayEntities = dayEntities;
     }
 
     @NonNull
@@ -59,7 +47,7 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
 
     @Override
     public int getItemCount() {
-        return dayEntities.size();
+        return dayEntities.size() - 1;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

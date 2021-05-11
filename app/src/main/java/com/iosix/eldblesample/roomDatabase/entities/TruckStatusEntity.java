@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringDef;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity (tableName = "status_table")
@@ -38,6 +39,13 @@ public class TruckStatusEntity {
         this.note = note;
         this.document = document;
         this.time = time;
+        this.seconds = seconds;
+    }
+
+    @Ignore
+    public TruckStatusEntity(int from_status, int to_status, int seconds) {
+        this.from_status = from_status;
+        this.to_status = to_status;
         this.seconds = seconds;
     }
 

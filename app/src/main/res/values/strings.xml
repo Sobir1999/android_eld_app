@@ -49,10 +49,8 @@
     <string name="create">Create</string>
     <string name="weight_station">Weight Station</string>
     <string name="_1">1</string>
-    <string name="dr">DR</string>
     <string name="_12_00_am_cdt">12:00 AM CDT</string>
     <string name="space">|</string>
     <string name="_5h_45m">5h 45m</string>
     <string name="_20mi_e_grass_valley_ca">20MI E GRASS VALLEY,CA</string>
-    <string name="driving">Driving</string>
 </resources>
