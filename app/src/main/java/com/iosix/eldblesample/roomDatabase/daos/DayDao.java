@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
+import com.iosix.eldblesample.roomDatabase.entities.TruckStatusEntity;
 
 import java.util.List;
 

@@ -63,6 +63,7 @@ public abstract class CustomRulerChart extends View {
         onDrawText(canvas);
 
         drawLineProgress(canvas, CUSTOM_TABLE_WIDTH);
+        drawTextTime(canvas, CUSTOM_TABLE_WIDTH);
     }
 
     @Override
@@ -269,53 +270,31 @@ public abstract class CustomRulerChart extends View {
                 START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8,
                 TableConstants.getOFFPaint()
         );
-        canvas.drawText(
-                "00:00",
-                START_POINT_X + CUSTOM_TABLE_WIDTH + 10.0f,
-                START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8,
-                TableConstants.getOFFPaint()
-        );
+
         canvas.drawText(
                 "SB",
                 START_POINT_X / 2 - 20.0f,
                 START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 8,
                 TableConstants.getSBPaint()
         );
-        canvas.drawText(
-                "00:00",
-                START_POINT_X + CUSTOM_TABLE_WIDTH + 10.0f,
-                START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 8,
-                TableConstants.getSBPaint()
-        );
+
         canvas.drawText(
                 "DR",
                 START_POINT_X / 2 - 20.0f,
                 START_POINT_Y + 5 * CUSTOM_TABLE_HEIGHT / 8,
                 TableConstants.getDRPaint()
         );
-        canvas.drawText(
-                "00:00",
-                START_POINT_X + CUSTOM_TABLE_WIDTH + 10.0f,
-                START_POINT_Y + 5 * CUSTOM_TABLE_HEIGHT / 8,
-                TableConstants.getDRPaint()
-        );
+
         canvas.drawText(
                 "ON",
                 START_POINT_X / 2 - 20.0f,
                 START_POINT_Y + 7 * CUSTOM_TABLE_HEIGHT / 8,
                 TableConstants.getONPaint()
         );
-        canvas.drawText(
-                "00:00",
-                START_POINT_X + CUSTOM_TABLE_WIDTH + 10.0f,
-                START_POINT_Y + 7 * CUSTOM_TABLE_HEIGHT / 8,
-                TableConstants.getONPaint()
-        );
+
     }
 
     public abstract void drawLineProgress(Canvas canvas, float CUSTOM_TABLE_WIDTH);
 
-    public void mInvalidate() {
-        invalidate();
-    }
+    public abstract void drawTextTime(Canvas canvas, float CUSTOM_TABLE_WIDTH);
 }

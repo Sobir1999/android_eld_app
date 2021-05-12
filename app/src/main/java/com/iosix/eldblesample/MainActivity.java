@@ -128,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
     private String today = time.split(" ")[1] + " " + time.split(" ")[2];
     private ChangeDateTimeBroadcast broadcast;
     private IntentFilter intentFilter;
+    private ArrayList<TruckStatusEntity> truckStatusEntities;
 
     private double latitude;
     private double longtitude;
@@ -174,9 +175,10 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawer_layout);
         last_recycler_view = findViewById(R.id.idRecyclerView);
         customRulerChart = findViewById(R.id.idCustomLiveChart);
+        customRulerChart.setArrayList(truckStatusEntities);
 
         //Last Days Recycler Adapter
-        lastAdapter = new RecyclerViewLastAdapter(this, daoViewModel);
+        lastAdapter = new RecyclerViewLastAdapter(this, daoViewModel, statusDaoViewModel);
         last_recycler_view.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true));
         last_recycler_view.setAdapter(lastAdapter);
 
@@ -190,9 +192,9 @@ public class MainActivity extends AppCompatActivity {
         requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
 
         mEldManager = EldManager.GetEldManager(this, "123456789A");
-
-        broadcast = new ChangeDateTimeBroadcast();
-        intentFilter = new IntentFilter(Intent.ACTION_DATE_CHANGED);
+//
+//        broadcast = new ChangeDateTimeBroadcast();
+//        intentFilter = new IntentFilter(Intent.ACTION_DATE_CHANGED);
 
         onClickCustomBtn();
         onClickVisiblityCanAndSaveBtn();
@@ -208,6 +210,17 @@ public class MainActivity extends AppCompatActivity {
         clickLGDDButtons();
 
         setTopStatusTime();
+    }
+
+    private ArrayList<TruckStatusEntity> getDayTruckEntity(String day, ArrayList<TruckStatusEntity> truckStatusEntities) {
+        ArrayList<TruckStatusEntity> entities = new ArrayList<>();
+        for (int i=0; i<truckStatusEntities.size(); i++) {
+            if (truckStatusEntities.get(i).getTime().equalsIgnoreCase(day)) {
+                entities.add(truckStatusEntities.get(i));
+                Log.d("STA", "onChanged: " + truckStatusEntities.get(i).getTime() + " " + truckStatusEntities.get(i).getFrom_status() + " " + truckStatusEntities.get(i).getTo_status());
+            }
+        }
+        return entities;
     }
 
     private void clickLGDDButtons() {
@@ -245,18 +258,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
+//
     @Override
     protected void onResume() {
         super.onResume();
-        optimizeViewModels();
-        registerReceiver(broadcast, intentFilter);
+//        registerReceiver(broadcast, intentFilter);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(broadcast);
+//        unregisterReceiver(broadcast);
     }
 
     private void loadLGDDFragment(Fragment fragment) {
@@ -271,13 +283,16 @@ public class MainActivity extends AppCompatActivity {
         statusDaoViewModel = new StatusDaoViewModel(this.getApplication());
         daoViewModel = new DayDaoViewModel(this.getApplication());
 
+        truckStatusEntities = new ArrayList<>();
+
         statusDaoViewModel = ViewModelProviders.of(this).get(StatusDaoViewModel.class);
         statusDaoViewModel.getmAllStatus().observe(this, new Observer<List<TruckStatusEntity>>() {
             @Override
             public void onChanged(List<TruckStatusEntity> truckStatusEntities) {
-                for (int i = 0; i < truckStatusEntities.size(); i++) {
-                    Log.d("STATUS", "onChanged: " + truckStatusEntities.get(i).getFrom_status() + " " + truckStatusEntities.get(i).getTo_status() + "\n" + truckStatusEntities.get(i).getTime() + "\n" + truckStatusEntities.get(i).getSeconds());
+                for (int i=0; i<truckStatusEntities.size(); i++) {
+//                    Log.d("STA", "onChanged: " + truckStatusEntities.get(i).getTime() + " " + truckStatusEntities.get(i).getFrom_status() + " " + truckStatusEntities.get(i).getTo_status());
                 }
+                MainActivity.this.truckStatusEntities.addAll(getDayTruckEntity(today, (ArrayList<TruckStatusEntity>) truckStatusEntities));
 
                 last_status = getLastP();
                 setTopLastPos(last_status);
@@ -290,13 +305,10 @@ public class MainActivity extends AppCompatActivity {
         daoViewModel.getMgetAllDays().observe(this, new Observer<List<DayEntity>>() {
             @Override
             public void onChanged(List<DayEntity> dayEntities) {
-                for (int i = 0; i < dayEntities.size(); i++) {
-                    Log.d("DAY", "onChanged: " + dayEntities.get(i).getDay() + " " + dayEntities.get(i).getDay_name() + " " + dayEntities.get(i).getId());
-                }
+
             }
         });
 
-        Log.d("SEC", "optimizeViewModels: " + SystemClock.uptimeMillis());
     }
 
     @SuppressLint("SetTextI18n")
@@ -474,6 +486,7 @@ public class MainActivity extends AppCompatActivity {
         cancel = findViewById(R.id.idVisButtonCancel);
         TextView findLocation = findViewById(R.id.idLoactionIcon);
         final EditText editLocation = findViewById(R.id.idLocationEdit);
+        final EditText note = findViewById(R.id.idNoteEdit);
 
         findLocation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -533,7 +546,7 @@ public class MainActivity extends AppCompatActivity {
                 dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
                 on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
                 if (current_status != last_status) {
-                    statusDaoViewModel.insertStatus(new TruckStatusEntity(last_status, current_status, editLocation.getText().toString(), "Note", null, today, getCurrentSeconds()));
+                    statusDaoViewModel.insertStatus(new TruckStatusEntity(last_status, current_status, editLocation.getText().toString(), note.getText().toString(), null, today, getCurrentSeconds()));
                     saveLastPosition(current_status);
                     saveLastStatusTime();
                     restartActivity();

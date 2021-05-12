@@ -13,22 +13,34 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.customViews.CustomRulerChart;
+import com.iosix.eldblesample.customViews.CustomStableRulerChart;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
+import com.iosix.eldblesample.roomDatabase.entities.TruckStatusEntity;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
+import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLastAdapter.ViewHolder> {
     private List<DayEntity> dayEntities;
+    private List<TruckStatusEntity> truckStatusEntities;
 
-    public RecyclerViewLastAdapter(Context context, DayDaoViewModel daoViewModel) {
+    public RecyclerViewLastAdapter(Context context, DayDaoViewModel daoViewModel, StatusDaoViewModel statusDaoViewModel) {
         dayEntities = new ArrayList<>();
+        truckStatusEntities = new ArrayList<>();
 
         daoViewModel.getMgetAllDays().observe((LifecycleOwner) context, new Observer<List<DayEntity>>() {
             @Override
             public void onChanged(List<DayEntity> dayEntities) {
                 RecyclerViewLastAdapter.this.dayEntities = dayEntities;
+            }
+        });
+
+        statusDaoViewModel.getmAllStatus().observe((LifecycleOwner) context, new Observer<List<TruckStatusEntity>>() {
+            @Override
+            public void onChanged(List<TruckStatusEntity> truckStatusEntities) {
+                RecyclerViewLastAdapter.this.truckStatusEntities = truckStatusEntities;
             }
         });
     }
@@ -53,7 +65,7 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView day, day_week;
         View clickable;
-        CustomRulerChart customRulerChart;
+        CustomStableRulerChart customRulerChart;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -67,6 +79,7 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
         void onBind(DayEntity dayEntity) {
             day.setText(dayEntity.getDay_name());
             day_week.setText(dayEntity.getDay());
+            customRulerChart.setArrayList(getDayTruckEntity(dayEntity.getDay()));
         }
 
         private void itemsClicked() {
@@ -77,5 +90,15 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
                 }
             });
         }
+    }
+
+    private ArrayList<TruckStatusEntity> getDayTruckEntity(String day) {
+        ArrayList<TruckStatusEntity> entities = new ArrayList<>();
+        for (int i=0; i<truckStatusEntities.size(); i++) {
+            if (truckStatusEntities.get(i).getTime().equalsIgnoreCase(day)) {
+                entities.add(truckStatusEntities.get(i));
+            }
+        }
+        return entities;
     }
 }

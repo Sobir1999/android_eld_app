@@ -1,5 +1,6 @@
 package com.iosix.eldblesample.customViews;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
@@ -9,6 +10,7 @@ import android.util.AttributeSet;
 
 import androidx.annotation.Nullable;
 
+import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.enums.TableConstants;
 import com.iosix.eldblesample.roomDatabase.entities.TruckStatusEntity;
 
@@ -20,14 +22,9 @@ public class CustomLiveRulerChart extends CustomRulerChart {
     private float START_POINT_Y = TableConstants.START_POINT_Y;
     private int currentDate;
     private int last_status;
+    private int off = 0, sb = 0, dr = 0, on = 0;
 
-    private ArrayList<TruckStatusEntity> arrayList = new ArrayList<TruckStatusEntity>() {{
-//        add(new TruckStatusEntity(1, 2, 1000));
-//        add(new TruckStatusEntity(2, 0, 2000));
-//        add(new TruckStatusEntity(0, 1, 5000));
-//        add(new TruckStatusEntity(1, 3, 15000));
-//        add(new TruckStatusEntity(3, 1, 25000));
-    }};
+    private ArrayList<TruckStatusEntity> arrayList = new ArrayList();
 
     private ArrayList<Paint> paintArray = new ArrayList<Paint>() {{
         add(TableConstants.getOFFPaint());
@@ -57,6 +54,11 @@ public class CustomLiveRulerChart extends CustomRulerChart {
         last_status = pref.getInt("last_P", 0);
     }
 
+    public void setArrayList(ArrayList<TruckStatusEntity> arrayList) {
+        this.arrayList = arrayList;
+        invalidate();
+    }
+
     @Override
     public void drawLineProgress(Canvas canvas, float CUSTOM_TABLE_WIDTH) {
         float CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 3;
@@ -64,6 +66,10 @@ public class CustomLiveRulerChart extends CustomRulerChart {
         float startY = 0;
         float endX = 0;
         float endY = 0;
+
+        int off = 0, sb = 0, dr = 0, on = 0;
+
+        int start = 0;
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -82,19 +88,100 @@ public class CustomLiveRulerChart extends CustomRulerChart {
             canvas.drawLine(startX, startY, endX, startY, paintArray.get(arrayList.get(i).getFrom_status()));
             canvas.drawLine(endX, startY, endX, endY, paintArray.get(arrayList.get(i).getFrom_status()));
             startX = endX;
+
+            if (arrayList.get(i).getFrom_status() == EnumsConstants.STATUS_OFF) {
+                off += (arrayList.get(i).getSeconds() - start);
+            }
+            if (arrayList.get(i).getFrom_status() == EnumsConstants.STATUS_SB) {
+                sb += (arrayList.get(i).getSeconds() - start);
+            }
+            if (arrayList.get(i).getFrom_status() == EnumsConstants.STATUS_DR) {
+                dr += (arrayList.get(i).getSeconds() - start);
+            }
+            if (arrayList.get(i).getFrom_status() == EnumsConstants.STATUS_ON) {
+                on += (arrayList.get(i).getSeconds() - start);
+            }
+            start = arrayList.get(i).getSeconds();
         }
 
         if (!arrayList.isEmpty()) {
             canvas.drawLine(endX, endY, START_POINT_X + (currentDate * 8) / CUSTOM_TABLE_WIDTH, endY, paintArray.get(arrayList.get(arrayList.size() - 1).getTo_status()));
+
+            if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_OFF) {
+                off += (currentDate - start);
+            }
+            if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_SB) {
+                sb += (currentDate - start);
+            }
+            if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_DR) {
+                dr += (currentDate - start);
+            }
+            if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_ON) {
+                on += (currentDate - start);
+            }
         } else {
             endY = TableConstants.START_POINT_Y + CUSTOM_TABLE_HEIGHT/8 + (CUSTOM_TABLE_HEIGHT*last_status)/4;
             canvas.drawLine(TableConstants.START_POINT_X, endY, START_POINT_X + (currentDate*8)/CUSTOM_TABLE_WIDTH, endY, paintArray.get(last_status));
+
+            if (last_status == EnumsConstants.STATUS_OFF) {
+                off = currentDate;
+            }
+            if (last_status == EnumsConstants.STATUS_SB) {
+                sb = currentDate;
+            }
+            if (last_status == EnumsConstants.STATUS_DR) {
+                dr = currentDate;
+            }
+            if (last_status == EnumsConstants.STATUS_ON) {
+                on = currentDate;
+            }
         }
+
+        this.off = off;
+        this.sb = sb;
+        this.dr = dr;
+        this.on = on;
 
         invalidate();
     }
 
-    public void mInvalidate() {
+    @Override
+    public void drawTextTime(Canvas canvas, float CUSTOM_TABLE_WIDTH) {
+        float CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 3;
+        canvas.drawText(
+                getTime(off),
+                START_POINT_X + CUSTOM_TABLE_WIDTH + 10.0f,
+                START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8,
+                TableConstants.getOFFPaint()
+        );
+        canvas.drawText(
+                getTime(sb),
+                START_POINT_X + CUSTOM_TABLE_WIDTH + 10.0f,
+                START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 8,
+                TableConstants.getSBPaint()
+        );
+        canvas.drawText(
+                getTime(dr),
+                START_POINT_X + CUSTOM_TABLE_WIDTH + 10.0f,
+                START_POINT_Y + 5 * CUSTOM_TABLE_HEIGHT / 8,
+                TableConstants.getDRPaint()
+        );
+        canvas.drawText(
+                getTime(on),
+                START_POINT_X + CUSTOM_TABLE_WIDTH + 10.0f,
+                START_POINT_Y + 7 * CUSTOM_TABLE_HEIGHT / 8,
+                TableConstants.getONPaint()
+        );
+
         invalidate();
+    }
+
+    @SuppressLint("DefaultLocale")
+    private String getTime(int sum) {
+        String s = "";
+        int hour = sum / 3600;
+        int min = (sum % 3600) / 60;
+        s = String.format("%02d:%02d", hour, min);
+        return s;
     }
 }
