@@ -57,7 +57,7 @@
 
                     <TextView
                         android:id="@+id/idStatusTime"
-                        android:text="24h 31m"
+                        android:text="00:00:00"
                         android:textStyle="bold"
                         style="@style/TextAppearance.AppCompat.Headline"
                         app:layout_constraintRight_toRightOf="parent"
