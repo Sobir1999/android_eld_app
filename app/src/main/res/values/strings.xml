@@ -53,4 +53,12 @@
     <string name="space">|</string>
     <string name="_5h_45m">5h 45m</string>
     <string name="_20mi_e_grass_valley_ca">20MI E GRASS VALLEY,CA</string>
+    <string name="save">Save</string>
+    <string name="languages">Languages</string>
+    <string name="russian">Russian</string>
+    <string name="uzbek">Uzbek</string>
+    <string name="french">French</string>
+    <string name="spanish">Spanish</string>
+    <string name="english">English</string>
+    <string name="log_out">Log Out</string>
 </resources>

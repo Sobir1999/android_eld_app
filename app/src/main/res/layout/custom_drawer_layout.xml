@@ -93,8 +93,8 @@
 
         <TextView
             android:id="@+id/idSpinnerLanguage"
-            android:text="Language"
-            android:layout_width="wrap_content"
+            android:text="@string/languages"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
 
@@ -110,8 +110,8 @@
             android:layout_height="wrap_content" />
 
         <TextView
-            android:text="Log Out"
-            android:layout_width="wrap_content"
+            android:text="@string/log_out"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
 </LinearLayout>

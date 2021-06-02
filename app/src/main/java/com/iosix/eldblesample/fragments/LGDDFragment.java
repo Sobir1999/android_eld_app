@@ -46,38 +46,25 @@ public class LGDDFragment extends Fragment {
         Bundle bundle = getArguments();
         int pos = bundle.getInt("position");
 
+        view.findViewById(R.id.idImageBack).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFragmentManager().popBackStack();
+            }
+        });
+
         tabLayout = view.findViewById(R.id.tab_layout);
         viewPager = view.findViewById(R.id.pager);
         adapter = new LGDDFragmentAdapter(getChildFragmentManager(), 1);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(pos);
         tabLayout.setupWithViewPager(viewPager);
-        setOnTabListener(tabLayout);
+
         return view;
-    }
-
-    private void setOnTabListener(TabLayout tab) {
-        tab.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        getActivity().getSupportFragmentManager().popBackStack();
     }
 }

@@ -10,7 +10,7 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
-//import com.iosix.eldblesample.models.ExampleModel;
+//import com.iosix.eldblesample.ExampleModel;
 //import com.iosix.eldblesample.models.ExampleTimeModel;
 
 import com.iosix.eldblesample.enums.TableConstants;

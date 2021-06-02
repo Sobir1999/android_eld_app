@@ -1,7 +1,6 @@
 package com.iosix.eldblesample;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -23,9 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -38,7 +35,6 @@ import android.content.res.Resources;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -84,14 +80,12 @@ import com.iosix.eldblelib.EldTransmissionRecord;
 import com.iosix.eldblesample.adapters.RecyclerViewLastAdapter;
 import com.iosix.eldblesample.broadcasts.ChangeDateTimeBroadcast;
 import com.iosix.eldblesample.customViews.CustomLiveRulerChart;
-import com.iosix.eldblesample.customViews.CustomRulerChart;
 import com.iosix.eldblesample.dialogs.ConnectToEldDialog;
-import com.iosix.eldblesample.dialogs.EditLanguageDialog;
 import com.iosix.eldblesample.dialogs.SearchEldDeviceDialog;
 import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.fragments.LGDDFragment;
+import com.iosix.eldblesample.fragments.LanguageFragment;
 import com.iosix.eldblesample.interfaces.AlertDialogItemClickInterface;
-import com.iosix.eldblesample.interfaces.EditLanguageDialogListener;
 import com.iosix.eldblesample.models.MessageModel;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.TruckStatusEntity;
@@ -109,7 +103,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -202,8 +195,6 @@ public class MainActivity extends AppCompatActivity {
         getDrawerToggleEvent();
         getDrawerTouchEvent();
 
-        setLanguageDialog();
-
         createlocalFolder();
         setTodayAttr();
 
@@ -217,7 +208,6 @@ public class MainActivity extends AppCompatActivity {
         for (int i=0; i<truckStatusEntities.size(); i++) {
             if (truckStatusEntities.get(i).getTime().equalsIgnoreCase(day)) {
                 entities.add(truckStatusEntities.get(i));
-                Log.d("STA", "onChanged: " + truckStatusEntities.get(i).getTime() + " " + truckStatusEntities.get(i).getFrom_status() + " " + truckStatusEntities.get(i).getTo_status());
             }
         }
         return entities;
@@ -225,6 +215,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void clickLGDDButtons() {
         Button log, general, doc, dvir;
+        TextView recap = findViewById(R.id.idRecap);
         log = findViewById(R.id.idTableBtnLog);
         general = findViewById(R.id.idTableBtnGeneral);
         doc = findViewById(R.id.idTableBtnDocs);
@@ -257,7 +248,26 @@ public class MainActivity extends AppCompatActivity {
                 loadLGDDFragment(LGDDFragment.newInstance(3));
             }
         });
+
+        recap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "Clicked Recap", Toast.LENGTH_SHORT).show();
+                Log.d("RECAP", "onClick: ");
+//                toggleRightDrawer();
+            }
+        });
     }
+
+//    @SuppressLint("WrongConstant")
+//    private void toggleRightDrawer() {
+//        Log.d("RECAP", "toggleRightDrawer: ");
+//        if (drawerLayout.isDrawerOpen(R.id.rightDrawerMenu)) {
+//            drawerLayout.closeDrawer(R.id.rightDrawerMenu);
+//        } else {
+//            drawerLayout.openDrawer(R.id.rightDrawerMenu);
+//        }
+//    }
 //
     @Override
     protected void onResume() {
@@ -289,9 +299,9 @@ public class MainActivity extends AppCompatActivity {
         statusDaoViewModel.getmAllStatus().observe(this, new Observer<List<TruckStatusEntity>>() {
             @Override
             public void onChanged(List<TruckStatusEntity> truckStatusEntities) {
-                for (int i=0; i<truckStatusEntities.size(); i++) {
-//                    Log.d("STA", "onChanged: " + truckStatusEntities.get(i).getTime() + " " + truckStatusEntities.get(i).getFrom_status() + " " + truckStatusEntities.get(i).getTo_status());
-                }
+//                for (int i=0; i<truckStatusEntities.size(); i++) {
+////                    Log.d("STA", "onChanged: " + truckStatusEntities.get(i).getTime() + " " + truckStatusEntities.get(i).getFrom_status() + " " + truckStatusEntities.get(i).getTo_status());
+//                }
                 MainActivity.this.truckStatusEntities.addAll(getDayTruckEntity(today, (ArrayList<TruckStatusEntity>) truckStatusEntities));
 
                 last_status = getLastP();
@@ -365,41 +375,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
         }
-    }
-
-    private void setLanguageDialog() {
-        TextView textView = findViewById(R.id.idSpinnerLanguage);
-
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                drawerLayout.closeDrawer(Gravity.LEFT);
-                final EditLanguageDialog dialog = new EditLanguageDialog(MainActivity.this);
-                dialog.show();
-
-                dialog.setListener(new EditLanguageDialogListener() {
-                    @SuppressLint("NonConstantResourceId")
-                    @Override
-                    public void onClick(int id) {
-                        if (id == R.id.idEng) {
-                            setLocale("");
-                            restartActivity();
-                            dialog.cancel();
-                        }
-                        if (id == R.id.idEs) {
-                            setLocale("es");
-                            restartActivity();
-                            dialog.cancel();
-                        }
-                        if (id == R.id.idFr) {
-                            setLocale("fr");
-                            restartActivity();
-                            dialog.cancel();
-                        }
-                    }
-                });
-            }
-        });
     }
 
     private int getCurrentSeconds() {
@@ -656,6 +631,8 @@ public class MainActivity extends AppCompatActivity {
     private void getDrawerTouchEvent() {
         sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         nightModeSwitch = findViewById(R.id.idNightChoose);
+        TextView textView = findViewById(R.id.idSpinnerLanguage);
+
         checkNightModeActivated();
         nightModeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -669,6 +646,14 @@ public class MainActivity extends AppCompatActivity {
                     saveNightModeState(false);
                     restartActivity();
                 }
+            }
+        });
+
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadLGDDFragment(new LanguageFragment());
+                drawerLayout.closeDrawers();
             }
         });
     }
