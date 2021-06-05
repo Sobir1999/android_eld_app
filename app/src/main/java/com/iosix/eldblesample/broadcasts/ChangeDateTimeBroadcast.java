@@ -51,7 +51,6 @@ public abstract class ChangeDateTimeBroadcast extends BroadcastReceiver {
     public static IntentFilter getIntentFilter() {
         IntentFilter intentFilter = new IntentFilter();
 
-        intentFilter.addAction(Intent.ACTION_TIME_TICK);
         intentFilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
         intentFilter.addAction(Intent.ACTION_TIME_CHANGED);
 

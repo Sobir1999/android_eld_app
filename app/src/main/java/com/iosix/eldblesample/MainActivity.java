@@ -23,6 +23,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -79,13 +80,14 @@ import com.iosix.eldblelib.EldScanObject;
 import com.iosix.eldblelib.EldTransmissionRecord;
 import com.iosix.eldblesample.adapters.RecyclerViewLastAdapter;
 import com.iosix.eldblesample.broadcasts.ChangeDateTimeBroadcast;
-import com.iosix.eldblesample.customViews.CustomLiveRulerChart;
+import com.iosix.eldblesample.customViews.CustomRulerChart;
 import com.iosix.eldblesample.dialogs.ConnectToEldDialog;
 import com.iosix.eldblesample.dialogs.SearchEldDeviceDialog;
 import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.fragments.LGDDFragment;
 import com.iosix.eldblesample.fragments.LanguageFragment;
 import com.iosix.eldblesample.interfaces.AlertDialogItemClickInterface;
+import com.iosix.eldblesample.interfaces.EditLanguageDialogListener;
 import com.iosix.eldblesample.models.MessageModel;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.TruckStatusEntity;
@@ -105,7 +107,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -113,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar activity_main_toolbar;
     private RecyclerViewLastAdapter lastAdapter;
     private RecyclerView last_recycler_view;
-    private CustomLiveRulerChart customRulerChart;
+    private CustomRulerChart customRulerChart;
     private CardView off, sb, dr, on;
     private ConstraintLayout visiblityViewCons;
     private Button cancel, save;
@@ -148,6 +149,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String MyPREFERENCES = "nightModePrefs";
     public static final String Key_ISNIGHTMODE = "isNightMODE";
+    public static final String My_LAST_STATUS = "myLastStatus";
+    public static final String My_LAST_STATUS_KEY = "myLastStatusKey";
     private SharedPreferences sharedPreferences;
 
     private StatusDaoViewModel statusDaoViewModel;
@@ -171,11 +174,8 @@ public class MainActivity extends AppCompatActivity {
 
         drawerLayout = findViewById(R.id.drawer_layout);
         last_recycler_view = findViewById(R.id.idRecyclerView);
-        customRulerChart = findViewById(R.id.idCustomLiveChart);
-        customRulerChart.setArrayList(truckStatusEntities);
-
-        TextView time = findViewById(R.id.idTableTime);
-        time.setText(customRulerChart.getDr());
+        customRulerChart = findViewById(R.id.idCustomChart);
+//        customRulerChart.drawLineProgress(0);
 
         //Last Days Recycler Adapter
         lastAdapter = new RecyclerViewLastAdapter(this, daoViewModel, statusDaoViewModel);
@@ -193,12 +193,6 @@ public class MainActivity extends AppCompatActivity {
 
         mEldManager = EldManager.GetEldManager(this, "123456789A");
 
-//        DateFormat df = DateFormat.getTimeInstance();
-//        df.setTimeZone(TimeZone.getTimeZone("gmt"));
-//        String gmtTime = df.format(new Date());
-//
-//        Log.d("DATE", "onCreate: " + Calendar.getInstance().getTimeInMillis()/1000%86400/3600 + " " + Calendar.getInstance().getTimeInMillis()/1000%86400%3600/60 + " " + gmtTime);
-
         onClickCustomBtn();
         onClickVisiblityCanAndSaveBtn();
 
@@ -209,21 +203,22 @@ public class MainActivity extends AppCompatActivity {
         setTodayAttr();
 
         clickLGDDButtons();
-
-        setTopStatusTime();
     }
 
-    private ArrayList<TruckStatusEntity> getDayTruckEntity(String day, ArrayList<TruckStatusEntity> truckStatusEntities) {
-        ArrayList<TruckStatusEntity> entities = new ArrayList<>();
-        for (int i=0; i<truckStatusEntities.size(); i++) {
-            if (truckStatusEntities.get(i).getTime().equalsIgnoreCase(day)) {
-                entities.add(truckStatusEntities.get(i));
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        ChangeDateTimeBroadcast changeDateTimeBroadcast = new ChangeDateTimeBroadcast() {
+            @Override
+            public void onDayChanged() {
+                setTodayAttr();
             }
-        }
-        return entities;
+        };
+
+        registerReceiver(changeDateTimeBroadcast,ChangeDateTimeBroadcast.getIntentFilter());
     }
 
-    // todo: lgdd fragment optimize
     private void clickLGDDButtons() {
         Button log, general, doc, dvir;
         TextView recap = findViewById(R.id.idRecap);
@@ -278,7 +273,6 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
-    // Todo: optimize lgdd fragment
     private void optimizeViewModels() {
         statusDaoViewModel = new StatusDaoViewModel(this.getApplication());
         daoViewModel = new DayDaoViewModel(this.getApplication());
@@ -289,14 +283,17 @@ public class MainActivity extends AppCompatActivity {
         statusDaoViewModel.getmAllStatus().observe(this, new Observer<List<TruckStatusEntity>>() {
             @Override
             public void onChanged(List<TruckStatusEntity> truckStatusEntities) {
-//                for (int i=0; i<truckStatusEntities.size(); i++) {
-////                    Log.d("STA", "onChanged: " + truckStatusEntities.get(i).getTime() + " " + truckStatusEntities.get(i).getFrom_status() + " " + truckStatusEntities.get(i).getTo_status());
-//                }
-                MainActivity.this.truckStatusEntities.addAll(getDayTruckEntity(today, (ArrayList<TruckStatusEntity>) truckStatusEntities));
+                for (int i = 0; i < truckStatusEntities.size(); i++) {
+                    Log.d("STATUS", "onChanged: " + truckStatusEntities.get(i).getFrom_status() + " " + truckStatusEntities.get(i).getTo_status() + "\n" + truckStatusEntities.get(i).getTime() + "\n" + truckStatusEntities.get(i).getSeconds());
+                }
 
-                last_status = getLastP();
-                setTopLastPos(last_status);
-                statusDaoViewModel.insertStatus(new TruckStatusEntity(last_status, last_status, null, "note", null, today, getCurrentSeconds()));
+                if (truckStatusEntities.size() != 0) {
+                    last_status = truckStatusEntities.get(truckStatusEntities.size() - 1).getTo_status();
+                    setTopLastPos(last_status);
+                } else {
+                    last_status = EnumsConstants.STATUS_OFF;
+                    setTopLastPos(last_status);
+                }
             }
         });
 
@@ -306,13 +303,10 @@ public class MainActivity extends AppCompatActivity {
         daoViewModel.getMgetAllDays().observe(this, new Observer<List<DayEntity>>() {
             @Override
             public void onChanged(List<DayEntity> dayEntities) {
-                for (int i=dayEntities.size()-1; i>=0; i--){
-                    if (dayEntities.size() - i > 15) {
-                        daoViewModel.deleteDay(dayEntities.get(i));
-                        lastAdapter.notifyDataSetChanged();
-                    }
+                for (int i = 0; i < dayEntities.size(); i++) {
+                    Log.d("DAY", "onChanged: " + dayEntities.get(i).getDay() + " " + dayEntities.get(i).getDay_name() + " " + dayEntities.get(i).getId());
                 }
-                howMuchDay = dayEntities.size();
+//                lastAdapter.setDayEntities(dayEntities);
             }
         });
 
@@ -326,8 +320,6 @@ public class MainActivity extends AppCompatActivity {
 
         day.setText(time.split(" ")[0]);
         month.setText(today);
-
-//        lastDays.setText("Last " + howMuchDay + " Days");
     }
 
     private void createlocalFolder() {
@@ -461,7 +453,8 @@ public class MainActivity extends AppCompatActivity {
         cancel = findViewById(R.id.idVisButtonCancel);
         TextView findLocation = findViewById(R.id.idLoactionIcon);
         final EditText editLocation = findViewById(R.id.idLocationEdit);
-        final EditText note = findViewById(R.id.idNoteEdit);
+        sharedPreferences = getSharedPreferences(My_LAST_STATUS, Context.MODE_PRIVATE);
+
 
         findLocation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -534,6 +527,7 @@ public class MainActivity extends AppCompatActivity {
         CardView cardView = findViewById(R.id.idCardStatus);
         ImageView icon = findViewById(R.id.idStatusImage);
         TextView statusText = findViewById(R.id.idStatusText);
+        TextView statusTime = findViewById(R.id.idStatusTime);
 
         if (lastPos == EnumsConstants.STATUS_ON) {
             cardView.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
