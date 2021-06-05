@@ -30,6 +30,6 @@ public class DayDaoViewModel extends AndroidViewModel {
     }
 
     public void deleteDay(DayEntity entity) {
-//        repository
+        repository.deleteDay(entity);
     }
 }

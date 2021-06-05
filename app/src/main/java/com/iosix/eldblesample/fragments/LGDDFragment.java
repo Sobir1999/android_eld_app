@@ -44,11 +44,13 @@ public class LGDDFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_l_g_d_d, container, false);
 
         Bundle bundle = getArguments();
+        assert bundle != null;
         int pos = bundle.getInt("position");
 
         view.findViewById(R.id.idImageBack).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                assert getFragmentManager() != null;
                 getFragmentManager().popBackStack();
             }
         });
@@ -63,8 +65,4 @@ public class LGDDFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
 }

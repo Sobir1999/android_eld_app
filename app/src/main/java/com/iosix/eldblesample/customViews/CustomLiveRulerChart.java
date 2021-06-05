@@ -184,4 +184,13 @@ public class CustomLiveRulerChart extends CustomRulerChart {
         s = String.format("%02d:%02d", hour, min);
         return s;
     }
+
+    @SuppressLint("DefaultLocale")
+    public String getDr() {
+        String s = "";
+        int hour = dr / 3600;
+        int min = (dr % 3600) / 60;
+        s = String.format("%02dh %02dm", hour, min);
+        return s;
+    }
 }

@@ -4,8 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
@@ -13,12 +11,12 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.iosix.eldblesample.R;
 
-public class LogFragmentPagerAdapter extends PagerAdapter {
+public class GeneralFragmentPagerAdapter extends PagerAdapter {
 
     private final Context context;
-    private final String[] strings = {"1", "2", "3", "4", "5"};
+    final String[] strings = {"1", "2", "3", "4", "5"};
 
-    public LogFragmentPagerAdapter(Context context) {
+    public GeneralFragmentPagerAdapter(Context context) {
         this.context = context;
     }
 
@@ -37,7 +35,7 @@ public class LogFragmentPagerAdapter extends PagerAdapter {
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
 
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.log_pager_adapter_view, null);
+        View view = layoutInflater.inflate(R.layout.general_fragment_adapter_item, null);
 //        TextView textView = (TextView) view.findViewById(R.id.idExampleText);
 //        textView.setText(strings[position]);
 
@@ -47,11 +45,15 @@ public class LogFragmentPagerAdapter extends PagerAdapter {
     }
 
     @Override
+    public int getItemPosition(@NonNull Object object) {
+        return POSITION_NONE;
+    }
+
+    @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
 
         ViewPager vp = (ViewPager) container;
         View view = (View) object;
         vp.removeView(view);
-
     }
 }

@@ -2,6 +2,7 @@ package com.iosix.eldblesample.roomDatabase.daos;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -19,6 +20,9 @@ public interface DayDao {
 
     @Query("Select * From day_table")
     LiveData<List<DayEntity>> getAllDays();
+
+    @Delete
+    void deleteDay(DayEntity entity);
 
     @Query("Delete From day_table")
     void deleteAllDay();
