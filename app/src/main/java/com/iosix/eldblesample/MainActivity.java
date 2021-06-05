@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,6 +24,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -78,10 +80,10 @@ import com.iosix.eldblesample.adapters.RecyclerViewLastAdapter;
 import com.iosix.eldblesample.broadcasts.ChangeDateTimeBroadcast;
 import com.iosix.eldblesample.customViews.CustomRulerChart;
 import com.iosix.eldblesample.dialogs.ConnectToEldDialog;
-import com.iosix.eldblesample.dialogs.EditLanguageDialog;
 import com.iosix.eldblesample.dialogs.SearchEldDeviceDialog;
 import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.fragments.LGDDFragment;
+import com.iosix.eldblesample.fragments.LanguageFragment;
 import com.iosix.eldblesample.interfaces.AlertDialogItemClickInterface;
 import com.iosix.eldblesample.interfaces.EditLanguageDialogListener;
 import com.iosix.eldblesample.models.MessageModel;
@@ -101,6 +103,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -162,15 +166,16 @@ public class MainActivity extends AppCompatActivity {
 
         optimizeViewModels();
 
+
         drawerLayout = findViewById(R.id.drawer_layout);
         last_recycler_view = findViewById(R.id.idRecyclerView);
         customRulerChart = findViewById(R.id.idCustomChart);
-        customRulerChart.drawLineProgress(0);
-
-        //Last Days Recycler Adapter
-        lastAdapter = new RecyclerViewLastAdapter(this);
-        last_recycler_view.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true));
-        last_recycler_view.setAdapter(lastAdapter);
+//        customRulerChart.drawLineProgress(0);
+//
+//        //Last Days Recycler Adapter
+//        lastAdapter = new RecyclerViewLastAdapter(this);
+//        last_recycler_view.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true));
+//        last_recycler_view.setAdapter(lastAdapter);
 
         // Set the toolbar
         activity_main_toolbar = findViewById(R.id.activity_main_toolbar);
@@ -210,6 +215,37 @@ public class MainActivity extends AppCompatActivity {
 
         registerReceiver(changeDateTimeBroadcast,ChangeDateTimeBroadcast.getIntentFilter());
     }
+
+
+
+    private Timer timer = new Timer();
+    private int timeCount = 0;
+
+
+    private void loadTimer(){
+
+        TextView statusTime = findViewById(R.id.idStatusTime);
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                timeCount ++;
+                int second = timeCount % 60;
+                int hour = timeCount/3600;
+                int minut = (timeCount - hour*3600)/60;
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        statusTime.setText(String.format("%02d:%02d:%02d",hour,minut,second));
+                    }
+                });
+            }
+        },
+         1000,
+         1000);
+    }
+
 
     private void clickLGDDButtons() {
         Button log, general, doc, dvir;
@@ -349,38 +385,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setLanguageDialog() {
-        TextView textView = findViewById(R.id.idSpinnerLanguage);
+        TextView spinnerLanguage = findViewById(R.id.idSpinnerLanguage);
 
-        textView.setOnClickListener(new View.OnClickListener() {
+        spinnerLanguage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                drawerLayout.closeDrawer(Gravity.LEFT);
-                final EditLanguageDialog dialog = new EditLanguageDialog(MainActivity.this);
-                dialog.show();
-
-                dialog.setListener(new EditLanguageDialogListener() {
-                    @SuppressLint("NonConstantResourceId")
-                    @Override
-                    public void onClick(int id) {
-                        if (id == R.id.idEng) {
-                            setLocale("");
-                            restartActivity();
-                            dialog.cancel();
-                        }
-                        if (id == R.id.idEs) {
-                            setLocale("es");
-                            restartActivity();
-                            dialog.cancel();
-                        }
-                        if (id == R.id.idFr) {
-                            setLocale("fr");
-                            restartActivity();
-                            dialog.cancel();
-                        }
-                    }
-                });
+                findViewById(R.id.leftDrawerMenu).setVisibility(View.INVISIBLE);
+                loadLGDDFragment(LanguageFragment.newInstance());
             }
         });
+
     }
 
     private int getCurrentSeconds() {
@@ -494,7 +508,7 @@ public class MainActivity extends AppCompatActivity {
         CardView cardView = findViewById(R.id.idCardStatus);
         ImageView icon = findViewById(R.id.idStatusImage);
         TextView statusText = findViewById(R.id.idStatusText);
-        TextView statusTime = findViewById(R.id.idStatusTime);
+
 
         if (lastPos == 3) {
             cardView.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
