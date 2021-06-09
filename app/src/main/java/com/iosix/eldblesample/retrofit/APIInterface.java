@@ -1,6 +1,8 @@
 package com.iosix.eldblesample.retrofit;
 
+import com.iosix.eldblesample.models.SendExampleModelData;
 import com.iosix.eldblesample.models.Student;
+import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
 
 import java.util.ArrayList;
 
@@ -16,4 +18,7 @@ public interface APIInterface {
 
     @POST("api/token/")
     Call<Student> createUser(@Body Student student);
+
+    @POST("event/")
+    Call<SendExampleModelData> sendData(@Body SendExampleModelData model);
 }

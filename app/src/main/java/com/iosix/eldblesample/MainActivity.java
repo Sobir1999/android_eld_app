@@ -80,6 +80,7 @@ import com.iosix.eldblelib.EldScanObject;
 import com.iosix.eldblelib.EldTransmissionRecord;
 import com.iosix.eldblesample.adapters.RecyclerViewLastAdapter;
 import com.iosix.eldblesample.broadcasts.ChangeDateTimeBroadcast;
+import com.iosix.eldblesample.customViews.CustomLiveRulerChart;
 import com.iosix.eldblesample.customViews.CustomRulerChart;
 import com.iosix.eldblesample.dialogs.ConnectToEldDialog;
 import com.iosix.eldblesample.dialogs.SearchEldDeviceDialog;
@@ -89,10 +90,15 @@ import com.iosix.eldblesample.fragments.LanguageFragment;
 import com.iosix.eldblesample.interfaces.AlertDialogItemClickInterface;
 import com.iosix.eldblesample.interfaces.EditLanguageDialogListener;
 import com.iosix.eldblesample.models.MessageModel;
+import com.iosix.eldblesample.models.SendExampleModelData;
+import com.iosix.eldblesample.models.Student;
+import com.iosix.eldblesample.retrofit.APIInterface;
+import com.iosix.eldblesample.retrofit.ApiClient;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.TruckStatusEntity;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
+import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -108,13 +114,17 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private Toolbar activity_main_toolbar;
     private RecyclerViewLastAdapter lastAdapter;
     private RecyclerView last_recycler_view;
-    private CustomRulerChart customRulerChart;
+    private CustomLiveRulerChart customRulerChart;
     private CardView off, sb, dr, on;
     private ConstraintLayout visiblityViewCons;
     private Button cancel, save;
@@ -127,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
     private IntentFilter intentFilter;
     private ArrayList<TruckStatusEntity> truckStatusEntities;
     private int howMuchDay;
+    private APIInterface apiInterface;
 
     private double latitude;
     private double longtitude;
@@ -155,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
 
     private StatusDaoViewModel statusDaoViewModel;
     private DayDaoViewModel daoViewModel;
+    private EldJsonViewModel jsonViewModel;
 
     @SuppressLint({"VisibleForTests", "ResourceAsColor"})
     @Override
@@ -174,8 +186,8 @@ public class MainActivity extends AppCompatActivity {
 
         drawerLayout = findViewById(R.id.drawer_layout);
         last_recycler_view = findViewById(R.id.idRecyclerView);
-        customRulerChart = findViewById(R.id.idCustomChart);
-//        customRulerChart.drawLineProgress(0);
+        customRulerChart = findViewById(R.id.idCustomLiveChart);
+        customRulerChart.setArrayList(truckStatusEntities);
 
         //Last Days Recycler Adapter
         lastAdapter = new RecyclerViewLastAdapter(this, daoViewModel, statusDaoViewModel);
@@ -276,6 +288,28 @@ public class MainActivity extends AppCompatActivity {
     private void optimizeViewModels() {
         statusDaoViewModel = new StatusDaoViewModel(this.getApplication());
         daoViewModel = new DayDaoViewModel(this.getApplication());
+//        jsonViewModel = new EldJsonViewModel(this.getApplication());
+//
+//        jsonViewModel = ViewModelProviders.of(this).get(EldJsonViewModel.class);
+
+        apiInterface = ApiClient.getClient().create(APIInterface.class);
+
+//        Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData("50", "3", "rpm", "speed_kmh", "distance", "hours", "trip_hours", "voltage",
+//                Calendar.getInstance().getTime().toString(), "time", "lat", "long", "gps_speed", "course_deg", "napsat", "altitude", "dop",
+//                "sequnce", "firmware"));
+
+//        sendData.enqueue(new Callback<SendExampleModelData>() {
+//            @Override
+//            public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
+//                Log.d("JSON", "onResponse: " + response.body());
+//            }
+//
+//            @Override
+//            public void onFailure(Call<SendExampleModelData> call, Throwable t) {
+//                Log.d("JSON", "onResponse: " + t.getMessage());
+//            }
+//        });
+
 
         truckStatusEntities = new ArrayList<>();
 
@@ -284,7 +318,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(List<TruckStatusEntity> truckStatusEntities) {
                 for (int i = 0; i < truckStatusEntities.size(); i++) {
-                    Log.d("STATUS", "onChanged: " + truckStatusEntities.get(i).getFrom_status() + " " + truckStatusEntities.get(i).getTo_status() + "\n" + truckStatusEntities.get(i).getTime() + "\n" + truckStatusEntities.get(i).getSeconds());
+//                    Log.d("STATUS", "onChanged: " + truckStatusEntities.get(i).getFrom_status() + " " + truckStatusEntities.get(i).getTo_status() + "\n" + truckStatusEntities.get(i).getTime() + "\n" + truckStatusEntities.get(i).getSeconds());
+                    if (truckStatusEntities.get(i).getTime().equalsIgnoreCase(today)) {
+                        MainActivity.this.truckStatusEntities.add(truckStatusEntities.get(i));
+                    }
                 }
 
                 if (truckStatusEntities.size() != 0) {
@@ -303,10 +340,11 @@ public class MainActivity extends AppCompatActivity {
         daoViewModel.getMgetAllDays().observe(this, new Observer<List<DayEntity>>() {
             @Override
             public void onChanged(List<DayEntity> dayEntities) {
-                for (int i = 0; i < dayEntities.size(); i++) {
-                    Log.d("DAY", "onChanged: " + dayEntities.get(i).getDay() + " " + dayEntities.get(i).getDay_name() + " " + dayEntities.get(i).getId());
-                }
+//                for (int i = 0; i < dayEntities.size(); i++) {
+//                    Log.d("DAY", "onChanged: " + dayEntities.get(i).getDay() + " " + dayEntities.get(i).getDay_name() + " " + dayEntities.get(i).getId());
+//                }
 //                lastAdapter.setDayEntities(dayEntities);
+//                daoViewModel.insertDay(new DayEntity(today, ));
             }
         });
 
@@ -453,6 +491,7 @@ public class MainActivity extends AppCompatActivity {
         cancel = findViewById(R.id.idVisButtonCancel);
         TextView findLocation = findViewById(R.id.idLoactionIcon);
         final EditText editLocation = findViewById(R.id.idLocationEdit);
+        final EditText note = findViewById(R.id.idNoteEdit);
         sharedPreferences = getSharedPreferences(My_LAST_STATUS, Context.MODE_PRIVATE);
 
 
@@ -1305,10 +1344,16 @@ public class MainActivity extends AppCompatActivity {
                                 reccount = 0;
                             }
                         }
-
+//todo: eld send data
                         if (dataRec instanceof EldCachedPeriodicRecord) {
 
+
+
+                            Log.d("TESTING", "Engine State " + ((EldCachedPeriodicRecord) (dataRec)).getEngineState());
                             Log.d("TESTING", "Odometer " + ((EldCachedPeriodicRecord) (dataRec)).getOdometer());
+                            Log.d("TESTING", "Vin " + ((EldCachedPeriodicRecord) (dataRec)).getVin());
+                            Log.d("TESTING", "Speed " + ((EldCachedPeriodicRecord) (dataRec)).getSpeed());
+                            Log.d("TESTING", "Trip Distance " + ((EldCachedPeriodicRecord) (dataRec)).getTripDistance());
                             Log.d("TESTING", "Engine Hours " + ((EldCachedPeriodicRecord) (dataRec)).getEngineHours());
                             Log.d("TESTING", "RPM " + ((EldCachedPeriodicRecord) (dataRec)).getRpm());
                             Log.d("TESTING", "Satellites " + ((EldCachedPeriodicRecord) (dataRec)).getNumSats());
@@ -1316,6 +1361,24 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("TESTING", "Lon " + ((EldCachedPeriodicRecord) (dataRec)).getLongitude());
                             Log.d("TESTING", "Unix Time " + ((EldCachedPeriodicRecord) (dataRec)).getUnixTime());
                             Log.d("TESTING", "Sequence Number " + ((EldCachedPeriodicRecord) (dataRec)).getSeqNum());
+
+                            EldCachedPeriodicRecord p = (EldCachedPeriodicRecord) (dataRec);
+
+                            Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData(p.getEngineState(), p.getVin(), p.getRpm(), p.getSpeed(), p.getTripDistance(), p.getEngineHours(), p.getTripHours(), p.getVoltage(),
+                                    Calendar.getInstance().getTime().toString(), p.getGpsDateTime(), p.getLatitude(), p.getLongitude(), p.getGpsSpeed(), p.getCourse(), p.getNumSats(), p.getMslAlt(), p.getDop(),
+                                    p.getSequence(), p.getFirmwareVersion()));
+
+                            sendData.enqueue(new Callback<SendExampleModelData>() {
+                                @Override
+                                public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
+                                    Log.d("JSON", "onResponse: " + response.body());
+                                }
+
+                                @Override
+                                public void onFailure(Call<SendExampleModelData> call, Throwable t) {
+                                    Log.d("JSON", "onResponse: " + t.getMessage());
+                                }
+                            });
 
                             // mDataView.append("CACHED REC"+((EldCachedPeriodicRecord)(dataRec)).getBroadcastString());
 
@@ -1328,6 +1391,24 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("TESTING", "Engine Hours " + ((EldCachedNewVinRecord) (dataRec)).getEngineHours());
                             Log.d("TESTING", "Unix Time " + ((EldCachedNewVinRecord) (dataRec)).getUnixTime());
                             Log.d("TESTING", "Sequence Number " + ((EldCachedNewVinRecord) (dataRec)).getSeqNum());
+
+                            EldCachedNewVinRecord p = (EldCachedNewVinRecord) (dataRec);
+
+                            Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData(p.getEngineState(), p.getVin(), p.getRpm(), p.getSpeed(), p.getTripDistance(), p.getEngineHours(), p.getTripHours(), p.getVoltage(),
+                                    Calendar.getInstance().getTime().toString(), p.getGpsDateTime(), p.getLatitude(), p.getLongitude(), p.getGpsSpeed(), p.getCourse(), p.getNumSats(), p.getMslAlt(), p.getDop(),
+                                    p.getSequence(), p.getFirmwareVersion()));
+
+                            sendData.enqueue(new Callback<SendExampleModelData>() {
+                                @Override
+                                public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
+                                    Log.d("JSON", "onResponse: " + response.body());
+                                }
+
+                                @Override
+                                public void onFailure(Call<SendExampleModelData> call, Throwable t) {
+                                    Log.d("JSON", "onResponse: " + t.getMessage());
+                                }
+                            });
                         }
 
                     } else if (RecordType == EldBroadcastTypes.ELD_DRIVER_BEHAVIOR_RECORD) {
