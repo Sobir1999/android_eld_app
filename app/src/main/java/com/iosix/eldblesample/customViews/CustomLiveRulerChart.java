@@ -92,13 +92,13 @@ public class CustomLiveRulerChart extends CustomRulerChart {
             if (arrayList.get(i).getFrom_status() == EnumsConstants.STATUS_OFF) {
                 off += (arrayList.get(i).getSeconds() - start);
             }
-            if (arrayList.get(i).getFrom_status() == EnumsConstants.STATUS_SB) {
+            else if (arrayList.get(i).getFrom_status() == EnumsConstants.STATUS_SB) {
                 sb += (arrayList.get(i).getSeconds() - start);
             }
-            if (arrayList.get(i).getFrom_status() == EnumsConstants.STATUS_DR) {
+            else if (arrayList.get(i).getFrom_status() == EnumsConstants.STATUS_DR) {
                 dr += (arrayList.get(i).getSeconds() - start);
             }
-            if (arrayList.get(i).getFrom_status() == EnumsConstants.STATUS_ON) {
+            else if (arrayList.get(i).getFrom_status() == EnumsConstants.STATUS_ON) {
                 on += (arrayList.get(i).getSeconds() - start);
             }
             start = arrayList.get(i).getSeconds();
@@ -110,13 +110,13 @@ public class CustomLiveRulerChart extends CustomRulerChart {
             if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_OFF) {
                 off += (currentDate - start);
             }
-            if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_SB) {
+            else if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_SB) {
                 sb += (currentDate - start);
             }
-            if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_DR) {
+            else if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_DR) {
                 dr += (currentDate - start);
             }
-            if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_ON) {
+            else if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_ON) {
                 on += (currentDate - start);
             }
         } else {
@@ -182,6 +182,15 @@ public class CustomLiveRulerChart extends CustomRulerChart {
         int hour = sum / 3600;
         int min = (sum % 3600) / 60;
         s = String.format("%02d:%02d", hour, min);
+        return s;
+    }
+
+    @SuppressLint("DefaultLocale")
+    public String getDr() {
+        String s = "";
+        int hour = dr / 3600;
+        int min = (dr % 3600) / 60;
+        s = String.format("%02dh %02dm", hour, min);
         return s;
     }
 }

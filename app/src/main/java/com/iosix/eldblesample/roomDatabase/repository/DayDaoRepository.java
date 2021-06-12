@@ -29,6 +29,8 @@ public class DayDaoRepository {
         new insertDayAsync(dayDao).execute(dayEntity);
     }
 
+    public void deleteDay(DayEntity entity) {new deleterDayAsync(dayDao).execute(entity);}
+
     private static class insertDayAsync extends AsyncTask<DayEntity, Void, Void> {
         private DayDao dao;
 
@@ -37,6 +39,18 @@ public class DayDaoRepository {
         @Override
         protected Void doInBackground(DayEntity... dayEntities) {
             dao.insertDay(dayEntities[0]);
+            return null;
+        }
+    }
+
+    private static class deleterDayAsync extends AsyncTask<DayEntity, Void, Void> {
+        private DayDao dao;
+
+        deleterDayAsync(DayDao dayDao) {this.dao = dayDao;}
+
+        @Override
+        protected Void doInBackground(DayEntity... dayEntities) {
+            dao.deleteDay(dayEntities[0]);
             return null;
         }
     }

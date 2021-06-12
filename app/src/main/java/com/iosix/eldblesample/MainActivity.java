@@ -16,7 +16,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,6 +27,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -38,6 +38,8 @@ import android.location.Geocoder;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -78,6 +80,7 @@ import com.iosix.eldblelib.EldScanObject;
 import com.iosix.eldblelib.EldTransmissionRecord;
 import com.iosix.eldblesample.adapters.RecyclerViewLastAdapter;
 import com.iosix.eldblesample.broadcasts.ChangeDateTimeBroadcast;
+import com.iosix.eldblesample.customViews.CustomLiveRulerChart;
 import com.iosix.eldblesample.customViews.CustomRulerChart;
 import com.iosix.eldblesample.dialogs.ConnectToEldDialog;
 import com.iosix.eldblesample.dialogs.SearchEldDeviceDialog;
@@ -88,24 +91,33 @@ import com.iosix.eldblesample.fragments.RecapFragment;
 import com.iosix.eldblesample.interfaces.AlertDialogItemClickInterface;
 import com.iosix.eldblesample.interfaces.EditLanguageDialogListener;
 import com.iosix.eldblesample.models.MessageModel;
+import com.iosix.eldblesample.models.SendExampleModelData;
+import com.iosix.eldblesample.models.Student;
+import com.iosix.eldblesample.retrofit.APIInterface;
+import com.iosix.eldblesample.retrofit.ApiClient;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.TruckStatusEntity;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
+import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -113,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar activity_main_toolbar;
     private RecyclerViewLastAdapter lastAdapter;
     private RecyclerView last_recycler_view;
-    private CustomRulerChart customRulerChart;
+    private CustomLiveRulerChart customRulerChart;
     private CardView off, sb, dr, on;
     private ConstraintLayout visiblityViewCons;
     private Button cancel, save;
@@ -122,6 +134,11 @@ public class MainActivity extends AppCompatActivity {
     private int last_status;
     private String time = "" + Calendar.getInstance().getTime();
     private String today = time.split(" ")[1] + " " + time.split(" ")[2];
+    private ChangeDateTimeBroadcast broadcast;
+    private IntentFilter intentFilter;
+    private ArrayList<TruckStatusEntity> truckStatusEntities;
+    private int howMuchDay;
+    private APIInterface apiInterface;
 
     private double latitude;
     private double longtitude;
@@ -150,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
 
     private StatusDaoViewModel statusDaoViewModel;
     private DayDaoViewModel daoViewModel;
+    private EldJsonViewModel jsonViewModel;
 
     @SuppressLint({"VisibleForTests", "ResourceAsColor"})
     @Override
@@ -167,16 +185,15 @@ public class MainActivity extends AppCompatActivity {
 
         optimizeViewModels();
 
-
         drawerLayout = findViewById(R.id.drawer_layout);
         last_recycler_view = findViewById(R.id.idRecyclerView);
-        customRulerChart = findViewById(R.id.idCustomChart);
-//        customRulerChart.drawLineProgress(0);
-//
-//        //Last Days Recycler Adapter
-//        lastAdapter = new RecyclerViewLastAdapter(this);
-//        last_recycler_view.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true));
-//        last_recycler_view.setAdapter(lastAdapter);
+        customRulerChart = findViewById(R.id.idCustomLiveChart);
+        customRulerChart.setArrayList(truckStatusEntities);
+
+        //Last Days Recycler Adapter
+        lastAdapter = new RecyclerViewLastAdapter(this, daoViewModel, statusDaoViewModel);
+        last_recycler_view.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true));
+        last_recycler_view.setAdapter(lastAdapter);
 
         // Set the toolbar
         activity_main_toolbar = findViewById(R.id.activity_main_toolbar);
@@ -194,8 +211,6 @@ public class MainActivity extends AppCompatActivity {
 
         getDrawerToggleEvent();
         getDrawerTouchEvent();
-
-        setLanguageDialog();
 
         createlocalFolder();
         setTodayAttr();
@@ -278,37 +293,12 @@ public class MainActivity extends AppCompatActivity {
 }
 
 
-    private Timer timer = new Timer();
-    private int timeCount = 0;
 
-
-    private void loadTimer(){
-
-        TextView statusTime = findViewById(R.id.idStatusTime);
-
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                timeCount ++;
-                int second = timeCount % 60;
-                int hour = timeCount/3600;
-                int minut = (timeCount - hour*3600)/60;
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        statusTime.setText(String.format("%02d:%02d:%02d",hour,minut,second));
-                    }
-                });
-            }
-        },
-         1000,
-         1000);
-    }
 
 
     private void clickLGDDButtons() {
         Button log, general, doc, dvir;
+        TextView recap = findViewById(R.id.idRecap);
         log = findViewById(R.id.idTableBtnLog);
         general = findViewById(R.id.idTableBtnGeneral);
         doc = findViewById(R.id.idTableBtnDocs);
@@ -341,6 +331,15 @@ public class MainActivity extends AppCompatActivity {
                 loadLGDDFragment(LGDDFragment.newInstance(3));
             }
         });
+
+        recap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "Clicked Recap", Toast.LENGTH_SHORT).show();
+                Log.d("RECAP", "onClick: ");
+//                toggleRightDrawer();
+            }
+        });
     }
 
     private void loadLGDDFragment(Fragment fragment) {
@@ -363,13 +362,40 @@ public class MainActivity extends AppCompatActivity {
     private void optimizeViewModels() {
         statusDaoViewModel = new StatusDaoViewModel(this.getApplication());
         daoViewModel = new DayDaoViewModel(this.getApplication());
+//        jsonViewModel = new EldJsonViewModel(this.getApplication());
+//
+//        jsonViewModel = ViewModelProviders.of(this).get(EldJsonViewModel.class);
+
+        apiInterface = ApiClient.getClient().create(APIInterface.class);
+
+//        Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData("50", "3", "rpm", "speed_kmh", "distance", "hours", "trip_hours", "voltage",
+//                Calendar.getInstance().getTime().toString(), "time", "lat", "long", "gps_speed", "course_deg", "napsat", "altitude", "dop",
+//                "sequnce", "firmware"));
+
+//        sendData.enqueue(new Callback<SendExampleModelData>() {
+//            @Override
+//            public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
+//                Log.d("JSON", "onResponse: " + response.body());
+//            }
+//
+//            @Override
+//            public void onFailure(Call<SendExampleModelData> call, Throwable t) {
+//                Log.d("JSON", "onResponse: " + t.getMessage());
+//            }
+//        });
+
+
+        truckStatusEntities = new ArrayList<>();
 
         statusDaoViewModel = ViewModelProviders.of(this).get(StatusDaoViewModel.class);
         statusDaoViewModel.getmAllStatus().observe(this, new Observer<List<TruckStatusEntity>>() {
             @Override
             public void onChanged(List<TruckStatusEntity> truckStatusEntities) {
                 for (int i = 0; i < truckStatusEntities.size(); i++) {
-                    Log.d("STATUS", "onChanged: " + truckStatusEntities.get(i).getFrom_status() + " " + truckStatusEntities.get(i).getTo_status() + "\n" + truckStatusEntities.get(i).getTime() + "\n" + truckStatusEntities.get(i).getSeconds());
+//                    Log.d("STATUS", "onChanged: " + truckStatusEntities.get(i).getFrom_status() + " " + truckStatusEntities.get(i).getTo_status() + "\n" + truckStatusEntities.get(i).getTime() + "\n" + truckStatusEntities.get(i).getSeconds());
+                    if (truckStatusEntities.get(i).getTime().equalsIgnoreCase(today)) {
+                        MainActivity.this.truckStatusEntities.add(truckStatusEntities.get(i));
+                    }
                 }
 
                 if (truckStatusEntities.size() != 0) {
@@ -388,10 +414,11 @@ public class MainActivity extends AppCompatActivity {
         daoViewModel.getMgetAllDays().observe(this, new Observer<List<DayEntity>>() {
             @Override
             public void onChanged(List<DayEntity> dayEntities) {
-                for (int i = 0; i < dayEntities.size(); i++) {
-                    Log.d("DAY", "onChanged: " + dayEntities.get(i).getDay() + " " + dayEntities.get(i).getDay_name() + " " + dayEntities.get(i).getId());
-                }
+//                for (int i = 0; i < dayEntities.size(); i++) {
+//                    Log.d("DAY", "onChanged: " + dayEntities.get(i).getDay() + " " + dayEntities.get(i).getDay_name() + " " + dayEntities.get(i).getId());
+//                }
 //                lastAdapter.setDayEntities(dayEntities);
+//                daoViewModel.insertDay(new DayEntity(today, ));
             }
         });
 
@@ -401,6 +428,7 @@ public class MainActivity extends AppCompatActivity {
     private void setTodayAttr() {
         TextView day = findViewById(R.id.idTableDay);
         TextView month = findViewById(R.id.idTableMonth);
+        TextView lastDays = findViewById(R.id.idLas14DayText);
 
         day.setText(time.split(" ")[0]);
         month.setText(today);
@@ -453,19 +481,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setLanguageDialog() {
-        TextView spinnerLanguage = findViewById(R.id.idSpinnerLanguage);
-
-        spinnerLanguage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                findViewById(R.id.leftDrawerMenu).setVisibility(View.INVISIBLE);
-                loadLGDDFragment(LanguageFragment.newInstance());
-            }
-        });
-
-    }
-
     private int getCurrentSeconds() {
         int hour = Calendar.getInstance().getTime().getHours();
         int minute = Calendar.getInstance().getTime().getMinutes();
@@ -492,14 +507,57 @@ public class MainActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    public void restartActivity() {
-        recreate();
-    }
-
     private String loadLocal() {
         SharedPreferences pref = getApplicationContext()
                 .getSharedPreferences("MyPref", Context.MODE_PRIVATE);
         return pref.getString("lan", "en");
+    }
+
+    public void saveLastPosition(int last_P) {
+        SharedPreferences pref = getApplicationContext()
+                .getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt("last_P", last_P);
+        editor.apply();
+    }
+
+    private int getLastP() {
+        SharedPreferences pref = getApplicationContext()
+                .getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+        return pref.getInt("last_P", 0);
+    }
+
+    public void saveLastStatusTime() {
+        SharedPreferences pref = getApplicationContext()
+                .getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt("last_S_T", (int) SystemClock.uptimeMillis()/1000);
+        editor.apply();
+    }
+
+    private int getLastStatusSec() {
+        SharedPreferences pref = getApplicationContext()
+                .getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+        return pref.getInt("last_S_T", 0);
+    }
+
+    private void setTopStatusTime() {
+        final TextView statusTime = findViewById(R.id.idStatusTime);
+        new Handler().postDelayed(new Runnable() {
+            @SuppressLint("DefaultLocale")
+            @Override
+            public void run() {
+                int last = getLastStatusSec();
+                int current = (int) SystemClock.uptimeMillis()/1000;
+                int hour = (current-last)/3600;
+                int min = ((current - last)%3600)/60;
+                statusTime.setText(String.format("%02dh %02dm", hour, min));
+            }
+        }, 500);
+    }
+
+    public void restartActivity() {
+        recreate();
     }
 
     private void onClickVisiblityCanAndSaveBtn() {
@@ -507,6 +565,7 @@ public class MainActivity extends AppCompatActivity {
         cancel = findViewById(R.id.idVisButtonCancel);
         TextView findLocation = findViewById(R.id.idLoactionIcon);
         final EditText editLocation = findViewById(R.id.idLocationEdit);
+        final EditText note = findViewById(R.id.idNoteEdit);
         sharedPreferences = getSharedPreferences(My_LAST_STATUS, Context.MODE_PRIVATE);
 
 
@@ -567,8 +626,12 @@ public class MainActivity extends AppCompatActivity {
                 sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
                 dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
                 on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
-                statusDaoViewModel.insertStatus(new TruckStatusEntity(last_status, current_status, editLocation.getText().toString(), "Note", null, today, getCurrentSeconds()));
-//                lastStatusViewModel.insertLastStatus(new LastPositionChangeEntity(current_status));
+                if (current_status != last_status) {
+                    statusDaoViewModel.insertStatus(new TruckStatusEntity(last_status, current_status, editLocation.getText().toString(), note.getText().toString(), null, today, getCurrentSeconds()));
+                    saveLastPosition(current_status);
+                    saveLastStatusTime();
+                    restartActivity();
+                }
             }
         });
     }
@@ -577,17 +640,17 @@ public class MainActivity extends AppCompatActivity {
         CardView cardView = findViewById(R.id.idCardStatus);
         ImageView icon = findViewById(R.id.idStatusImage);
         TextView statusText = findViewById(R.id.idStatusText);
+        TextView statusTime = findViewById(R.id.idStatusTime);
 
-
-        if (lastPos == 3) {
+        if (lastPos == EnumsConstants.STATUS_ON) {
             cardView.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
             statusText.setText(R.string.on);
             icon.setImageResource(R.drawable.power);
-        } else if (lastPos == 1) {
+        } else if (lastPos == EnumsConstants.STATUS_SB) {
             cardView.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
             statusText.setText(R.string.sb);
             icon.setImageResource(R.drawable.sleeping);
-        } else if (lastPos == 2) {
+        } else if (lastPos == EnumsConstants.STATUS_DR) {
             cardView.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
             statusText.setText(R.string.dr);
             icon.setImageResource(R.drawable.driving);
@@ -675,6 +738,8 @@ public class MainActivity extends AppCompatActivity {
     private void getDrawerTouchEvent() {
         sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         nightModeSwitch = findViewById(R.id.idNightChoose);
+        TextView textView = findViewById(R.id.idSpinnerLanguage);
+
         checkNightModeActivated();
         nightModeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -688,6 +753,14 @@ public class MainActivity extends AppCompatActivity {
                     saveNightModeState(false);
                     restartActivity();
                 }
+            }
+        });
+
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadLGDDFragment(new LanguageFragment());
+                drawerLayout.closeDrawers();
             }
         });
     }
@@ -1345,10 +1418,16 @@ public class MainActivity extends AppCompatActivity {
                                 reccount = 0;
                             }
                         }
-
+//todo: eld send data
                         if (dataRec instanceof EldCachedPeriodicRecord) {
 
+
+
+                            Log.d("TESTING", "Engine State " + ((EldCachedPeriodicRecord) (dataRec)).getEngineState());
                             Log.d("TESTING", "Odometer " + ((EldCachedPeriodicRecord) (dataRec)).getOdometer());
+                            Log.d("TESTING", "Vin " + ((EldCachedPeriodicRecord) (dataRec)).getVin());
+                            Log.d("TESTING", "Speed " + ((EldCachedPeriodicRecord) (dataRec)).getSpeed());
+                            Log.d("TESTING", "Trip Distance " + ((EldCachedPeriodicRecord) (dataRec)).getTripDistance());
                             Log.d("TESTING", "Engine Hours " + ((EldCachedPeriodicRecord) (dataRec)).getEngineHours());
                             Log.d("TESTING", "RPM " + ((EldCachedPeriodicRecord) (dataRec)).getRpm());
                             Log.d("TESTING", "Satellites " + ((EldCachedPeriodicRecord) (dataRec)).getNumSats());
@@ -1356,6 +1435,24 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("TESTING", "Lon " + ((EldCachedPeriodicRecord) (dataRec)).getLongitude());
                             Log.d("TESTING", "Unix Time " + ((EldCachedPeriodicRecord) (dataRec)).getUnixTime());
                             Log.d("TESTING", "Sequence Number " + ((EldCachedPeriodicRecord) (dataRec)).getSeqNum());
+
+                            EldCachedPeriodicRecord p = (EldCachedPeriodicRecord) (dataRec);
+
+                            Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData(p.getEngineState(), p.getVin(), p.getRpm(), p.getSpeed(), p.getTripDistance(), p.getEngineHours(), p.getTripHours(), p.getVoltage(),
+                                    Calendar.getInstance().getTime().toString(), p.getGpsDateTime(), p.getLatitude(), p.getLongitude(), p.getGpsSpeed(), p.getCourse(), p.getNumSats(), p.getMslAlt(), p.getDop(),
+                                    p.getSequence(), p.getFirmwareVersion()));
+
+                            sendData.enqueue(new Callback<SendExampleModelData>() {
+                                @Override
+                                public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
+                                    Log.d("JSON", "onResponse: " + response.body());
+                                }
+
+                                @Override
+                                public void onFailure(Call<SendExampleModelData> call, Throwable t) {
+                                    Log.d("JSON", "onResponse: " + t.getMessage());
+                                }
+                            });
 
                             // mDataView.append("CACHED REC"+((EldCachedPeriodicRecord)(dataRec)).getBroadcastString());
 
@@ -1368,6 +1465,24 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("TESTING", "Engine Hours " + ((EldCachedNewVinRecord) (dataRec)).getEngineHours());
                             Log.d("TESTING", "Unix Time " + ((EldCachedNewVinRecord) (dataRec)).getUnixTime());
                             Log.d("TESTING", "Sequence Number " + ((EldCachedNewVinRecord) (dataRec)).getSeqNum());
+
+                            EldCachedNewVinRecord p = (EldCachedNewVinRecord) (dataRec);
+
+                            Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData(p.getEngineState(), p.getVin(), p.getRpm(), p.getSpeed(), p.getTripDistance(), p.getEngineHours(), p.getTripHours(), p.getVoltage(),
+                                    Calendar.getInstance().getTime().toString(), p.getGpsDateTime(), p.getLatitude(), p.getLongitude(), p.getGpsSpeed(), p.getCourse(), p.getNumSats(), p.getMslAlt(), p.getDop(),
+                                    p.getSequence(), p.getFirmwareVersion()));
+
+                            sendData.enqueue(new Callback<SendExampleModelData>() {
+                                @Override
+                                public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
+                                    Log.d("JSON", "onResponse: " + response.body());
+                                }
+
+                                @Override
+                                public void onFailure(Call<SendExampleModelData> call, Throwable t) {
+                                    Log.d("JSON", "onResponse: " + t.getMessage());
+                                }
+                            });
                         }
 
                     } else if (RecordType == EldBroadcastTypes.ELD_DRIVER_BEHAVIOR_RECORD) {
