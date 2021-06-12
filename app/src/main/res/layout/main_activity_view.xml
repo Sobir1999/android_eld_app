@@ -12,7 +12,8 @@
         android:focusable="true"
         android:background="@color/colorBackgroundMainView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:id="@+id/idActivityMainView">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:paddingHorizontal="8dp"

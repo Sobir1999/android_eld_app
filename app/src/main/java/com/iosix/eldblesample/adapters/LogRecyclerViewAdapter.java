@@ -21,6 +21,7 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
     @Override
     public void onBindViewHolder(@NonNull LogRecyclerViewAdapter.LogViewHolder holder, int position) {
 
+
     }
 
     @Override

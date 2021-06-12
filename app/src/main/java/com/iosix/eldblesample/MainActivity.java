@@ -84,6 +84,7 @@ import com.iosix.eldblesample.dialogs.SearchEldDeviceDialog;
 import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.fragments.LGDDFragment;
 import com.iosix.eldblesample.fragments.LanguageFragment;
+import com.iosix.eldblesample.fragments.RecapFragment;
 import com.iosix.eldblesample.interfaces.AlertDialogItemClickInterface;
 import com.iosix.eldblesample.interfaces.EditLanguageDialogListener;
 import com.iosix.eldblesample.models.MessageModel;
@@ -200,6 +201,10 @@ public class MainActivity extends AppCompatActivity {
         setTodayAttr();
 
         clickLGDDButtons();
+
+        setActivateDr();
+
+        openRecapFragment();
     }
 
     @Override
@@ -216,6 +221,61 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(changeDateTimeBroadcast,ChangeDateTimeBroadcast.getIntentFilter());
     }
 
+    public void setActivateDr(){
+
+       Button activateDr = findViewById(R.id.idDRWithExeption);
+
+       activateDr.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+                showAlertDialog();
+           }
+       });
+    }
+
+    private void showAlertDialog(){
+        String[] items = {"Adverse diving","16-Hour Exceptiom"};
+
+        final boolean[] checked = new boolean[items.length];
+        for (int i = 0; i < items.length; i++) {
+            checked[i] = false;
+        }
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+        alertDialog.setTitle("Activate DR with exception")
+                .setMultiChoiceItems(items, checked, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                        checked[which] = isChecked;
+                    }
+                })
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(MainActivity.this,"ok",Toast.LENGTH_SHORT).show();
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(MainActivity.this,"cancel",Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        AlertDialog alert = alertDialog.create();
+        alert.show();
+
+    }
+
+    private void openRecapFragment(){
+
+        TextView recap = findViewById(R.id.idRecap);
+        recap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadLGDDFragmentForRecap(RecapFragment.newInstance());
+            }
+
+    });
+}
 
 
     private Timer timer = new Timer();
@@ -286,6 +346,15 @@ public class MainActivity extends AppCompatActivity {
     private void loadLGDDFragment(Fragment fragment) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        fragmentTransaction.addToBackStack("fragment");
+        fragmentTransaction.replace(R.id.drawer_layout, fragment);
+        fragmentTransaction.commit();
+    }
+
+    private void loadLGDDFragmentForRecap(Fragment fragment){
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.fade_in_from_right,R.anim.fade_out_to_right);
         fragmentTransaction.addToBackStack("fragment");
         fragmentTransaction.replace(R.id.drawer_layout, fragment);
         fragmentTransaction.commit();
