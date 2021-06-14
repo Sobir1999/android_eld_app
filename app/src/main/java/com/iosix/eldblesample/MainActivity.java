@@ -72,6 +72,7 @@ import com.iosix.eldblelib.EldDriverBehaviorRecord;
 import com.iosix.eldblelib.EldDtcCallback;
 import com.iosix.eldblelib.EldEmissionsRecord;
 import com.iosix.eldblelib.EldEngineRecord;
+import com.iosix.eldblelib.EldEngineStates;
 import com.iosix.eldblelib.EldFirmwareUpdateCallback;
 import com.iosix.eldblelib.EldFuelRecord;
 import com.iosix.eldblelib.EldManager;
@@ -89,6 +90,8 @@ import com.iosix.eldblesample.fragments.LGDDFragment;
 import com.iosix.eldblesample.fragments.LanguageFragment;
 import com.iosix.eldblesample.interfaces.AlertDialogItemClickInterface;
 import com.iosix.eldblesample.interfaces.EditLanguageDialogListener;
+import com.iosix.eldblesample.models.ExampleSendModels;
+import com.iosix.eldblesample.models.ExampleTimeModel;
 import com.iosix.eldblesample.models.MessageModel;
 import com.iosix.eldblesample.models.SendExampleModelData;
 import com.iosix.eldblesample.models.Student;
@@ -242,28 +245,28 @@ public class MainActivity extends AppCompatActivity {
         log.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadLGDDFragment(LGDDFragment.newInstance(0));
+                loadLGDDFragment(LGDDFragment.newInstance(0, daoViewModel));
             }
         });
 
         general.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadLGDDFragment(LGDDFragment.newInstance(1));
+                loadLGDDFragment(LGDDFragment.newInstance(1, daoViewModel));
             }
         });
 
         doc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadLGDDFragment(LGDDFragment.newInstance(2));
+                loadLGDDFragment(LGDDFragment.newInstance(2, daoViewModel));
             }
         });
 
         dvir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadLGDDFragment(LGDDFragment.newInstance(3));
+                loadLGDDFragment(LGDDFragment.newInstance(3, daoViewModel));
             }
         });
 
@@ -294,21 +297,21 @@ public class MainActivity extends AppCompatActivity {
 
         apiInterface = ApiClient.getClient().create(APIInterface.class);
 
-//        Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData("50", "3", "rpm", "speed_kmh", "distance", "hours", "trip_hours", "voltage",
-//                Calendar.getInstance().getTime().toString(), "time", "lat", "long", "gps_speed", "course_deg", "napsat", "altitude", "dop",
-//                "sequnce", "firmware"));
+        Call<SendExampleModelData> sendData = apiInterface.sendDataEx(new ExampleSendModels("new EldEngineStates()", "3", 2.3, 56.3, 100, 452, 452, 20,
+                Calendar.getInstance().getTime().toString(), Calendar.getInstance().getTime(), 36.23, 49.65, 56, 45, 4, 453, 45,
+                52, "firmware"));
 
-//        sendData.enqueue(new Callback<SendExampleModelData>() {
-//            @Override
-//            public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
-//                Log.d("JSON", "onResponse: " + response.body());
-//            }
-//
-//            @Override
-//            public void onFailure(Call<SendExampleModelData> call, Throwable t) {
-//                Log.d("JSON", "onResponse: " + t.getMessage());
-//            }
-//        });
+        sendData.enqueue(new Callback<SendExampleModelData>() {
+            @Override
+            public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
+                Log.d("JSON", "onResponse: " + response.message());
+            }
+
+            @Override
+            public void onFailure(Call<SendExampleModelData> call, Throwable t) {
+                Log.d("JSON", "onResponse: " + t.getMessage());
+            }
+        });
 
 
         truckStatusEntities = new ArrayList<>();
@@ -784,7 +787,8 @@ public class MainActivity extends AppCompatActivity {
                 public void run() {
 //                    mDataView.append(status);
 //                    mDataView.append(jsonString);
-                    EventBus.getDefault().postSticky(new MessageModel(status, jsonString));
+//                    EventBus.getDefault().postSticky(new MessageModel(status, jsonString));
+                    EventBus.getDefault().postSticky(new MessageModel(status, "EldDtcCallback"));
 //                    mScrollView.fullScroll(View.FOCUS_DOWN);
                 }
             });
@@ -799,7 +803,8 @@ public class MainActivity extends AppCompatActivity {
                 public void run() {
                     final String data = status;
 //                    mDataView.append(status + "\n");
-                    EventBus.getDefault().postSticky(new MessageModel("", status));
+//                    EventBus.getDefault().postSticky(new MessageModel("", status));
+                    EventBus.getDefault().postSticky(new MessageModel("", "EldFirmwareUpdateCallback"));
 //                    mScrollView.fullScroll(View.FOCUS_DOWN);
                 }
             });
@@ -1295,6 +1300,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     //todo mDataView.append("New State of connection" + Integer.toString(newState, 10) + "\n");
+                    EventBus.getDefault().postSticky(new MessageModel("newState", "EldBleConnectionStateChangeCallback"));
                 }
             });
         }
@@ -1309,6 +1315,23 @@ public class MainActivity extends AppCompatActivity {
 
 //                    mDataView.append(dataRec.getBroadcastString().trim() + "\n");
                     EventBus.getDefault().postSticky(new MessageModel("", dataRec.getBroadcastString().trim() + "\n"));
+                    EldCachedPeriodicRecord p = (EldCachedPeriodicRecord) (dataRec);
+
+                    Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData(p.getEngineState(), p.getVin(), p.getRpm(), p.getSpeed(), p.getTripDistance(), p.getEngineHours(), p.getTripHours(), p.getVoltage(),
+                            Calendar.getInstance().getTime().toString(), p.getGpsDateTime(), p.getLatitude(), p.getLongitude(), p.getGpsSpeed(), p.getCourse(), p.getNumSats(), p.getMslAlt(), p.getDop(),
+                            p.getSequence(), p.getFirmwareVersion()));
+
+                    sendData.enqueue(new Callback<SendExampleModelData>() {
+                        @Override
+                        public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
+                            Log.d("JSON", "onResponse: " + response.body());
+                        }
+
+                        @Override
+                        public void onFailure(Call<SendExampleModelData> call, Throwable t) {
+                            Log.d("JSON", "onResponse: " + t.getMessage());
+                        }
+                    });
 
                     if (dataRec instanceof EldBufferRecord) {
                         startseq = ((EldBufferRecord) dataRec).getStartSeqNo();
@@ -1320,6 +1343,26 @@ public class MainActivity extends AppCompatActivity {
 //                        mDataView.append(" Longitude: " + Double.toString(((EldDataRecord) (dataRec)).getLongitude()));
 //                        mDataView.append(" Firmware: " + ((EldDataRecord) (dataRec)).getFirmwareVersion() + "\n");
 
+//                        EldCachedPeriodicRecord p = (EldCachedPeriodicRecord) (dataRec);
+//
+//                        Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData(p.getEngineState(), p.getVin(), p.getRpm(), p.getSpeed(), p.getTripDistance(), p.getEngineHours(), p.getTripHours(), p.getVoltage(),
+//                                Calendar.getInstance().getTime().toString(), p.getGpsDateTime(), p.getLatitude(), p.getLongitude(), p.getGpsSpeed(), p.getCourse(), p.getNumSats(), p.getMslAlt(), p.getDop(),
+//                                p.getSequence(), p.getFirmwareVersion()));
+
+                        EventBus.getDefault().postSticky(new MessageModel("", dataRec.getBroadcastString().trim() + "\n"));
+
+                        sendData.enqueue(new Callback<SendExampleModelData>() {
+                            @Override
+                            public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
+                                Log.d("JSON", "onResponse: " + response.body());
+                            }
+
+                            @Override
+                            public void onFailure(Call<SendExampleModelData> call, Throwable t) {
+                                Log.d("JSON", "onResponse: " + t.getMessage());
+                            }
+                        });
+
                         latitude = ((EldDataRecord) dataRec).getLatitude();
                         longtitude = ((EldDataRecord) dataRec).getLongitude();
 
@@ -1328,6 +1371,7 @@ public class MainActivity extends AppCompatActivity {
 
 //                        mStatusView.append(dataRec.getBroadcastString());
                         EventBus.getDefault().postSticky(new MessageModel(dataRec.getBroadcastString(), ""));
+                        EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback3"));
 
                         if (reqdelinprogress) {
                             reccount++;
@@ -1362,12 +1406,6 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("TESTING", "Unix Time " + ((EldCachedPeriodicRecord) (dataRec)).getUnixTime());
                             Log.d("TESTING", "Sequence Number " + ((EldCachedPeriodicRecord) (dataRec)).getSeqNum());
 
-                            EldCachedPeriodicRecord p = (EldCachedPeriodicRecord) (dataRec);
-
-                            Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData(p.getEngineState(), p.getVin(), p.getRpm(), p.getSpeed(), p.getTripDistance(), p.getEngineHours(), p.getTripHours(), p.getVoltage(),
-                                    Calendar.getInstance().getTime().toString(), p.getGpsDateTime(), p.getLatitude(), p.getLongitude(), p.getGpsSpeed(), p.getCourse(), p.getNumSats(), p.getMslAlt(), p.getDop(),
-                                    p.getSequence(), p.getFirmwareVersion()));
-
                             sendData.enqueue(new Callback<SendExampleModelData>() {
                                 @Override
                                 public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
@@ -1379,6 +1417,8 @@ public class MainActivity extends AppCompatActivity {
                                     Log.d("JSON", "onResponse: " + t.getMessage());
                                 }
                             });
+
+                            EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback4M"));
 
                             // mDataView.append("CACHED REC"+((EldCachedPeriodicRecord)(dataRec)).getBroadcastString());
 
@@ -1392,11 +1432,13 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("TESTING", "Unix Time " + ((EldCachedNewVinRecord) (dataRec)).getUnixTime());
                             Log.d("TESTING", "Sequence Number " + ((EldCachedNewVinRecord) (dataRec)).getSeqNum());
 
-                            EldCachedNewVinRecord p = (EldCachedNewVinRecord) (dataRec);
+//                            EldCachedNewVinRecord p = (EldCachedNewVinRecord) (dataRec);
 
-                            Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData(p.getEngineState(), p.getVin(), p.getRpm(), p.getSpeed(), p.getTripDistance(), p.getEngineHours(), p.getTripHours(), p.getVoltage(),
-                                    Calendar.getInstance().getTime().toString(), p.getGpsDateTime(), p.getLatitude(), p.getLongitude(), p.getGpsSpeed(), p.getCourse(), p.getNumSats(), p.getMslAlt(), p.getDop(),
-                                    p.getSequence(), p.getFirmwareVersion()));
+//                            EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback5"));
+//
+//                            Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData(p.getEngineState(), p.getVin(), p.getRpm(), p.getSpeed(), p.getTripDistance(), p.getEngineHours(), p.getTripHours(), p.getVoltage(),
+//                                    Calendar.getInstance().getTime().toString(), p.getGpsDateTime(), p.getLatitude(), p.getLongitude(), p.getGpsSpeed(), p.getCourse(), p.getNumSats(), p.getMslAlt(), p.getDop(),
+//                                    p.getSequence(), p.getFirmwareVersion()));
 
                             sendData.enqueue(new Callback<SendExampleModelData>() {
                                 @Override
@@ -1432,6 +1474,7 @@ public class MainActivity extends AppCompatActivity {
 //                            mStatusView.append("\n");
 
                             // mDataView.append("CACHED REC"+((EldCachedPeriodicRecord)(rec)).getBroadcastString());
+                            EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback6"));
 
                         }
                     } else if (RecordType == EldBroadcastTypes.ELD_ENGINE_PARAMETERS_RECORD) {
@@ -1459,6 +1502,7 @@ public class MainActivity extends AppCompatActivity {
 //                        mStatusView.append("\n");
 
                         //mDataView.append("Engine Rec was sent" + ((EldEngineRecord) (rec)).getBroadcastString());
+                        EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback7"));
 
 
                     } else if (RecordType == EldBroadcastTypes.ELD_EMISSIONS_PARAMETERS_RECORD) {
@@ -1481,6 +1525,7 @@ public class MainActivity extends AppCompatActivity {
 //                        mStatusView.append("" + rec.getDefTankTemperature() + " ");
 //                        mStatusView.append("" + rec.getScrInducementFaultStatus() + " ");
 //                        mStatusView.append("\n");
+                        EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback8"));
 
 
                     } else if (RecordType == EldBroadcastTypes.ELD_TRANSMISSION_PARAMETERS_RECORD) {
@@ -1494,6 +1539,7 @@ public class MainActivity extends AppCompatActivity {
 //                        mStatusView.append("" + rec.getTorqueConverterLockupStatus() + " ");
 //                        mStatusView.append("" + rec.getTorqueConverterOilOutletTemp_c() + " ");
 //                        mStatusView.append("\n");
+                        EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback9"));
 
                     } else if (RecordType == EldBroadcastTypes.ELD_FUEL_RECORD) {
                         EldFuelRecord rec = (EldFuelRecord) dataRec;
@@ -1512,6 +1558,7 @@ public class MainActivity extends AppCompatActivity {
 //                        mStatusView.append("" + rec.getStateEco() + " ");
 //                        mStatusView.append("" + rec.getStateAnticipate() + " ");
 //                        mStatusView.append("\n");
+                        EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback10"));
 
                     } else if (RecordType == EldBroadcastTypes.ELD_DIAGNOSTIC_RECORD) {
                         diagnosticEnabled = true;

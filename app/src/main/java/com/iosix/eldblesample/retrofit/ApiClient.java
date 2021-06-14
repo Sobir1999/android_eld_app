@@ -13,8 +13,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiClient {
     public static final String BASE_URL = "http://fastlogz.napaautomotive.uz/backend/";
     private static Retrofit retrofit = null;
-    private static final String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjIzMTMwMjY2LCJqdGkiOiJlZTMxYzBjZmU0OGQ0NjFiODE3NDUyYzhkZTE2NmVhNCIsInVzZXJfaWQiOjF9.s1fIbti-XaOEWO-kKa3mV0pqVDsE-Yzqa51eBgfRlkA";
-
+    private static final String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjI0MDExMjg2LCJqdGkiOiI2MGU2MGFiZDM2MWU0N2Y2YjgyNWVkNzI1NGJiYjQ1ZCIsInVzZXJfaWQiOjl9.yOV4obu7lOXpEZrYgO7MBXRvWZQriK0qX1Gb7FEcXRo";
+//eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjI0MDExMjg2LCJqdGkiOiI2MGU2MGFiZDM2MWU0N2Y2YjgyNWVkNzI1NGJiYjQ1ZCIsInVzZXJfaWQiOjl9.yOV4obu7lOXpEZrYgO7MBXRvWZQriK0qX1Gb7FEcXRo
     public static Retrofit getClient() {
 
 //        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
