@@ -1,9 +1,7 @@
 package com.iosix.eldblesample.retrofit;
 
-import com.iosix.eldblesample.models.ExampleSendModels;
 import com.iosix.eldblesample.models.SendExampleModelData;
 import com.iosix.eldblesample.models.Student;
-import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
 
 import java.util.ArrayList;
 
@@ -23,6 +21,6 @@ public interface APIInterface {
     @POST("event/")
     Call<SendExampleModelData> sendData(@Body SendExampleModelData model);
 
-    @POST("event/")
-    Call<SendExampleModelData> sendDataEx(@Body ExampleSendModels model);
+//    @POST("event/")
+//    Call<SendExampleModelData> sendDataEx(@Body ExampleSendModels model);
 }

@@ -12,12 +12,12 @@ import com.iosix.eldblesample.fragments.GeneralFragment;
 import com.iosix.eldblesample.fragments.LogFragment;
 
 public class LGDDFragmentAdapter extends FragmentPagerAdapter {
-    private int numerOfTabs;
+    private String curr;
     private String[] tabs = new String[]{"Log", "General", "Docs", "DVIR"};
 
-    public LGDDFragmentAdapter(@NonNull FragmentManager fm, int behavior) {
+    public LGDDFragmentAdapter(@NonNull FragmentManager fm, int behavior, String curr) {
         super(fm, behavior);
-        numerOfTabs = behavior;
+        this.curr = curr;
     }
 
     @NonNull
@@ -31,8 +31,8 @@ public class LGDDFragmentAdapter extends FragmentPagerAdapter {
                 GeneralFragment general = new GeneralFragment();
                 return general;
             case 2:
-                DocsFragment doc = new DocsFragment();
-                return doc;
+//                DocsFragment doc = new DocsFragment();
+                return DocsFragment.newInstance(curr);
             case 3:
                 DVIRFragment dvir = new DVIRFragment();
                 return dvir;
@@ -56,4 +56,5 @@ public class LGDDFragmentAdapter extends FragmentPagerAdapter {
     public int getItemPosition(@NonNull Object object) {
         return POSITION_NONE;
     }
+
 }

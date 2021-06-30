@@ -8,8 +8,8 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-@Entity (tableName = "status_table")
-public class TruckStatusEntity {
+@Entity (tableName = "log_table")
+public class LogEntity {
     @PrimaryKey(autoGenerate = true)
     private int id;
     @ColumnInfo(name = "from_status")
@@ -26,13 +26,11 @@ public class TruckStatusEntity {
     @Nullable
     private String document;
     @ColumnInfo(name = "time")
-    @NonNull
     private String time;
     @ColumnInfo(name = "seconds")
-    @NonNull
     private int seconds;
 
-    public TruckStatusEntity(int from_status, int to_status, @Nullable String location, @Nullable String note, @Nullable String document, @NonNull String time, int seconds) {
+    public LogEntity(int from_status, int to_status, @Nullable String location, @Nullable String note, @Nullable String document, @NonNull String time, int seconds) {
         this.from_status = from_status;
         this.to_status = to_status;
         this.location = location;
@@ -43,7 +41,7 @@ public class TruckStatusEntity {
     }
 
     @Ignore
-    public TruckStatusEntity(int from_status, int to_status, int seconds) {
+    public LogEntity(int from_status, int to_status, int seconds) {
         this.from_status = from_status;
         this.to_status = to_status;
         this.seconds = seconds;

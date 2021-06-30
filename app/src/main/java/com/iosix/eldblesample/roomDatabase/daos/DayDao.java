@@ -8,7 +8,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
-import com.iosix.eldblesample.roomDatabase.entities.TruckStatusEntity;
+import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 
 import java.util.List;
 
@@ -16,9 +16,9 @@ import java.util.List;
 public interface DayDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insertDay(DayEntity entity);
+    long insertDay(DayEntity entity);
 
-    @Query("Select * From day_table")
+    @Query("Select * From day_table order by day")
     LiveData<List<DayEntity>> getAllDays();
 
     @Delete
@@ -26,4 +26,13 @@ public interface DayDao {
 
     @Query("Delete From day_table")
     void deleteAllDay();
+
+    @Insert (onConflict = OnConflictStrategy.REPLACE)
+    public void insertStatus(LogEntity logEntity);
+
+    @Query("Select * from log_table")
+    LiveData<List<LogEntity>> getAllStatus();
+
+    @Query("DELETE FROM log_table WHERE time = :day")
+    void deleteAllTruckStatus(String day);
 }

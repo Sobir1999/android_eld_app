@@ -9,12 +9,24 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.iosix.eldblesample.fragments.GeneralFragment;
 import com.iosix.eldblesample.roomDatabase.daos.DayDao;
 import com.iosix.eldblesample.roomDatabase.daos.StatusTruckDao;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
-import com.iosix.eldblesample.roomDatabase.entities.TruckStatusEntity;
+import com.iosix.eldblesample.roomDatabase.entities.DvirEntity;
+import com.iosix.eldblesample.roomDatabase.entities.GeneralEntity;
+import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
+import com.iosix.eldblesample.roomDatabase.entities.MainOfficeEntity;
+import com.iosix.eldblesample.roomDatabase.entities.TrailerDefectsEntity;
+import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
+import com.iosix.eldblesample.roomDatabase.entities.UnitDefectsEntity;
+import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 
-@Database(entities = {TruckStatusEntity.class, DayEntity.class}, version = 5)
+@Database(entities = {LogEntity.class, DayEntity.class, DvirEntity.class, GeneralEntity.class,
+        TrailersEntity.class, TrailerDefectsEntity.class,
+        UnitDefectsEntity.class, VehiclesEntity.class,
+        MainOfficeEntity.class
+}, version = 7)
 public abstract class StatusTruckRoomDatabase extends RoomDatabase {
 
     public abstract StatusTruckDao statusTruckDao();

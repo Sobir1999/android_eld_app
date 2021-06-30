@@ -23,7 +23,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -72,7 +71,6 @@ import com.iosix.eldblelib.EldDriverBehaviorRecord;
 import com.iosix.eldblelib.EldDtcCallback;
 import com.iosix.eldblelib.EldEmissionsRecord;
 import com.iosix.eldblelib.EldEngineRecord;
-import com.iosix.eldblelib.EldEngineStates;
 import com.iosix.eldblelib.EldFirmwareUpdateCallback;
 import com.iosix.eldblelib.EldFuelRecord;
 import com.iosix.eldblelib.EldManager;
@@ -82,7 +80,6 @@ import com.iosix.eldblelib.EldTransmissionRecord;
 import com.iosix.eldblesample.adapters.RecyclerViewLastAdapter;
 import com.iosix.eldblesample.broadcasts.ChangeDateTimeBroadcast;
 import com.iosix.eldblesample.customViews.CustomLiveRulerChart;
-import com.iosix.eldblesample.customViews.CustomRulerChart;
 import com.iosix.eldblesample.dialogs.ConnectToEldDialog;
 import com.iosix.eldblesample.dialogs.SearchEldDeviceDialog;
 import com.iosix.eldblesample.enums.EnumsConstants;
@@ -90,16 +87,12 @@ import com.iosix.eldblesample.fragments.LGDDFragment;
 import com.iosix.eldblesample.fragments.LanguageFragment;
 import com.iosix.eldblesample.fragments.RecapFragment;
 import com.iosix.eldblesample.interfaces.AlertDialogItemClickInterface;
-import com.iosix.eldblesample.interfaces.EditLanguageDialogListener;
-import com.iosix.eldblesample.models.ExampleSendModels;
-import com.iosix.eldblesample.models.ExampleTimeModel;
 import com.iosix.eldblesample.models.MessageModel;
 import com.iosix.eldblesample.models.SendExampleModelData;
-import com.iosix.eldblesample.models.Student;
 import com.iosix.eldblesample.retrofit.APIInterface;
 import com.iosix.eldblesample.retrofit.ApiClient;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
-import com.iosix.eldblesample.roomDatabase.entities.TruckStatusEntity;
+import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
 import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
@@ -108,15 +101,14 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -139,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
     private String today = time.split(" ")[1] + " " + time.split(" ")[2];
     private ChangeDateTimeBroadcast broadcast;
     private IntentFilter intentFilter;
-    private ArrayList<TruckStatusEntity> truckStatusEntities;
+    private ArrayList<LogEntity> truckStatusEntities;
     private int howMuchDay;
     private APIInterface apiInterface;
 
@@ -370,30 +362,30 @@ public class MainActivity extends AppCompatActivity {
 //        jsonViewModel = ViewModelProviders.of(this).get(EldJsonViewModel.class);
 
         apiInterface = ApiClient.getClient().create(APIInterface.class);
-
-        Call<SendExampleModelData> sendData = apiInterface.sendDataEx(new ExampleSendModels("new EldEngineStates()", "3", 2.3, 56.3, 100, 452, 452, 20,
-                Calendar.getInstance().getTime().toString(), Calendar.getInstance().getTime(), 36.23, 49.65, 56, 45, 4, 453, 45,
-                52, "firmware"));
-
-        sendData.enqueue(new Callback<SendExampleModelData>() {
-            @Override
-            public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
-                Log.d("JSON", "onResponse: " + response.message());
-            }
-
-            @Override
-            public void onFailure(Call<SendExampleModelData> call, Throwable t) {
-                Log.d("JSON", "onResponse: " + t.getMessage());
-            }
-        });
+//
+//        Call<SendExampleModelData> sendData = apiInterface.sendDataEx(new ExampleSendModels("new EldEngineStates()", "3", 2.3, 56.3, 100, 452, 452, 20,
+//                Calendar.getInstance().getTime().toString(), Calendar.getInstance().getTime(), 36.23, 49.65, 56, 45, 4, 453, 45,
+//                52, "firmware"));
+//
+//        sendData.enqueue(new Callback<SendExampleModelData>() {
+//            @Override
+//            public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
+//                Log.d("JSON", "onResponse: " + response.message());
+//            }
+//
+//            @Override
+//            public void onFailure(Call<SendExampleModelData> call, Throwable t) {
+//                Log.d("JSON", "onResponse: " + t.getMessage());
+//            }
+//        });
 
 
         truckStatusEntities = new ArrayList<>();
 
         statusDaoViewModel = ViewModelProviders.of(this).get(StatusDaoViewModel.class);
-        statusDaoViewModel.getmAllStatus().observe(this, new Observer<List<TruckStatusEntity>>() {
+        statusDaoViewModel.getmAllStatus().observe(this, new Observer<List<LogEntity>>() {
             @Override
-            public void onChanged(List<TruckStatusEntity> truckStatusEntities) {
+            public void onChanged(List<LogEntity> truckStatusEntities) {
                 for (int i = 0; i < truckStatusEntities.size(); i++) {
 //                    Log.d("STATUS", "onChanged: " + truckStatusEntities.get(i).getFrom_status() + " " + truckStatusEntities.get(i).getTo_status() + "\n" + truckStatusEntities.get(i).getTime() + "\n" + truckStatusEntities.get(i).getSeconds());
                     if (truckStatusEntities.get(i).getTime().equalsIgnoreCase(today)) {
@@ -411,7 +403,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        daoViewModel.insertDay(new DayEntity(today, time.split(" ")[0]));
+        long a=0;
+
+        try {
+            a = daoViewModel.insertDay(new DayEntity(today, time.split(" ")[0]));
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("_ID", "optimizeViewModels: " + a);
 
         daoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
         daoViewModel.getMgetAllDays().observe(this, new Observer<List<DayEntity>>() {
@@ -630,7 +630,7 @@ public class MainActivity extends AppCompatActivity {
                 dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
                 on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
                 if (current_status != last_status) {
-                    statusDaoViewModel.insertStatus(new TruckStatusEntity(last_status, current_status, editLocation.getText().toString(), note.getText().toString(), null, today, getCurrentSeconds()));
+                    statusDaoViewModel.insertStatus(new LogEntity(last_status, current_status, editLocation.getText().toString(), note.getText().toString(), null, today, getCurrentSeconds()));
                     saveLastPosition(current_status);
                     saveLastStatusTime();
                     restartActivity();
@@ -1391,21 +1391,26 @@ public class MainActivity extends AppCompatActivity {
                     EventBus.getDefault().postSticky(new MessageModel("", dataRec.getBroadcastString().trim() + "\n"));
                     EldCachedPeriodicRecord p = (EldCachedPeriodicRecord) (dataRec);
 
-                    Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData(p.getEngineState(), p.getVin(), p.getRpm(), p.getSpeed(), p.getTripDistance(), p.getEngineHours(), p.getTripHours(), p.getVoltage(),
-                            Calendar.getInstance().getTime().toString(), p.getGpsDateTime(), p.getLatitude(), p.getLongitude(), p.getGpsSpeed(), p.getCourse(), p.getNumSats(), p.getMslAlt(), p.getDop(),
-                            p.getSequence(), p.getFirmwareVersion()));
+                    try {
+                        Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData(p.getEngineState(), p.getVin(), p.getRpm(), p.getSpeed(), p.getTripDistance(), p.getEngineHours(), p.getTripHours(), p.getVoltage(),
+                                Calendar.getInstance().getTime().toString(), p.getGpsDateTime(), p.getLatitude(), p.getLongitude(), p.getGpsSpeed(), p.getCourse(), p.getNumSats(), p.getMslAlt(), p.getDop(),
+                                p.getSequence(), p.getFirmwareVersion()));
 
-                    sendData.enqueue(new Callback<SendExampleModelData>() {
-                        @Override
-                        public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
-                            Log.d("JSON", "onResponse: " + response.body());
-                        }
+                        sendData.enqueue(new Callback<SendExampleModelData>() {
+                            @Override
+                            public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
+                                Log.d("JSON", "onResponse: " + response.body());
+                            }
 
-                        @Override
-                        public void onFailure(Call<SendExampleModelData> call, Throwable t) {
-                            Log.d("JSON", "onResponse: " + t.getMessage());
-                        }
-                    });
+                            @Override
+                            public void onFailure(Call<SendExampleModelData> call, Throwable t) {
+                                Log.d("JSON", "onResponse: " + t.getMessage());
+                            }
+                        });
+                    } catch (Exception e) {
+                        Toast.makeText(MainActivity.this, "1. " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+
 
                     if (dataRec instanceof EldBufferRecord) {
                         startseq = ((EldBufferRecord) dataRec).getStartSeqNo();
@@ -1425,17 +1430,25 @@ public class MainActivity extends AppCompatActivity {
 
                         EventBus.getDefault().postSticky(new MessageModel("", dataRec.getBroadcastString().trim() + "\n"));
 
-                        sendData.enqueue(new Callback<SendExampleModelData>() {
-                            @Override
-                            public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
-                                Log.d("JSON", "onResponse: " + response.body());
-                            }
+                        try {
+                            Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData(p.getEngineState(), p.getVin(), p.getRpm(), p.getSpeed(), p.getTripDistance(), p.getEngineHours(), p.getTripHours(), p.getVoltage(),
+                                    Calendar.getInstance().getTime().toString(), p.getGpsDateTime(), p.getLatitude(), p.getLongitude(), p.getGpsSpeed(), p.getCourse(), p.getNumSats(), p.getMslAlt(), p.getDop(),
+                                    p.getSequence(), p.getFirmwareVersion()));
 
-                            @Override
-                            public void onFailure(Call<SendExampleModelData> call, Throwable t) {
-                                Log.d("JSON", "onResponse: " + t.getMessage());
-                            }
-                        });
+                            sendData.enqueue(new Callback<SendExampleModelData>() {
+                                @Override
+                                public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
+                                    Log.d("JSON", "onResponse: " + response.body());
+                                }
+
+                                @Override
+                                public void onFailure(Call<SendExampleModelData> call, Throwable t) {
+                                    Log.d("JSON", "onResponse: " + t.getMessage());
+                                }
+                            });
+                        } catch (Exception e) {
+                            Toast.makeText(MainActivity.this, "2. " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
 
                         latitude = ((EldDataRecord) dataRec).getLatitude();
                         longtitude = ((EldDataRecord) dataRec).getLongitude();
@@ -1480,18 +1493,25 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("TESTING", "Unix Time " + ((EldCachedPeriodicRecord) (dataRec)).getUnixTime());
                             Log.d("TESTING", "Sequence Number " + ((EldCachedPeriodicRecord) (dataRec)).getSeqNum());
 
-                            sendData.enqueue(new Callback<SendExampleModelData>() {
-                                @Override
-                                public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
-                                    Log.d("JSON", "onResponse: " + response.body());
-                                }
+                            try {
+                                Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData(p.getEngineState(), p.getVin(), p.getRpm(), p.getSpeed(), p.getTripDistance(), p.getEngineHours(), p.getTripHours(), p.getVoltage(),
+                                        Calendar.getInstance().getTime().toString(), p.getGpsDateTime(), p.getLatitude(), p.getLongitude(), p.getGpsSpeed(), p.getCourse(), p.getNumSats(), p.getMslAlt(), p.getDop(),
+                                        p.getSequence(), p.getFirmwareVersion()));
 
-                                @Override
-                                public void onFailure(Call<SendExampleModelData> call, Throwable t) {
-                                    Log.d("JSON", "onResponse: " + t.getMessage());
-                                }
-                            });
+                                sendData.enqueue(new Callback<SendExampleModelData>() {
+                                    @Override
+                                    public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
+                                        Log.d("JSON", "onResponse: " + response.body());
+                                    }
 
+                                    @Override
+                                    public void onFailure(Call<SendExampleModelData> call, Throwable t) {
+                                        Log.d("JSON", "onResponse: " + t.getMessage());
+                                    }
+                                });
+                            } catch (Exception e) {
+                                Toast.makeText(MainActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
                             EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback4M"));
 
                             // mDataView.append("CACHED REC"+((EldCachedPeriodicRecord)(dataRec)).getBroadcastString());
@@ -1514,17 +1534,25 @@ public class MainActivity extends AppCompatActivity {
 //                                    Calendar.getInstance().getTime().toString(), p.getGpsDateTime(), p.getLatitude(), p.getLongitude(), p.getGpsSpeed(), p.getCourse(), p.getNumSats(), p.getMslAlt(), p.getDop(),
 //                                    p.getSequence(), p.getFirmwareVersion()));
 
-                            sendData.enqueue(new Callback<SendExampleModelData>() {
-                                @Override
-                                public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
-                                    Log.d("JSON", "onResponse: " + response.body());
-                                }
+                            try {
+                                Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData(p.getEngineState(), p.getVin(), p.getRpm(), p.getSpeed(), p.getTripDistance(), p.getEngineHours(), p.getTripHours(), p.getVoltage(),
+                                        Calendar.getInstance().getTime().toString(), p.getGpsDateTime(), p.getLatitude(), p.getLongitude(), p.getGpsSpeed(), p.getCourse(), p.getNumSats(), p.getMslAlt(), p.getDop(),
+                                        p.getSequence(), p.getFirmwareVersion()));
 
-                                @Override
-                                public void onFailure(Call<SendExampleModelData> call, Throwable t) {
-                                    Log.d("JSON", "onResponse: " + t.getMessage());
-                                }
-                            });
+                                sendData.enqueue(new Callback<SendExampleModelData>() {
+                                    @Override
+                                    public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
+                                        Log.d("JSON", "onResponse: " + response.body());
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<SendExampleModelData> call, Throwable t) {
+                                        Log.d("JSON", "onResponse: " + t.getMessage());
+                                    }
+                                });
+                            } catch (Exception e) {
+                                Toast.makeText(MainActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
                         }
 
                     } else if (RecordType == EldBroadcastTypes.ELD_DRIVER_BEHAVIOR_RECORD) {

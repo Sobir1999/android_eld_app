@@ -6,6 +6,8 @@
     android:orientation="vertical"
     android:background="#4B4C3F3F"
     android:clickable="true"
+    android:focusable="true"
+    android:id="@+id/idRecapLinear"
     android:paddingTop="?attr/actionBarSize"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 

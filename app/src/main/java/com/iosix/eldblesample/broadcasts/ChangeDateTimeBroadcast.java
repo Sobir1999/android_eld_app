@@ -32,7 +32,7 @@ public abstract class ChangeDateTimeBroadcast extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (Intent.ACTION_DATE_CHANGED.equalsIgnoreCase(intent.getAction())) {
             Toast.makeText(context, "Date Changed", Toast.LENGTH_SHORT).show();
-            Log.d("BR", "onReceive: Changed");
+            Log.d("BR", "onReceive: ChangedI");
 
             String action = intent.getAction();
             Date currentDate = new Date();
@@ -46,6 +46,7 @@ public abstract class ChangeDateTimeBroadcast extends BroadcastReceiver {
         }
         MediaPlayer mediaPlayer = MediaPlayer.create(context, Settings.System.DEFAULT_RINGTONE_URI);
         mediaPlayer.start();
+        Log.d("BR", "onReceive: ChangedT");
     }
 
     public static IntentFilter getIntentFilter() {

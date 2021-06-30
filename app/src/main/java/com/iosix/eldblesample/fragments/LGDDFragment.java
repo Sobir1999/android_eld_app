@@ -24,8 +24,13 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.tabs.TabLayout;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.adapters.LGDDFragmentAdapter;
+import com.iosix.eldblesample.models.ExampleSMSModel;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -41,6 +46,7 @@ public class LGDDFragment extends Fragment {
     private int index = 0;
     private DayDaoViewModel dayDaoViewModel;
     private List<DayEntity> dayEntities = new ArrayList<>();
+    private String currDay;
 
     private String[] str = {"1", "2", "3", "5", "6"};
 
@@ -74,63 +80,68 @@ public class LGDDFragment extends Fragment {
         assert bundle != null;
         int pos = bundle.getInt("position");
 
-        view.findViewById(R.id.idImageBack).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                assert getFragmentManager() != null;
-                getFragmentManager().popBackStack();
-            }
+        view.findViewById(R.id.idImageBack).setOnClickListener(v -> {
+            assert getFragmentManager() != null;
+            getFragmentManager().popBackStack();
         });
 
         textFrag = view.findViewById(R.id.idTextFrag);
 
-        textFrag.setText(dayEntities.get(index).getDay());
+        currDay = dayEntities.get(index).getDay();
+        textFrag.setText(currDay);
+        adapter = new LGDDFragmentAdapter(getChildFragmentManager(), 1, currDay);
 
         tabLayout = view.findViewById(R.id.tab_layout);
         viewPager = view.findViewById(R.id.pager);
-        adapter = new LGDDFragmentAdapter(getChildFragmentManager(), 1);
+
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(pos);
         tabLayout.setupWithViewPager(viewPager);
 
-        clickPrevAndNext(view);
-
-        viewPager.setOnTouchListener(new View.OnTouchListener() {
-            @SuppressLint("ClickableViewAccessibility")
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                EventBus.getDefault().postSticky(new ExampleSMSModel(currDay));
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
             }
         });
 
+        clickPrevAndNext(view);
+
         return view;
     }
-
 
     private void clickPrevAndNext(View v){
         TextView prev, next;
         prev = v.findViewById(R.id.idPreviewLog);
         next = v.findViewById(R.id.idNextLog);
 
-        prev.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (index > 0) {
-                    index--;
-                    textFrag.setText(dayEntities.get(index).getDay());
-                }
+        prev.setOnClickListener(v12 -> {
+            if (index > 0) {
+                index--;
+                currDay = dayEntities.get(index).getDay();
+                textFrag.setText(currDay);
+                EventBus.getDefault().postSticky(new ExampleSMSModel(currDay));
+
             }
         });
 
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (index < dayEntities.size()-1) {
-                    index++;
-                    textFrag.setText(dayEntities.get(index).getDay());
-                }
+        next.setOnClickListener(v1 -> {
+            if (index < dayEntities.size()-1) {
+                index++;
+                currDay = dayEntities.get(index).getDay();
+                textFrag.setText(currDay);
+                EventBus.getDefault().postSticky(new ExampleSMSModel(currDay));
             }
         });
     }
-
 }
