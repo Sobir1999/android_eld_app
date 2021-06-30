@@ -1,6 +1,7 @@
-package com.iosix.eldblesample.fragments;
+    package com.iosix.eldblesample.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -14,11 +15,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.iosix.eldblesample.MainActivity;
 import com.iosix.eldblesample.R;
 
 import java.util.Locale;
@@ -29,6 +30,7 @@ public class LanguageFragment extends Fragment {
     private SharedPreferences pref;
     private ImageView imageBack;
     private TextView saveLang;
+    private Context context;
 
     public LanguageFragment() {
         // Required empty public constructor
@@ -50,6 +52,7 @@ public class LanguageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        context = container.getContext();
         pref = container != null ? container.getContext()
                 .getSharedPreferences("MyPref", Context.MODE_PRIVATE) : null;
 
@@ -84,6 +87,8 @@ public class LanguageFragment extends Fragment {
                 RadioGroup radioGroup = view.findViewById(R.id.idLangRadioGroup);
                 Log.d("LAN", "onClick: " + view.findViewById(radioGroup.getCheckedRadioButtonId()));
                 setSelectelang(radioGroup.getCheckedRadioButtonId());
+                Intent intent =  new Intent(context, MainActivity.class);
+                startActivityForResult(intent,1);
             }
         });
     }
@@ -110,16 +115,22 @@ public class LanguageFragment extends Fragment {
         } else if (lang.equalsIgnoreCase("fr")) {
             fr.setChecked(true);
         }
+        else if (lang.equalsIgnoreCase("ru")) {
+            ru.setChecked(true);
+        }
+        else if (lang.equalsIgnoreCase("uz")) {
+            uz.setChecked(true);
+        }
     }
 
     private void setLocale(String lang, SharedPreferences pref) {
         Locale myLocale = new Locale(lang);
+        Locale.setDefault(myLocale);
         Resources res = getResources();
         DisplayMetrics dm = res.getDisplayMetrics();
         Configuration conf = res.getConfiguration();
         conf.locale = myLocale;
         res.updateConfiguration(conf, dm);
-
         saveLanguage(lang, pref);
     }
 
@@ -137,4 +148,8 @@ public class LanguageFragment extends Fragment {
         return pref.getString("lan", "en");
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode,Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 }

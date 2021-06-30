@@ -23,7 +23,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -72,7 +71,6 @@ import com.iosix.eldblelib.EldDriverBehaviorRecord;
 import com.iosix.eldblelib.EldDtcCallback;
 import com.iosix.eldblelib.EldEmissionsRecord;
 import com.iosix.eldblelib.EldEngineRecord;
-import com.iosix.eldblelib.EldEngineStates;
 import com.iosix.eldblelib.EldFirmwareUpdateCallback;
 import com.iosix.eldblelib.EldFuelRecord;
 import com.iosix.eldblelib.EldManager;
@@ -82,7 +80,6 @@ import com.iosix.eldblelib.EldTransmissionRecord;
 import com.iosix.eldblesample.adapters.RecyclerViewLastAdapter;
 import com.iosix.eldblesample.broadcasts.ChangeDateTimeBroadcast;
 import com.iosix.eldblesample.customViews.CustomLiveRulerChart;
-import com.iosix.eldblesample.customViews.CustomRulerChart;
 import com.iosix.eldblesample.dialogs.ConnectToEldDialog;
 import com.iosix.eldblesample.dialogs.SearchEldDeviceDialog;
 import com.iosix.eldblesample.enums.EnumsConstants;
@@ -90,12 +87,11 @@ import com.iosix.eldblesample.fragments.LGDDFragment;
 import com.iosix.eldblesample.fragments.LanguageFragment;
 import com.iosix.eldblesample.fragments.RecapFragment;
 import com.iosix.eldblesample.interfaces.AlertDialogItemClickInterface;
-import com.iosix.eldblesample.interfaces.EditLanguageDialogListener;
+//import com.iosix.eldblesample.models.ExampleSendModels;
+//import com.iosix.eldblesample.models.ExampleTimeModel;
 import com.iosix.eldblesample.models.ExampleSendModels;
-import com.iosix.eldblesample.models.ExampleTimeModel;
 import com.iosix.eldblesample.models.MessageModel;
 import com.iosix.eldblesample.models.SendExampleModelData;
-import com.iosix.eldblesample.models.Student;
 import com.iosix.eldblesample.retrofit.APIInterface;
 import com.iosix.eldblesample.retrofit.ApiClient;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
@@ -108,10 +104,8 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
@@ -222,7 +216,6 @@ public class MainActivity extends AppCompatActivity {
 
         setActivateDr();
 
-        openRecapFragment();
     }
 
     @Override
@@ -283,22 +276,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void openRecapFragment(){
-
-        TextView recap = findViewById(R.id.idRecap);
-        recap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadLGDDFragmentForRecap(RecapFragment.newInstance());
-            }
-
-    });
-}
-
-
-
-
-
     private void clickLGDDButtons() {
         Button log, general, doc, dvir;
         TextView recap = findViewById(R.id.idRecap);
@@ -338,10 +315,9 @@ public class MainActivity extends AppCompatActivity {
         recap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Clicked Recap", Toast.LENGTH_SHORT).show();
-                Log.d("RECAP", "onClick: ");
-//                toggleRightDrawer();
+                loadLGDDFragmentForRecap(RecapFragment.newInstance());
             }
+
         });
     }
 

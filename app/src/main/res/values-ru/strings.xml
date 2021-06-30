@@ -2,4 +2,6 @@
 <resources>
     <string name="app_name">FastLogz</string>
     <string name="off">Ru OFF</string>
+    <string name="russian">Ru Russian</string>
+    <string name="create">Ru create</string>
 </resources>
