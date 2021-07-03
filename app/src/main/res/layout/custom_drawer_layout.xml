@@ -105,6 +105,24 @@
 
         <ImageView
             android:layout_margin="16dp"
+            android:src="@drawable/ic_repair"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/idSpinnerInspection"
+            android:text="@string/inspection_module"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_margin="16dp"
             android:src="@drawable/ic_baseline_logout_24"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

@@ -11,6 +11,11 @@ import android.view.ViewGroup;
 
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.adapters.LogFragmentPagerAdapter;
+import com.iosix.eldblesample.models.ExampleSMSModel;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class LogFragment extends Fragment {
     private LogFragmentPagerAdapter adapter;
@@ -28,11 +33,28 @@ public class LogFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_log, container, false);
-        pager = view.findViewById(R.id.idLogFragmentPager);
-        adapter = new LogFragmentPagerAdapter(getContext());
-        pager.setAdapter(adapter);
-        pager.setCurrentItem(adapter.getCount(), true);
+//        pager = view.findViewById(R.id.idLogFragmentPager);
+//        adapter = new LogFragmentPagerAdapter(getContext());
+//        pager.setAdapter(adapter);
+//        pager.setCurrentItem(adapter.getCount(), true);
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSMSHandler(ExampleSMSModel sendModels){
+
     }
 }

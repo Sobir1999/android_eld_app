@@ -6,25 +6,19 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.iosix.eldblesample.roomDatabase.entities.TruckStatusEntity;
+import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 
 import java.util.List;
-
-import kotlin.jvm.JvmOverloads;
 
 @Dao
 public interface StatusTruckDao {
 
     @Insert (onConflict = OnConflictStrategy.REPLACE)
-    public void insertStatus(TruckStatusEntity truckStatusEntity);
+    public void insertStatus(LogEntity logEntity);
 
-    @Query("Select * from status_table")
-    LiveData<List<TruckStatusEntity>> getAllStatus();
+    @Query("Select * from log_table")
+    LiveData<List<LogEntity>> getAllStatus();
 
-//    @JvmOverloads
-//    @Query("Select * From status_table where time like '% : day1 %' order by seconds")
-//    LiveData<List<TruckStatusEntity>> getTruckEntityByDay(String day1);
-
-    @Query("Delete from status_table")
-    void deleteAllTruckStatus();
+    @Query("DELETE FROM log_table WHERE time = :day")
+    void deleteAllTruckStatus(String day);
 }

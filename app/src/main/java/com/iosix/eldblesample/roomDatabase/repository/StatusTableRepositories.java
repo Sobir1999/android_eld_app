@@ -4,18 +4,17 @@ import android.app.Application;
 import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
-import androidx.room.Room;
 
 import com.iosix.eldblesample.roomDatabase.daos.StatusTruckDao;
 import com.iosix.eldblesample.roomDatabase.database.StatusTruckRoomDatabase;
-import com.iosix.eldblesample.roomDatabase.entities.TruckStatusEntity;
+import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 
 import java.util.List;
 
 public class StatusTableRepositories {
 
     private StatusTruckDao mStatusDao;
-    private LiveData<List<TruckStatusEntity>> mAllStatus;
+    private LiveData<List<LogEntity>> mAllStatus;
 
     public StatusTableRepositories(Application application) {
         StatusTruckRoomDatabase db = StatusTruckRoomDatabase.getINSTANCE(application);
@@ -23,15 +22,15 @@ public class StatusTableRepositories {
         mAllStatus = mStatusDao.getAllStatus();
     }
 
-    public LiveData<List<TruckStatusEntity>> getmAllStatus() {
+    public LiveData<List<LogEntity>> getmAllStatus() {
         return mAllStatus;
     }
 
-    public void insertStatus(TruckStatusEntity entity) {
+    public void insertStatus(LogEntity entity) {
         new insertStatusAsync(mStatusDao).execute(entity);
     }
 
-    private static class insertStatusAsync extends AsyncTask<TruckStatusEntity, Void, Void> {
+    private static class insertStatusAsync extends AsyncTask<LogEntity, Void, Void> {
         private StatusTruckDao dao;
 
         insertStatusAsync(StatusTruckDao statusTruckDao) {
@@ -39,7 +38,7 @@ public class StatusTableRepositories {
         }
 
         @Override
-        protected Void doInBackground(TruckStatusEntity... truckStatusEntities) {
+        protected Void doInBackground(LogEntity... truckStatusEntities) {
             dao.insertStatus(truckStatusEntities[0]);
             return null;
         }

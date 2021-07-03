@@ -12,10 +12,9 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.iosix.eldblesample.R;
-import com.iosix.eldblesample.customViews.CustomRulerChart;
 import com.iosix.eldblesample.customViews.CustomStableRulerChart;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
-import com.iosix.eldblesample.roomDatabase.entities.TruckStatusEntity;
+import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
 
@@ -24,7 +23,7 @@ import java.util.List;
 
 public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLastAdapter.ViewHolder> {
     private List<DayEntity> dayEntities;
-    private List<TruckStatusEntity> truckStatusEntities;
+    private List<LogEntity> truckStatusEntities;
 
     public RecyclerViewLastAdapter(Context context, DayDaoViewModel daoViewModel, StatusDaoViewModel statusDaoViewModel) {
         dayEntities = new ArrayList<>();
@@ -37,9 +36,9 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
             }
         });
 
-        statusDaoViewModel.getmAllStatus().observe((LifecycleOwner) context, new Observer<List<TruckStatusEntity>>() {
+        statusDaoViewModel.getmAllStatus().observe((LifecycleOwner) context, new Observer<List<LogEntity>>() {
             @Override
-            public void onChanged(List<TruckStatusEntity> truckStatusEntities) {
+            public void onChanged(List<LogEntity> truckStatusEntities) {
                 RecyclerViewLastAdapter.this.truckStatusEntities = truckStatusEntities;
             }
         });
@@ -92,8 +91,8 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
         }
     }
 
-    private ArrayList<TruckStatusEntity> getDayTruckEntity(String day) {
-        ArrayList<TruckStatusEntity> entities = new ArrayList<>();
+    private ArrayList<LogEntity> getDayTruckEntity(String day) {
+        ArrayList<LogEntity> entities = new ArrayList<>();
         for (int i=0; i<truckStatusEntities.size(); i++) {
             if (truckStatusEntities.get(i).getTime().equalsIgnoreCase(day)) {
                 entities.add(truckStatusEntities.get(i));

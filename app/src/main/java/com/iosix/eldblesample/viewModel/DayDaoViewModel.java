@@ -10,6 +10,7 @@ import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.repository.DayDaoRepository;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class DayDaoViewModel extends AndroidViewModel {
     private DayDaoRepository repository;
@@ -25,8 +26,8 @@ public class DayDaoViewModel extends AndroidViewModel {
         return mgetAllDays;
     }
 
-    public void insertDay(DayEntity entity) {
-        repository.insertDay(entity);
+    public Long insertDay(DayEntity entity) throws ExecutionException, InterruptedException {
+        return repository.insertDay(entity);
     }
 
     public void deleteDay(DayEntity entity) {

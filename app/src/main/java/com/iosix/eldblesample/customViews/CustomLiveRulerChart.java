@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 
 import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.enums.TableConstants;
-import com.iosix.eldblesample.roomDatabase.entities.TruckStatusEntity;
+import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,7 +24,7 @@ public class CustomLiveRulerChart extends CustomRulerChart {
     private int last_status;
     private int off = 0, sb = 0, dr = 0, on = 0;
 
-    private ArrayList<TruckStatusEntity> arrayList = new ArrayList();
+    private ArrayList<LogEntity> arrayList = new ArrayList();
 
     private ArrayList<Paint> paintArray = new ArrayList<Paint>() {{
         add(TableConstants.getOFFPaint());
@@ -54,7 +54,7 @@ public class CustomLiveRulerChart extends CustomRulerChart {
         last_status = pref.getInt("last_P", 0);
     }
 
-    public void setArrayList(ArrayList<TruckStatusEntity> arrayList) {
+    public void setArrayList(ArrayList<LogEntity> arrayList) {
         this.arrayList = arrayList;
         invalidate();
     }

@@ -13,6 +13,11 @@ import android.widget.Toast;
 
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.adapters.GeneralFragmentPagerAdapter;
+import com.iosix.eldblesample.models.ExampleSMSModel;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class GeneralFragment extends Fragment {
     private ViewPager pager;
@@ -29,32 +34,31 @@ public class GeneralFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_general, container, false);
-        pager = view.findViewById(R.id.idGeneralFragmentPage);
-        adapter = new GeneralFragmentPagerAdapter(getContext());
-        pager.setAdapter(adapter);
-        pager.setCurrentItem(adapter.getCount(), true);
-
-        onPager();
+//        pager = view.findViewById(R.id.idGeneralFragmentPage);
+//        adapter = new GeneralFragmentPagerAdapter(getContext());
+//        pager.setAdapter(adapter);
+//        pager.setCurrentItem(adapter.getCount(), true);
+//
+//        onPager();
 
         return view;
     }
 
-    private void onPager() {
-        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                Log.d("DATE", "onPageScrolled: " + pager.getCurrentItem());
-            }
 
-            @Override
-            public void onPageSelected(int position) {
-                Log.d("DATE", "onPageSelected: " + pager.getCurrentItem());
-            }
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
 
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                Log.d("DATE", "onPageScrollStateChanged: " + pager.getCurrentItem());
-            }
-        });
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSMSHandler(ExampleSMSModel sendModels){
+
     }
 }
