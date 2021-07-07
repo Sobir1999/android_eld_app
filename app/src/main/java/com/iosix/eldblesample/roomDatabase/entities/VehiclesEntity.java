@@ -12,8 +12,7 @@ public class VehiclesEntity {
     @ColumnInfo(name = "name")
     private String name;
 
-    public VehiclesEntity(int id, String name) {
-        this.id = id;
+    public VehiclesEntity(String name) {
         this.name = name;
     }
 

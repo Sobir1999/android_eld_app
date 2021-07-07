@@ -83,17 +83,11 @@ import com.iosix.eldblesample.customViews.CustomLiveRulerChart;
 import com.iosix.eldblesample.dialogs.ConnectToEldDialog;
 import com.iosix.eldblesample.dialogs.SearchEldDeviceDialog;
 import com.iosix.eldblesample.enums.EnumsConstants;
-import com.iosix.eldblesample.fragments.InspectionModuleFragment;
+import com.iosix.eldblesample.fragments.AddDvirFragment;
 import com.iosix.eldblesample.fragments.LGDDFragment;
 import com.iosix.eldblesample.fragments.LanguageFragment;
 import com.iosix.eldblesample.fragments.RecapFragment;
 import com.iosix.eldblesample.interfaces.AlertDialogItemClickInterface;
-//<<<<<<< HEAD
-//import com.iosix.eldblesample.models.ExampleSendModels;
-//import com.iosix.eldblesample.models.ExampleTimeModel;
-//import com.iosix.eldblesample.models.ExampleSendModels;
-//=======
-//>>>>>>> origin/master
 import com.iosix.eldblesample.models.MessageModel;
 import com.iosix.eldblesample.models.SendExampleModelData;
 import com.iosix.eldblesample.retrofit.APIInterface;
@@ -170,8 +164,10 @@ public class MainActivity extends AppCompatActivity {
     private StatusDaoViewModel statusDaoViewModel;
     private DayDaoViewModel daoViewModel;
     private EldJsonViewModel jsonViewModel;
+    private Menu optionMenu;
+    private ArrayList<String> daysArray = new ArrayList<>();
 
-    @SuppressLint({"VisibleForTests", "ResourceAsColor"})
+    @SuppressLint({"VisibleForTests", "ResourceAsColor", "UseCompatLoadingForDrawables"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -185,6 +181,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+//        daoViewModel = (DayDaoViewModel) getIntent().getBundleExtra("bundle").getSerializable("dayDao");
+//        statusDaoViewModel = (StatusDaoViewModel) getIntent().getBundleExtra("bundle").getSerializable("statusDao");
         optimizeViewModels();
 
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -196,6 +194,24 @@ public class MainActivity extends AppCompatActivity {
         lastAdapter = new RecyclerViewLastAdapter(this, daoViewModel, statusDaoViewModel);
         last_recycler_view.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true));
         last_recycler_view.setAdapter(lastAdapter);
+
+        lastAdapter.setListener(new RecyclerViewLastAdapter.LastDaysRecyclerViewItemClickListener() {
+            @Override
+            public void onclickItem(String s) {
+                if (daysArray.contains(s)) {
+                    daysArray.remove(s);
+                } else {
+                    daysArray.add(s);
+                }
+
+                optionMenu.findItem(R.id.shareMenu).setVisible(!daysArray.isEmpty());
+            }
+
+            @Override
+            public void onclickDvir(String s) {
+                loadLGDDFragment(AddDvirFragment.newInstance(daoViewModel));
+            }
+        });
 
         // Set the toolbar
         activity_main_toolbar = findViewById(R.id.activity_main_toolbar);
@@ -221,6 +237,7 @@ public class MainActivity extends AppCompatActivity {
 
         setActivateDr();
 
+        openRecapFragment();
     }
 
     @Override
@@ -234,23 +251,23 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        registerReceiver(changeDateTimeBroadcast,ChangeDateTimeBroadcast.getIntentFilter());
+        registerReceiver(changeDateTimeBroadcast, ChangeDateTimeBroadcast.getIntentFilter());
     }
 
-    public void setActivateDr(){
+    public void setActivateDr() {
 
-       Button activateDr = findViewById(R.id.idDRWithExeption);
+        Button activateDr = findViewById(R.id.idDRWithExeption);
 
-       activateDr.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
+        activateDr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 showAlertDialog();
-           }
-       });
+            }
+        });
     }
 
-    private void showAlertDialog(){
-        String[] items = {"Adverse diving","16-Hour Exceptiom"};
+    private void showAlertDialog() {
+        String[] items = {"Adverse diving", "16-Hour Exceptiom"};
 
         final boolean[] checked = new boolean[items.length];
         for (int i = 0; i < items.length; i++) {
@@ -267,12 +284,12 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(MainActivity.this,"ok",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "ok", Toast.LENGTH_SHORT).show();
                     }
                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(MainActivity.this,"cancel",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "cancel", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -281,6 +298,19 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void openRecapFragment() {
+
+        TextView recap = findViewById(R.id.idRecap);
+        recap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadLGDDFragmentForRecap(RecapFragment.newInstance());
+            }
+
+        });
+    }
+
+
     private void clickLGDDButtons() {
         Button log, general, doc, dvir;
         TextView recap = findViewById(R.id.idRecap);
@@ -288,7 +318,6 @@ public class MainActivity extends AppCompatActivity {
         general = findViewById(R.id.idTableBtnGeneral);
         doc = findViewById(R.id.idTableBtnDocs);
         dvir = findViewById(R.id.idTableBtnDVIR);
-        TextView inspection = findViewById(R.id.idSpinnerInspection);
 
         log.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -321,15 +350,9 @@ public class MainActivity extends AppCompatActivity {
         recap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadLGDDFragmentForRecap(RecapFragment.newInstance());
-            }
-        });
-
-        inspection.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadLGDDFragment(InspectionModuleFragment.newInstance());
-                drawerLayout.close();
+                Toast.makeText(MainActivity.this, "Clicked Recap", Toast.LENGTH_SHORT).show();
+                Log.d("RECAP", "onClick: ");
+//                toggleRightDrawer();
             }
         });
     }
@@ -342,10 +365,10 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
-    private void loadLGDDFragmentForRecap(Fragment fragment){
+    private void loadLGDDFragmentForRecap(Fragment fragment) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.anim.fade_in_from_right,R.anim.fade_out_to_right);
+        fragmentTransaction.setCustomAnimations(R.anim.fade_in_from_right, R.anim.fade_out_to_right);
         fragmentTransaction.addToBackStack("fragment");
         fragmentTransaction.replace(R.id.drawer_layout, fragment);
         fragmentTransaction.commit();
@@ -354,29 +377,9 @@ public class MainActivity extends AppCompatActivity {
     private void optimizeViewModels() {
         statusDaoViewModel = new StatusDaoViewModel(this.getApplication());
         daoViewModel = new DayDaoViewModel(this.getApplication());
-//        jsonViewModel = new EldJsonViewModel(this.getApplication());
-//
-//        jsonViewModel = ViewModelProviders.of(this).get(EldJsonViewModel.class);
 
         apiInterface = ApiClient.getClient().create(APIInterface.class);
 //
-//        Call<SendExampleModelData> sendData = apiInterface.sendDataEx(new ExampleSendModels("new EldEngineStates()", "3", 2.3, 56.3, 100, 452, 452, 20,
-//                Calendar.getInstance().getTime().toString(), Calendar.getInstance().getTime(), 36.23, 49.65, 56, 45, 4, 453, 45,
-//                52, "firmware"));
-//
-//        sendData.enqueue(new Callback<SendExampleModelData>() {
-//            @Override
-//            public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
-//                Log.d("JSON", "onResponse: " + response.message());
-//            }
-//
-//            @Override
-//            public void onFailure(Call<SendExampleModelData> call, Throwable t) {
-//                Log.d("JSON", "onResponse: " + t.getMessage());
-//            }
-//        });
-
-
         truckStatusEntities = new ArrayList<>();
 
         statusDaoViewModel = ViewModelProviders.of(this).get(StatusDaoViewModel.class);
@@ -400,7 +403,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        long a=0;
+        long a = 0;
 
         try {
             a = daoViewModel.insertDay(new DayEntity(today, time.split(" ")[0]));
@@ -531,7 +534,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences pref = getApplicationContext()
                 .getSharedPreferences("MyPref", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("last_S_T", (int) SystemClock.uptimeMillis()/1000);
+        editor.putInt("last_S_T", (int) SystemClock.uptimeMillis() / 1000);
         editor.apply();
     }
 
@@ -548,9 +551,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 int last = getLastStatusSec();
-                int current = (int) SystemClock.uptimeMillis()/1000;
-                int hour = (current-last)/3600;
-                int min = ((current - last)%3600)/60;
+                int current = (int) SystemClock.uptimeMillis() / 1000;
+                int hour = (current - last) / 3600;
+                int min = ((current - last) % 3600) / 60;
                 statusTime.setText(String.format("%02dh %02dm", hour, min));
             }
         }, 500);
@@ -719,19 +722,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_option_menus, menu);
+        optionMenu = menu;
         return true;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.shareMenu:
+                Toast.makeText(this, "Share" + daysArray.size(), Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.connectMenu:
                 connectToEld();
                 return true;
             default:
-                return super.onOptionsItemSelected(item);
+                return false;
         }
     }
 
@@ -741,18 +747,15 @@ public class MainActivity extends AppCompatActivity {
         TextView textView = findViewById(R.id.idSpinnerLanguage);
 
         checkNightModeActivated();
-        nightModeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    saveNightModeState(true);
-                    restartActivity();
-                } else {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                    saveNightModeState(false);
-                    restartActivity();
-                }
+        nightModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                saveNightModeState(true);
+                restartActivity();
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                saveNightModeState(false);
+                restartActivity();
             }
         });
 
@@ -1474,7 +1477,6 @@ public class MainActivity extends AppCompatActivity {
                         }
 //todo: eld send data
                         if (dataRec instanceof EldCachedPeriodicRecord) {
-
 
 
                             Log.d("TESTING", "Engine State " + ((EldCachedPeriodicRecord) (dataRec)).getEngineState());

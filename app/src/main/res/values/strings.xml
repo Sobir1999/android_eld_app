@@ -72,4 +72,10 @@
     <string name="begin_inspection">Begin Inspection</string>
     <string name="send_logs_for_previous_7_days_today">Send logs for previous 7 days + today</string>
     <string name="send_eld_output_file_to_dot">Send ELD output file to DOT</string>
+    <string name="create_edit_dvir">Create/Edit DVIR</string>
+    <string name="next">NEXT</string>
+    <string name="unit">Unit</string>
+    <string name="no_defect_detected">No Defect Detected</string>
+    <string name="click_here_to_add_defects">Click here add to Defect</string>
+    <string name="time">Time</string>
 </resources>

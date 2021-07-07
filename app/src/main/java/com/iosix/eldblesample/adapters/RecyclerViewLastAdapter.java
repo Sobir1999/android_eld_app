@@ -1,9 +1,13 @@
 package com.iosix.eldblesample.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,10 +28,17 @@ import java.util.List;
 public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLastAdapter.ViewHolder> {
     private List<DayEntity> dayEntities;
     private List<LogEntity> truckStatusEntities;
+    private LastDaysRecyclerViewItemClickListener listener;
+    private Context ctx;
+
+    public void setListener(LastDaysRecyclerViewItemClickListener listener) {
+        this.listener = listener;
+    }
 
     public RecyclerViewLastAdapter(Context context, DayDaoViewModel daoViewModel, StatusDaoViewModel statusDaoViewModel) {
         dayEntities = new ArrayList<>();
         truckStatusEntities = new ArrayList<>();
+        ctx = context;
 
         daoViewModel.getMgetAllDays().observe((LifecycleOwner) context, new Observer<List<DayEntity>>() {
             @Override
@@ -62,9 +73,10 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView day, day_week;
+        TextView day, day_week, no_dvir;
         View clickable;
         CustomStableRulerChart customRulerChart;
+        ImageView imageView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -72,13 +84,29 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
             day_week = itemView.findViewById(R.id.idTableMonth);
             clickable = itemView.findViewById(R.id.idCLickableView);
             customRulerChart = itemView.findViewById(R.id.idLastDaysTable);
+            imageView = itemView.findViewById(R.id.idTableRadioBtn);
+            no_dvir = itemView.findViewById(R.id.idTableDvir);
             itemsClicked();
         }
 
+        @SuppressLint("UseCompatLoadingForDrawables")
         void onBind(DayEntity dayEntity) {
             day.setText(dayEntity.getDay_name());
             day_week.setText(dayEntity.getDay());
             customRulerChart.setArrayList(getDayTruckEntity(dayEntity.getDay()));
+
+            imageView.setOnClickListener(v -> {
+                imageView.setImageResource(imageView.getDrawable().getConstantState().equals(imageView.getContext().getDrawable(R.drawable.state_checked).getConstantState())?R.drawable.state_unchacked:R.drawable.state_checked);
+                if (listener != null) {
+                    listener.onclickItem(dayEntity.getDay());
+                }
+            });
+
+            no_dvir.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onclickDvir(dayEntity.getDay());
+                }
+            });
         }
 
         private void itemsClicked() {
@@ -99,5 +127,11 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
             }
         }
         return entities;
+    }
+
+    public interface LastDaysRecyclerViewItemClickListener{
+        void onclickItem(String s);
+
+        void onclickDvir(String s);
     }
 }

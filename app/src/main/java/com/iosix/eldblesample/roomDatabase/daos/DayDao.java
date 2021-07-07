@@ -9,6 +9,7 @@ import androidx.room.Query;
 
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
+import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public interface DayDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     long insertDay(DayEntity entity);
 
-    @Query("Select * From day_table order by day")
+    @Query("Select * From day_table")
     LiveData<List<DayEntity>> getAllDays();
 
     @Delete
@@ -35,4 +36,10 @@ public interface DayDao {
 
     @Query("DELETE FROM log_table WHERE time = :day")
     void deleteAllTruckStatus(String day);
+
+    @Insert
+    void insertVehicle(VehiclesEntity vehiclesEntity);
+
+    @Query("Select * From vehicles")
+    LiveData<List<VehiclesEntity>> getAllVehicles();
 }
