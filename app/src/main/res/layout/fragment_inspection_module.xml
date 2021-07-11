@@ -4,6 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:id="@+id/fragment_container"
+    android:clickable="true"
+    android:focusable="true"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.InspectionModuleFragment">
 
@@ -63,9 +66,10 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:gravity="center"
             android:text="@string/tap_begin_inspection_and_hand_your_deviceto_the_officer"
             android:textColor="@color/black"
             android:textSize="15sp"/>
@@ -75,7 +79,7 @@
             android:layout_height="50dp"
             android:id="@+id/idBeginInspection"
             android:layout_gravity="center"
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:text="@string/begin_inspection"
             android:textColor="@color/white"
             android:layout_marginTop="25dp"
@@ -102,8 +106,8 @@
             android:layout_height="50dp"
             android:id="@+id/idSendLogs"
             android:layout_gravity="center"
-            android:textSize="16sp"
-            android:text="Send logs"
+            android:textSize="15sp"
+            android:text="@string/send_logs"
             android:textColor="@color/white"
             android:layout_marginTop="25dp"
             android:background="@drawable/button_bg_inspection"/>
@@ -129,7 +133,7 @@
             android:layout_height="50dp"
             android:id="@+id/idSendELDFile"
             android:layout_gravity="center"
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:text="@string/send_eld_output_file_to_dot"
             android:textColor="@color/white"
             android:layout_marginTop="25dp"

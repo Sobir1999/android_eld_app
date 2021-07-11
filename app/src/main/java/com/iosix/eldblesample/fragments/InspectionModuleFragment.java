@@ -3,6 +3,8 @@ package com.iosix.eldblesample.fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.iosix.eldblesample.MainActivity;
 import com.iosix.eldblesample.R;
 
 public class InspectionModuleFragment extends Fragment {
@@ -54,5 +57,28 @@ public class InspectionModuleFragment extends Fragment {
             }
         });
 
+        sendLogs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadFragment(SendLogFragment.newInstance());
+            }
+        });
+
+        beginInspection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadFragment(BeginInspectionFragment.newInstance());
+            }
+        });
+
+    }
+
+    private void loadFragment(Fragment fragment){
+        FragmentManager fm = getFragmentManager();
+        assert fm != null;
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        fragmentTransaction.addToBackStack("fragment");
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.commit();
     }
 }
