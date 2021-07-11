@@ -12,8 +12,7 @@ public class TrailersEntity {
     @ColumnInfo(name = "number")
     private String number;
 
-    public TrailersEntity(int id, String number) {
-        this.id = id;
+    public TrailersEntity(String number) {
         this.number = number;
     }
 

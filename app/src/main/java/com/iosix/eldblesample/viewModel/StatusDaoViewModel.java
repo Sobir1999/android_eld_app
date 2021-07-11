@@ -8,9 +8,10 @@ import androidx.lifecycle.LiveData;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 import com.iosix.eldblesample.roomDatabase.repository.StatusTableRepositories;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class StatusDaoViewModel extends AndroidViewModel {
+public class StatusDaoViewModel extends AndroidViewModel implements Serializable {
     private StatusTableRepositories repository;
     private LiveData<List<LogEntity>> mAllStatus;
 

@@ -39,13 +39,23 @@
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true"
         tools:ignore="ExtraText">
-        <activity android:name=".ForgotPasswordActivity"/>
-        <activity android:name=".LoginActivity">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
+        <service
+            android:name=".services.MyIntentService"
+            android:exported="false"></service>
+        <service
+            android:name=".services.MyBroadcastService"
+            android:enabled="true"
+            android:exported="true" />
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+        <activity android:name=".ForgotPasswordActivity" />
+        <activity android:name=".LoginActivity">
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity android:name=".ExampleAvtivity">
 

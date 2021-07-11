@@ -10,6 +10,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.iosix.eldblesample.viewModel.DayDaoViewModel;
+import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
+
 public class LoginActivity extends AppCompatActivity {
 
     @Override
@@ -22,13 +25,10 @@ public class LoginActivity extends AppCompatActivity {
         EditText password = findViewById(R.id.idEditTextPassword);
         TextView forgot_password = findViewById(R.id.idTextViewForgotPassword);
 
-        forgot_password.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this,ForgotPasswordActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
+        forgot_password.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this,ForgotPasswordActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         });
 
         button.setOnClickListener(new View.OnClickListener() {
