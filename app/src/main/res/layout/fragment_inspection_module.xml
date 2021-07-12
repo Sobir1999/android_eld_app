@@ -43,7 +43,7 @@
                     android:id="@+id/idTextFrag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/inspection_module"
+                    android:text="@string/inspection_mode"
                     android:textColor="#fff"
                     app:layout_constraintBottom_toBottomOf="parent"
                     style="@style/TextAppearance.AppCompat.Widget.ActionMode.Title"

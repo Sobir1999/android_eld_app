@@ -111,7 +111,7 @@
 
         <TextView
             android:id="@+id/idSpinnerInspection"
-            android:text="@string/inspection_module"
+            android:text="@string/inspection_mode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>

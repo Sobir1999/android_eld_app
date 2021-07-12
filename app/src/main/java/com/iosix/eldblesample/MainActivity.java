@@ -48,7 +48,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
@@ -84,6 +83,7 @@ import com.iosix.eldblesample.dialogs.ConnectToEldDialog;
 import com.iosix.eldblesample.dialogs.SearchEldDeviceDialog;
 import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.fragments.AddDvirFragment;
+import com.iosix.eldblesample.fragments.InspectionModuleFragment;
 import com.iosix.eldblesample.fragments.LGDDFragment;
 import com.iosix.eldblesample.fragments.LanguageFragment;
 import com.iosix.eldblesample.fragments.RecapFragment;
@@ -313,11 +313,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void clickLGDDButtons() {
         Button log, general, doc, dvir;
+        TextView inspectionMode;
         TextView recap = findViewById(R.id.idRecap);
         log = findViewById(R.id.idTableBtnLog);
         general = findViewById(R.id.idTableBtnGeneral);
         doc = findViewById(R.id.idTableBtnDocs);
         dvir = findViewById(R.id.idTableBtnDVIR);
+        inspectionMode = findViewById(R.id.idSpinnerInspection);
 
         log.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -353,6 +355,14 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Clicked Recap", Toast.LENGTH_SHORT).show();
                 Log.d("RECAP", "onClick: ");
 //                toggleRightDrawer();
+            }
+        });
+
+        inspectionMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadLGDDFragment(InspectionModuleFragment.newInstance());
+                drawerLayout.close();
             }
         });
     }
