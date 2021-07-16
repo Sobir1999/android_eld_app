@@ -647,24 +647,24 @@
 
                 <TextView
                     android:id="@+id/idLas14DayText"
-                    android:drawableLeft="@drawable/ic_baseline_calendar_today_24"
                     android:text="Last 14 days"
                     android:drawablePadding="5dp"
                     style="@style/TextAppearance.AppCompat.Widget.ActionMode.Subtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:ignore="MissingConstraints" />
+                    tools:ignore="MissingConstraints"
+                    app:drawableLeftCompat="@drawable/ic_baseline_calendar_today_24" />
 
-                <TextView
-                    android:id="@+id/idLastDaysCheckAll"
-                    app:layout_constraintRight_toRightOf="parent"
-                    android:text="@string/check_all"
-                    style="@style/TextAppearance.AppCompat.Widget.PopupMenu.Small"
-                    android:drawablePadding="5dp"
-                    android:drawableRight="@drawable/ic_baseline_check_circle_outline_24"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:ignore="MissingConstraints" />
+                    <TextView
+                        android:id="@+id/idLastDaysCheckAll"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:text="@string/check_all"
+                        style="@style/TextAppearance.AppCompat.Widget.PopupMenu.Small"
+                        android:drawablePadding="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:ignore="MissingConstraints"
+                        app:drawableRightCompat="@drawable/ic_baseline_check_circle_outline_24" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View
@@ -676,7 +676,10 @@
                 android:id="@+id/idRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                tools:itemCount="5"
                 android:nestedScrollingEnabled="false"/>
+
+            <include layout="@layout/no_dvir_item"/>
         </LinearLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
