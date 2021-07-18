@@ -41,7 +41,7 @@
         tools:ignore="ExtraText">
         <service
             android:name=".services.MyIntentService"
-            android:exported="false"></service>
+            android:exported="false" />
         <service
             android:name=".services.MyBroadcastService"
             android:enabled="true"

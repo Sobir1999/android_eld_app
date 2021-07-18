@@ -90,4 +90,6 @@
     <string name="selected_trailers">Selected trailers</string>
     <string name="location">Location</string>
     <string name="no_defect_detected">No defect detected</string>
+    <string name="content_description">Just Image</string>
+    <string name="defects">Defects</string>
 </resources>

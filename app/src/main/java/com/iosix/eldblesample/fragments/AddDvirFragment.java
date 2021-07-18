@@ -1,12 +1,11 @@
 package com.iosix.eldblesample.fragments;
 
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,19 +15,14 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.iosix.eldblesample.R;
-import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 
-import java.io.Serializable;
-import java.util.List;
-
-import static com.iosix.eldblesample.R.id.idAddDvirNext;
-
 public class AddDvirFragment extends Fragment {
-    private TextView addUnit, units, addTrailer, trailers, nextText;
+    private TextView addUnit, units, addTrailer, trailers, nextText, idDefectNoText, idAddDefectText;
     private ImageView backView;
     private DayDaoViewModel daoViewModel;
 
@@ -62,8 +56,10 @@ public class AddDvirFragment extends Fragment {
         trailers = v.findViewById(R.id.idAddDvirTrailerNumberText);
         backView = v.findViewById(R.id.idImageBack);
         nextText = v.findViewById(R.id.idAddDvirNext);
+        idDefectNoText = v.findViewById(R.id.idDefectNoText);
+        idAddDefectText = v.findViewById(R.id.idAddDefectText);
 
-        daoViewModel.getGetAllVehicles().observe(getActivity(), dayEntities -> {
+        daoViewModel.getGetAllVehicles().observe(requireActivity(), dayEntities -> {
             for (int i=0; i<dayEntities.size(); i++) {
                 Log.d("ADDDVIR", "onChanged: " + dayEntities.get(i).getName());
             }
@@ -76,15 +72,13 @@ public class AddDvirFragment extends Fragment {
 
     @SuppressWarnings("deprecation")
     private void buttonClicks(ViewGroup context) {
-        addUnit.setOnClickListener(v -> {
-            createDialog(context, "Add Unit", "Add Unit", 1);
-        });
+        addUnit.setOnClickListener(v -> createDialog(context, "Add Unit", "Add Unit", 1));
 
         units.setOnClickListener(v -> {
             AlertDialog.Builder builderSingle = new AlertDialog.Builder(getContext());
             builderSingle.setTitle("Select One Name:-");
 
-            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.select_dialog_singlechoice);
+            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.select_dialog_singlechoice);
             arrayAdapter.add("Hardik");
             arrayAdapter.add("Archit");
             arrayAdapter.add("Jignesh");
@@ -109,22 +103,30 @@ public class AddDvirFragment extends Fragment {
             builderSingle.show();
         });
 
-        addTrailer.setOnClickListener(v -> {
-            createDialog(context, "Add Trailer", "Add Trailer", 2);
-        });
+        addTrailer.setOnClickListener(v -> createDialog(context, "Add Trailer", "Add Trailer", 2));
 
         trailers.setOnClickListener(v -> {
 
         });
 
-        backView.setOnClickListener(v -> getFragmentManager().popBackStack());
+        backView.setOnClickListener(v -> {
+            assert getFragmentManager() != null;
+            getFragmentManager().popBackStack();
+        });
 
         nextText.setOnClickListener(v -> {
 
         });
+
+        idDefectNoText.setOnClickListener(v-> loadLGDDFragment(AddDefectFragment.newInstance(daoViewModel)));
+        idAddDefectText.setOnClickListener(v-> {
+            loadLGDDFragment(AddDefectFragment.newInstance(daoViewModel));
+            Toast.makeText(requireContext(), "clicked", Toast.LENGTH_SHORT).show();
+        });
+
     }
 
-    private String createDialog(ViewGroup group, String title, String hint, int type) {
+    private void createDialog(ViewGroup group, String title, String hint, int type) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
         dialog.setTitle(title);
 
@@ -135,8 +137,6 @@ public class AddDvirFragment extends Fragment {
         dialog.setPositiveButton("Ok", (dialog12, which) -> {
             if (type == 1 && !editText.getText().toString().equalsIgnoreCase("")) {
                 daoViewModel.insertVehicle(new VehiclesEntity(editText.getText().toString()));
-            } else {
-
             }
         });
 
@@ -145,6 +145,14 @@ public class AddDvirFragment extends Fragment {
         dialog.setView(v);
         dialog.show();
 
-        return editText.getText().toString();
+//        editText.getText().toString();
+    }
+
+    private void loadLGDDFragment(Fragment fragment) {
+        FragmentManager fm = requireActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        fragmentTransaction.addToBackStack("fragment");
+        fragmentTransaction.replace(R.id.drawer_layout, fragment);
+        fragmentTransaction.commit();
     }
 }

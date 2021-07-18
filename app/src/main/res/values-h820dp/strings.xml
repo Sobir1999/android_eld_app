@@ -1,6 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">FastLogz</string>
-    <string name="off">Es OFF</string>
     <string name="content_description">Just Image</string>
     <string name="defects">Defects</string>
 </resources>
