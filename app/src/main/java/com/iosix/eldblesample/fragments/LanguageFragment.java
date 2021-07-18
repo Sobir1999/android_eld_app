@@ -19,7 +19,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.iosix.eldblesample.MainActivity;
+import com.iosix.eldblesample.activity.MainActivity;
 import com.iosix.eldblesample.R;
 
 import java.util.Locale;

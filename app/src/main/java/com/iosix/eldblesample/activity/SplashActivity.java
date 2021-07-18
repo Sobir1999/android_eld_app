@@ -1,19 +1,16 @@
-package com.iosix.eldblesample;
+package com.iosix.eldblesample.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
-import android.view.Window;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
-
-import java.io.Serializable;
 
 public class SplashActivity extends AppCompatActivity {
     private StatusDaoViewModel statusDaoViewModel;

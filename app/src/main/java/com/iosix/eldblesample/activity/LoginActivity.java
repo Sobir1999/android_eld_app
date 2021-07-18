@@ -1,4 +1,4 @@
-package com.iosix.eldblesample;
+package com.iosix.eldblesample.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,8 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.iosix.eldblesample.viewModel.DayDaoViewModel;
-import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
+import com.iosix.eldblesample.R;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -26,7 +25,7 @@ public class LoginActivity extends AppCompatActivity {
         TextView forgot_password = findViewById(R.id.idTextViewForgotPassword);
 
         forgot_password.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this,ForgotPasswordActivity.class);
+            Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         });

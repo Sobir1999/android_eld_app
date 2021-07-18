@@ -1,4 +1,4 @@
-package com.iosix.eldblesample;
+package com.iosix.eldblesample.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -72,6 +72,7 @@ import com.iosix.eldblelib.EldManager;
 import com.iosix.eldblelib.EldParameterTypes;
 import com.iosix.eldblelib.EldScanObject;
 import com.iosix.eldblelib.EldTransmissionRecord;
+import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.adapters.RecyclerViewLastAdapter;
 import com.iosix.eldblesample.broadcasts.ChangeDateTimeBroadcast;
 import com.iosix.eldblesample.customViews.CustomLiveRulerChart;
