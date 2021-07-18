@@ -84,12 +84,14 @@ import com.iosix.eldblesample.fragments.InspectionModuleFragment;
 import com.iosix.eldblesample.fragments.LGDDFragment;
 import com.iosix.eldblesample.fragments.LanguageFragment;
 import com.iosix.eldblesample.fragments.RecapFragment;
+import com.iosix.eldblesample.models.ExampleSMSModel;
 import com.iosix.eldblesample.models.MessageModel;
 import com.iosix.eldblesample.models.SendExampleModelData;
 import com.iosix.eldblesample.retrofit.APIInterface;
 import com.iosix.eldblesample.retrofit.ApiClient;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
+import com.iosix.eldblesample.services.foreground.ForegroundService;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
 import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
@@ -228,20 +230,22 @@ public class MainActivity extends AppCompatActivity {
         setActivateDr();
 
         openRecapFragment();
+
+        startService();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        ChangeDateTimeBroadcast changeDateTimeBroadcast = new ChangeDateTimeBroadcast() {
-            @Override
-            public void onDayChanged() {
-                setTodayAttr();
-            }
-        };
-
-        registerReceiver(changeDateTimeBroadcast, ChangeDateTimeBroadcast.getIntentFilter());
+//        ChangeDateTimeBroadcast changeDateTimeBroadcast = new ChangeDateTimeBroadcast() {
+//            @Override
+//            public void onDayChanged() {
+//                setTodayAttr();
+//            }
+//        };
+//
+//        registerReceiver(changeDateTimeBroadcast, ChangeDateTimeBroadcast.getIntentFilter());
     }
 
     public void setActivateDr() {
@@ -1577,5 +1581,33 @@ public class MainActivity extends AppCompatActivity {
     private void ScanForEld() {
         if (mEldManager.ScanForElds(bleScanCallback) == EldBleError.BLUETOOTH_NOT_ENABLED)
             mEldManager.EnableBluetooth(REQUEST_BT_ENABLE);
+    }
+
+    /**
+     * Start service method
+     * "data" for sending data
+     */
+    public void startService(){
+        String data = "Service is running...";
+        Intent intent = new Intent(this, ForegroundService.class);
+        intent.putExtra("data", data);
+        startService(intent);
+
+        ChangeDateTimeBroadcast changeDateTimeBroadcast = new ChangeDateTimeBroadcast() {
+            @Override
+            public void onDayChanged() {
+                setTodayAttr();
+            }
+        };
+
+        registerReceiver(changeDateTimeBroadcast, ChangeDateTimeBroadcast.getIntentFilter());
+    }
+
+    /**
+     * Stop service method
+     */
+    public void stopService(){
+        Intent intent = new Intent(this, ForegroundService.class);
+        stopService(intent);
     }
 }
