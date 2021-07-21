@@ -37,7 +37,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\User\Downloads\trailer.png" />
+                                                <entry key="imagePath" value="C:\Users\User\Downloads\signature.png" />
                                                 <entry key="opacityPercent" value="80" />
                                                 <entry key="paddingPercent" value="5" />
                                               </map>
@@ -74,10 +74,10 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="C:\Users\User\Downloads\trailer.png" />
-                                      <entry key="outputName" value="trailer" />
+                                      <entry key="imageAsset" value="C:\Users\User\Downloads\signature.png" />
+                                      <entry key="outputName" value="signature" />
                                       <entry key="theme" value="CUSTOM" />
-                                      <entry key="themeColor" value="3e56f6" />
+                                      <entry key="themeColor" value="0466f8" />
                                     </map>
                                   </option>
                                 </PersistentState>

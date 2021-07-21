@@ -313,13 +313,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void clickLGDDButtons() {
         Button log, general, doc, dvir;
-        TextView inspectionMode;
+        TextView inspectionMode,addDvir;
         TextView recap = findViewById(R.id.idRecap);
         log = findViewById(R.id.idTableBtnLog);
         general = findViewById(R.id.idTableBtnGeneral);
         doc = findViewById(R.id.idTableBtnDocs);
         dvir = findViewById(R.id.idTableBtnDVIR);
         inspectionMode = findViewById(R.id.idSpinnerInspection);
+        addDvir = findViewById(R.id.idTableDvir);
 
         log.setOnClickListener(new View.OnClickListener() {
             @Override

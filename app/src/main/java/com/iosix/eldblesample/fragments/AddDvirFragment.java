@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 
 import android.util.Log;
@@ -13,11 +15,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.iosix.eldblesample.R;
+import com.iosix.eldblesample.SignatureFragment;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
@@ -30,6 +35,7 @@ import static com.iosix.eldblesample.R.id.idAddDvirNext;
 public class AddDvirFragment extends Fragment {
     private TextView addUnit, units, addTrailer, trailers, nextText;
     private ImageView backView;
+    private AppBarLayout appBarLayout;
     private DayDaoViewModel daoViewModel;
 
     public static AddDvirFragment newInstance(DayDaoViewModel dayDaoViewModel) {
@@ -62,6 +68,8 @@ public class AddDvirFragment extends Fragment {
         trailers = v.findViewById(R.id.idAddDvirTrailerNumberText);
         backView = v.findViewById(R.id.idImageBack);
         nextText = v.findViewById(R.id.idAddDvirNext);
+        appBarLayout = v.findViewById(R.id.idAppbar);
+
 
         daoViewModel.getGetAllVehicles().observe(getActivity(), dayEntities -> {
             for (int i=0; i<dayEntities.size(); i++) {
@@ -70,6 +78,14 @@ public class AddDvirFragment extends Fragment {
         });
 
         buttonClicks(container);
+
+        nextText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadFragment(SignatureFragment.newInstance());
+                appBarLayout.setVisibility(View.GONE);
+            }
+        });
 
         return v;
     }
@@ -118,10 +134,6 @@ public class AddDvirFragment extends Fragment {
         });
 
         backView.setOnClickListener(v -> getFragmentManager().popBackStack());
-
-        nextText.setOnClickListener(v -> {
-
-        });
     }
 
     private String createDialog(ViewGroup group, String title, String hint, int type) {
@@ -146,5 +158,15 @@ public class AddDvirFragment extends Fragment {
         dialog.show();
 
         return editText.getText().toString();
+    }
+
+    private void loadFragment(Fragment fragment){
+        FragmentManager fm = getFragmentManager();
+        assert fm != null;
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        fragmentTransaction.addToBackStack("fragment");
+        fragmentTransaction.replace(R.id.fragment_container_add_dvir, fragment);
+        fragmentTransaction.commit();
+
     }
 }
