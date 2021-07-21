@@ -1,4 +1,4 @@
-package com.iosix.eldblesample;
+package com.iosix.eldblesample.activity;
 
 import android.Manifest;
 import android.app.Activity;
@@ -45,6 +45,7 @@ import com.iosix.eldblelib.EldManager;
 import com.iosix.eldblelib.EldParameterTypes;
 import com.iosix.eldblelib.EldScanObject;
 import com.iosix.eldblelib.EldTransmissionRecord;
+import com.iosix.eldblesample.R;
 
 import java.util.ArrayList;
 import java.util.EnumSet;

@@ -4,4 +4,6 @@
     <string name="off">Ru OFF</string>
     <string name="russian">Ru Russian</string>
     <string name="create">Ru create</string>
+    <string name="content_description">Just Image</string>
+    <string name="defects">Defects</string>
 </resources>

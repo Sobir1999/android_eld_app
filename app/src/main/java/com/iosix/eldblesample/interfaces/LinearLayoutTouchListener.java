@@ -1,13 +1,10 @@
 package com.iosix.eldblesample.interfaces;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
-
-import com.iosix.eldblesample.MainActivity;
 
 public abstract class LinearLayoutTouchListener implements View.OnTouchListener {
 

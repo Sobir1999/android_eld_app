@@ -32,7 +32,8 @@
                     android:src="@drawable/fragment_back"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:contentDescription="@string/content_description" />
 
                 <TextView
                     android:id="@+id/idTextFrag"
@@ -251,7 +252,8 @@
                             android:textColor="@color/design_default_color_primary_dark"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            app:drawableEndCompat="@drawable/ic_baseline_location_on_24" />
+                            app:drawableEndCompat="@drawable/ic_baseline_location_on_24"
+                            android:inputType="text" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <View

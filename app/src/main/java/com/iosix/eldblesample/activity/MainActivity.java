@@ -1,4 +1,4 @@
-package com.iosix.eldblesample;
+package com.iosix.eldblesample.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -14,7 +14,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,9 +23,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -61,7 +58,6 @@ import com.iosix.eldblelib.EldBleError;
 import com.iosix.eldblelib.EldBleScanCallback;
 import com.iosix.eldblelib.EldBroadcast;
 import com.iosix.eldblelib.EldBroadcastTypes;
-import com.iosix.eldblelib.EldBufferRecord;
 import com.iosix.eldblelib.EldCachedNewTimeRecord;
 import com.iosix.eldblelib.EldCachedNewVinRecord;
 import com.iosix.eldblelib.EldCachedPeriodicRecord;
@@ -76,6 +72,7 @@ import com.iosix.eldblelib.EldManager;
 import com.iosix.eldblelib.EldParameterTypes;
 import com.iosix.eldblelib.EldScanObject;
 import com.iosix.eldblelib.EldTransmissionRecord;
+import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.adapters.RecyclerViewLastAdapter;
 import com.iosix.eldblesample.broadcasts.ChangeDateTimeBroadcast;
 import com.iosix.eldblesample.customViews.CustomLiveRulerChart;
@@ -87,13 +84,13 @@ import com.iosix.eldblesample.fragments.InspectionModuleFragment;
 import com.iosix.eldblesample.fragments.LGDDFragment;
 import com.iosix.eldblesample.fragments.LanguageFragment;
 import com.iosix.eldblesample.fragments.RecapFragment;
-import com.iosix.eldblesample.interfaces.AlertDialogItemClickInterface;
 import com.iosix.eldblesample.models.MessageModel;
 import com.iosix.eldblesample.models.SendExampleModelData;
 import com.iosix.eldblesample.retrofit.APIInterface;
 import com.iosix.eldblesample.retrofit.ApiClient;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
+import com.iosix.eldblesample.services.foreground.ForegroundService;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
 import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
@@ -119,21 +116,15 @@ public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private Toolbar activity_main_toolbar;
-    private RecyclerViewLastAdapter lastAdapter;
-    private RecyclerView last_recycler_view;
-    private CustomLiveRulerChart customRulerChart;
     private CardView off, sb, dr, on;
     private ConstraintLayout visiblityViewCons;
-    private Button cancel, save;
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     private Switch nightModeSwitch;
     private int current_status = EnumsConstants.STATUS_OFF;
     private int last_status;
-    private String time = "" + Calendar.getInstance().getTime();
-    private String today = time.split(" ")[1] + " " + time.split(" ")[2];
-    private ChangeDateTimeBroadcast broadcast;
-    private IntentFilter intentFilter;
+    private final String time = "" + Calendar.getInstance().getTime();
+    private final String today = time.split(" ")[1] + " " + time.split(" ")[2];
     private ArrayList<LogEntity> truckStatusEntities;
-    private int howMuchDay;
     private APIInterface apiInterface;
 
     private double latitude;
@@ -143,13 +134,13 @@ public class MainActivity extends AppCompatActivity {
     private int updateSelection;
 
     private EldManager mEldManager;
-    private Set<EldBroadcastTypes> subscribedRecords = EnumSet.of(EldBroadcastTypes.ELD_BUFFER_RECORD, EldBroadcastTypes.ELD_CACHED_RECORD, EldBroadcastTypes.ELD_FUEL_RECORD, EldBroadcastTypes.ELD_DATA_RECORD, EldBroadcastTypes.ELD_DRIVER_BEHAVIOR_RECORD, EldBroadcastTypes.ELD_EMISSIONS_PARAMETERS_RECORD, EldBroadcastTypes.ELD_ENGINE_PARAMETERS_RECORD, EldBroadcastTypes.ELD_TRANSMISSION_PARAMETERS_RECORD);
+    private final Set<EldBroadcastTypes> subscribedRecords = EnumSet.of(EldBroadcastTypes.ELD_BUFFER_RECORD, EldBroadcastTypes.ELD_CACHED_RECORD, EldBroadcastTypes.ELD_FUEL_RECORD, EldBroadcastTypes.ELD_DATA_RECORD, EldBroadcastTypes.ELD_DRIVER_BEHAVIOR_RECORD, EldBroadcastTypes.ELD_EMISSIONS_PARAMETERS_RECORD, EldBroadcastTypes.ELD_ENGINE_PARAMETERS_RECORD, EldBroadcastTypes.ELD_TRANSMISSION_PARAMETERS_RECORD);
     private boolean diagnosticEnabled = false, fuelEnabled = false, engineEnabled = false, transmissionEnabled = false, emissionsEnabled = false, driverEnabled = false;
 
     private static final int REQUEST_BASE = 100;
     private static final int REQUEST_BT_ENABLE = REQUEST_BASE + 1;
 
-    private boolean exit = false;
+    private final boolean exit = false;
 
     boolean reqdelinprogress = false;
     int startseq, endseq;
@@ -165,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
     private DayDaoViewModel daoViewModel;
     private EldJsonViewModel jsonViewModel;
     private Menu optionMenu;
-    private ArrayList<String> daysArray = new ArrayList<>();
+    private final ArrayList<String> daysArray = new ArrayList<>();
 
     @SuppressLint({"VisibleForTests", "ResourceAsColor", "UseCompatLoadingForDrawables"})
     @Override
@@ -179,19 +170,19 @@ public class MainActivity extends AppCompatActivity {
         w.setStatusBarColor(R.color.colorPrimaryDark);
 
         setContentView(R.layout.activity_main);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 
 //        daoViewModel = (DayDaoViewModel) getIntent().getBundleExtra("bundle").getSerializable("dayDao");
 //        statusDaoViewModel = (StatusDaoViewModel) getIntent().getBundleExtra("bundle").getSerializable("statusDao");
         optimizeViewModels();
 
         drawerLayout = findViewById(R.id.drawer_layout);
-        last_recycler_view = findViewById(R.id.idRecyclerView);
-        customRulerChart = findViewById(R.id.idCustomLiveChart);
+        RecyclerView last_recycler_view = findViewById(R.id.idRecyclerView);
+        CustomLiveRulerChart customRulerChart = findViewById(R.id.idCustomLiveChart);
         customRulerChart.setArrayList(truckStatusEntities);
 
         //Last Days Recycler Adapter
-        lastAdapter = new RecyclerViewLastAdapter(this, daoViewModel, statusDaoViewModel);
+        RecyclerViewLastAdapter lastAdapter = new RecyclerViewLastAdapter(this, daoViewModel, statusDaoViewModel);
         last_recycler_view.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true));
         last_recycler_view.setAdapter(lastAdapter);
 
@@ -238,32 +229,29 @@ public class MainActivity extends AppCompatActivity {
         setActivateDr();
 
         openRecapFragment();
+
+        startService();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        ChangeDateTimeBroadcast changeDateTimeBroadcast = new ChangeDateTimeBroadcast() {
-            @Override
-            public void onDayChanged() {
-                setTodayAttr();
-            }
-        };
-
-        registerReceiver(changeDateTimeBroadcast, ChangeDateTimeBroadcast.getIntentFilter());
+//        ChangeDateTimeBroadcast changeDateTimeBroadcast = new ChangeDateTimeBroadcast() {
+//            @Override
+//            public void onDayChanged() {
+//                setTodayAttr();
+//            }
+//        };
+//
+//        registerReceiver(changeDateTimeBroadcast, ChangeDateTimeBroadcast.getIntentFilter());
     }
 
     public void setActivateDr() {
 
         Button activateDr = findViewById(R.id.idDRWithExeption);
 
-        activateDr.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAlertDialog();
-            }
-        });
+        activateDr.setOnClickListener(v -> showAlertDialog());
     }
 
     private void showAlertDialog() {
@@ -275,24 +263,8 @@ public class MainActivity extends AppCompatActivity {
         }
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
         alertDialog.setTitle("Activate DR with exception")
-                .setMultiChoiceItems(items, checked, new DialogInterface.OnMultiChoiceClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                        checked[which] = isChecked;
-                    }
-                })
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(MainActivity.this, "ok", Toast.LENGTH_SHORT).show();
-                    }
-                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(MainActivity.this, "cancel", Toast.LENGTH_SHORT).show();
-
-            }
-        });
+                .setMultiChoiceItems(items, checked, (dialog, which, isChecked) -> checked[which] = isChecked)
+                .setPositiveButton("Ok", (dialog, which) -> Toast.makeText(MainActivity.this, "ok", Toast.LENGTH_SHORT).show()).setNegativeButton("Cancel", (dialog, which) -> Toast.makeText(MainActivity.this, "cancel", Toast.LENGTH_SHORT).show());
         AlertDialog alert = alertDialog.create();
         alert.show();
 
@@ -301,70 +273,41 @@ public class MainActivity extends AppCompatActivity {
     private void openRecapFragment() {
 
         TextView recap = findViewById(R.id.idRecap);
-        recap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadLGDDFragmentForRecap(RecapFragment.newInstance());
-            }
-
-        });
+        recap.setOnClickListener(v -> loadLGDDFragmentForRecap(RecapFragment.newInstance()));
     }
 
 
     private void clickLGDDButtons() {
-        Button log, general, doc, dvir;
         TextView inspectionMode,addDvir;
+        Button log, general, doc, dvir, addDvirFragment;
         TextView recap = findViewById(R.id.idRecap);
         log = findViewById(R.id.idTableBtnLog);
         general = findViewById(R.id.idTableBtnGeneral);
+        addDvirFragment = findViewById(R.id.AddDvirFragment);
         doc = findViewById(R.id.idTableBtnDocs);
         dvir = findViewById(R.id.idTableBtnDVIR);
         inspectionMode = findViewById(R.id.idSpinnerInspection);
         addDvir = findViewById(R.id.idTableDvir);
 
-        log.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadLGDDFragment(LGDDFragment.newInstance(0, daoViewModel));
-            }
-        });
+        addDvirFragment.setOnClickListener(v -> loadLGDDFragment(AddDvirFragment.newInstance(daoViewModel)));
 
-        general.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadLGDDFragment(LGDDFragment.newInstance(1, daoViewModel));
-            }
-        });
+        log.setOnClickListener(v -> loadLGDDFragment(LGDDFragment.newInstance(0, daoViewModel)));
 
-        doc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadLGDDFragment(LGDDFragment.newInstance(2, daoViewModel));
-            }
-        });
+        general.setOnClickListener(v -> loadLGDDFragment(LGDDFragment.newInstance(1, daoViewModel)));
 
-        dvir.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadLGDDFragment(LGDDFragment.newInstance(3, daoViewModel));
-            }
-        });
+        doc.setOnClickListener(v -> loadLGDDFragment(LGDDFragment.newInstance(2, daoViewModel)));
 
-        recap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Clicked Recap", Toast.LENGTH_SHORT).show();
-                Log.d("RECAP", "onClick: ");
+        dvir.setOnClickListener(v -> loadLGDDFragment(LGDDFragment.newInstance(3, daoViewModel)));
+
+        recap.setOnClickListener(v -> {
+            Toast.makeText(MainActivity.this, "Clicked Recap", Toast.LENGTH_SHORT).show();
+            Log.d("RECAP", "onClick: ");
 //                toggleRightDrawer();
-            }
         });
 
-        inspectionMode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadLGDDFragment(InspectionModuleFragment.newInstance());
-                drawerLayout.close();
-            }
+        inspectionMode.setOnClickListener(v -> {
+            loadLGDDFragment(InspectionModuleFragment.newInstance());
+            drawerLayout.close();
         });
     }
 
@@ -394,24 +337,20 @@ public class MainActivity extends AppCompatActivity {
         truckStatusEntities = new ArrayList<>();
 
         statusDaoViewModel = ViewModelProviders.of(this).get(StatusDaoViewModel.class);
-        statusDaoViewModel.getmAllStatus().observe(this, new Observer<List<LogEntity>>() {
-            @Override
-            public void onChanged(List<LogEntity> truckStatusEntities) {
-                for (int i = 0; i < truckStatusEntities.size(); i++) {
+        statusDaoViewModel.getmAllStatus().observe(this, truckStatusEntities -> {
+            for (int i = 0; i < truckStatusEntities.size(); i++) {
 //                    Log.d("STATUS", "onChanged: " + truckStatusEntities.get(i).getFrom_status() + " " + truckStatusEntities.get(i).getTo_status() + "\n" + truckStatusEntities.get(i).getTime() + "\n" + truckStatusEntities.get(i).getSeconds());
-                    if (truckStatusEntities.get(i).getTime().equalsIgnoreCase(today)) {
-                        MainActivity.this.truckStatusEntities.add(truckStatusEntities.get(i));
-                    }
-                }
-
-                if (truckStatusEntities.size() != 0) {
-                    last_status = truckStatusEntities.get(truckStatusEntities.size() - 1).getTo_status();
-                    setTopLastPos(last_status);
-                } else {
-                    last_status = EnumsConstants.STATUS_OFF;
-                    setTopLastPos(last_status);
+                if (truckStatusEntities.get(i).getTime().equalsIgnoreCase(today)) {
+                    MainActivity.this.truckStatusEntities.add(truckStatusEntities.get(i));
                 }
             }
+
+            if(truckStatusEntities.size() != 0) {
+                last_status = truckStatusEntities.get(truckStatusEntities.size() - 1).getTo_status();
+            } else {
+                last_status = EnumsConstants.STATUS_OFF;
+            }
+            setTopLastPos(last_status);
         });
 
         long a = 0;
@@ -425,15 +364,12 @@ public class MainActivity extends AppCompatActivity {
         Log.d("_ID", "optimizeViewModels: " + a);
 
         daoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
-        daoViewModel.getMgetAllDays().observe(this, new Observer<List<DayEntity>>() {
-            @Override
-            public void onChanged(List<DayEntity> dayEntities) {
+        daoViewModel.getMgetAllDays().observe(this, dayEntities -> {
 //                for (int i = 0; i < dayEntities.size(); i++) {
 //                    Log.d("DAY", "onChanged: " + dayEntities.get(i).getDay() + " " + dayEntities.get(i).getDay_name() + " " + dayEntities.get(i).getId());
 //                }
 //                lastAdapter.setDayEntities(dayEntities);
 //                daoViewModel.insertDay(new DayEntity(today, ));
-            }
         });
 
     }
@@ -467,11 +403,7 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean checkPermission() {
         int result = ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (result == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        } else {
-            return false;
-        }
+        return result == PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestPermission() {
@@ -483,15 +415,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case 100:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.e("value", "Permission Granted, Now you can use local drive .");
-                } else {
-                    Log.e("value", "Permission Denied, You cannot use local drive .");
-                }
-                break;
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 100) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.e("value", "Permission Granted, Now you can use local drive .");
+            } else {
+                Log.e("value", "Permission Denied, You cannot use local drive .");
+            }
         }
     }
 
@@ -575,77 +505,65 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onClickVisiblityCanAndSaveBtn() {
-        save = findViewById(R.id.idVisButtonSave);
-        cancel = findViewById(R.id.idVisButtonCancel);
+        Button save = findViewById(R.id.idVisButtonSave);
+        Button cancel = findViewById(R.id.idVisButtonCancel);
         TextView findLocation = findViewById(R.id.idLoactionIcon);
         final EditText editLocation = findViewById(R.id.idLocationEdit);
         final EditText note = findViewById(R.id.idNoteEdit);
         sharedPreferences = getSharedPreferences(My_LAST_STATUS, Context.MODE_PRIVATE);
 
 
-        findLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (checkGrantResults(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, new int[]{1})) {
-                    Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
-                    if (latitude != 0 && longtitude != 0) {
-                        try {
-                            List<Address> addresses = geocoder.getFromLocation(latitude, longtitude, 1);
-                            Address obj = addresses.get(0);
-                            String add = obj.getCountryName();
-                            add = add + ", " + obj.getSubAdminArea();
+        findLocation.setOnClickListener(v -> {
+            if (checkGrantResults(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, new int[]{1})) {
+                Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
+                if (latitude != 0 && longtitude != 0) {
+                    try {
+                        List<Address> addresses = geocoder.getFromLocation(latitude, longtitude, 1);
+                        Address obj = addresses.get(0);
+                        String add = obj.getCountryName();
+                        add = add + ", " + obj.getSubAdminArea();
 
-                            editLocation.setText(add);
-                            editLocation.setClickable(false);
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                            Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Toast.makeText(MainActivity.this, "Failed to detect location", Toast.LENGTH_SHORT).show();
+                        editLocation.setText(add);
+                        editLocation.setClickable(false);
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+                    Toast.makeText(MainActivity.this, "Failed to detect location", Toast.LENGTH_SHORT).show();
                 }
-
+            } else {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
             }
+
         });
 
-        findViewById(R.id.idDocumentIcon).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("application/*");
-                startActivityForResult(intent, 0);
-            }
+        findViewById(R.id.idDocumentIcon).setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("application/*");
+            startActivityForResult(intent, 0);
         });
 
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                visiblityViewCons.setVisibility(View.GONE);
-                off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
-                sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
-                dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
-                on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
-            }
+        cancel.setOnClickListener(v -> {
+            visiblityViewCons.setVisibility(View.GONE);
+            off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
+            sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
+            dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
+            on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
         });
 
-        save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                visiblityViewCons.setVisibility(View.GONE);
-                off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
-                sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
-                dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
-                on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
-                if (current_status != last_status) {
-                    statusDaoViewModel.insertStatus(new LogEntity(last_status, current_status, editLocation.getText().toString(), note.getText().toString(), null, today, getCurrentSeconds()));
-                    saveLastPosition(current_status);
-                    saveLastStatusTime();
-                    restartActivity();
-                }
+        save.setOnClickListener(v -> {
+            visiblityViewCons.setVisibility(View.GONE);
+            off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
+            sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
+            dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
+            on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
+            if (current_status != last_status) {
+                statusDaoViewModel.insertStatus(new LogEntity(last_status, current_status, editLocation.getText().toString(), note.getText().toString(), null, today, getCurrentSeconds()));
+                saveLastPosition(current_status);
+                saveLastStatusTime();
+                restartActivity();
             }
         });
     }
@@ -681,52 +599,40 @@ public class MainActivity extends AppCompatActivity {
         on = findViewById(R.id.cardON);
         visiblityViewCons = findViewById(R.id.idVisibilityViewCons);
 
-        off.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                visiblityViewCons.setVisibility(View.VISIBLE);
-                off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFFBold));
-                sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
-                dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
-                on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
-                current_status = EnumsConstants.STATUS_OFF;
-            }
+        off.setOnClickListener(v -> {
+            visiblityViewCons.setVisibility(View.VISIBLE);
+            off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFFBold));
+            sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
+            dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
+            on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
+            current_status = EnumsConstants.STATUS_OFF;
         });
 
-        sb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                visiblityViewCons.setVisibility(View.VISIBLE);
-                off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
-                sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSBBold));
-                dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
-                on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
-                current_status = EnumsConstants.STATUS_SB;
-            }
+        sb.setOnClickListener(v -> {
+            visiblityViewCons.setVisibility(View.VISIBLE);
+            off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
+            sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSBBold));
+            dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
+            on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
+            current_status = EnumsConstants.STATUS_SB;
         });
 
-        dr.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                visiblityViewCons.setVisibility(View.VISIBLE);
-                off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
-                sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
-                dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDRBold));
-                on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
-                current_status = EnumsConstants.STATUS_DR;
-            }
+        dr.setOnClickListener(v -> {
+            visiblityViewCons.setVisibility(View.VISIBLE);
+            off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
+            sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
+            dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDRBold));
+            on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
+            current_status = EnumsConstants.STATUS_DR;
         });
 
-        on.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                visiblityViewCons.setVisibility(View.VISIBLE);
-                off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
-                sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
-                dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
-                on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusONBold));
-                current_status = EnumsConstants.STATUS_ON;
-            }
+        on.setOnClickListener(v -> {
+            visiblityViewCons.setVisibility(View.VISIBLE);
+            off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
+            sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
+            dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
+            on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusONBold));
+            current_status = EnumsConstants.STATUS_ON;
         });
     }
 
@@ -762,20 +668,16 @@ public class MainActivity extends AppCompatActivity {
             if (isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 saveNightModeState(true);
-                restartActivity();
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 saveNightModeState(false);
-                restartActivity();
             }
+            restartActivity();
         });
 
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadLGDDFragment(new LanguageFragment());
-                drawerLayout.closeDrawers();
-            }
+        textView.setOnClickListener(v -> {
+            loadLGDDFragment(new LanguageFragment());
+            drawerLayout.closeDrawers();
         });
     }
 
@@ -850,37 +752,31 @@ public class MainActivity extends AppCompatActivity {
         final SearchEldDeviceDialog searchEldDeviceDialog = new SearchEldDeviceDialog(this);
 
 
-        dialog.setAlerrtDialogItemClickInterface(new AlertDialogItemClickInterface() {
-            @Override
-            public void onClick() {
-                dialog.cancel();
+        dialog.setAlerrtDialogItemClickInterface(() -> {
+            dialog.cancel();
 
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
-                if (mEldManager.ScanForElds(bleScanCallback) == EldBleError.BLUETOOTH_NOT_ENABLED)
-                    mEldManager.EnableBluetooth(REQUEST_BT_ENABLE);
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+            if (mEldManager.ScanForElds(bleScanCallback) == EldBleError.BLUETOOTH_NOT_ENABLED)
+                mEldManager.EnableBluetooth(REQUEST_BT_ENABLE);
 
-                searchEldDeviceDialog.show();
-            }
+            searchEldDeviceDialog.show();
         });
     }
 
-    private EldDtcCallback dtcCallback = new EldDtcCallback() {
+    private final EldDtcCallback dtcCallback = new EldDtcCallback() {
         @Override
         public void onDtcDetected(final String status, final String jsonString) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+            runOnUiThread(() -> {
 //                    mDataView.append(status);
 //                    mDataView.append(jsonString);
 //                    EventBus.getDefault().postSticky(new MessageModel(status, jsonString));
-                    EventBus.getDefault().postSticky(new MessageModel(status, "EldDtcCallback"));
+                EventBus.getDefault().postSticky(new MessageModel(status, "EldDtcCallback"));
 //                    mScrollView.fullScroll(View.FOCUS_DOWN);
-                }
             });
         }
     };
 
-    private EldFirmwareUpdateCallback fwUpdateCallback = new EldFirmwareUpdateCallback() {
+    private final EldFirmwareUpdateCallback fwUpdateCallback = new EldFirmwareUpdateCallback() {
         @Override
         public void onUpdateNotification(final String status) {
             runOnUiThread(new Runnable() {
@@ -901,12 +797,9 @@ public class MainActivity extends AppCompatActivity {
         if (v.getId() == R.id.FW_CHECK) {
             final String Status = mEldManager.CheckFirmwareUpdate();
 
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+            runOnUiThread(() -> {
 //                    mStatusView.append("Current firmware: " + mEldManager.GetFirmwareVersion() + " Available firmware: " + mEldManager.CheckFirmwareUpdate() + "\r\n");
-                    EventBus.getDefault().postSticky(new MessageModel("Current firmware: " + mEldManager.GetFirmwareVersion() + " Available firmware: " + mEldManager.CheckFirmwareUpdate() + "\r\n", ""));
-                }
+                EventBus.getDefault().postSticky(new MessageModel("Current firmware: " + mEldManager.GetFirmwareVersion() + " Available firmware: " + mEldManager.CheckFirmwareUpdate() + "\r\n", ""));
             });
         }
     }
@@ -942,9 +835,9 @@ public class MainActivity extends AppCompatActivity {
             // get prompts.xml view
             LayoutInflater li = LayoutInflater.from(this);
             View promptsView = li.inflate(R.layout.update_popup, null);
-            final EditText downloadInput = (EditText) promptsView.findViewById(R.id.downloadInput);
-            final EditText localInput = (EditText) promptsView.findViewById(R.id.localInput);
-            final RadioGroup radioGroup = (RadioGroup) promptsView.findViewById(R.id.radiogroup);
+            final EditText downloadInput = promptsView.findViewById(R.id.downloadInput);
+            final EditText localInput = promptsView.findViewById(R.id.localInput);
+            final RadioGroup radioGroup = promptsView.findViewById(R.id.radiogroup);
 
             android.app.AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(this);
             alertDialogBuilder.setView(promptsView);
@@ -952,40 +845,32 @@ public class MainActivity extends AppCompatActivity {
             alertDialogBuilder
                     .setCancelable(true)
                     .setPositiveButton("START",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    if (updateSelection == 0) {
-                                        if (downloadInput.getText().toString().equals("")) {
-                                            mEldManager.StartUpdate(fwUpdateCallback, null);
-                                        } else if (downloadInput.getText().toString().toUpperCase().equals("FLASHERROR")) {
-                                            mEldManager.SendSpecialString("FLASHERROR");
-                                        } else {
-                                            mEldManager.StartUpdate(fwUpdateCallback, downloadInput.getText().toString());
-                                        }
+                            (dialog, id) -> {
+                                if (updateSelection == 0) {
+                                    if (downloadInput.getText().toString().equals("")) {
+                                        mEldManager.StartUpdate(fwUpdateCallback, null);
+                                    } else if (downloadInput.getText().toString().toUpperCase().equals("FLASHERROR")) {
+                                        mEldManager.SendSpecialString("FLASHERROR");
                                     } else {
-                                        mEldManager.StartUpdateLocal(fwUpdateCallback, localInput.getText().toString());
+                                        mEldManager.StartUpdate(fwUpdateCallback, downloadInput.getText().toString());
                                     }
+                                } else {
+                                    mEldManager.StartUpdateLocal(fwUpdateCallback, localInput.getText().toString());
                                 }
                             })
                     .setNegativeButton("Cancel",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
+                            (dialog, id) -> dialog.cancel());
 
-            radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                                                      public void onCheckedChanged(RadioGroup group, int checkedId) {
-                                                          switch (checkedId) {
-                                                              case R.id.downloadbutton:
-                                                                  updateSelection = 0;
-                                                                  break;
-                                                              case R.id.localbutton:
-                                                                  updateSelection = 1;
-                                                                  break;
-                                                          }
-                                                      }
-                                                  }
+            radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+                switch (checkedId) {
+                    case R.id.downloadbutton:
+                        updateSelection = 0;
+                        break;
+                    case R.id.localbutton:
+                        updateSelection = 1;
+                        break;
+                }
+            }
             );
 
             // create alert dialog
@@ -996,16 +881,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     public void onEnableParametersClicked(View v) {
         if (v.getId() == R.id.ENABLE_PARAM) {
             LayoutInflater li = LayoutInflater.from(this);
             View promptsView = li.inflate(R.layout.param_popup, null);
-            final Switch dtcSwitch = (Switch) promptsView.findViewById(R.id.diagnostics);
-            final Switch fuelSwitch = (Switch) promptsView.findViewById(R.id.fuel);
-            final Switch engineSwitch = (Switch) promptsView.findViewById(R.id.engine);
-            final Switch transmissionSwitch = (Switch) promptsView.findViewById(R.id.transmission);
-            final Switch emissionsSwitch = (Switch) promptsView.findViewById(R.id.emissions);
-            final Switch driverSwitch = (Switch) promptsView.findViewById(R.id.driver);
+            final Switch dtcSwitch = promptsView.findViewById(R.id.diagnostics);
+            final Switch fuelSwitch = promptsView.findViewById(R.id.fuel);
+            final Switch engineSwitch = promptsView.findViewById(R.id.engine);
+            final Switch transmissionSwitch = promptsView.findViewById(R.id.transmission);
+            final Switch emissionsSwitch = promptsView.findViewById(R.id.emissions);
+            final Switch driverSwitch = promptsView.findViewById(R.id.driver);
 
             dtcSwitch.setChecked(diagnosticEnabled);
             fuelSwitch.setChecked(fuelEnabled);
@@ -1020,149 +906,107 @@ public class MainActivity extends AppCompatActivity {
             alertDialogBuilder
                     .setCancelable(true)
                     .setPositiveButton("OK",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    if (dtcSwitch.isChecked() && !diagnosticEnabled) {
-                                        final EldBleError status = mEldManager.EnableAdditionalParameters(EldParameterTypes.DIAGNOSTIC_PARAMETERS);
-                                        subscribedRecords.add(EldBroadcastTypes.ELD_DIAGNOSTIC_RECORD);
-                                        diagnosticEnabled = true;
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                //todo mStatusView.append("EnableAdditionalParameters (" + status + ")\n");
-                                            }
-                                        });
-                                    } else if (!dtcSwitch.isChecked() && diagnosticEnabled) {
-                                        final EldBleError status = mEldManager.DisableAdditionalParameters(EldParameterTypes.DIAGNOSTIC_PARAMETERS);
-                                        subscribedRecords.remove(EldBroadcastTypes.ELD_DIAGNOSTIC_RECORD);
-                                        diagnosticEnabled = false;
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                //todo mStatusView.append("DisableAdditionalParameters (" + status + ")\n");
-                                            }
-                                        });
-                                    }
-
-                                    if (fuelSwitch.isChecked() && !fuelEnabled) {
-                                        final EldBleError status = mEldManager.EnableAdditionalParameters(EldParameterTypes.FUEL_PARAMETERS);
-                                        subscribedRecords.add(EldBroadcastTypes.ELD_FUEL_RECORD);
-                                        fuelEnabled = true;
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                //todo mStatusView.append("EnableAdditionalParameters (" + status + ")\n");
-                                            }
-                                        });
-                                    } else if (!fuelSwitch.isChecked() && fuelEnabled) {
-                                        final EldBleError status = mEldManager.DisableAdditionalParameters(EldParameterTypes.FUEL_PARAMETERS);
-                                        subscribedRecords.remove(EldBroadcastTypes.ELD_FUEL_RECORD);
-                                        fuelEnabled = false;
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                //todo mStatusView.append("DisableAdditionalParameters (" + status + ")\n");
-                                            }
-                                        });
-                                    }
-
-                                    if (engineSwitch.isChecked() && !engineEnabled) {
-                                        final EldBleError status = mEldManager.EnableAdditionalParameters(EldParameterTypes.ENGINE_PARAMETERS);
-                                        subscribedRecords.add(EldBroadcastTypes.ELD_ENGINE_PARAMETERS_RECORD);
-                                        engineEnabled = true;
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                //todo mStatusView.append("EnableAdditionalParameters (" + status + ")\n");
-                                            }
-                                        });
-                                    } else if (!engineSwitch.isChecked() && engineEnabled) {
-                                        final EldBleError status = mEldManager.DisableAdditionalParameters(EldParameterTypes.ENGINE_PARAMETERS);
-                                        subscribedRecords.remove(EldBroadcastTypes.ELD_ENGINE_PARAMETERS_RECORD);
-                                        engineEnabled = false;
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                //todo mStatusView.append("DisableAdditionalParameters (" + status + ")\n");
-                                            }
-                                        });
-                                    }
-
-                                    if (transmissionSwitch.isChecked() && !transmissionEnabled) {
-                                        final EldBleError status = mEldManager.EnableAdditionalParameters(EldParameterTypes.TRANSMISSION_PARAMETERS);
-                                        subscribedRecords.add(EldBroadcastTypes.ELD_TRANSMISSION_PARAMETERS_RECORD);
-                                        transmissionEnabled = true;
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                //todo mStatusView.append("EnableAdditionalParameters (" + status + ")\n");
-                                            }
-                                        });
-                                    } else if (!transmissionSwitch.isChecked() && transmissionEnabled) {
-                                        final EldBleError status = mEldManager.DisableAdditionalParameters(EldParameterTypes.TRANSMISSION_PARAMETERS);
-                                        subscribedRecords.remove(EldBroadcastTypes.ELD_TRANSMISSION_PARAMETERS_RECORD);
-                                        transmissionEnabled = false;
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                //todo mStatusView.append("DisableAdditionalParameters (" + status + ")\n");
-                                            }
-                                        });
-                                    }
-
-                                    if (emissionsSwitch.isChecked() && !emissionsEnabled) {
-                                        final EldBleError status = mEldManager.EnableAdditionalParameters(EldParameterTypes.EMISSIONS_PARAMETERS);
-                                        subscribedRecords.add(EldBroadcastTypes.ELD_EMISSIONS_PARAMETERS_RECORD);
-                                        emissionsEnabled = true;
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                //todo mStatusView.append("EnableAdditionalParameters (" + status + ")\n");
-                                            }
-                                        });
-                                    } else if (!emissionsSwitch.isChecked() && emissionsEnabled) {
-                                        final EldBleError status = mEldManager.DisableAdditionalParameters(EldParameterTypes.EMISSIONS_PARAMETERS);
-                                        subscribedRecords.remove(EldBroadcastTypes.ELD_EMISSIONS_PARAMETERS_RECORD);
-                                        emissionsEnabled = false;
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                //todo mStatusView.append("DisableAdditionalParameters (" + status + ")\n");
-                                            }
-                                        });
-                                    }
-
-                                    if (driverSwitch.isChecked() && !driverEnabled) {
-                                        final EldBleError status = mEldManager.EnableAdditionalParameters(EldParameterTypes.DRIVER_BEHAVIOR);
-                                        subscribedRecords.add(EldBroadcastTypes.ELD_DRIVER_BEHAVIOR_RECORD);
-                                        driverEnabled = true;
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                //todo mStatusView.append("EnableAdditionalParameters (" + status + ")\n");
-                                            }
-                                        });
-                                    } else if (!driverSwitch.isChecked() && driverEnabled) {
-                                        final EldBleError status = mEldManager.DisableAdditionalParameters(EldParameterTypes.DRIVER_BEHAVIOR);
-                                        subscribedRecords.remove(EldBroadcastTypes.ELD_DRIVER_BEHAVIOR_RECORD);
-                                        driverEnabled = false;
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                //todo mStatusView.append("DisableAdditionalParameters (" + status + ")\n");
-                                            }
-                                        });
-                                    }
-
-                                    mEldManager.UpdateSubscribedRecordTypes(subscribedRecords);
+                            (dialog, id) -> {
+                                if (dtcSwitch.isChecked() && !diagnosticEnabled) {
+                                    final EldBleError status = mEldManager.EnableAdditionalParameters(EldParameterTypes.DIAGNOSTIC_PARAMETERS);
+                                    subscribedRecords.add(EldBroadcastTypes.ELD_DIAGNOSTIC_RECORD);
+                                    diagnosticEnabled = true;
+                                    runOnUiThread(() -> {
+                                        //todo mStatusView.append("EnableAdditionalParameters (" + status + ")\n");
+                                    });
+                                } else if (!dtcSwitch.isChecked() && diagnosticEnabled) {
+                                    final EldBleError status = mEldManager.DisableAdditionalParameters(EldParameterTypes.DIAGNOSTIC_PARAMETERS);
+                                    subscribedRecords.remove(EldBroadcastTypes.ELD_DIAGNOSTIC_RECORD);
+                                    diagnosticEnabled = false;
+                                    runOnUiThread(() -> {
+                                        //todo mStatusView.append("DisableAdditionalParameters (" + status + ")\n");
+                                    });
                                 }
+
+                                if (fuelSwitch.isChecked() && !fuelEnabled) {
+                                    final EldBleError status = mEldManager.EnableAdditionalParameters(EldParameterTypes.FUEL_PARAMETERS);
+                                    subscribedRecords.add(EldBroadcastTypes.ELD_FUEL_RECORD);
+                                    fuelEnabled = true;
+                                    runOnUiThread(() -> {
+                                        //todo mStatusView.append("EnableAdditionalParameters (" + status + ")\n");
+                                    });
+                                } else if (!fuelSwitch.isChecked() && fuelEnabled) {
+                                    final EldBleError status = mEldManager.DisableAdditionalParameters(EldParameterTypes.FUEL_PARAMETERS);
+                                    subscribedRecords.remove(EldBroadcastTypes.ELD_FUEL_RECORD);
+                                    fuelEnabled = false;
+                                    runOnUiThread(() -> {
+                                        //todo mStatusView.append("DisableAdditionalParameters (" + status + ")\n");
+                                    });
+                                }
+
+                                if (engineSwitch.isChecked() && !engineEnabled) {
+                                    final EldBleError status = mEldManager.EnableAdditionalParameters(EldParameterTypes.ENGINE_PARAMETERS);
+                                    subscribedRecords.add(EldBroadcastTypes.ELD_ENGINE_PARAMETERS_RECORD);
+                                    engineEnabled = true;
+                                    runOnUiThread(() -> {
+                                        //todo mStatusView.append("EnableAdditionalParameters (" + status + ")\n");
+                                    });
+                                } else if (!engineSwitch.isChecked() && engineEnabled) {
+                                    final EldBleError status = mEldManager.DisableAdditionalParameters(EldParameterTypes.ENGINE_PARAMETERS);
+                                    subscribedRecords.remove(EldBroadcastTypes.ELD_ENGINE_PARAMETERS_RECORD);
+                                    engineEnabled = false;
+                                    runOnUiThread(() -> {
+                                        //todo mStatusView.append("DisableAdditionalParameters (" + status + ")\n");
+                                    });
+                                }
+
+                                if (transmissionSwitch.isChecked() && !transmissionEnabled) {
+                                    final EldBleError status = mEldManager.EnableAdditionalParameters(EldParameterTypes.TRANSMISSION_PARAMETERS);
+                                    subscribedRecords.add(EldBroadcastTypes.ELD_TRANSMISSION_PARAMETERS_RECORD);
+                                    transmissionEnabled = true;
+                                    runOnUiThread(() -> {
+                                        //todo mStatusView.append("EnableAdditionalParameters (" + status + ")\n");
+                                    });
+                                } else if (!transmissionSwitch.isChecked() && transmissionEnabled) {
+                                    final EldBleError status = mEldManager.DisableAdditionalParameters(EldParameterTypes.TRANSMISSION_PARAMETERS);
+                                    subscribedRecords.remove(EldBroadcastTypes.ELD_TRANSMISSION_PARAMETERS_RECORD);
+                                    transmissionEnabled = false;
+                                    runOnUiThread(() -> {
+                                        //todo mStatusView.append("DisableAdditionalParameters (" + status + ")\n");
+                                    });
+                                }
+
+                                if (emissionsSwitch.isChecked() && !emissionsEnabled) {
+                                    final EldBleError status = mEldManager.EnableAdditionalParameters(EldParameterTypes.EMISSIONS_PARAMETERS);
+                                    subscribedRecords.add(EldBroadcastTypes.ELD_EMISSIONS_PARAMETERS_RECORD);
+                                    emissionsEnabled = true;
+                                    runOnUiThread(() -> {
+                                        //todo mStatusView.append("EnableAdditionalParameters (" + status + ")\n");
+                                    });
+                                } else if (!emissionsSwitch.isChecked() && emissionsEnabled) {
+                                    final EldBleError status = mEldManager.DisableAdditionalParameters(EldParameterTypes.EMISSIONS_PARAMETERS);
+                                    subscribedRecords.remove(EldBroadcastTypes.ELD_EMISSIONS_PARAMETERS_RECORD);
+                                    emissionsEnabled = false;
+                                    runOnUiThread(() -> {
+                                        //todo mStatusView.append("DisableAdditionalParameters (" + status + ")\n");
+                                    });
+                                }
+
+                                if (driverSwitch.isChecked() && !driverEnabled) {
+                                    final EldBleError status = mEldManager.EnableAdditionalParameters(EldParameterTypes.DRIVER_BEHAVIOR);
+                                    subscribedRecords.add(EldBroadcastTypes.ELD_DRIVER_BEHAVIOR_RECORD);
+                                    driverEnabled = true;
+                                    runOnUiThread(() -> {
+                                        //todo mStatusView.append("EnableAdditionalParameters (" + status + ")\n");
+                                    });
+                                } else if (!driverSwitch.isChecked() && driverEnabled) {
+                                    final EldBleError status = mEldManager.DisableAdditionalParameters(EldParameterTypes.DRIVER_BEHAVIOR);
+                                    subscribedRecords.remove(EldBroadcastTypes.ELD_DRIVER_BEHAVIOR_RECORD);
+                                    driverEnabled = false;
+                                    runOnUiThread(() -> {
+                                        //todo mStatusView.append("DisableAdditionalParameters (" + status + ")\n");
+                                    });
+                                }
+
+                                mEldManager.UpdateSubscribedRecordTypes(subscribedRecords);
                             })
                     .setNegativeButton("Cancel",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
+                            (dialog, id) -> dialog.cancel());
 
             android.app.AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
@@ -1173,7 +1017,7 @@ public class MainActivity extends AppCompatActivity {
         if (v.getId() == R.id.SET_PERIOD) {
             LayoutInflater li = LayoutInflater.from(this);
             View promptsView = li.inflate(R.layout.period_popup, null);
-            final EditText periodInput = (EditText) promptsView.findViewById(R.id.periodinput);
+            final EditText periodInput = promptsView.findViewById(R.id.periodinput);
 
             android.app.AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(this);
             alertDialogBuilder.setView(promptsView);
@@ -1181,24 +1025,15 @@ public class MainActivity extends AppCompatActivity {
             alertDialogBuilder
                     .setCancelable(true)
                     .setPositiveButton("OK",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    int period = Integer.parseInt(periodInput.getText().toString()) * 1000;
-                                    final EldBleError status = mEldManager.SetRecordingInterval(period);
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            //todo mStatusView.append("Set Period Status (" + status + ")\n");
-                                        }
-                                    });
-                                }
+                            (dialog, id) -> {
+                                int period = Integer.parseInt(periodInput.getText().toString()) * 1000;
+                                final EldBleError status = mEldManager.SetRecordingInterval(period);
+                                runOnUiThread(() -> {
+                                    //todo mStatusView.append("Set Period Status (" + status + ")\n");
+                                });
                             })
                     .setNegativeButton("Cancel",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
+                            (dialog, id) -> dialog.cancel());
 
             android.app.AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
@@ -1208,11 +1043,8 @@ public class MainActivity extends AppCompatActivity {
     public void onReqRecordClicked(View v) {
         if (v.getId() == R.id.reqButton) {
             final EldBleError status = mEldManager.RequestRecord();
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    //todo mStatusView.append("ReqRecordStatus (" + status + ")\n");
-                }
+            runOnUiThread(() -> {
+                //todo mStatusView.append("ReqRecordStatus (" + status + ")\n");
             });
         }
     }
@@ -1255,11 +1087,8 @@ public class MainActivity extends AppCompatActivity {
     public void onDelRecordClicked(View v) {
         if (v.getId() == R.id.delButton) {
             final EldBleError status = mEldManager.DeleteRecord(startseq, startseq);
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    //todo mStatusView.append("DelRecordStatus (" + status + ")\n");
-                }
+            runOnUiThread(() -> {
+                //todo mStatusView.append("DelRecordStatus (" + status + ")\n");
             });
         }
     }
@@ -1268,7 +1097,7 @@ public class MainActivity extends AppCompatActivity {
         if (v.getId() == R.id.SET_ODO) {
             LayoutInflater li = LayoutInflater.from(this);
             View promptsView = li.inflate(R.layout.odo_popup, null);
-            final EditText odoInput = (EditText) promptsView.findViewById(R.id.odoinput);
+            final EditText odoInput = promptsView.findViewById(R.id.odoinput);
 
             android.app.AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(this);
             alertDialogBuilder.setView(promptsView);
@@ -1276,20 +1105,14 @@ public class MainActivity extends AppCompatActivity {
             alertDialogBuilder
                     .setCancelable(true)
                     .setPositiveButton("OK",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    int odo = Integer.parseInt(odoInput.getText().toString());
-                                    if (odo > 0) {
-                                        mEldManager.SetOdometer(odo);
-                                    }
+                            (dialog, id) -> {
+                                int odo = Integer.parseInt(odoInput.getText().toString());
+                                if (odo > 0) {
+                                    mEldManager.SetOdometer(odo);
                                 }
                             })
                     .setNegativeButton("Cancel",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
+                            (dialog, id) -> dialog.cancel());
 
             // create alert dialog
             android.app.AlertDialog alertDialog = alertDialogBuilder.create();
@@ -1304,7 +1127,7 @@ public class MainActivity extends AppCompatActivity {
             // get prompts.xml view
             LayoutInflater li = LayoutInflater.from(this);
             View promptsView = li.inflate(R.layout.time_popup, null);
-            final EditText timeInput = (EditText) promptsView.findViewById(R.id.timeinput);
+            final EditText timeInput = promptsView.findViewById(R.id.timeinput);
 
             android.app.AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(this);
             alertDialogBuilder.setView(promptsView);
@@ -1312,20 +1135,14 @@ public class MainActivity extends AppCompatActivity {
             alertDialogBuilder
                     .setCancelable(true)
                     .setPositiveButton("OK",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    int time = Integer.parseInt(timeInput.getText().toString());
-                                    if (time > 0) {
-                                        mEldManager.SetTime(time);
-                                    }
+                            (dialog, id) -> {
+                                int time = Integer.parseInt(timeInput.getText().toString());
+                                if (time > 0) {
+                                    mEldManager.SetTime(time);
                                 }
                             })
                     .setNegativeButton("Cancel",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
+                            (dialog, id) -> dialog.cancel());
 
             // create alert dialog
             AlertDialog alertDialog = alertDialogBuilder.create();
@@ -1378,29 +1195,60 @@ public class MainActivity extends AppCompatActivity {
         return granted == 2;
     }
 
-    private EldBleConnectionStateChangeCallback bleConnectionStateChangeCallback = new EldBleConnectionStateChangeCallback() {
+    private final EldBleConnectionStateChangeCallback bleConnectionStateChangeCallback = new EldBleConnectionStateChangeCallback() {
         @Override
         public void onConnectionStateChange(final int newState) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    //todo mDataView.append("New State of connection" + Integer.toString(newState, 10) + "\n");
-                    EventBus.getDefault().postSticky(new MessageModel("newState", "EldBleConnectionStateChangeCallback"));
-                }
+            runOnUiThread(() -> {
+                //todo mDataView.append("New State of connection" + Integer.toString(newState, 10) + "\n");
+                EventBus.getDefault().postSticky(new MessageModel("newState", "EldBleConnectionStateChangeCallback"));
             });
         }
     };
 
-    private EldBleDataCallback bleDataCallback = new EldBleDataCallback() {
+    private final EldBleDataCallback bleDataCallback = new EldBleDataCallback() {
         @Override
         public void OnDataRecord(final EldBroadcast dataRec, final EldBroadcastTypes RecordType) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+            runOnUiThread(() -> {
 
 //                    mDataView.append(dataRec.getBroadcastString().trim() + "\n");
+                EventBus.getDefault().postSticky(new MessageModel("", dataRec.getBroadcastString().trim() + "\n"));
+                EldCachedPeriodicRecord p = (EldCachedPeriodicRecord) (dataRec);
+
+                try {
+                    Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData(p.getEngineState(), p.getVin(), p.getRpm(), p.getSpeed(), p.getTripDistance(), p.getEngineHours(), p.getTripHours(), p.getVoltage(),
+                            Calendar.getInstance().getTime().toString(), p.getGpsDateTime(), p.getLatitude(), p.getLongitude(), p.getGpsSpeed(), p.getCourse(), p.getNumSats(), p.getMslAlt(), p.getDop(),
+                            p.getSequence(), p.getFirmwareVersion()));
+
+                    sendData.enqueue(new Callback<SendExampleModelData>() {
+                        @Override
+                        public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
+                            Log.d("JSON", "onResponse: " + response.body());
+                        }
+
+                        @Override
+                        public void onFailure(Call<SendExampleModelData> call, Throwable t) {
+                            Log.d("JSON", "onResponse: " + t.getMessage());
+                        }
+                    });
+                } catch (Exception e) {
+                    Toast.makeText(MainActivity.this, "1. " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+
+                if (RecordType == EldBroadcastTypes.ELD_DATA_RECORD) {
+//                        mDataView.append("RPM: " + Double.toString(((EldDataRecord) (dataRec)).getRpm()));
+//                        mDataView.append(" Satellites: " + Double.toString(((EldDataRecord) (dataRec)).getNumSats()));
+//                        mDataView.append(" Latitude: " + Double.toString(((EldDataRecord) (dataRec)).getLatitude()));
+//                        mDataView.append(" Longitude: " + Double.toString(((EldDataRecord) (dataRec)).getLongitude()));
+//                        mDataView.append(" Firmware: " + ((EldDataRecord) (dataRec)).getFirmwareVersion() + "\n");
+
+//                        EldCachedPeriodicRecord p = (EldCachedPeriodicRecord) (dataRec);
+//
+//                        Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData(p.getEngineState(), p.getVin(), p.getRpm(), p.getSpeed(), p.getTripDistance(), p.getEngineHours(), p.getTripHours(), p.getVoltage(),
+//                                Calendar.getInstance().getTime().toString(), p.getGpsDateTime(), p.getLatitude(), p.getLongitude(), p.getGpsSpeed(), p.getCourse(), p.getNumSats(), p.getMslAlt(), p.getDop(),
+//                                p.getSequence(), p.getFirmwareVersion()));
+
                     EventBus.getDefault().postSticky(new MessageModel("", dataRec.getBroadcastString().trim() + "\n"));
-                    EldCachedPeriodicRecord p = (EldCachedPeriodicRecord) (dataRec);
 
                     try {
                         Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData(p.getEngineState(), p.getVin(), p.getRpm(), p.getSpeed(), p.getTripDistance(), p.getEngineHours(), p.getTripHours(), p.getVoltage(),
@@ -1419,27 +1267,50 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
                     } catch (Exception e) {
-                        Toast.makeText(MainActivity.this, "1. " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, "2. " + e.getMessage(), Toast.LENGTH_LONG).show();
                     }
 
+                    latitude = ((EldDataRecord) dataRec).getLatitude();
+                    longtitude = ((EldDataRecord) dataRec).getLongitude();
 
-                    if (dataRec instanceof EldBufferRecord) {
-                        startseq = ((EldBufferRecord) dataRec).getStartSeqNo();
-                        endseq = ((EldBufferRecord) dataRec).getEndSeqNo();
-                    } else if (RecordType == EldBroadcastTypes.ELD_DATA_RECORD) {
-//                        mDataView.append("RPM: " + Double.toString(((EldDataRecord) (dataRec)).getRpm()));
-//                        mDataView.append(" Satellites: " + Double.toString(((EldDataRecord) (dataRec)).getNumSats()));
-//                        mDataView.append(" Latitude: " + Double.toString(((EldDataRecord) (dataRec)).getLatitude()));
-//                        mDataView.append(" Longitude: " + Double.toString(((EldDataRecord) (dataRec)).getLongitude()));
-//                        mDataView.append(" Firmware: " + ((EldDataRecord) (dataRec)).getFirmwareVersion() + "\n");
+                } else if (RecordType == EldBroadcastTypes.ELD_CACHED_RECORD) {
+                    //Shows how to get to the specific record types created based on the broadcast info
 
-//                        EldCachedPeriodicRecord p = (EldCachedPeriodicRecord) (dataRec);
-//
-//                        Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData(p.getEngineState(), p.getVin(), p.getRpm(), p.getSpeed(), p.getTripDistance(), p.getEngineHours(), p.getTripHours(), p.getVoltage(),
-//                                Calendar.getInstance().getTime().toString(), p.getGpsDateTime(), p.getLatitude(), p.getLongitude(), p.getGpsSpeed(), p.getCourse(), p.getNumSats(), p.getMslAlt(), p.getDop(),
-//                                p.getSequence(), p.getFirmwareVersion()));
+//                        mStatusView.append(dataRec.getBroadcastString());
+                    EventBus.getDefault().postSticky(new MessageModel(dataRec.getBroadcastString(), ""));
+                    EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback3"));
 
-                        EventBus.getDefault().postSticky(new MessageModel("", dataRec.getBroadcastString().trim() + "\n"));
+                    if (reqdelinprogress) {
+                        reccount++;
+                        Log.d("TESTING", "received " + reccount + " records");
+                        if (reccount == 10) {
+                            Log.d("TESTING", "delete " + startseq + "-" + (startseq + 9));
+                            mEldManager.DeleteRecord(startseq, startseq + 9);
+                            Log.d("TESTING", "request " + (startseq + 10));
+                            mEldManager.RequestRecord(startseq + 10);
+                        } else if (reccount == 11) {
+                            Log.d("TESTING", "success!");
+
+                            reqdelinprogress = false;
+                            reccount = 0;
+                        }
+                    }
+//todo: eld send data
+                    if (dataRec instanceof EldCachedPeriodicRecord) {
+
+
+                        Log.d("TESTING", "Engine State " + ((EldCachedPeriodicRecord) (dataRec)).getEngineState());
+                        Log.d("TESTING", "Odometer " + ((EldCachedPeriodicRecord) (dataRec)).getOdometer());
+                        Log.d("TESTING", "Vin " + ((EldCachedPeriodicRecord) (dataRec)).getVin());
+                        Log.d("TESTING", "Speed " + ((EldCachedPeriodicRecord) (dataRec)).getSpeed());
+                        Log.d("TESTING", "Trip Distance " + ((EldCachedPeriodicRecord) (dataRec)).getTripDistance());
+                        Log.d("TESTING", "Engine Hours " + ((EldCachedPeriodicRecord) (dataRec)).getEngineHours());
+                        Log.d("TESTING", "RPM " + ((EldCachedPeriodicRecord) (dataRec)).getRpm());
+                        Log.d("TESTING", "Satellites " + ((EldCachedPeriodicRecord) (dataRec)).getNumSats());
+                        Log.d("TESTING", "Lat " + ((EldCachedPeriodicRecord) (dataRec)).getLatitude());
+                        Log.d("TESTING", "Lon " + ((EldCachedPeriodicRecord) (dataRec)).getLongitude());
+                        Log.d("TESTING", "Unix Time " + ((EldCachedPeriodicRecord) (dataRec)).getUnixTime());
+                        Log.d("TESTING", "Sequence Number " + ((EldCachedPeriodicRecord) (dataRec)).getSeqNum());
 
                         try {
                             Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData(p.getEngineState(), p.getVin(), p.getRpm(), p.getSpeed(), p.getTripDistance(), p.getEngineHours(), p.getTripHours(), p.getVoltage(),
@@ -1458,83 +1329,21 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             });
                         } catch (Exception e) {
-                            Toast.makeText(MainActivity.this, "2. " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
+                        EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback4M"));
 
-                        latitude = ((EldDataRecord) dataRec).getLatitude();
-                        longtitude = ((EldDataRecord) dataRec).getLongitude();
+                        // mDataView.append("CACHED REC"+((EldCachedPeriodicRecord)(dataRec)).getBroadcastString());
 
-                    } else if (RecordType == EldBroadcastTypes.ELD_CACHED_RECORD) {
-                        //Shows how to get to the specific record types created based on the broadcast info
-
-//                        mStatusView.append(dataRec.getBroadcastString());
-                        EventBus.getDefault().postSticky(new MessageModel(dataRec.getBroadcastString(), ""));
-                        EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback3"));
-
-                        if (reqdelinprogress) {
-                            reccount++;
-                            Log.d("TESTING", "received " + reccount + " records");
-                            if (reccount == 10) {
-                                Log.d("TESTING", "delete " + startseq + "-" + (startseq + 9));
-                                mEldManager.DeleteRecord(startseq, startseq + 9);
-                                Log.d("TESTING", "request " + (startseq + 10));
-                                mEldManager.RequestRecord(startseq + 10);
-                            } else if (reccount == 11) {
-                                Log.d("TESTING", "success!");
-
-                                reqdelinprogress = false;
-                                reccount = 0;
-                            }
-                        }
-//todo: eld send data
-                        if (dataRec instanceof EldCachedPeriodicRecord) {
-
-
-                            Log.d("TESTING", "Engine State " + ((EldCachedPeriodicRecord) (dataRec)).getEngineState());
-                            Log.d("TESTING", "Odometer " + ((EldCachedPeriodicRecord) (dataRec)).getOdometer());
-                            Log.d("TESTING", "Vin " + ((EldCachedPeriodicRecord) (dataRec)).getVin());
-                            Log.d("TESTING", "Speed " + ((EldCachedPeriodicRecord) (dataRec)).getSpeed());
-                            Log.d("TESTING", "Trip Distance " + ((EldCachedPeriodicRecord) (dataRec)).getTripDistance());
-                            Log.d("TESTING", "Engine Hours " + ((EldCachedPeriodicRecord) (dataRec)).getEngineHours());
-                            Log.d("TESTING", "RPM " + ((EldCachedPeriodicRecord) (dataRec)).getRpm());
-                            Log.d("TESTING", "Satellites " + ((EldCachedPeriodicRecord) (dataRec)).getNumSats());
-                            Log.d("TESTING", "Lat " + ((EldCachedPeriodicRecord) (dataRec)).getLatitude());
-                            Log.d("TESTING", "Lon " + ((EldCachedPeriodicRecord) (dataRec)).getLongitude());
-                            Log.d("TESTING", "Unix Time " + ((EldCachedPeriodicRecord) (dataRec)).getUnixTime());
-                            Log.d("TESTING", "Sequence Number " + ((EldCachedPeriodicRecord) (dataRec)).getSeqNum());
-
-                            try {
-                                Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData(p.getEngineState(), p.getVin(), p.getRpm(), p.getSpeed(), p.getTripDistance(), p.getEngineHours(), p.getTripHours(), p.getVoltage(),
-                                        Calendar.getInstance().getTime().toString(), p.getGpsDateTime(), p.getLatitude(), p.getLongitude(), p.getGpsSpeed(), p.getCourse(), p.getNumSats(), p.getMslAlt(), p.getDop(),
-                                        p.getSequence(), p.getFirmwareVersion()));
-
-                                sendData.enqueue(new Callback<SendExampleModelData>() {
-                                    @Override
-                                    public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
-                                        Log.d("JSON", "onResponse: " + response.body());
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<SendExampleModelData> call, Throwable t) {
-                                        Log.d("JSON", "onResponse: " + t.getMessage());
-                                    }
-                                });
-                            } catch (Exception e) {
-                                Toast.makeText(MainActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                            EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback4M"));
-
-                            // mDataView.append("CACHED REC"+((EldCachedPeriodicRecord)(dataRec)).getBroadcastString());
-
-                        } else if (dataRec instanceof EldCachedNewTimeRecord) {
-                            ((EldCachedNewTimeRecord) (dataRec)).getEngineHours();
-                            ((EldCachedNewTimeRecord) (dataRec)).getNewUnixTime();
-                        } else if (dataRec instanceof EldCachedNewVinRecord) {
-                            Log.d("TESTING", "Vin " + ((EldCachedNewVinRecord) (dataRec)).getVin());
-                            Log.d("TESTING", "Odometer " + ((EldCachedNewVinRecord) (dataRec)).getOdometer());
-                            Log.d("TESTING", "Engine Hours " + ((EldCachedNewVinRecord) (dataRec)).getEngineHours());
-                            Log.d("TESTING", "Unix Time " + ((EldCachedNewVinRecord) (dataRec)).getUnixTime());
-                            Log.d("TESTING", "Sequence Number " + ((EldCachedNewVinRecord) (dataRec)).getSeqNum());
+                    } else if (dataRec instanceof EldCachedNewTimeRecord) {
+                        ((EldCachedNewTimeRecord) (dataRec)).getEngineHours();
+                        ((EldCachedNewTimeRecord) (dataRec)).getNewUnixTime();
+                    } else if (dataRec instanceof EldCachedNewVinRecord) {
+                        Log.d("TESTING", "Vin " + ((EldCachedNewVinRecord) (dataRec)).getVin());
+                        Log.d("TESTING", "Odometer " + ((EldCachedNewVinRecord) (dataRec)).getOdometer());
+                        Log.d("TESTING", "Engine Hours " + ((EldCachedNewVinRecord) (dataRec)).getEngineHours());
+                        Log.d("TESTING", "Unix Time " + ((EldCachedNewVinRecord) (dataRec)).getUnixTime());
+                        Log.d("TESTING", "Sequence Number " + ((EldCachedNewVinRecord) (dataRec)).getSeqNum());
 
 //                            EldCachedNewVinRecord p = (EldCachedNewVinRecord) (dataRec);
 
@@ -1544,33 +1353,33 @@ public class MainActivity extends AppCompatActivity {
 //                                    Calendar.getInstance().getTime().toString(), p.getGpsDateTime(), p.getLatitude(), p.getLongitude(), p.getGpsSpeed(), p.getCourse(), p.getNumSats(), p.getMslAlt(), p.getDop(),
 //                                    p.getSequence(), p.getFirmwareVersion()));
 
-                            try {
-                                Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData(p.getEngineState(), p.getVin(), p.getRpm(), p.getSpeed(), p.getTripDistance(), p.getEngineHours(), p.getTripHours(), p.getVoltage(),
-                                        Calendar.getInstance().getTime().toString(), p.getGpsDateTime(), p.getLatitude(), p.getLongitude(), p.getGpsSpeed(), p.getCourse(), p.getNumSats(), p.getMslAlt(), p.getDop(),
-                                        p.getSequence(), p.getFirmwareVersion()));
+                        try {
+                            Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData(p.getEngineState(), p.getVin(), p.getRpm(), p.getSpeed(), p.getTripDistance(), p.getEngineHours(), p.getTripHours(), p.getVoltage(),
+                                    Calendar.getInstance().getTime().toString(), p.getGpsDateTime(), p.getLatitude(), p.getLongitude(), p.getGpsSpeed(), p.getCourse(), p.getNumSats(), p.getMslAlt(), p.getDop(),
+                                    p.getSequence(), p.getFirmwareVersion()));
 
-                                sendData.enqueue(new Callback<SendExampleModelData>() {
-                                    @Override
-                                    public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
-                                        Log.d("JSON", "onResponse: " + response.body());
-                                    }
+                            sendData.enqueue(new Callback<SendExampleModelData>() {
+                                @Override
+                                public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
+                                    Log.d("JSON", "onResponse: " + response.body());
+                                }
 
-                                    @Override
-                                    public void onFailure(Call<SendExampleModelData> call, Throwable t) {
-                                        Log.d("JSON", "onResponse: " + t.getMessage());
-                                    }
-                                });
-                            } catch (Exception e) {
-                                Toast.makeText(MainActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
+                                @Override
+                                public void onFailure(Call<SendExampleModelData> call, Throwable t) {
+                                    Log.d("JSON", "onResponse: " + t.getMessage());
+                                }
+                            });
+                        } catch (Exception e) {
+                            Toast.makeText(MainActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
+                    }
 
-                    } else if (RecordType == EldBroadcastTypes.ELD_DRIVER_BEHAVIOR_RECORD) {
-                        EldDriverBehaviorRecord rec = (EldDriverBehaviorRecord) dataRec;
-                        driverEnabled = true;
-                        if (rec instanceof EldDriverBehaviorRecord) {
-                            ((EldDriverBehaviorRecord) (rec)).getAbsStatus();
-                            //((EldCachedPeriodicRecord)(rec)).getUnixTime();
+                } else if (RecordType == EldBroadcastTypes.ELD_DRIVER_BEHAVIOR_RECORD) {
+                    EldDriverBehaviorRecord rec = (EldDriverBehaviorRecord) dataRec;
+                    driverEnabled = true;
+                    if (rec instanceof EldDriverBehaviorRecord) {
+                        rec.getAbsStatus();
+                        //((EldCachedPeriodicRecord)(rec)).getUnixTime();
 
 //                            mStatusView.append("" + rec.getCruiseSetSpeed_kph() + " ");
 //                            mStatusView.append("" + rec.getCruiseStatus() + " ");
@@ -1585,13 +1394,13 @@ public class MainActivity extends AppCompatActivity {
 //                            mStatusView.append("" + rec.getBrakeSystemPressure_kpa() + " ");
 //                            mStatusView.append("\n");
 
-                            // mDataView.append("CACHED REC"+((EldCachedPeriodicRecord)(rec)).getBroadcastString());
-                            EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback6"));
+                        // mDataView.append("CACHED REC"+((EldCachedPeriodicRecord)(rec)).getBroadcastString());
+                        EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback6"));
 
-                        }
-                    } else if (RecordType == EldBroadcastTypes.ELD_ENGINE_PARAMETERS_RECORD) {
-                        EldEngineRecord rec = (EldEngineRecord) dataRec;
-                        engineEnabled = true;
+                    }
+                } else if (RecordType == EldBroadcastTypes.ELD_ENGINE_PARAMETERS_RECORD) {
+                    EldEngineRecord rec = (EldEngineRecord) dataRec;
+                    engineEnabled = true;
 
 //                        mStatusView.append("" + rec.getOilPressure_kpa() + " ");
 //                        mStatusView.append("" + rec.getTurboBoost_kpa() + " ");
@@ -1613,13 +1422,13 @@ public class MainActivity extends AppCompatActivity {
 //                        mStatusView.append("" + rec.getDrivingFuelEconomy_LPerKm() + " ");
 //                        mStatusView.append("\n");
 
-                        //mDataView.append("Engine Rec was sent" + ((EldEngineRecord) (rec)).getBroadcastString());
-                        EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback7"));
+                    //mDataView.append("Engine Rec was sent" + ((EldEngineRecord) (rec)).getBroadcastString());
+                    EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback7"));
 
 
-                    } else if (RecordType == EldBroadcastTypes.ELD_EMISSIONS_PARAMETERS_RECORD) {
-                        EldEmissionsRecord rec = (EldEmissionsRecord) dataRec;
-                        emissionsEnabled = true;
+                } else if (RecordType == EldBroadcastTypes.ELD_EMISSIONS_PARAMETERS_RECORD) {
+                    EldEmissionsRecord rec = (EldEmissionsRecord) dataRec;
+                    emissionsEnabled = true;
 
 //                        mStatusView.append("" + rec.getNOxInlet() + " ");
 //                        mStatusView.append("" + rec.getNOxOutlet() + " ");
@@ -1637,12 +1446,12 @@ public class MainActivity extends AppCompatActivity {
 //                        mStatusView.append("" + rec.getDefTankTemperature() + " ");
 //                        mStatusView.append("" + rec.getScrInducementFaultStatus() + " ");
 //                        mStatusView.append("\n");
-                        EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback8"));
+                    EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback8"));
 
 
-                    } else if (RecordType == EldBroadcastTypes.ELD_TRANSMISSION_PARAMETERS_RECORD) {
-                        EldTransmissionRecord rec = (EldTransmissionRecord) dataRec;
-                        transmissionEnabled = true;
+                } else if (RecordType == EldBroadcastTypes.ELD_TRANSMISSION_PARAMETERS_RECORD) {
+                    EldTransmissionRecord rec = (EldTransmissionRecord) dataRec;
+                    transmissionEnabled = true;
 
 //                        mStatusView.append("" + rec.getOutputShaftRpm() + " ");
 //                        mStatusView.append("" + rec.getGearStatus() + " ");
@@ -1651,11 +1460,11 @@ public class MainActivity extends AppCompatActivity {
 //                        mStatusView.append("" + rec.getTorqueConverterLockupStatus() + " ");
 //                        mStatusView.append("" + rec.getTorqueConverterOilOutletTemp_c() + " ");
 //                        mStatusView.append("\n");
-                        EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback9"));
+                    EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback9"));
 
-                    } else if (RecordType == EldBroadcastTypes.ELD_FUEL_RECORD) {
-                        EldFuelRecord rec = (EldFuelRecord) dataRec;
-                        fuelEnabled = true;
+                } else if (RecordType == EldBroadcastTypes.ELD_FUEL_RECORD) {
+                    EldFuelRecord rec = (EldFuelRecord) dataRec;
+                    fuelEnabled = true;
 
 //                        mStatusView.append("" + rec.getFuelLevelPercent() + " ");
 //                        mStatusView.append("" + rec.getFuelIntegratedLiters() + " ");
@@ -1670,19 +1479,18 @@ public class MainActivity extends AppCompatActivity {
 //                        mStatusView.append("" + rec.getStateEco() + " ");
 //                        mStatusView.append("" + rec.getStateAnticipate() + " ");
 //                        mStatusView.append("\n");
-                        EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback10"));
+                    EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback10"));
 
-                    } else if (RecordType == EldBroadcastTypes.ELD_DIAGNOSTIC_RECORD) {
-                        diagnosticEnabled = true;
-                    }
+                } else if (RecordType == EldBroadcastTypes.ELD_DIAGNOSTIC_RECORD) {
+                    diagnosticEnabled = true;
+                }
 
 //                    mScrollView.fullScroll(View.FOCUS_DOWN);
-                }
             });
         }
     };
 
-    private EldBleScanCallback bleScanCallback = new EldBleScanCallback() {
+    private final EldBleScanCallback bleScanCallback = new EldBleScanCallback() {
 
         @Override
         public void onScanResult(EldScanObject device) {
@@ -1692,33 +1500,24 @@ public class MainActivity extends AppCompatActivity {
             final String strDevice;
             if (device != null) {
                 strDevice = device.getDeviceId();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+                runOnUiThread(() -> {
 //                        mStatusView.append("ELD " + strDevice + " found, now connecting...\n");
-                        EventBus.getDefault().postSticky(new MessageModel("ELD " + strDevice + " found, now connecting...\n", ""));
-                    }
+                    EventBus.getDefault().postSticky(new MessageModel("ELD " + strDevice + " found, now connecting...\n", ""));
                 });
 
                 EldBleError res = mEldManager.ConnectToEld(bleDataCallback, subscribedRecords, bleConnectionStateChangeCallback);
 
                 if (res != EldBleError.SUCCESS) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
+                    runOnUiThread(() -> {
 //                            mStatusView.append("Connection Failed\n");
-                            EventBus.getDefault().postSticky(new MessageModel("Connection Failed\n", ""));
-                        }
+                        EventBus.getDefault().postSticky(new MessageModel("Connection Failed\n", ""));
                     });
                 }
 
             } else {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+                runOnUiThread(() -> {
 //                        mStatusView.append("No ELD found\n");
-                        EventBus.getDefault().postSticky(new MessageModel("No ELD found\n", ""));
-                    }
+                    EventBus.getDefault().postSticky(new MessageModel("No ELD found\n", ""));
                 });
             }
         }
@@ -1735,33 +1534,24 @@ public class MainActivity extends AppCompatActivity {
                 so = (EldScanObject) deviceList.get(0);
                 strDevice = so.getDeviceId();
                 MAC = strDevice;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+                runOnUiThread(() -> {
 //                        mStatusView.append("ELD " + strDevice + " found, now connecting...\n");
-                        EventBus.getDefault().postSticky(new MessageModel("ELD " + strDevice + " found, now connecting...\n", ""));
-                    }
+                    EventBus.getDefault().postSticky(new MessageModel("ELD " + strDevice + " found, now connecting...\n", ""));
                 });
 
                 EldBleError res = mEldManager.ConnectToEld(bleDataCallback, subscribedRecords, bleConnectionStateChangeCallback, strDevice);
 
                 if (res != EldBleError.SUCCESS) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
+                    runOnUiThread(() -> {
 //                            mStatusView.append("Connection Failed\n");
-                            EventBus.getDefault().postSticky(new MessageModel("Connection Failed\n", ""));
-                        }
+                        EventBus.getDefault().postSticky(new MessageModel("Connection Failed\n", ""));
                     });
                 }
 
             } else {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+                runOnUiThread(() -> {
 //                        mStatusView.append("No ELD found\n");
-                        EventBus.getDefault().postSticky(new MessageModel("No ELD found\n", ""));
-                    }
+                    EventBus.getDefault().postSticky(new MessageModel("No ELD found\n", ""));
                 });
             }
         }
@@ -1791,5 +1581,33 @@ public class MainActivity extends AppCompatActivity {
     private void ScanForEld() {
         if (mEldManager.ScanForElds(bleScanCallback) == EldBleError.BLUETOOTH_NOT_ENABLED)
             mEldManager.EnableBluetooth(REQUEST_BT_ENABLE);
+    }
+
+    /**
+     * Start service method
+     * "data" for sending data
+     */
+    public void startService(){
+        String data = "Service is running...";
+        Intent intent = new Intent(this, ForegroundService.class);
+        intent.putExtra("data", data);
+        startService(intent);
+
+        ChangeDateTimeBroadcast changeDateTimeBroadcast = new ChangeDateTimeBroadcast() {
+            @Override
+            public void onDayChanged() {
+                setTodayAttr();
+            }
+        };
+
+        registerReceiver(changeDateTimeBroadcast, ChangeDateTimeBroadcast.getIntentFilter());
+    }
+
+    /**
+     * Stop service method
+     */
+    public void stopService(){
+        Intent intent = new Intent(this, ForegroundService.class);
+        stopService(intent);
     }
 }

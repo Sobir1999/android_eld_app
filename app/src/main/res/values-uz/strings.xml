@@ -2,4 +2,6 @@
 <resources>
     <string name="app_name">FastLogz</string>
     <string name="off">Uz OFF</string>
+    <string name="content_description">Just Image</string>
+    <string name="defects">Defects</string>
 </resources>
