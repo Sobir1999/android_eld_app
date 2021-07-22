@@ -112,6 +112,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.iosix.eldblesample.utils.Utils.setBluetoothDataEnabled;
+import static com.iosix.eldblesample.utils.Utils.statusCheck;
+
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
@@ -180,6 +183,8 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView last_recycler_view = findViewById(R.id.idRecyclerView);
         CustomLiveRulerChart customRulerChart = findViewById(R.id.idCustomLiveChart);
         customRulerChart.setArrayList(truckStatusEntities);
+
+        setBluetoothDataEnabled(this);
 
         //Last Days Recycler Adapter
         RecyclerViewLastAdapter lastAdapter = new RecyclerViewLastAdapter(this, daoViewModel, statusDaoViewModel);
