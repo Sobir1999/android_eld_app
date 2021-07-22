@@ -4,4 +4,9 @@
     <string name="off">Uz OFF</string>
     <string name="content_description">Just Image</string>
     <string name="defects">Defects</string>
+    <string name="unit_defects">Unit Defects</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="bluetooth_not_work">Bluetooth is off</string>
+    <string name="you_want_to_turn_on">Do you want to turn on?</string>
 </resources>

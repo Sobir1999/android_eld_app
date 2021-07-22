@@ -6,6 +6,7 @@
 
     <uses-sdk tools:overrideLibrary="com.iosix.eldblelib" />
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
@@ -54,6 +55,7 @@
 
         <activity android:name=".activity.ForgotPasswordActivity" />
         <activity android:name=".activity.LoginActivity"/>
+        <activity android:name=".activity.AddDefectActivity"/>
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

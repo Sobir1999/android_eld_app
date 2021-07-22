@@ -13,7 +13,7 @@ import androidx.core.app.NotificationCompat;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.activity.MainActivity;
 
-import static com.iosix.eldblesample.MyApplication.CHANNEL_ID;
+import static com.iosix.eldblesample.utils.Constants.CHANNEL_ID;
 
 public class ForegroundService extends Service {
 

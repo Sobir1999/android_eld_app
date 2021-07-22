@@ -1,40 +1,45 @@
 package com.iosix.eldblesample.fragments;
 
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Observer;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.iosix.eldblesample.R;
-import com.iosix.eldblesample.SignatureFragment;
-import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
+import com.iosix.eldblesample.activity.AddDefectActivity;
 import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 
-import java.io.Serializable;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 
-import static com.iosix.eldblesample.R.id.idAddDvirNext;
+import static android.app.Activity.RESULT_OK;
 
 public class AddDvirFragment extends Fragment {
-    private TextView addUnit, units, addTrailer, trailers, nextText;
+    private TextView addUnit;
+    private TextView units;
+    private TextView addTrailer;
+    private TextView trailers;
+    private TextView defectsList;
+    private TextView notes;
     private ImageView backView;
+    private LinearLayout defects, addDefect;
     private AppBarLayout appBarLayout;
     private DayDaoViewModel daoViewModel;
 
@@ -42,7 +47,6 @@ public class AddDvirFragment extends Fragment {
         AddDvirFragment fragment = new AddDvirFragment();
         Bundle args = new Bundle();
         fragment.daoViewModel = dayDaoViewModel;
-//        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -50,10 +54,6 @@ public class AddDvirFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (getArguments() != null) {
-//            daoViewModel = (DayDaoViewModel) getArguments().getSerializable("ARG_PARAM1");
-////            mParam2 = getArguments().getString(ARG_PARAM2);
-//        }
     }
 
     @Override
@@ -66,41 +66,68 @@ public class AddDvirFragment extends Fragment {
         units = v.findViewById(R.id.idAddDvirUnitNumberText);
         addTrailer = v.findViewById(R.id.idAddDvirTrailerText);
         trailers = v.findViewById(R.id.idAddDvirTrailerNumberText);
+        trailers = v.findViewById(R.id.idAddDvirTrailerNumberText);
+        defectsList = v.findViewById(R.id.defectsList);
+        notes = v.findViewById(R.id.notes);
+        addDefect = v.findViewById(R.id.addDefect);
+        defects = v.findViewById(R.id.defects);
         backView = v.findViewById(R.id.idImageBack);
-        nextText = v.findViewById(R.id.idAddDvirNext);
+        TextView nextText = v.findViewById(R.id.idAddDvirNext);
         appBarLayout = v.findViewById(R.id.idAppbar);
 
 
-        daoViewModel.getGetAllVehicles().observe(getActivity(), dayEntities -> {
-            for (int i=0; i<dayEntities.size(); i++) {
+        daoViewModel.getGetAllVehicles().observe(requireActivity(), dayEntities -> {
+            for (int i = 0; i < dayEntities.size(); i++) {
                 Log.d("ADDDVIR", "onChanged: " + dayEntities.get(i).getName());
             }
         });
 
         buttonClicks(container);
 
-        nextText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadFragment(SignatureFragment.newInstance());
-                appBarLayout.setVisibility(View.GONE);
-            }
+        nextText.setOnClickListener(v1 -> {
+            loadFragment(new SignatureFragment());
+            appBarLayout.setVisibility(View.GONE);
         });
 
+        addDefect.setOnClickListener(v1 -> startActivityForResult(new Intent(requireContext(), AddDefectActivity.class), 100));
+        defects.setOnClickListener(v1 -> startActivityForResult(new Intent(requireContext(), AddDefectActivity.class), 100));
         return v;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        try {
+            super.onActivityResult(requestCode, resultCode, data);
+
+            if (requestCode == 100 && resultCode == RESULT_OK) {
+
+                addDefect.setVisibility(View.GONE);
+                defects.setVisibility(View.VISIBLE);
+
+                defectsList.setText(data.getStringExtra("defectsList"));
+                notes.setText(data.getStringExtra("notes"));
+
+                ArrayList<String> listB = data.getExtras().getStringArrayList("list");
+                Toast.makeText(requireActivity(), listB.toString(), Toast.LENGTH_SHORT).show();
+
+            } else {
+                Toast.makeText(requireContext(), "Not selected item", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception ex) {
+            Toast.makeText(requireContext(), ex.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     @SuppressWarnings("deprecation")
     private void buttonClicks(ViewGroup context) {
-        addUnit.setOnClickListener(v -> {
-            createDialog(context, "Add Unit", "Add Unit", 1);
-        });
+        addUnit.setOnClickListener(v -> createDialog(context, "Add Unit", "Add Unit", 1));
 
         units.setOnClickListener(v -> {
             AlertDialog.Builder builderSingle = new AlertDialog.Builder(getContext());
             builderSingle.setTitle("Select One Name:-");
 
-            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.select_dialog_singlechoice);
+            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.select_dialog_singlechoice);
             arrayAdapter.add("Hardik");
             arrayAdapter.add("Archit");
             arrayAdapter.add("Jignesh");
@@ -125,18 +152,19 @@ public class AddDvirFragment extends Fragment {
             builderSingle.show();
         });
 
-        addTrailer.setOnClickListener(v -> {
-            createDialog(context, "Add Trailer", "Add Trailer", 2);
-        });
+        addTrailer.setOnClickListener(v -> createDialog(context, "Add Trailer", "Add Trailer", 2));
 
         trailers.setOnClickListener(v -> {
 
         });
 
-        backView.setOnClickListener(v -> getFragmentManager().popBackStack());
+        backView.setOnClickListener(v -> {
+            assert getFragmentManager() != null;
+            getFragmentManager().popBackStack();
+        });
     }
 
-    private String createDialog(ViewGroup group, String title, String hint, int type) {
+    private void createDialog(ViewGroup group, String title, String hint, int type) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
         dialog.setTitle(title);
 
@@ -147,8 +175,6 @@ public class AddDvirFragment extends Fragment {
         dialog.setPositiveButton("Ok", (dialog12, which) -> {
             if (type == 1 && !editText.getText().toString().equalsIgnoreCase("")) {
                 daoViewModel.insertVehicle(new VehiclesEntity(editText.getText().toString()));
-            } else {
-
             }
         });
 
@@ -157,10 +183,10 @@ public class AddDvirFragment extends Fragment {
         dialog.setView(v);
         dialog.show();
 
-        return editText.getText().toString();
+//        editText.getText().toString().trim();
     }
 
-    private void loadFragment(Fragment fragment){
+    private void loadFragment(Fragment fragment) {
         FragmentManager fm = getFragmentManager();
         assert fm != null;
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
