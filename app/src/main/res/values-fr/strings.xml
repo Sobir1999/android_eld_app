@@ -3,4 +3,5 @@
     <string name="off">Fr OFF</string>
     <string name="content_description">Just Image</string>
     <string name="defects">Defects</string>
+    <string name="unit_defects">Unit Defects</string>
 </resources>

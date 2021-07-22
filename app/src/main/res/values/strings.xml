@@ -99,4 +99,5 @@
     <string name="use_previous_signature">Use previous signature</string>
     <string name="clear_signature">Clear signature</string>
     <string name="save_signature">SAVE</string>
+    <string name="unit_defects">Unit Defects</string>
 </resources>
