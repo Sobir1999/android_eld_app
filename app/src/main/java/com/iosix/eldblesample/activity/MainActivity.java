@@ -86,6 +86,7 @@ import com.iosix.eldblesample.fragments.InspectionModuleFragment;
 import com.iosix.eldblesample.fragments.LGDDFragment;
 import com.iosix.eldblesample.fragments.LanguageFragment;
 import com.iosix.eldblesample.fragments.RecapFragment;
+import com.iosix.eldblesample.interfaces.AlertDialogItemClickInterface;
 import com.iosix.eldblesample.models.MessageModel;
 import com.iosix.eldblesample.models.SendExampleModelData;
 import com.iosix.eldblesample.retrofit.APIInterface;

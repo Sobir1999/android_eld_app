@@ -173,14 +173,36 @@
             android:textStyle="bold"
             android:layout_marginStart="25dp"/>
 
-        <com.github.gcacace.signaturepad.views.SignaturePad
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="140dp"
             android:layout_marginHorizontal="25dp"
-            android:layout_marginTop="5dp"
-            android:id="@+id/idSignature"
-            app:penColor="@color/white"
-            android:background="@color/black" />
+            android:layout_marginTop="5dp">
+
+            <com.github.gcacace.signaturepad.views.SignaturePad
+                android:id="@+id/idSignature"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/add_defect_text_background"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:penColor="@color/black" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/draw_your_signature"
+                android:id="@+id/idTvDrawSignature"
+                android:textSize="15sp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:visibility="visible"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -196,8 +218,8 @@
                 android:text="@string/use_previous_signature"
                 android:textSize="14sp"
                 android:id="@+id/idTVPreviousSignature"
-                android:textColor="#0266B6"
-                android:textStyle="bold" />
+                android:textColor="@color/SignatureColorDefault"
+                />
 
             <TextView
                 android:layout_width="match_parent"
@@ -205,8 +227,7 @@
                 android:text="@string/clear_signature"
                 android:textSize="14sp"
                 android:id="@+id/idTVClearSignature"
-                android:textColor="#0266B6"
-                android:textStyle="bold"
+                android:textColor="@color/SignatureColorDefault"
                 android:gravity="end"/>
 
         </LinearLayout>
