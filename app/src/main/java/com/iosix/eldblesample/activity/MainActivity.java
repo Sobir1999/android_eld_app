@@ -22,6 +22,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -50,6 +51,7 @@ import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.iosix.eldblelib.EldBleConnectionStateChangeCallback;
@@ -115,9 +117,8 @@ import retrofit2.Response;
 
 import static com.iosix.eldblesample.MyApplication.userData;
 import static com.iosix.eldblesample.utils.Utils.setBluetoothDataEnabled;
-import static com.iosix.eldblesample.utils.Utils.statusCheck;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
 
     private DrawerLayout drawerLayout;
     private Toolbar activity_main_toolbar;
@@ -1601,11 +1602,23 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(changeDateTimeBroadcast, ChangeDateTimeBroadcast.getIntentFilter());
     }
 
-    /**
+    /**f
      * Stop service method
      */
     public void stopService(){
         Intent intent = new Intent(this, ForegroundService.class);
         stopService(intent);
+    }
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+       TextView addTime = findViewById(R.id.idDefectTimeText);
+        addTime.setText(timeString(hourOfDay) + ":" + timeString(minute));
+    }
+
+    private String timeString(int digit) {
+        String s = "" + digit;
+        if(s.length() == 1) s = "0" + s;
+        return s;
     }
 }

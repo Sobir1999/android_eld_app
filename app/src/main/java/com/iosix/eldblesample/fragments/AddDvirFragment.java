@@ -1,9 +1,11 @@
 package com.iosix.eldblesample.fragments;
 
 import android.app.AlertDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -17,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -31,12 +34,13 @@ import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
 
-public class AddDvirFragment extends Fragment {
+public class AddDvirFragment extends Fragment{
     private TextView addUnit;
     private TextView units;
     private TextView addTrailer;
     private TextView trailers;
     private TextView defectsList;
+    private TextView addTime;
     private TextView notes;
     private ImageView backView;
     private LinearLayout defects, addDefect;
@@ -59,7 +63,6 @@ public class AddDvirFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_add_dvir, container, false);
 
         addUnit = v.findViewById(R.id.idAddDvirUnitText);
@@ -68,6 +71,7 @@ public class AddDvirFragment extends Fragment {
         trailers = v.findViewById(R.id.idAddDvirTrailerNumberText);
         trailers = v.findViewById(R.id.idAddDvirTrailerNumberText);
         defectsList = v.findViewById(R.id.defectsList);
+        addTime = v.findViewById(R.id.idDefectTimeText);
         notes = v.findViewById(R.id.notes);
         addDefect = v.findViewById(R.id.addDefect);
         defects = v.findViewById(R.id.defects);
@@ -153,6 +157,11 @@ public class AddDvirFragment extends Fragment {
         });
 
         addTrailer.setOnClickListener(v -> createDialog(context, "Add Trailer", "Add Trailer", 2));
+
+        addTime.setOnClickListener(v->{
+            DialogFragment timeFragment = new TimePickerFragment();
+            timeFragment.show(getFragmentManager() != null ? getFragmentManager() : null, "time picker");
+        });
 
         trailers.setOnClickListener(v -> {
 
