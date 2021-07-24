@@ -15,17 +15,28 @@ public class UserData {
         userPref = _context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
 
-    public void saveLang(String _lang, int _id){
+    public Object getByKey(String key){
+        return userPref.getString(key,"");
+    }
+
+    public void saveLang(String lang){
         editor = userPref.edit();
-        editor.putString("lang", _lang);
-        editor.putInt("idLang", _id);
+        editor.putString("lang", lang);
         editor.apply();
+    }
+
+    public String getLang(){
+        return userPref.getString("lang","en");
     }
 
     public void saveMode(boolean isDark){
         editor = userPref.edit();
         editor.putBoolean("isDark", isDark);
         editor.apply();
+    }
+
+    public boolean getMode(){
+        return userPref.getBoolean("isDark",false);
     }
 
     public void saveUserData(String name, String surname){
