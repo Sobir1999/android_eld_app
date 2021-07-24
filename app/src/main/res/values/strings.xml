@@ -97,4 +97,7 @@
     <string name="use_previous_signature">Use previous signature</string>
     <string name="clear_signature">Clear signature</string>
     <string name="save_signature">SAVE</string>
+    <string name="send_email">Send Email</string>
+    <string name="email_address">Email address</string>
+    <string name="send">Send</string>
 </resources>

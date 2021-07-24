@@ -2,7 +2,9 @@ package com.iosix.eldblesample;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -38,6 +40,7 @@ public class SignatureFragment extends Fragment {
     private static String[] PERMISSIONS_STORAGE = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
     SignaturePad signature;
     TextView previousSignature,clearSignature,save;
+    private boolean hasSignature = false;
     private Context context;
 
     public SignatureFragment() {
@@ -75,12 +78,12 @@ public class SignatureFragment extends Fragment {
 
             @Override
             public void onSigned() {
-
+                hasSignature = true;
             }
 
             @Override
             public void onClear() {
-
+                hasSignature = false;
             }
         });
 
@@ -91,14 +94,37 @@ public class SignatureFragment extends Fragment {
             }
         });
 
+        previousSignature.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                signature.setSignatureBitmap();
+            }
+        });
+
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bitmap signatureBitmap = signature.getSignatureBitmap();
-                if (addJpgSignatureToGallery(signatureBitmap)){
-                    Toast.makeText(context, "Signature saved into the Gallery", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(context, "Unable to store the signature", Toast.LENGTH_SHORT).show();
+                String s = String.valueOf(hasSignature);
+                Log.d("SignatureFragment", s);
+                Bitmap signatureBitmap = signature.getTransparentSignatureBitmap();
+                if (hasSignature){
+                    if (addJpgSignatureToGallery(signatureBitmap)){
+                        Toast.makeText(context, "Signature saved into the Gallery", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Unable to store the signature", Toast.LENGTH_SHORT).show();
+                    }
+                }else {
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+                    alertDialog.setTitle("Signature missed")
+                            .setMessage("Sign or take your saved signatures")
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    alertDialog.setCancelable(true);
+                                }
+                            });
+                    AlertDialog alert = alertDialog.create();
+                    alert.show();
                 }
             }
         });

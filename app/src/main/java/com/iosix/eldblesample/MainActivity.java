@@ -87,6 +87,7 @@ import com.iosix.eldblesample.fragments.InspectionModuleFragment;
 import com.iosix.eldblesample.fragments.LGDDFragment;
 import com.iosix.eldblesample.fragments.LanguageFragment;
 import com.iosix.eldblesample.fragments.RecapFragment;
+import com.iosix.eldblesample.fragments.ShareFragment;
 import com.iosix.eldblesample.interfaces.AlertDialogItemClickInterface;
 import com.iosix.eldblesample.models.MessageModel;
 import com.iosix.eldblesample.models.SendExampleModelData;
@@ -742,7 +743,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.shareMenu:
-                Toast.makeText(this, "Share" + daysArray.size(), Toast.LENGTH_SHORT).show();
+                loadLGDDFragment(ShareFragment.newInstance());
                 return true;
             case R.id.connectMenu:
                 connectToEld();
