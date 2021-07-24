@@ -14,10 +14,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import static com.iosix.eldblesample.utils.Utils.setBluetoothDataEnabled;
+
 public abstract class ChangeDateTimeBroadcast extends BroadcastReceiver {
 
     private Date date = new Date();
-    private DateFormat dateFormat = new SimpleDateFormat("yyMMdd", Locale.getDefault());
+    private final DateFormat dateFormat = new SimpleDateFormat("yyMMdd", Locale.getDefault());
 
     public ChangeDateTimeBroadcast() {
     }
@@ -46,6 +48,7 @@ public abstract class ChangeDateTimeBroadcast extends BroadcastReceiver {
         }
         MediaPlayer mediaPlayer = MediaPlayer.create(context, Settings.System.DEFAULT_RINGTONE_URI);
         mediaPlayer.start();
+        setBluetoothDataEnabled(context);
         Log.d("BR", "onReceive: ChangedT");
     }
 

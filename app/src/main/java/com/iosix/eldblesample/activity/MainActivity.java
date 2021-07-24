@@ -22,6 +22,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -50,6 +51,7 @@ import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.iosix.eldblelib.EldBleConnectionStateChangeCallback;
@@ -92,6 +94,7 @@ import com.iosix.eldblesample.retrofit.ApiClient;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 import com.iosix.eldblesample.services.foreground.ForegroundService;
+import com.iosix.eldblesample.shared_prefs.UserData;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
 import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
@@ -113,10 +116,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.iosix.eldblesample.MyApplication.userData;
 import static com.iosix.eldblesample.utils.Utils.setBluetoothDataEnabled;
-import static com.iosix.eldblesample.utils.Utils.statusCheck;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
 
     private DrawerLayout drawerLayout;
     private Toolbar activity_main_toolbar;
@@ -154,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
     public static final String Key_ISNIGHTMODE = "isNightMODE";
     public static final String My_LAST_STATUS = "myLastStatus";
     public static final String My_LAST_STATUS_KEY = "myLastStatusKey";
-    private SharedPreferences sharedPreferences;
 
     private StatusDaoViewModel statusDaoViewModel;
     private DayDaoViewModel daoViewModel;
@@ -516,8 +518,6 @@ public class MainActivity extends AppCompatActivity {
         TextView findLocation = findViewById(R.id.idLoactionIcon);
         final EditText editLocation = findViewById(R.id.idLocationEdit);
         final EditText note = findViewById(R.id.idNoteEdit);
-        sharedPreferences = getSharedPreferences(My_LAST_STATUS, Context.MODE_PRIVATE);
-
 
         findLocation.setOnClickListener(v -> {
             if (checkGrantResults(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, new int[]{1})) {
@@ -553,18 +553,18 @@ public class MainActivity extends AppCompatActivity {
 
         cancel.setOnClickListener(v -> {
             visiblityViewCons.setVisibility(View.GONE);
-            off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
-            sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
-            dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
-            on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
+            off.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusOFF));
+            sb.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSB));
+            dr.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDR));
+            on.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusON));
         });
 
         save.setOnClickListener(v -> {
             visiblityViewCons.setVisibility(View.GONE);
-            off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
-            sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
-            dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
-            on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
+            off.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusOFF));
+            sb.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSB));
+            dr.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDR));
+            on.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusON));
             if (current_status != last_status) {
                 statusDaoViewModel.insertStatus(new LogEntity(last_status, current_status, editLocation.getText().toString(), note.getText().toString(), null, today, getCurrentSeconds()));
                 saveLastPosition(current_status);
@@ -581,19 +581,19 @@ public class MainActivity extends AppCompatActivity {
         TextView statusTime = findViewById(R.id.idStatusTime);
 
         if (lastPos == EnumsConstants.STATUS_ON) {
-            cardView.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
+            cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusON));
             statusText.setText(R.string.on);
             icon.setImageResource(R.drawable.power);
         } else if (lastPos == EnumsConstants.STATUS_SB) {
-            cardView.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
+            cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSB));
             statusText.setText(R.string.sb);
             icon.setImageResource(R.drawable.sleeping);
         } else if (lastPos == EnumsConstants.STATUS_DR) {
-            cardView.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
+            cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDR));
             statusText.setText(R.string.dr);
             icon.setImageResource(R.drawable.driving);
         } else {
-            cardView.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
+            cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusOFF));
             statusText.setText(R.string.off);
         }
     }
@@ -607,37 +607,37 @@ public class MainActivity extends AppCompatActivity {
 
         off.setOnClickListener(v -> {
             visiblityViewCons.setVisibility(View.VISIBLE);
-            off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFFBold));
-            sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
-            dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
-            on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
+            off.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusOFFBold));
+            sb.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSB));
+            dr.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDR));
+            on.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusON));
             current_status = EnumsConstants.STATUS_OFF;
         });
 
         sb.setOnClickListener(v -> {
             visiblityViewCons.setVisibility(View.VISIBLE);
-            off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
-            sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSBBold));
-            dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
-            on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
+            off.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusOFF));
+            sb.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSBBold));
+            dr.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDR));
+            on.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusON));
             current_status = EnumsConstants.STATUS_SB;
         });
 
         dr.setOnClickListener(v -> {
             visiblityViewCons.setVisibility(View.VISIBLE);
-            off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
-            sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
-            dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDRBold));
-            on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
+            off.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusOFF));
+            sb.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSB));
+            dr.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDRBold));
+            on.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusON));
             current_status = EnumsConstants.STATUS_DR;
         });
 
         on.setOnClickListener(v -> {
             visiblityViewCons.setVisibility(View.VISIBLE);
-            off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
-            sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
-            dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
-            on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusONBold));
+            off.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusOFF));
+            sb.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSB));
+            dr.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDR));
+            on.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusONBold));
             current_status = EnumsConstants.STATUS_ON;
         });
     }
@@ -665,7 +665,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getDrawerTouchEvent() {
-        sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         nightModeSwitch = findViewById(R.id.idNightChoose);
         TextView textView = findViewById(R.id.idSpinnerLanguage);
 
@@ -673,10 +672,10 @@ public class MainActivity extends AppCompatActivity {
         nightModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                saveNightModeState(true);
+                userData.saveMode(true);
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                saveNightModeState(false);
+                userData.saveMode(false);
             }
             restartActivity();
         });
@@ -687,14 +686,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void saveNightModeState(boolean nightMode) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(Key_ISNIGHTMODE, nightMode);
-        editor.apply();
-    }
-
     private void checkNightModeActivated() {
-        if (sharedPreferences.getBoolean(Key_ISNIGHTMODE, false)) {
+        if (userData.getMode()) {
             nightModeSwitch.setChecked(true);
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {
@@ -833,6 +826,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("NonConstantResourceId")
     public void onUpdateFwClicked(View v) {
         if (v.getId() == R.id.updateFw) {
 
@@ -1609,11 +1603,23 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(changeDateTimeBroadcast, ChangeDateTimeBroadcast.getIntentFilter());
     }
 
-    /**
+    /**f
      * Stop service method
      */
     public void stopService(){
         Intent intent = new Intent(this, ForegroundService.class);
         stopService(intent);
+    }
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+       TextView addTime = findViewById(R.id.idDefectTimeText);
+        addTime.setText(timeString(hourOfDay) + ":" + timeString(minute));
+    }
+
+    private String timeString(int digit) {
+        String s = "" + digit;
+        if(s.length() == 1) s = "0" + s;
+        return s;
     }
 }
