@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import com.iosix.eldblesample.MainActivity;
 import com.iosix.eldblesample.R;
 
 public class InspectionModuleFragment extends Fragment {

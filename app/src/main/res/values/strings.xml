@@ -90,6 +90,8 @@
     <string name="selected_trailers">Selected trailers</string>
     <string name="location">Location</string>
     <string name="no_defect_detected">No defect detected</string>
+    <string name="content_description">Just Image</string>
+    <string name="defects">Defects</string>
     <string name="driver_singature">Driver Singature</string>
     <string name="no_defects">No defects</string>
     <string name="above_defects_need_to_be_corrected">Above defects need to be corrected</string>
@@ -100,4 +102,9 @@
     <string name="send_email">Send Email</string>
     <string name="email_address">Email address</string>
     <string name="send">Send</string>
+    <string name="unit_defects">Unit Defects</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="bluetooth_not_work">Bluetooth is off</string>
+    <string name="you_want_to_turn_on">Do you want to turn on?</string>
 </resources>

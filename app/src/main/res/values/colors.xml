@@ -13,6 +13,7 @@
     <color name="colorStatusDR">#B4E380</color>
     <color name="colorStatusDRBold">#90BC5E</color>
     <color name="colorStatusON">#5CACEC</color>
+    <color name="textSelected">#665CACEC</color>
     <color name="colorStatusONBold">#3A88C6</color>
 
     <color name="colorActionText">#61CFDD</color>

@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="#fff"
     android:id="@+id/fragment_container_add_dvir"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#eee">
 
     <com.google.android.material.appbar.AppBarLayout
-        style="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:id="@+id/idAppbar"
+        style="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:ignore="MissingConstraints">
@@ -29,6 +28,7 @@
                     android:id="@+id/idImageBack"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/content_description"
                     android:src="@drawable/fragment_back"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
@@ -36,231 +36,277 @@
 
                 <TextView
                     android:id="@+id/idTextFrag"
+                    style="@style/TextAppearance.AppCompat.Large"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/create_edit_dvir"
                     android:textColor="#fff"
                     android:textStyle="bold"
-                    style="@style/TextAppearance.AppCompat.Large"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
-                        android:id="@+id/idAddDvirNext"
-                        android:text="@string/next"
-                        android:textColor="#fff"
-                        style="@style/TextAppearance.AppCompat.Medium"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/idAddDvirNext"
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/next"
+                    android:textColor="#fff"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
     <ScrollView
-        app:layout_constraintTop_toBottomOf="@id/idAppbar"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/idAppbar"
         tools:ignore="MissingConstraints">
 
         <LinearLayout
-            android:padding="16dp"
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
             tools:ignore="MissingConstraints">
 
             <androidx.cardview.widget.CardView
-                app:cardBackgroundColor="@color/colorBackgroundMainView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/white">
 
                 <LinearLayout
-                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/idAddDvirUnitText"
-                        android:text="@string/unit"
-                        android:gravity="center_vertical"
-                        android:drawablePadding="10dp"
-                        android:padding="10dp"
                         style="@style/TextAppearance.AppCompat.Medium"
-                        android:textStyle="bold"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:drawablePadding="10dp"
+                        android:gravity="center_vertical"
+                        android:padding="10dp"
+                        android:text="@string/unit"
+                        android:textStyle="bold"
                         app:drawableEndCompat="@drawable/add_unit"
                         app:drawableStartCompat="@drawable/driving" />
 
                     <View
-                        android:layout_marginVertical="10dp"
-                        android:background="@color/design_default_color_primary"
                         android:layout_width="match_parent"
-                        android:layout_height="2dp" />
+                        android:layout_height="2dp"
+                        android:layout_marginVertical="10dp"
+                        android:background="#eee" />
 
                     <TextView
                         android:id="@+id/idAddDvirUnitNumberText"
-                        android:text="2412"
-                        android:gravity="center_vertical"
-                        android:drawablePadding="10dp"
-                        android:padding="10dp"
                         style="@style/TextAppearance.AppCompat"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:drawableEndCompat="@drawable/keyboard_bottom_arrow"/>
+                        android:drawablePadding="10dp"
+                        android:gravity="center_vertical"
+                        android:padding="10dp"
+                        android:text="2412"
+                        app:drawableEndCompat="@drawable/keyboard_bottom_arrow" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
-                android:layout_marginTop="20dp"
-                app:cardBackgroundColor="@color/colorBackgroundMainView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:cardBackgroundColor="#fff">
 
                 <LinearLayout
-                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/idAddDvirTrailerText"
-                        android:text="@string/trailers"
-                        android:gravity="center_vertical"
-                        android:drawablePadding="10dp"
-                        android:padding="10dp"
                         style="@style/TextAppearance.AppCompat.Medium"
-                        android:textStyle="bold"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:drawablePadding="10dp"
+                        android:gravity="center_vertical"
+                        android:padding="10dp"
+                        android:text="@string/trailers"
+                        android:textStyle="bold"
                         app:drawableEndCompat="@drawable/add_unit"
                         app:drawableStartCompat="@drawable/driving" />
 
                     <View
-                        android:layout_marginVertical="10dp"
-                        android:background="@color/design_default_color_primary"
                         android:layout_width="match_parent"
-                        android:layout_height="2dp" />
+                        android:layout_height="2dp"
+                        android:layout_marginVertical="10dp"
+                        android:background="#eee" />
 
                     <TextView
                         android:id="@+id/idAddDvirTrailerNumberText"
-                        android:text="Select trailers"
-                        android:gravity="center_vertical"
-                        android:drawablePadding="10dp"
-                        android:padding="10dp"
                         style="@style/TextAppearance.AppCompat"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:drawableEndCompat="@drawable/keyboard_bottom_arrow"/>
+                        android:drawablePadding="10dp"
+                        android:gravity="center_vertical"
+                        android:padding="10dp"
+                        android:text="Select trailers"
+                        app:drawableEndCompat="@drawable/keyboard_bottom_arrow" />
 
                     <View
-                        android:background="@color/design_default_color_primary"
-                        android:layout_marginVertical="5dp"
-                        android:layout_marginHorizontal="10dp"
                         android:layout_width="wrap_content"
-                        android:layout_height="2dp" />
+                        android:layout_height="2dp"
+                        android:layout_marginHorizontal="10dp"
+                        android:layout_marginVertical="5dp"
+                        android:background="#eee" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/idTrailersRecyclerView"
-                        android:layout_marginHorizontal="10dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                    <TextView
-                        android:id="@+id/idDefectNoText"
-                        android:text="@string/no_defect_detected"
-                        android:layout_margin="15dp"
-                        android:gravity="center_vertical"
-                        android:drawablePadding="10dp"
-                        style="@style/TextAppearance.AppCompat.Medium"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:drawableStartCompat="@drawable/defect_settings" />
+                        android:layout_marginHorizontal="10dp" />
 
-                    <TextView
-                        android:id="@+id/idAddDefectText"
-                        style="@style/TextAppearance.AppCompat.Large"
+                    <LinearLayout
+                        android:id="@+id/addDefect"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:background="@drawable/add_defect_text_background"
-                        android:gravity="center"
-                        android:text="@string/click_here_to_add_defects"
-                        android:textColor="@color/design_default_color_primary" />
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:padding="10dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:orientation="vertical">
 
                         <TextView
-                            android:text="@string/time"
-                            style="@style/TextAppearance.AppCompat.Small"
-                            android:textStyle="bold"
+                            style="@style/TextAppearance.AppCompat.Medium"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:drawablePadding="10dp"
+                            android:drawableTint="#aaa"
+                            android:gravity="center_vertical"
+                            android:text="@string/no_defect_detected"
+                            app:drawableStartCompat="@drawable/defect_settings" />
+
+                        <TextView
+                            style="@style/TextAppearance.AppCompat.Large"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:background="@drawable/add_defect_text_background"
+                            android:gravity="center"
+                            android:text="@string/click_here_to_add_defects"
+                            android:textColor="#0976CD" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/defects"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="10dp"
+                        android:visibility="gone">
+
+                        <TextView
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:text="@string/unit_defects"
+                            android:textColor="@color/black"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/defectsList"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dual_vertical_margin"
+                            android:textColor="@color/black" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/activity_vertical_margin"
+                            android:text="@string/notes"
+                            android:textColor="@color/black"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/notes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dual_vertical_margin"
+                            android:textColor="@color/black" />
+
+                    </LinearLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp">
+
+                        <TextView
+                            style="@style/TextAppearance.AppCompat.Small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/time"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/idDefectTimeText"
-                            app:layout_constraintRight_toRightOf="parent"
-                            android:text="05:05 AM CDT"
-                            app:layout_constraintTop_toTopOf="parent"
-                            android:textColor="@color/design_default_color_primary_dark"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            app:drawableEndCompat="@drawable/keyboard_bottom_arrow" />
+                            android:text="05:05 AM CDT"
+                            android:textColor="#eee"
+                            app:drawableEndCompat="@drawable/keyboard_bottom_arrow"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <View
-                        android:layout_marginHorizontal="10dp"
-                        android:background="@color/design_default_color_primary_dark"
                         android:layout_width="match_parent"
-                        android:layout_height="2dp" />
+                        android:layout_height="2dp"
+                        android:layout_marginHorizontal="10dp"
+                        android:background="#eee" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
-                        android:padding="10dp"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:padding="10dp">
 
                         <TextView
                             android:id="@+id/idLocationT"
+                            style="@style/TextAppearance.AppCompat.Small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:text="Location"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintRight_toLeftOf="@id/idDefectLocationEdit"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            style="@style/TextAppearance.AppCompat.Small"
-                            android:textStyle="bold"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <EditText
                             android:id="@+id/idDefectLocationEdit"
-                            app:layout_constraintRight_toRightOf="parent"
-                            android:hint="Your Location"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintLeft_toRightOf="@id/idLocationT"
-                            android:textAlignment="viewEnd"
-                            android:background="@android:color/transparent"
-                            android:textColor="@color/design_default_color_primary_dark"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            app:drawableEndCompat="@drawable/ic_baseline_location_on_24" />
+                            android:background="@android:color/transparent"
+                            android:hint="Your Location"
+                            android:inputType="text"
+                            android:textAlignment="viewEnd"
+                            android:textColor="@color/design_default_color_primary_dark"
+                            app:drawableEndCompat="@drawable/ic_baseline_location_on_24"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintLeft_toRightOf="@id/idLocationT"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <View
                         android:id="@+id/idview"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
                         android:layout_marginHorizontal="10dp"
                         android:layout_marginBottom="10dp"
-                        android:background="@color/design_default_color_primary_dark"
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp" />
+                        android:background="#eee" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
         </LinearLayout>

@@ -1,4 +1,4 @@
-package com.iosix.eldblesample;
+package com.iosix.eldblesample.fragments;
 
 import android.Manifest;
 import android.app.Activity;
@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -27,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
+import com.iosix.eldblesample.R;
 
 import java.io.File;
 import java.io.FileOutputStream;

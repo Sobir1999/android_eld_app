@@ -4,10 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".SignatureFragment"
+    tools:context=".fragments.SignatureFragment"
     android:orientation="vertical"
+    android:background="@color/colorBackgroundMainView"
     android:clickable="true"
-    android:background="@color/colorBackgroundMainView">
+    android:focusable="true">
 
     <com.google.android.material.appbar.AppBarLayout
         style="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
