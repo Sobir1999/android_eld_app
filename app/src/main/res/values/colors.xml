@@ -26,6 +26,6 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
 
-    <color name="SignatureColorDefault">#9F0389C6</color>
+    <color name="SignatureColorDefault">#9953BFED</color>
     <color name="SignatureColorWhenClicked">#08ACF6</color>
 </resources>
