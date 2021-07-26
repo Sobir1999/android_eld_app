@@ -1,23 +1,24 @@
 package com.iosix.eldblesample.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.iosix.eldblesample.R;
+import com.iosix.eldblesample.base.BaseActivity;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+    protected int getLayoutId() {
+        return R.layout.activity_login;
+    }
+
+    @Override
+    public void initView() {
+        super.initView();
 
         Button button = findViewById(R.id.idLoginButton);
         EditText login = findViewById(R.id.idEditTextLogin);
