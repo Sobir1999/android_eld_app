@@ -15,35 +15,36 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.iosix.eldblesample.R;
+import com.iosix.eldblesample.base.BaseActivity;
 import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddDefectActivity extends AppCompatActivity {
+public class AddDefectActivity extends BaseActivity {
+    private List<String> selectedList = new ArrayList<>();
     private final String[] maintitle = {
             "Buzuq",
             "Siniq",
             "Ishlamaydi",
             "Dabdala",
     };
-    private List<String> selectedList = new ArrayList<>();
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_defect);
+    protected int getLayoutId() {
+        return R.layout.activity_add_defect;
+    }
+
+    @Override
+    public void initView() {
+        super.initView();
 
         ImageView backButton = findViewById(R.id.idImageBack);
         TextView save = findViewById(R.id.save);
         backButton.setOnClickListener(v -> onBackPressed());
         save.setOnClickListener(v-> createDialog("Add a note to your defect", "Notes", 1));
 
-        initView();
-    }
-
-    private void initView() {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_activated_1, maintitle);
 
@@ -52,7 +53,6 @@ public class AddDefectActivity extends AppCompatActivity {
         list.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
         list.setOnItemClickListener((parent, view, position, id) -> selectedItems(maintitle[position]));
-
     }
 
     private void selectedItems(String s) {
@@ -107,4 +107,5 @@ public class AddDefectActivity extends AppCompatActivity {
 
 //        editText.getText().toString().trim();
     }
+
 }

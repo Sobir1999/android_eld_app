@@ -76,6 +76,7 @@ import com.iosix.eldblelib.EldScanObject;
 import com.iosix.eldblelib.EldTransmissionRecord;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.adapters.RecyclerViewLastAdapter;
+import com.iosix.eldblesample.base.BaseActivity;
 import com.iosix.eldblesample.broadcasts.ChangeDateTimeBroadcast;
 import com.iosix.eldblesample.customViews.CustomLiveRulerChart;
 import com.iosix.eldblesample.dialogs.ConnectToEldDialog;
@@ -115,10 +116,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.iosix.eldblesample.MyApplication.context;
 import static com.iosix.eldblesample.MyApplication.userData;
 import static com.iosix.eldblesample.utils.Utils.setBluetoothDataEnabled;
 
-public class MainActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
+public class MainActivity extends BaseActivity implements TimePickerDialog.OnTimeSetListener {
 
     private DrawerLayout drawerLayout;
     private Toolbar activity_main_toolbar;
@@ -163,16 +165,21 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
     private Menu optionMenu;
     private final ArrayList<String> daysArray = new ArrayList<>();
 
-    @SuppressLint({"VisibleForTests", "ResourceAsColor", "UseCompatLoadingForDrawables"})
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected int getLayoutId() {
+        return R.layout.activity_main;
+    }
+
+    @Override
+    public void initView() {
+        super.initView();
+
 
         setLocale(loadLocal());
 
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         Window w = getWindow();
-        w.setStatusBarColor(R.color.colorPrimaryDark);
+//            w.setStatusBarColor(R.color.colorPrimaryDark);
 
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
@@ -238,6 +245,24 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
         openRecapFragment();
 
         startService();
+
+        try {
+            Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData());
+
+            sendData.enqueue(new Callback<SendExampleModelData>() {
+                @Override
+                public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
+                    Log.d("JSON", "onResponse: " + response.body());
+                }
+
+                @Override
+                public void onFailure(Call<SendExampleModelData> call, Throwable t) {
+                    Log.d("JSON", "onResponse: " + t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Toast.makeText(MainActivity.this, "1. " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -285,7 +310,7 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
 
 
     private void clickLGDDButtons() {
-        TextView inspectionMode,addDvir;
+        TextView inspectionMode, addDvir;
         Button log, general, doc, dvir, addDvirFragment;
         TextView recap = findViewById(R.id.idRecap);
         log = findViewById(R.id.idTableBtnLog);
@@ -352,7 +377,7 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
                 }
             }
 
-            if(truckStatusEntities.size() != 0) {
+            if (truckStatusEntities.size() != 0) {
                 last_status = truckStatusEntities.get(truckStatusEntities.size() - 1).getTo_status();
             } else {
                 last_status = EnumsConstants.STATUS_OFF;
@@ -861,15 +886,15 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
                             (dialog, id) -> dialog.cancel());
 
             radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-                switch (checkedId) {
-                    case R.id.downloadbutton:
-                        updateSelection = 0;
-                        break;
-                    case R.id.localbutton:
-                        updateSelection = 1;
-                        break;
-                }
-            }
+                        switch (checkedId) {
+                            case R.id.downloadbutton:
+                                updateSelection = 0;
+                                break;
+                            case R.id.localbutton:
+                                updateSelection = 1;
+                                break;
+                        }
+                    }
             );
 
             // create alert dialog
@@ -1586,7 +1611,7 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
      * Start service method
      * "data" for sending data
      */
-    public void startService(){
+    public void startService() {
         String data = "Service is running...";
         Intent intent = new Intent(this, ForegroundService.class);
         intent.putExtra("data", data);
@@ -1602,23 +1627,24 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
         registerReceiver(changeDateTimeBroadcast, ChangeDateTimeBroadcast.getIntentFilter());
     }
 
-    /**f
+    /**
+     * f
      * Stop service method
      */
-    public void stopService(){
+    public void stopService() {
         Intent intent = new Intent(this, ForegroundService.class);
         stopService(intent);
     }
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-       TextView addTime = findViewById(R.id.idDefectTimeText);
+        TextView addTime = findViewById(R.id.idDefectTimeText);
         addTime.setText(timeString(hourOfDay) + ":" + timeString(minute));
     }
 
     private String timeString(int digit) {
         String s = "" + digit;
-        if(s.length() == 1) s = "0" + s;
+        if (s.length() == 1) s = "0" + s;
         return s;
     }
 }
