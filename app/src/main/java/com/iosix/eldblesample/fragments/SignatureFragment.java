@@ -2,7 +2,9 @@ package com.iosix.eldblesample.fragments;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -14,22 +16,30 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DiffUtil;
 
 import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.iosix.eldblesample.R;
+import com.iosix.eldblesample.roomDatabase.entities.SignatureEntity;
+import com.iosix.eldblesample.viewModel.SignatureViewModel;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.concurrent.ExecutionException;
 
 
 public class SignatureFragment extends Fragment {
@@ -37,8 +47,11 @@ public class SignatureFragment extends Fragment {
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
     SignaturePad signature;
-    TextView previousSignature,clearSignature,save;
+    TextView previousSignature,clearSignature,save,drawSignature;
+    private boolean hasSignature = false;
     private Context context;
+    Bitmap bitmap;
+    SignatureViewModel signatureViewModel;
 
     public SignatureFragment() {
         // Required empty public constructor
@@ -62,25 +75,80 @@ public class SignatureFragment extends Fragment {
 
         context = container.getContext();
 
+        ImageView img = view.findViewById(R.id.idImageBack);
+
+        img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFragmentManager().popBackStack();
+            }
+        });
+
+
         signature = view.findViewById(R.id.idSignature);
         previousSignature = view.findViewById(R.id.idTVPreviousSignature);
         clearSignature = view.findViewById(R.id.idTVClearSignature);
         save = view.findViewById(R.id.idAddDvirSave);
+        drawSignature = view.findViewById(R.id.idTvDrawSignature);
+
+        signatureViewModel = new SignatureViewModel(requireActivity().getApplication());
+        signatureViewModel = ViewModelProviders.of((FragmentActivity) context).get(SignatureViewModel.class);
+        signatureViewModel.getMgetAllSignatures().observe(getViewLifecycleOwner(), signatureEntities -> {
+            if (signatureEntities.size() > 0){
+            bitmap = signatureEntities.get(signatureEntities.size()-1).getSignatureBitmap();
+            }else {
+                bitmap = null;
+            }
+        });
+
+        isFirstTime();
 
         signature.setOnSignedListener(new SignaturePad.OnSignedListener() {
             @Override
             public void onStartSigning() {
+                clearSignature.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
+                clearSignature.setClickable(true);
+                if (bitmap != null){
+                    previousSignature.setClickable(true);
+                    previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
+                }else {
+                    previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorDefault));
+                    previousSignature.setClickable(false);
+                }
+                drawSignature.setVisibility(View.GONE);
 
             }
 
             @Override
             public void onSigned() {
+                clearSignature.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
+                clearSignature.setClickable(true);
+                hasSignature = true;
+                if (bitmap != null){
+                    previousSignature.setClickable(true);
+                    previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
+                }else {
+                    previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorDefault));
+                    previousSignature.setClickable(false);
+                }
+                drawSignature.setVisibility(View.GONE);
+
 
             }
 
             @Override
             public void onClear() {
-
+                hasSignature = false;
+                clearSignature.setTextColor(getResources().getColor(R.color.SignatureColorDefault));
+                clearSignature.setClickable(false);
+                if (bitmap != null){
+                    previousSignature.setClickable(true);
+                    previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
+                }else {
+                    previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorDefault));
+                    previousSignature.setClickable(false);
+                }
+                drawSignature.setVisibility(View.VISIBLE);
             }
         });
 
@@ -91,14 +159,44 @@ public class SignatureFragment extends Fragment {
             }
         });
 
+        previousSignature.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signature.setSignatureBitmap(bitmap);
+                }
+        });
+
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bitmap signatureBitmap = signature.getSignatureBitmap();
-                if (addJpgSignatureToGallery(signatureBitmap)){
-                    Toast.makeText(context, "Signature saved into the Gallery", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(context, "Unable to store the signature", Toast.LENGTH_SHORT).show();
+
+                if (hasSignature){
+                    Bitmap signatureBitmap = signature.getSignatureBitmap();
+                    SignatureEntity signatureEntity = new SignatureEntity(signatureBitmap);
+                    try {
+                        signatureViewModel.insertSignature(signatureEntity);
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (addJpgSignatureToGallery(signatureBitmap)){
+                        Toast.makeText(context, "Signature saved into the Gallery", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Unable to store the signature", Toast.LENGTH_SHORT).show();
+                    }
+                }else {
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+                    alertDialog.setTitle("Signature missed")
+                            .setMessage("Sign or take your saved signatures")
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    alertDialog.setCancelable(true);
+                                }
+                            });
+                    AlertDialog alert = alertDialog.create();
+                    alert.show();
                 }
             }
         });
@@ -119,7 +217,7 @@ public class SignatureFragment extends Fragment {
     public void saveBitmapToJPG(Bitmap bitmap, File photo) throws IOException {
         Bitmap newBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(newBitmap);
-        canvas.drawColor(Color.BLACK);
+        canvas.drawColor(Color.WHITE);
         canvas.drawBitmap(bitmap, 0, 0, null);
         OutputStream stream = new FileOutputStream(photo);
         newBitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
@@ -171,6 +269,16 @@ public class SignatureFragment extends Fragment {
                     Toast.makeText(context, "Cannot write images to external storage", Toast.LENGTH_SHORT).show();
                 }
             }
+        }
+    }
+
+    void isFirstTime(){
+        if (bitmap != null){
+            previousSignature.setClickable(true);
+            previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
+        }else {
+            previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorDefault));
+            previousSignature.setClickable(false);
         }
     }
 }
