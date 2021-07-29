@@ -11,8 +11,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LifecycleRegistry;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.iosix.eldblesample.R;
@@ -24,36 +29,45 @@ import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLastAdapter.ViewHolder> {
     private List<DayEntity> dayEntities;
     private List<LogEntity> truckStatusEntities;
     private LastDaysRecyclerViewItemClickListener listener;
     private Context ctx;
+    private DayDaoViewModel dViewModel;
+    private StatusDaoViewModel sViewModel;
 
     public void setListener(LastDaysRecyclerViewItemClickListener listener) {
         this.listener = listener;
     }
+
+//    public void setDayEntities(List<DayEntity> dayEntities) {
+//        this.dayEntities = dayEntities;
+//        notifyDataSetChanged();
+//    }
+//
+//    public void setTruckStatusEntities(List<LogEntity> truckStatusEntities) {
+//        this.truckStatusEntities = truckStatusEntities;
+//        notifyDataSetChanged();
+//    }
 
     public RecyclerViewLastAdapter(Context context, DayDaoViewModel daoViewModel, StatusDaoViewModel statusDaoViewModel) {
         dayEntities = new ArrayList<>();
         truckStatusEntities = new ArrayList<>();
         ctx = context;
 
-        daoViewModel.getMgetAllDays().observe((LifecycleOwner) context, new Observer<List<DayEntity>>() {
-            @Override
-            public void onChanged(List<DayEntity> dayEntities) {
-                RecyclerViewLastAdapter.this.dayEntities = dayEntities;
-            }
-        });
+        daoViewModel.getMgetAllDays().observe((LifecycleOwner) ctx, dayEntities -> RecyclerViewLastAdapter.this.dayEntities = dayEntities);
 
-        statusDaoViewModel.getmAllStatus().observe((LifecycleOwner) context, new Observer<List<LogEntity>>() {
-            @Override
-            public void onChanged(List<LogEntity> truckStatusEntities) {
-                RecyclerViewLastAdapter.this.truckStatusEntities = truckStatusEntities;
-            }
-        });
+        statusDaoViewModel.getmAllStatus().observe((LifecycleOwner) ctx, truckStatusEntities -> RecyclerViewLastAdapter.this.truckStatusEntities = truckStatusEntities);
     }
+
+//    private void bindModelData() {
+//
+//
+//        notifyDataSetChanged();
+//    }
 
     @NonNull
     @Override
@@ -96,7 +110,7 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
             customRulerChart.setArrayList(getDayTruckEntity(dayEntity.getDay()));
 
             imageView.setOnClickListener(v -> {
-                imageView.setImageResource(imageView.getDrawable().getConstantState().equals(imageView.getContext().getDrawable(R.drawable.state_checked).getConstantState())?R.drawable.state_unchacked:R.drawable.state_checked);
+                imageView.setImageResource(imageView.getDrawable().getConstantState().equals(imageView.getContext().getDrawable(R.drawable.state_checked).getConstantState()) ? R.drawable.state_unchacked : R.drawable.state_checked);
                 if (listener != null) {
                     listener.onclickItem(dayEntity.getDay());
                 }
@@ -121,7 +135,7 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
 
     private ArrayList<LogEntity> getDayTruckEntity(String day) {
         ArrayList<LogEntity> entities = new ArrayList<>();
-        for (int i=0; i<truckStatusEntities.size(); i++) {
+        for (int i = 0; i < truckStatusEntities.size(); i++) {
             if (truckStatusEntities.get(i).getTime().equalsIgnoreCase(day)) {
                 entities.add(truckStatusEntities.get(i));
             }
@@ -129,7 +143,7 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
         return entities;
     }
 
-    public interface LastDaysRecyclerViewItemClickListener{
+    public interface LastDaysRecyclerViewItemClickListener {
         void onclickItem(String s);
 
         void onclickDvir(String s);
