@@ -9,6 +9,7 @@ import androidx.room.Query;
 
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
+import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
 import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 
 import java.util.List;
@@ -42,4 +43,10 @@ public interface DayDao {
 
     @Query("Select * From vehicles")
     LiveData<List<VehiclesEntity>> getAllVehicles();
+
+    @Insert (onConflict = OnConflictStrategy.IGNORE)
+    long insertTrailer(TrailersEntity trailers);
+
+    @Query("Select * From trailers")
+    LiveData<List<TrailersEntity>> getAllTrailers();
 }
