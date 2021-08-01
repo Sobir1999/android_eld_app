@@ -1,15 +1,12 @@
 package com.iosix.eldblesample.fragments;
 
 import android.app.AlertDialog;
-import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,18 +16,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
-
 import com.google.android.material.appbar.AppBarLayout;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.activity.AddDefectActivity;
 import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -39,7 +30,7 @@ public class AddDvirFragment extends Fragment{
     private TextView units;
     private TextView addTrailer;
     private TextView trailers;
-    private TextView defectsList;
+    private TextView unitDefects, trailerDefects, unitDefectsTitle, trailerDefectsTitle;
     private TextView addTime;
     private TextView notes;
     private ImageView backView;
@@ -70,7 +61,10 @@ public class AddDvirFragment extends Fragment{
         addTrailer = v.findViewById(R.id.idAddDvirTrailerText);
         trailers = v.findViewById(R.id.idAddDvirTrailerNumberText);
         trailers = v.findViewById(R.id.idAddDvirTrailerNumberText);
-        defectsList = v.findViewById(R.id.defectsList);
+        unitDefects = v.findViewById(R.id.unitDefects);
+        trailerDefects = v.findViewById(R.id.trailerDefects);
+        unitDefectsTitle = v.findViewById(R.id.unitDefectsTitle);
+        trailerDefectsTitle = v.findViewById(R.id.trailerDefectsTitle);
         addTime = v.findViewById(R.id.idDefectTimeText);
         notes = v.findViewById(R.id.notes);
         addDefect = v.findViewById(R.id.addDefect);
@@ -104,15 +98,28 @@ public class AddDvirFragment extends Fragment{
             super.onActivityResult(requestCode, resultCode, data);
 
             if (requestCode == 100 && resultCode == RESULT_OK) {
+                String unitDefectsString, trailerDefectsString;
 
                 addDefect.setVisibility(View.GONE);
                 defects.setVisibility(View.VISIBLE);
 
-                defectsList.setText(data.getStringExtra("defectsList"));
-                notes.setText(data.getStringExtra("notes"));
+                unitDefectsString = data.getStringExtra("unitDefects");
+                trailerDefectsString = data.getStringExtra("trailerDefects");
 
-                ArrayList<String> listB = data.getExtras().getStringArrayList("list");
-                Toast.makeText(requireActivity(), listB.toString(), Toast.LENGTH_SHORT).show();
+                unitDefects.setText(unitDefectsString);
+                trailerDefects.setText(trailerDefectsString);
+
+                if(unitDefectsString.equals("")){
+                    unitDefectsTitle.setVisibility(View.GONE);
+                    unitDefects.setVisibility(View.GONE);
+                }
+
+                if(trailerDefectsString.equals("")){
+                    trailerDefectsTitle.setVisibility(View.GONE);
+                    trailerDefects.setVisibility(View.GONE);
+                }
+
+                notes.setText(data.getStringExtra("notes"));
 
             } else {
                 Toast.makeText(requireContext(), "Not selected item", Toast.LENGTH_SHORT).show();

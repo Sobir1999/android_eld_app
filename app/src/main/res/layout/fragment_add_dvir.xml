@@ -210,6 +210,7 @@
                         android:visibility="gone">
 
                         <TextView
+                            android:id="@+id/unitDefectsTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/unit_defects"
@@ -217,7 +218,23 @@
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/defectsList"
+                            android:id="@+id/unitDefects"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dual_vertical_margin"
+                            android:textColor="@color/black" />
+
+                        <TextView
+                            android:id="@+id/trailerDefectsTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/activity_vertical_margin"
+                            android:text="@string/trailer_defects"
+                            android:textColor="@color/black"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/trailerDefects"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/dual_vertical_margin"
