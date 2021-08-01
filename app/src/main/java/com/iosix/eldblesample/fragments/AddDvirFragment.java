@@ -45,6 +45,7 @@ public class AddDvirFragment extends Fragment {
     private AppBarLayout appBarLayout;
     private DayDaoViewModel daoViewModel;
     private final String selectedUnit = "No Unit Selected";
+    private boolean isTruckSelected = false;
     private ArrayList<TrailersEntity> selectedTrailers;
     private TrailerRecyclerAdapter adapter;
 
@@ -98,8 +99,10 @@ public class AddDvirFragment extends Fragment {
             appBarLayout.setVisibility(View.GONE);
         });
 
-        addDefect.setOnClickListener(v1 -> startActivityForResult(new Intent(requireContext(), AddDefectActivity.class), 100));
-        defects.setOnClickListener(v1 -> startActivityForResult(new Intent(requireContext(), AddDefectActivity.class), 100));
+        Intent intent = new Intent(requireContext(), AddDefectActivity.class);
+        intent.putExtra("isTruckSelected", isTruckSelected);
+        addDefect.setOnClickListener(v1 -> startActivityForResult(intent, 100));
+        defects.setOnClickListener(v1 -> startActivityForResult(intent, 100));
         return v;
     }
 
