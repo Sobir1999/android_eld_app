@@ -1,4 +1,5 @@
 package com.iosix.eldblesample.activity;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -7,12 +8,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
+
 import com.google.android.material.tabs.TabLayout;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.base.BaseActivity;
@@ -22,9 +25,9 @@ import static com.iosix.eldblesample.MyApplication.userData;
 
 public class AddDefectActivity extends BaseActivity {
 
-    TabLayout tabLayout;
-    ViewPager2 viewPager;
-    DefectsFragmentAdapter adapter;
+    private TabLayout tabLayout;
+    private ViewPager2 viewPager;
+    private boolean isTruckSelected;
 
     @Override
     protected int getLayoutId() {
@@ -35,19 +38,21 @@ public class AddDefectActivity extends BaseActivity {
     public void initView() {
         super.initView();
 
+        isTruckSelected = getIntent().getBooleanExtra("isTruckSelected", false);
+
         tabLayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.viewpager);
         ImageView backButton = findViewById(R.id.idImageBack);
         TextView save = findViewById(R.id.save);
         backButton.setOnClickListener(v -> onBackPressed());
-        save.setOnClickListener(v-> createDialog(v.getContext()));
+        save.setOnClickListener(v -> createDialog(v.getContext()));
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        adapter = new DefectsFragmentAdapter(fragmentManager, getLifecycle());
+        DefectsFragmentAdapter adapter = new DefectsFragmentAdapter(fragmentManager, getLifecycle(), isTruckSelected);
         viewPager.setAdapter(adapter);
 
         tabLayout.addTab(tabLayout.newTab().setText("Unit"));
-        tabLayout.addTab(tabLayout.newTab().setText("Trailer"));
+        if (isTruckSelected) tabLayout.addTab(tabLayout.newTab().setText("Trailer"));
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -112,13 +117,15 @@ public class AddDefectActivity extends BaseActivity {
         }
         finish();
     }
-    
+
 }
 
 class DefectsFragmentAdapter extends FragmentStateAdapter {
+    boolean isTruckSelected = false;
 
-    public DefectsFragmentAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
+    public DefectsFragmentAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, boolean isTruckSelected) {
         super(fragmentManager, lifecycle);
+        this.isTruckSelected = isTruckSelected;
     }
 
     @NonNull
@@ -128,10 +135,11 @@ class DefectsFragmentAdapter extends FragmentStateAdapter {
             return new AddDefectFragment(1);
         }
         return new AddDefectFragment(2);
+
     }
 
     @Override
     public int getItemCount() {
-        return 2;
+        return isTruckSelected ? 2 : 1;
     }
 }
