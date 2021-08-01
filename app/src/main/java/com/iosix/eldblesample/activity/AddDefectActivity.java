@@ -87,9 +87,8 @@ public class AddDefectActivity extends BaseActivity {
         EditText editText = v.findViewById(R.id.idAddUnitTrailerEdit);
         editText.setHint("Notes");
 
-        dialog.setPositiveButton("Ok", (dialog12, which) -> {
+        dialog.setPositiveButton("OK", (dialog12, which) -> {
             if (!editText.getText().toString().equalsIgnoreCase("")) {
-                Toast.makeText(context, "dd save defect data method", Toast.LENGTH_SHORT).show();
                 back(editText.getText().toString());
             }
         });
