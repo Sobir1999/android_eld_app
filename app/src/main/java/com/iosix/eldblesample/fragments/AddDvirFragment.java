@@ -1,24 +1,17 @@
 package com.iosix.eldblesample.fragments;
 
 import android.app.AlertDialog;
-import android.app.Application;
-import android.app.TimePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,9 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
-
 import com.google.android.material.appbar.AppBarLayout;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.activity.AddDefectActivity;
@@ -37,14 +28,8 @@ import com.iosix.eldblesample.adapters.TrailerRecyclerAdapter;
 import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
 import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
-
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
-
 import static android.app.Activity.RESULT_OK;
 
 public class AddDvirFragment extends Fragment {
@@ -52,17 +37,16 @@ public class AddDvirFragment extends Fragment {
     private TextView units;
     private TextView addTrailer;
     private TextView trailers;
-    private TextView defectsList;
+    private TextView unitDefects, trailerDefects, unitDefectsTitle, trailerDefectsTitle;
     private TextView addTime;
     private TextView notes;
     private ImageView backView;
     private LinearLayout defects, addDefect;
     private AppBarLayout appBarLayout;
     private DayDaoViewModel daoViewModel;
-    private String selectedUnit = "No Unit Selected";
+    private final String selectedUnit = "No Unit Selected";
     private ArrayList<TrailersEntity> selectedTrailers;
     private TrailerRecyclerAdapter adapter;
-    private RecyclerView recyclerView;
 
     public static AddDvirFragment newInstance(DayDaoViewModel dayDaoViewModel) {
         AddDvirFragment fragment = new AddDvirFragment();
@@ -86,7 +70,10 @@ public class AddDvirFragment extends Fragment {
         units = v.findViewById(R.id.idAddDvirUnitNumberText);
         addTrailer = v.findViewById(R.id.idAddDvirTrailerText);
         trailers = v.findViewById(R.id.idAddDvirTrailerNumberText);
-        defectsList = v.findViewById(R.id.defectsList);
+        unitDefects = v.findViewById(R.id.unitDefects);
+        trailerDefects = v.findViewById(R.id.trailerDefects);
+        unitDefectsTitle = v.findViewById(R.id.unitDefectsTitle);
+        trailerDefectsTitle = v.findViewById(R.id.trailerDefectsTitle);
         addTime = v.findViewById(R.id.idDefectTimeText);
         notes = v.findViewById(R.id.notes);
         addDefect = v.findViewById(R.id.addDefect);
@@ -94,7 +81,7 @@ public class AddDvirFragment extends Fragment {
         backView = v.findViewById(R.id.idImageBack);
         TextView nextText = v.findViewById(R.id.idAddDvirNext);
         appBarLayout = v.findViewById(R.id.idAppbar);
-        recyclerView = v.findViewById(R.id.idTrailersRecyclerView);
+        RecyclerView recyclerView = v.findViewById(R.id.idTrailersRecyclerView);
 
         buttonClicks(container);
 
@@ -103,7 +90,7 @@ public class AddDvirFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
 
-        daoViewModel = ViewModelProviders.of((FragmentActivity) getContext()).get(DayDaoViewModel.class);
+        daoViewModel = ViewModelProviders.of((FragmentActivity) requireActivity()).get(DayDaoViewModel.class);
         daoViewModel.getGetAllVehicles().observe((LifecycleOwner) requireContext(), vehiclesEntities -> units.setText(vehiclesEntities.isEmpty()?selectedUnit:vehiclesEntities.get(0).getName()));
 
         nextText.setOnClickListener(v1 -> {
@@ -122,15 +109,28 @@ public class AddDvirFragment extends Fragment {
             super.onActivityResult(requestCode, resultCode, data);
 
             if (requestCode == 100 && resultCode == RESULT_OK) {
+                String unitDefectsString, trailerDefectsString;
 
                 addDefect.setVisibility(View.GONE);
                 defects.setVisibility(View.VISIBLE);
 
-                defectsList.setText(data.getStringExtra("defectsList"));
-                notes.setText(data.getStringExtra("notes"));
+                unitDefectsString = data.getStringExtra("unitDefects");
+                trailerDefectsString = data.getStringExtra("trailerDefects");
 
-                ArrayList<String> listB = data.getExtras().getStringArrayList("list");
-                Toast.makeText(requireActivity(), listB.toString(), Toast.LENGTH_SHORT).show();
+                unitDefects.setText(unitDefectsString);
+                trailerDefects.setText(trailerDefectsString);
+
+                if(unitDefectsString.equals("")){
+                    unitDefectsTitle.setVisibility(View.GONE);
+                    unitDefects.setVisibility(View.GONE);
+                }
+
+                if(trailerDefectsString.equals("")){
+                    trailerDefectsTitle.setVisibility(View.GONE);
+                    trailerDefects.setVisibility(View.GONE);
+                }
+
+                notes.setText(data.getStringExtra("notes"));
 
             } else {
                 Toast.makeText(requireContext(), "Not selected item", Toast.LENGTH_SHORT).show();
@@ -180,13 +180,10 @@ public class AddDvirFragment extends Fragment {
             builderSingle.setTitle("Select Trailers");
 
             final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_selectable_list_item);
-            daoViewModel.getGetAllTrailers().observe((LifecycleOwner) requireContext(), new Observer<List<TrailersEntity>>() {
-                @Override
-                public void onChanged(List<TrailersEntity> trailersEntities) {
-                    for (int i = 0; i < trailersEntities.size(); i++) {
-                        if (!selectedTrailers.contains(trailersEntities.get(i))) {
-                            arrayAdapter.add(trailersEntities.get(i).getNumber());
-                        }
+            daoViewModel.getGetAllTrailers().observe((LifecycleOwner) requireContext(), trailersEntities -> {
+                for (int i = 0; i < trailersEntities.size(); i++) {
+                    if (!selectedTrailers.contains(trailersEntities.get(i))) {
+                        arrayAdapter.add(trailersEntities.get(i).getNumber());
                     }
                 }
             });

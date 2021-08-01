@@ -29,6 +29,22 @@ public class UserData {
         return userPref.getString("lang","en");
     }
 
+    public void addDefects(int defectType, String defect){
+        editor = userPref.edit();
+        editor.putString("defect-" + defectType, defect);
+        editor.apply();
+    }
+
+    public String getDefects(int defectType){
+        return userPref.getString("defect-" + defectType,"");
+    }
+
+    public void clearDefects(int defectType){
+        editor = userPref.edit();
+        editor.remove("defect-" + defectType);
+        editor.apply();
+    }
+
     public void saveMode(boolean isDark){
         editor = userPref.edit();
         editor.putBoolean("isDark", isDark);
