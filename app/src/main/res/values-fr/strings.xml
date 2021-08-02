@@ -8,4 +8,5 @@
     <string name="no">No</string>
     <string name="bluetooth_not_work">Bluetooth is off</string>
     <string name="you_want_to_turn_on">Do you want to turn on?</string>
+    <string name="trailer_defects">Trailer Defects</string>
 </resources>
