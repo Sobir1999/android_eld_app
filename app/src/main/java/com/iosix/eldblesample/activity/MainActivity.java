@@ -327,7 +327,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         statusDaoViewModel = ViewModelProviders.of(this).get(StatusDaoViewModel.class);
         statusDaoViewModel.getmAllStatus().observe(this, truckStatusEntities -> {
             for (int i = 0; i < truckStatusEntities.size(); i++) {
-//                    Log.d("STATUS", "onChanged: " + truckStatusEntities.get(i).getFrom_status() + " " + truckStatusEntities.get(i).getTo_status() + "\n" + truckStatusEntities.get(i).getTime() + "\n" + truckStatusEntities.get(i).getSeconds());
                 if (truckStatusEntities.get(i).getTime().equalsIgnoreCase(today)) {
                     MainActivity.this.truckStatusEntities.add(truckStatusEntities.get(i));
                 }

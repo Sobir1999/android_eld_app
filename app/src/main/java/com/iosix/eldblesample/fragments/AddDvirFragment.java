@@ -96,6 +96,8 @@ public class AddDvirFragment extends Fragment {
         appBarLayout = v.findViewById(R.id.idAppbar);
         recyclerView = v.findViewById(R.id.idTrailersRecyclerView);
 
+        Log.d("FR", "onCreateView: " + appBarLayout.getVisibility());
+
         buttonClicks(container);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -241,7 +243,7 @@ public class AddDvirFragment extends Fragment {
 
     @SuppressWarnings("deprecation")
     private void loadFragment(Fragment fragment) {
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getParentFragmentManager();
         assert fm != null;
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
         fragmentTransaction.addToBackStack("fragment");
