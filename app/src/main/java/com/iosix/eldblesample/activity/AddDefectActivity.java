@@ -53,6 +53,7 @@ public class AddDefectActivity extends BaseActivity {
 
         tabLayout.addTab(tabLayout.newTab().setText("Unit"));
         if (isTruckSelected) tabLayout.addTab(tabLayout.newTab().setText("Trailer"));
+//        tabLayout.addTab(tabLayout.newTab().setText("Trailer"));
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override

@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -21,12 +22,16 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DiffUtil;
 
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,39 +49,84 @@ import java.util.concurrent.ExecutionException;
 
 public class SignatureFragment extends Fragment {
 
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
+
+    private boolean mParam1;
+
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
     private SignaturePad signature;
-    private TextView previousSignature,clearSignature,save,drawSignature;
+    private TextView previousSignature, clearSignature, save, drawSignature;
     private boolean hasSignature = false;
     private Context context;
     private Bitmap bitmap;
     private SignatureViewModel signatureViewModel;
+    private RadioButton no_defect, correct_defect, corrected_defect;
+    private ConstraintLayout mechanicCons;
+    private TextView mechamnicTextView, mechanicText;
+    private ImageView img;
 
     public SignatureFragment() {
         // Required empty public constructor
     }
 
-    public static SignatureFragment newInstance() {
+    public static SignatureFragment newInstance(boolean param1) {
         SignatureFragment fragment = new SignatureFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(ARG_PARAM1, param1);
+        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getArguments() != null) {
+            mParam1 = getArguments().getBoolean(ARG_PARAM1);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_signature, container, false);
 
-        context = container.getContext();
+        context = requireContext();
 
-        ImageView img = view.findViewById(R.id.idImageBack);
+        img = view.findViewById(R.id.idImageBack);
+        signature = view.findViewById(R.id.idSignature);
+        previousSignature = view.findViewById(R.id.idTVPreviousSignature);
+        clearSignature = view.findViewById(R.id.idTVClearSignature);
+        save = view.findViewById(R.id.idAddDvirSave);
+        drawSignature = view.findViewById(R.id.idTvDrawSignature);
+        no_defect = view.findViewById(R.id.idNoDefects);
+        correct_defect = view.findViewById(R.id.idNeedCorrected);
+        corrected_defect = view.findViewById(R.id.idCorrected);
+        mechamnicTextView = view.findViewById(R.id.idClearSignTextViewMechanic);
+        mechanicCons = view.findViewById(R.id.idMechanicCons);
+        mechanicText = view.findViewById(R.id.idMechanicSignatureText);
 
+        signatureViewModel = new SignatureViewModel(requireActivity().getApplication());
+        signatureViewModel = ViewModelProviders.of((FragmentActivity) requireContext()).get(SignatureViewModel.class);
+        signatureViewModel.getMgetAllSignatures().observe(getViewLifecycleOwner(), signatureEntities -> {
+            if (signatureEntities.size() > 0) {
+                bitmap = signatureEntities.get(signatureEntities.size() - 1).getSignatureBitmap();
+            } else {
+                bitmap = null;
+            }
+        });
+
+        isFirstTime();
+        selectRadio();
+
+        actionFunctions();
+
+        return view;
+    }
+
+    private void actionFunctions() {
         img.setOnClickListener(v -> {
             //noinspection deprecation
             assert getFragmentManager() != null;
@@ -84,34 +134,15 @@ public class SignatureFragment extends Fragment {
             getFragmentManager().popBackStack();
         });
 
-
-        signature = view.findViewById(R.id.idSignature);
-        previousSignature = view.findViewById(R.id.idTVPreviousSignature);
-        clearSignature = view.findViewById(R.id.idTVClearSignature);
-        save = view.findViewById(R.id.idAddDvirSave);
-        drawSignature = view.findViewById(R.id.idTvDrawSignature);
-
-        signatureViewModel = new SignatureViewModel(requireActivity().getApplication());
-        signatureViewModel = ViewModelProviders.of((FragmentActivity) context).get(SignatureViewModel.class);
-        signatureViewModel.getMgetAllSignatures().observe(getViewLifecycleOwner(), signatureEntities -> {
-            if (signatureEntities.size() > 0){
-            bitmap = signatureEntities.get(signatureEntities.size()-1).getSignatureBitmap();
-            }else {
-                bitmap = null;
-            }
-        });
-
-        isFirstTime();
-
         signature.setOnSignedListener(new SignaturePad.OnSignedListener() {
             @Override
             public void onStartSigning() {
                 clearSignature.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
                 clearSignature.setClickable(true);
-                if (bitmap != null){
+                if (bitmap != null) {
                     previousSignature.setClickable(true);
                     previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
-                }else {
+                } else {
                     previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorDefault));
                     previousSignature.setClickable(false);
                 }
@@ -124,10 +155,10 @@ public class SignatureFragment extends Fragment {
                 clearSignature.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
                 clearSignature.setClickable(true);
                 hasSignature = true;
-                if (bitmap != null){
+                if (bitmap != null) {
                     previousSignature.setClickable(true);
                     previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
-                }else {
+                } else {
                     previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorDefault));
                     previousSignature.setClickable(false);
                 }
@@ -141,10 +172,10 @@ public class SignatureFragment extends Fragment {
                 hasSignature = false;
                 clearSignature.setTextColor(getResources().getColor(R.color.SignatureColorDefault));
                 clearSignature.setClickable(false);
-                if (bitmap != null){
+                if (bitmap != null) {
                     previousSignature.setClickable(true);
                     previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
-                }else {
+                } else {
                     previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorDefault));
                     previousSignature.setClickable(false);
                 }
@@ -158,7 +189,7 @@ public class SignatureFragment extends Fragment {
 
         save.setOnClickListener(v -> {
 
-            if (hasSignature){
+            if (hasSignature) {
                 Bitmap signatureBitmap = signature.getSignatureBitmap();
                 SignatureEntity signatureEntity = new SignatureEntity(signatureBitmap);
                 try {
@@ -166,12 +197,12 @@ public class SignatureFragment extends Fragment {
                 } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();
                 }
-                if (addJpgSignatureToGallery(signatureBitmap)){
+                if (addJpgSignatureToGallery(signatureBitmap)) {
                     Toast.makeText(context, "Signature saved into the Gallery", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(context, "Unable to store the signature", Toast.LENGTH_SHORT).show();
                 }
-            }else {
+            } else {
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
                 alertDialog.setTitle("Signature missed")
                         .setMessage("Sign or take your saved signatures")
@@ -180,8 +211,28 @@ public class SignatureFragment extends Fragment {
                 alert.show();
             }
         });
+    }
 
-        return view;
+    private void selectRadio() {
+        if (mParam1) {
+            correct_defect.setChecked(true);
+            no_defect.setClickable(false);
+            corrected_defect.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
+                    mechanicCons.setVisibility(View.VISIBLE);
+                    mechamnicTextView.setVisibility(View.VISIBLE);
+                    mechanicText.setVisibility(View.VISIBLE);
+                } else {
+                    mechanicCons.setVisibility(View.GONE);
+                    mechamnicTextView.setVisibility(View.GONE);
+                    mechanicText.setVisibility(View.GONE);
+                }
+            });
+        } else {
+            no_defect.setChecked(true);
+            correct_defect.setClickable(false);
+            corrected_defect.setClickable(false);
+        }
     }
 
     public File getAlbumStorageDir(String albumName) {
@@ -252,11 +303,11 @@ public class SignatureFragment extends Fragment {
         }
     }
 
-    void isFirstTime(){
-        if (bitmap != null){
+    void isFirstTime() {
+        if (bitmap != null) {
             previousSignature.setClickable(true);
             previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
-        }else {
+        } else {
             previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorDefault));
             previousSignature.setClickable(false);
         }

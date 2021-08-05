@@ -109,4 +109,5 @@
     <string name="you_want_to_turn_on">Do you want to turn on?</string>
     <string name="draw_your_signature">Draw your signature</string>
     <string name="trailer_defects">Trailer Defects</string>
+    <string name="mechanic_signature">Mechanic Signature</string>
 </resources>

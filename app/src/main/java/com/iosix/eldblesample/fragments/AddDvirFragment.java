@@ -3,15 +3,16 @@ package com.iosix.eldblesample.fragments;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.material.appbar.AppBarLayout;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.activity.AddDefectActivity;
@@ -28,12 +30,15 @@ import com.iosix.eldblesample.adapters.TrailerRecyclerAdapter;
 import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
 import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
+
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicReference;
+
 import static android.app.Activity.RESULT_OK;
 
 public class AddDvirFragment extends Fragment {
-    private TextView addUnit;
+    private TextView addUnit, nextText;
     private TextView units;
     private TextView addTrailer;
     private TextView trailers;
@@ -45,9 +50,9 @@ public class AddDvirFragment extends Fragment {
     private AppBarLayout appBarLayout;
     private DayDaoViewModel daoViewModel;
     private final String selectedUnit = "No Unit Selected";
-    private boolean isTruckSelected = false;
     private ArrayList<TrailersEntity> selectedTrailers;
     private TrailerRecyclerAdapter adapter;
+    private String unitDefectsString = "", trailerDefectsString = "";
 
     public static AddDvirFragment newInstance(DayDaoViewModel dayDaoViewModel) {
         AddDvirFragment fragment = new AddDvirFragment();
@@ -80,32 +85,52 @@ public class AddDvirFragment extends Fragment {
         addDefect = v.findViewById(R.id.addDefect);
         defects = v.findViewById(R.id.defects);
         backView = v.findViewById(R.id.idImageBack);
-        TextView nextText = v.findViewById(R.id.idAddDvirNext);
+        nextText = v.findViewById(R.id.idAddDvirNext);
         appBarLayout = v.findViewById(R.id.idAppbar);
         RecyclerView recyclerView = v.findViewById(R.id.idTrailersRecyclerView);
 
-        Log.d("FR", "onCreateView: " + appBarLayout.getVisibility());
-
         buttonClicks(container);
+
+        daoViewModel = ViewModelProviders.of(requireActivity()).get(DayDaoViewModel.class);
+        daoViewModel.getGetAllVehicles().observe((LifecycleOwner) requireContext(), vehiclesEntities -> units.setText(vehiclesEntities.isEmpty() ? selectedUnit : vehiclesEntities.get(0).getName()));
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new TrailerRecyclerAdapter(selectedTrailers);
         recyclerView.setAdapter(adapter);
 
+        adapterListener();
 
-        daoViewModel = ViewModelProviders.of((FragmentActivity) requireActivity()).get(DayDaoViewModel.class);
-        daoViewModel.getGetAllVehicles().observe((LifecycleOwner) requireContext(), vehiclesEntities -> units.setText(vehiclesEntities.isEmpty()?selectedUnit:vehiclesEntities.get(0).getName()));
+        return v;
+    }
 
-        nextText.setOnClickListener(v1 -> {
-            loadFragment(new SignatureFragment());
-            appBarLayout.setVisibility(View.GONE);
+    private void adapterListener() {
+        adapter.setUpdateListener((position) -> {
+            AlertDialog.Builder builderSingle = new AlertDialog.Builder(getContext());
+            builderSingle.setTitle("Select Trailers");
+
+            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_selectable_list_item);
+            daoViewModel.getGetAllTrailers().observe((LifecycleOwner) requireContext(), trailersEntities -> {
+                for (int i = 0; i < trailersEntities.size(); i++) {
+                    arrayAdapter.add(trailersEntities.get(i).getNumber());
+                }
+            });
+
+            builderSingle.setNegativeButton("cancel", (dialog, which) -> dialog.dismiss());
+
+            builderSingle.setAdapter(arrayAdapter, (dialog, which) -> {
+                String strName = arrayAdapter.getItem(which);
+                selectedTrailers.get(position).setNumber(strName);
+                adapter.notifyDataSetChanged();
+            });
+            builderSingle.show();
+
+            adapter.notifyDataSetChanged();
         });
 
-        Intent intent = new Intent(requireContext(), AddDefectActivity.class);
-        intent.putExtra("isTruckSelected", isTruckSelected);
-        addDefect.setOnClickListener(v1 -> startActivityForResult(intent, 100));
-        defects.setOnClickListener(v1 -> startActivityForResult(intent, 100));
-        return v;
+        adapter.setDeleteListener((position) -> {
+            selectedTrailers.remove(position);
+            adapter.notifyDataSetChanged();
+        });
     }
 
     @Override
@@ -114,7 +139,6 @@ public class AddDvirFragment extends Fragment {
             super.onActivityResult(requestCode, resultCode, data);
 
             if (requestCode == 100 && resultCode == RESULT_OK) {
-                String unitDefectsString, trailerDefectsString;
 
                 addDefect.setVisibility(View.GONE);
                 defects.setVisibility(View.VISIBLE);
@@ -125,12 +149,12 @@ public class AddDvirFragment extends Fragment {
                 unitDefects.setText(unitDefectsString);
                 trailerDefects.setText(trailerDefectsString);
 
-                if(unitDefectsString.equals("")){
+                if (unitDefectsString.equals("")) {
                     unitDefectsTitle.setVisibility(View.GONE);
                     unitDefects.setVisibility(View.GONE);
                 }
 
-                if(trailerDefectsString.equals("")){
+                if (trailerDefectsString.equals("")) {
                     trailerDefectsTitle.setVisibility(View.GONE);
                     trailerDefects.setVisibility(View.GONE);
                 }
@@ -187,9 +211,7 @@ public class AddDvirFragment extends Fragment {
             final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_selectable_list_item);
             daoViewModel.getGetAllTrailers().observe((LifecycleOwner) requireContext(), trailersEntities -> {
                 for (int i = 0; i < trailersEntities.size(); i++) {
-                    if (!selectedTrailers.contains(trailersEntities.get(i))) {
-                        arrayAdapter.add(trailersEntities.get(i).getNumber());
-                    }
+                    arrayAdapter.add(trailersEntities.get(i).getNumber());
                 }
             });
 
@@ -206,6 +228,23 @@ public class AddDvirFragment extends Fragment {
         backView.setOnClickListener(v -> {
             assert getFragmentManager() != null;
             getFragmentManager().popBackStack();
+        });
+
+        nextText.setOnClickListener(v1 -> {
+            loadFragment(SignatureFragment.newInstance(!unitDefectsString.equalsIgnoreCase("") || !trailerDefectsString.equalsIgnoreCase("")));
+            appBarLayout.setVisibility(View.GONE);
+        });
+
+        addDefect.setOnClickListener(v1 -> {
+            Intent intent = new Intent(requireContext(), AddDefectActivity.class);
+            intent.putExtra("isTruckSelected", !selectedTrailers.isEmpty());
+            startActivityForResult(intent, 100);
+        });
+
+        defects.setOnClickListener(v1 -> {
+            Intent intent = new Intent(requireContext(), AddDefectActivity.class);
+            intent.putExtra("isTruckSelected", !selectedTrailers.isEmpty());
+            startActivityForResult(intent, 100);
         });
     }
 
@@ -249,6 +288,28 @@ public class AddDvirFragment extends Fragment {
         fragmentTransaction.addToBackStack("fragment");
         fragmentTransaction.replace(R.id.fragment_container_add_dvir, fragment);
         fragmentTransaction.commit();
+    }
 
+    private String getDialogString() {
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(getContext());
+        builderSingle.setTitle("Select Trailers");
+        final String[] strName = new String[1];
+
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_selectable_list_item);
+        daoViewModel.getGetAllTrailers().observe((LifecycleOwner) requireContext(), trailersEntities -> {
+            for (int i = 0; i < trailersEntities.size(); i++) {
+                arrayAdapter.add(trailersEntities.get(i).getNumber());
+            }
+        });
+
+        builderSingle.setNegativeButton("cancel", (dialog, which) -> dialog.dismiss());
+
+        builderSingle.setAdapter(arrayAdapter, (dialog, which) -> {
+            strName[0] = arrayAdapter.getItem(which);
+            adapter.notifyDataSetChanged();
+        });
+        builderSingle.show();
+
+        return strName[0];
     }
 }

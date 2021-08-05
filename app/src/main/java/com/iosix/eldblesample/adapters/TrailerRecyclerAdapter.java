@@ -63,23 +63,23 @@ public class TrailerRecyclerAdapter extends RecyclerView.Adapter<TrailerRecycler
 
             textView.setOnClickListener(v -> {
                 if (updateListener != null) {
-                    updateListener.onClick();
+                    updateListener.onClick(getAbsoluteAdapterPosition());
                 }
             });
 
             imageView.setOnClickListener(v -> {
                 if (deleteListener != null) {
-                    deleteListener.onClick();
+                    deleteListener.onClick(getAbsoluteAdapterPosition());
                 }
             });
         }
     }
 
-    interface onTrailerUpdateListener {
-        void onClick();
+    public interface onTrailerUpdateListener {
+        void onClick(int position);
     }
 
-    interface onTrailerDeleteListener {
-        void onClick();
+    public interface onTrailerDeleteListener {
+        void onClick(int position);
     }
 }

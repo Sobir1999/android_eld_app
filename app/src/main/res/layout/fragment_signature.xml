@@ -105,64 +105,29 @@
             android:orientation="horizontal"
             android:padding="5dp">
 
-            <RadioButton
-                android:id="@+id/idNoDefects"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            <RadioGroup
+                android:id="@+id/idRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/no_defects"
-                android:textColor="@color/black"
-                android:textSize="15sp" />
+                <RadioButton
+                    android:id="@+id/idNoDefects"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_defects" />
 
-        </LinearLayout>
+                <RadioButton
+                    android:id="@+id/idNeedCorrected"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/above_defects_need_to_be_corrected" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:orientation="horizontal"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
-            android:paddingBottom="5dp">
-
-            <RadioButton
-                android:id="@+id/idNeedCorrected"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/above_defects_need_to_be_corrected"
-                android:textColor="@color/black"
-                android:textSize="15sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:orientation="horizontal"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
-            android:paddingBottom="5dp">
-
-            <RadioButton
-                android:id="@+id/idCorrected"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/above_defects_corrected"
-                android:textColor="@color/black"
-                android:textSize="15sp" />
-
+                <RadioButton
+                    android:id="@+id/idCorrected"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/above_defects_corrected" />
+            </RadioGroup>
         </LinearLayout>
 
         <TextView
@@ -231,6 +196,61 @@
                 android:textSize="14sp" />
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/idMechanicSignatureText"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:text="@string/mechanic_signature"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/idMechanicCons"
+            android:layout_width="match_parent"
+            android:layout_height="140dp"
+            android:visibility="gone"
+            android:layout_marginHorizontal="25dp"
+            android:layout_marginTop="5dp">
+
+            <com.github.gcacace.signaturepad.views.SignaturePad
+                android:id="@+id/idSignatureMechanic"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/add_defect_text_background"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:penColor="@color/black" />
+
+            <TextView
+                android:id="@+id/idTvDrawSignatureMechanic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/draw_your_signature"
+                android:textSize="15sp"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/idClearSignTextViewMechanic"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/clear_signature"
+            android:textColor="@color/SignatureColorDefault"
+            android:textSize="14sp" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
