@@ -5,6 +5,7 @@
     android:id="@+id/fragment_container_add_dvir"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:context=".activity.MainActivity"
     android:background="#eee">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -78,6 +79,7 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:cardCornerRadius="@dimen/card_view_corner_radius"
                 app:cardBackgroundColor="@color/white">
 
                 <LinearLayout
@@ -121,6 +123,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                app:cardCornerRadius="@dimen/card_view_corner_radius"
                 app:cardBackgroundColor="#fff">
 
                 <LinearLayout
@@ -161,7 +164,6 @@
                     <View
                         android:layout_width="wrap_content"
                         android:layout_height="2dp"
-                        android:layout_marginHorizontal="10dp"
                         android:layout_marginVertical="5dp"
                         android:background="#eee" />
 
@@ -183,10 +185,10 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="15dp"
                             android:drawablePadding="10dp"
-                            android:drawableTint="#aaa"
                             android:gravity="center_vertical"
                             android:text="@string/no_defect_detected"
-                            app:drawableStartCompat="@drawable/defect_settings" />
+                            app:drawableStartCompat="@drawable/defect_settings"
+                            app:drawableTint="#aaa" />
 
                         <TextView
                             style="@style/TextAppearance.AppCompat.Large"
@@ -196,7 +198,7 @@
                             android:background="@drawable/add_defect_text_background"
                             android:gravity="center"
                             android:text="@string/click_here_to_add_defects"
-                            android:textColor="#0976CD" />
+                            android:textColor="#aaa" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -208,6 +210,7 @@
                         android:visibility="gone">
 
                         <TextView
+                            android:id="@+id/unitDefectsTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/unit_defects"
@@ -215,7 +218,23 @@
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/defectsList"
+                            android:id="@+id/unitDefects"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dual_vertical_margin"
+                            android:textColor="@color/black" />
+
+                        <TextView
+                            android:id="@+id/trailerDefectsTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/activity_vertical_margin"
+                            android:text="@string/trailer_defects"
+                            android:textColor="@color/black"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/trailerDefects"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/dual_vertical_margin"
@@ -255,7 +274,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="05:05 AM CDT"
-                            android:textColor="#eee"
+                            style="@style/TextAppearance.AppCompat.Small"
                             app:drawableEndCompat="@drawable/keyboard_bottom_arrow"
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -264,7 +283,6 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
-                        android:layout_marginHorizontal="10dp"
                         android:background="#eee" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
@@ -304,7 +322,6 @@
                         android:id="@+id/idview"
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
-                        android:layout_marginHorizontal="10dp"
                         android:layout_marginBottom="10dp"
                         android:background="#eee" />
                 </LinearLayout>

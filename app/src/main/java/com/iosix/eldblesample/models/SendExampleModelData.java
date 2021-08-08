@@ -25,6 +25,8 @@ public class SendExampleModelData {
     private int sequence;
     private String firmware;
 
+    public SendExampleModelData(){}
+
     public SendExampleModelData(EldEngineStates engine_state, String vin, double rpm, double speed_kmh, double trip_distance_km, double hours, double trip_hours, double voltage, String date, Date time, double latitude, double longitude, int gps_speed_kmh, int course_deg, int namsats, int altitude, double dop, int sequence, String firmware) {
         this.engine_state = engine_state;
         this.vin = vin;

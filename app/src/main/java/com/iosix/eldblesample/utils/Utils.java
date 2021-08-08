@@ -18,7 +18,9 @@ public class Utils {
     public static void setBluetoothDataEnabled(Context context) {
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         if (!adapter.isEnabled()) {
-            AlertDialogInit.Companion.showDialogOkWithMessage(context, R.string.bluetooth_not_work, R.string.you_want_to_turn_on,  (dialog, which) -> {
+            AlertDialogInit.Companion.showDialogOkWithMessage(context,
+                    R.string.bluetooth_not_work, R.string.you_want_to_turn_on,
+                    (dialog, which) -> {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
                         dialog.dismiss();

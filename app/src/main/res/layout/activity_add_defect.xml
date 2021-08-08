@@ -4,11 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorBackgroundMainView"
+    android:fitsSystemWindows="true"
     tools:context=".activity.AddDefectActivity"
     android:clickable="true"
     android:focusable="true"
     android:orientation="vertical"
     android:layout_height="match_parent">
+
 
     <com.google.android.material.appbar.AppBarLayout
         style="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
@@ -63,12 +65,14 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <ListView
-        android:id="@+id/listView"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:choiceMode="multipleChoice"
-        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-        />
+        android:layout_height="?actionBarSize"/>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

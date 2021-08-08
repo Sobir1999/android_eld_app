@@ -15,10 +15,33 @@ public class UserData {
         userPref = _context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
 
-    public void saveLang(String _lang, int _id){
+    public Object getByKey(String key){
+        return userPref.getString(key,"");
+    }
+
+    public void saveLang(String lang){
         editor = userPref.edit();
-        editor.putString("lang", _lang);
-        editor.putInt("idLang", _id);
+        editor.putString("lang", lang);
+        editor.apply();
+    }
+
+    public String getLang(){
+        return userPref.getString("lang","en");
+    }
+
+    public void addDefects(int defectType, String defect){
+        editor = userPref.edit();
+        editor.putString("defect-" + defectType, defect);
+        editor.apply();
+    }
+
+    public String getDefects(int defectType){
+        return userPref.getString("defect-" + defectType,"");
+    }
+
+    public void clearDefects(int defectType){
+        editor = userPref.edit();
+        editor.remove("defect-" + defectType);
         editor.apply();
     }
 
@@ -26,6 +49,10 @@ public class UserData {
         editor = userPref.edit();
         editor.putBoolean("isDark", isDark);
         editor.apply();
+    }
+
+    public boolean getMode(){
+        return userPref.getBoolean("isDark",false);
     }
 
     public void saveUserData(String name, String surname){

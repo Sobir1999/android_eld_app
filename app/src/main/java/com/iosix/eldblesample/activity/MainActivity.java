@@ -22,7 +22,9 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -50,6 +52,7 @@ import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.iosix.eldblelib.EldBleConnectionStateChangeCallback;
@@ -74,6 +77,7 @@ import com.iosix.eldblelib.EldScanObject;
 import com.iosix.eldblelib.EldTransmissionRecord;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.adapters.RecyclerViewLastAdapter;
+import com.iosix.eldblesample.base.BaseActivity;
 import com.iosix.eldblesample.broadcasts.ChangeDateTimeBroadcast;
 import com.iosix.eldblesample.customViews.CustomLiveRulerChart;
 import com.iosix.eldblesample.dialogs.ConnectToEldDialog;
@@ -92,6 +96,7 @@ import com.iosix.eldblesample.retrofit.ApiClient;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 import com.iosix.eldblesample.services.foreground.ForegroundService;
+import com.iosix.eldblesample.shared_prefs.UserData;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
 import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
@@ -113,10 +118,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.iosix.eldblesample.MyApplication.context;
+import static com.iosix.eldblesample.MyApplication.userData;
 import static com.iosix.eldblesample.utils.Utils.setBluetoothDataEnabled;
-import static com.iosix.eldblesample.utils.Utils.statusCheck;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity implements TimePickerDialog.OnTimeSetListener {
 
     private DrawerLayout drawerLayout;
     private Toolbar activity_main_toolbar;
@@ -150,34 +156,29 @@ public class MainActivity extends AppCompatActivity {
     int startseq, endseq;
     int reccount = 0;
 
-    public static final String MyPREFERENCES = "nightModePrefs";
-    public static final String Key_ISNIGHTMODE = "isNightMODE";
-    public static final String My_LAST_STATUS = "myLastStatus";
-    public static final String My_LAST_STATUS_KEY = "myLastStatusKey";
-    private SharedPreferences sharedPreferences;
-
     private StatusDaoViewModel statusDaoViewModel;
     private DayDaoViewModel daoViewModel;
-    private EldJsonViewModel jsonViewModel;
     private Menu optionMenu;
     private final ArrayList<String> daysArray = new ArrayList<>();
 
-    @SuppressLint({"VisibleForTests", "ResourceAsColor", "UseCompatLoadingForDrawables"})
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected int getLayoutId() {
+        return R.layout.activity_main;
+    }
+
+    @Override
+    public void initView() {
+        super.initView();
 
         setLocale(loadLocal());
 
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         Window w = getWindow();
-        w.setStatusBarColor(R.color.colorPrimaryDark);
+//            w.setStatusBarColor(R.color.colorPrimaryDark);
 
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 
-//        daoViewModel = (DayDaoViewModel) getIntent().getBundleExtra("bundle").getSerializable("dayDao");
-//        statusDaoViewModel = (StatusDaoViewModel) getIntent().getBundleExtra("bundle").getSerializable("statusDao");
         optimizeViewModels();
 
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -227,30 +228,31 @@ public class MainActivity extends AppCompatActivity {
         getDrawerToggleEvent();
         getDrawerTouchEvent();
 
-        createlocalFolder();
         setTodayAttr();
 
         clickLGDDButtons();
 
         setActivateDr();
 
-        openRecapFragment();
-
         startService();
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+        try {
+            Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData());
 
-//        ChangeDateTimeBroadcast changeDateTimeBroadcast = new ChangeDateTimeBroadcast() {
-//            @Override
-//            public void onDayChanged() {
-//                setTodayAttr();
-//            }
-//        };
-//
-//        registerReceiver(changeDateTimeBroadcast, ChangeDateTimeBroadcast.getIntentFilter());
+            sendData.enqueue(new Callback<SendExampleModelData>() {
+                @Override
+                public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
+                    Log.d("JSON", "onResponse: " + response.body());
+                }
+
+                @Override
+                public void onFailure(Call<SendExampleModelData> call, Throwable t) {
+                    Log.d("JSON", "onResponse: " + t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Toast.makeText(MainActivity.this, "1. " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     public void setActivateDr() {
@@ -269,33 +271,26 @@ public class MainActivity extends AppCompatActivity {
         }
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
         alertDialog.setTitle("Activate DR with exception")
-                .setMultiChoiceItems(items, checked, (dialog, which, isChecked) -> checked[which] = isChecked)
+                .setSingleChoiceItems(items, 2, (dialog, which) -> Log.d("ECEPT", "onClick: " + which))
                 .setPositiveButton("Ok", (dialog, which) -> Toast.makeText(MainActivity.this, "ok", Toast.LENGTH_SHORT).show()).setNegativeButton("Cancel", (dialog, which) -> Toast.makeText(MainActivity.this, "cancel", Toast.LENGTH_SHORT).show());
         AlertDialog alert = alertDialog.create();
         alert.show();
 
     }
 
-    private void openRecapFragment() {
-
-        TextView recap = findViewById(R.id.idRecap);
-        recap.setOnClickListener(v -> loadLGDDFragmentForRecap(RecapFragment.newInstance()));
-    }
-
-
     private void clickLGDDButtons() {
-        TextView inspectionMode,addDvir;
+        TextView inspectionMode, addDvir;
         Button log, general, doc, dvir, addDvirFragment;
         TextView recap = findViewById(R.id.idRecap);
         log = findViewById(R.id.idTableBtnLog);
         general = findViewById(R.id.idTableBtnGeneral);
-        addDvirFragment = findViewById(R.id.AddDvirFragment);
+//        addDvirFragment = findViewById(R.id.AddDvirFragment);
         doc = findViewById(R.id.idTableBtnDocs);
         dvir = findViewById(R.id.idTableBtnDVIR);
         inspectionMode = findViewById(R.id.idSpinnerInspection);
         addDvir = findViewById(R.id.idTableDvir);
 
-        addDvirFragment.setOnClickListener(v -> loadLGDDFragment(AddDvirFragment.newInstance(daoViewModel)));
+        addDvir.setOnClickListener(v -> loadLGDDFragment((AddDvirFragment.newInstance(daoViewModel))));
 
         log.setOnClickListener(v -> loadLGDDFragment(LGDDFragment.newInstance(0, daoViewModel)));
 
@@ -305,11 +300,7 @@ public class MainActivity extends AppCompatActivity {
 
         dvir.setOnClickListener(v -> loadLGDDFragment(LGDDFragment.newInstance(3, daoViewModel)));
 
-        recap.setOnClickListener(v -> {
-            Toast.makeText(MainActivity.this, "Clicked Recap", Toast.LENGTH_SHORT).show();
-            Log.d("RECAP", "onClick: ");
-//                toggleRightDrawer();
-        });
+        recap.setOnClickListener(v -> loadLGDDFragment(RecapFragment.newInstance()));
 
         inspectionMode.setOnClickListener(v -> {
             loadLGDDFragment(InspectionModuleFragment.newInstance());
@@ -320,15 +311,6 @@ public class MainActivity extends AppCompatActivity {
     private void loadLGDDFragment(Fragment fragment) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
-        fragmentTransaction.addToBackStack("fragment");
-        fragmentTransaction.replace(R.id.drawer_layout, fragment);
-        fragmentTransaction.commit();
-    }
-
-    private void loadLGDDFragmentForRecap(Fragment fragment) {
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fm.beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.anim.fade_in_from_right, R.anim.fade_out_to_right);
         fragmentTransaction.addToBackStack("fragment");
         fragmentTransaction.replace(R.id.drawer_layout, fragment);
         fragmentTransaction.commit();
@@ -345,13 +327,12 @@ public class MainActivity extends AppCompatActivity {
         statusDaoViewModel = ViewModelProviders.of(this).get(StatusDaoViewModel.class);
         statusDaoViewModel.getmAllStatus().observe(this, truckStatusEntities -> {
             for (int i = 0; i < truckStatusEntities.size(); i++) {
-//                    Log.d("STATUS", "onChanged: " + truckStatusEntities.get(i).getFrom_status() + " " + truckStatusEntities.get(i).getTo_status() + "\n" + truckStatusEntities.get(i).getTime() + "\n" + truckStatusEntities.get(i).getSeconds());
                 if (truckStatusEntities.get(i).getTime().equalsIgnoreCase(today)) {
                     MainActivity.this.truckStatusEntities.add(truckStatusEntities.get(i));
                 }
             }
 
-            if(truckStatusEntities.size() != 0) {
+            if (truckStatusEntities.size() != 0) {
                 last_status = truckStatusEntities.get(truckStatusEntities.size() - 1).getTo_status();
             } else {
                 last_status = EnumsConstants.STATUS_OFF;
@@ -367,15 +348,8 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        Log.d("_ID", "optimizeViewModels: " + a);
-
         daoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
         daoViewModel.getMgetAllDays().observe(this, dayEntities -> {
-//                for (int i = 0; i < dayEntities.size(); i++) {
-//                    Log.d("DAY", "onChanged: " + dayEntities.get(i).getDay() + " " + dayEntities.get(i).getDay_name() + " " + dayEntities.get(i).getId());
-//                }
-//                lastAdapter.setDayEntities(dayEntities);
-//                daoViewModel.insertDay(new DayEntity(today, ));
         });
 
     }
@@ -388,47 +362,6 @@ public class MainActivity extends AppCompatActivity {
 
         day.setText(time.split(" ")[0]);
         month.setText(today);
-    }
-
-    private void createlocalFolder() {
-        if (checkPermission()) {
-            File myDir = new File(Environment.getExternalStorageDirectory() + "/FastLogz");
-            File image = new File(Environment.getExternalStorageDirectory() + "/FastLogz/Images");
-            File documents = new File(Environment.getExternalStorageDirectory() + "/FastLogz/Documents");
-            if (!myDir.exists()) {
-                myDir.mkdirs();
-                image.mkdirs();
-                documents.mkdirs();
-            } else {
-                Log.d("TAG", "createlocalFolser: Not created");
-            }
-        } else {
-            requestPermission();
-        }
-    }
-
-    private boolean checkPermission() {
-        int result = ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        return result == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void requestPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            Toast.makeText(MainActivity.this, "Write External Storage permission allows us to do store images. Please allow this permission in App Settings.", Toast.LENGTH_LONG).show();
-        } else {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == 100) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.e("value", "Permission Granted, Now you can use local drive .");
-            } else {
-                Log.e("value", "Permission Denied, You cannot use local drive .");
-            }
-        }
     }
 
     private int getCurrentSeconds() {
@@ -516,8 +449,6 @@ public class MainActivity extends AppCompatActivity {
         TextView findLocation = findViewById(R.id.idLoactionIcon);
         final EditText editLocation = findViewById(R.id.idLocationEdit);
         final EditText note = findViewById(R.id.idNoteEdit);
-        sharedPreferences = getSharedPreferences(My_LAST_STATUS, Context.MODE_PRIVATE);
-
 
         findLocation.setOnClickListener(v -> {
             if (checkGrantResults(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, new int[]{1})) {
@@ -553,18 +484,18 @@ public class MainActivity extends AppCompatActivity {
 
         cancel.setOnClickListener(v -> {
             visiblityViewCons.setVisibility(View.GONE);
-            off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
-            sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
-            dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
-            on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
+            off.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusOFF));
+            sb.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSB));
+            dr.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDR));
+            on.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusON));
         });
 
         save.setOnClickListener(v -> {
             visiblityViewCons.setVisibility(View.GONE);
-            off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
-            sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
-            dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
-            on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
+            off.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusOFF));
+            sb.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSB));
+            dr.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDR));
+            on.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusON));
             if (current_status != last_status) {
                 statusDaoViewModel.insertStatus(new LogEntity(last_status, current_status, editLocation.getText().toString(), note.getText().toString(), null, today, getCurrentSeconds()));
                 saveLastPosition(current_status);
@@ -581,19 +512,19 @@ public class MainActivity extends AppCompatActivity {
         TextView statusTime = findViewById(R.id.idStatusTime);
 
         if (lastPos == EnumsConstants.STATUS_ON) {
-            cardView.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
+            cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusON));
             statusText.setText(R.string.on);
             icon.setImageResource(R.drawable.power);
         } else if (lastPos == EnumsConstants.STATUS_SB) {
-            cardView.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
+            cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSB));
             statusText.setText(R.string.sb);
             icon.setImageResource(R.drawable.sleeping);
         } else if (lastPos == EnumsConstants.STATUS_DR) {
-            cardView.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
+            cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDR));
             statusText.setText(R.string.dr);
             icon.setImageResource(R.drawable.driving);
         } else {
-            cardView.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
+            cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusOFF));
             statusText.setText(R.string.off);
         }
     }
@@ -607,37 +538,37 @@ public class MainActivity extends AppCompatActivity {
 
         off.setOnClickListener(v -> {
             visiblityViewCons.setVisibility(View.VISIBLE);
-            off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFFBold));
-            sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
-            dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
-            on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
+            off.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusOFFBold));
+            sb.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSB));
+            dr.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDR));
+            on.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusON));
             current_status = EnumsConstants.STATUS_OFF;
         });
 
         sb.setOnClickListener(v -> {
             visiblityViewCons.setVisibility(View.VISIBLE);
-            off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
-            sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSBBold));
-            dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
-            on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
+            off.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusOFF));
+            sb.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSBBold));
+            dr.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDR));
+            on.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusON));
             current_status = EnumsConstants.STATUS_SB;
         });
 
         dr.setOnClickListener(v -> {
             visiblityViewCons.setVisibility(View.VISIBLE);
-            off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
-            sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
-            dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDRBold));
-            on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusON));
+            off.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusOFF));
+            sb.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSB));
+            dr.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDRBold));
+            on.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusON));
             current_status = EnumsConstants.STATUS_DR;
         });
 
         on.setOnClickListener(v -> {
             visiblityViewCons.setVisibility(View.VISIBLE);
-            off.setCardBackgroundColor(getResources().getColor(R.color.colorStatusOFF));
-            sb.setCardBackgroundColor(getResources().getColor(R.color.colorStatusSB));
-            dr.setCardBackgroundColor(getResources().getColor(R.color.colorStatusDR));
-            on.setCardBackgroundColor(getResources().getColor(R.color.colorStatusONBold));
+            off.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusOFF));
+            sb.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSB));
+            dr.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDR));
+            on.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusONBold));
             current_status = EnumsConstants.STATUS_ON;
         });
     }
@@ -665,7 +596,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getDrawerTouchEvent() {
-        sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         nightModeSwitch = findViewById(R.id.idNightChoose);
         TextView textView = findViewById(R.id.idSpinnerLanguage);
 
@@ -673,10 +603,10 @@ public class MainActivity extends AppCompatActivity {
         nightModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                saveNightModeState(true);
+                userData.saveMode(true);
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                saveNightModeState(false);
+                userData.saveMode(false);
             }
             restartActivity();
         });
@@ -687,14 +617,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void saveNightModeState(boolean nightMode) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(Key_ISNIGHTMODE, nightMode);
-        editor.apply();
-    }
-
     private void checkNightModeActivated() {
-        if (sharedPreferences.getBoolean(Key_ISNIGHTMODE, false)) {
+        if (userData.getMode()) {
             nightModeSwitch.setChecked(true);
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {
@@ -833,6 +757,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("NonConstantResourceId")
     public void onUpdateFwClicked(View v) {
         if (v.getId() == R.id.updateFw) {
 
@@ -868,15 +793,15 @@ public class MainActivity extends AppCompatActivity {
                             (dialog, id) -> dialog.cancel());
 
             radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-                switch (checkedId) {
-                    case R.id.downloadbutton:
-                        updateSelection = 0;
-                        break;
-                    case R.id.localbutton:
-                        updateSelection = 1;
-                        break;
-                }
-            }
+                        switch (checkedId) {
+                            case R.id.downloadbutton:
+                                updateSelection = 0;
+                                break;
+                            case R.id.localbutton:
+                                updateSelection = 1;
+                                break;
+                        }
+                    }
             );
 
             // create alert dialog
@@ -1593,7 +1518,7 @@ public class MainActivity extends AppCompatActivity {
      * Start service method
      * "data" for sending data
      */
-    public void startService(){
+    public void startService() {
         String data = "Service is running...";
         Intent intent = new Intent(this, ForegroundService.class);
         intent.putExtra("data", data);
@@ -1610,10 +1535,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * f
      * Stop service method
      */
-    public void stopService(){
+    public void stopService() {
         Intent intent = new Intent(this, ForegroundService.class);
         stopService(intent);
+    }
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        TextView addTime = findViewById(R.id.idDefectTimeText);
+        addTime.setText(timeString(hourOfDay) + ":" + timeString(minute));
+    }
+
+    private String timeString(int digit) {
+        String s = "" + digit;
+        if (s.length() == 1) s = "0" + s;
+        return s;
     }
 }
