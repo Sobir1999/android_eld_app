@@ -141,7 +141,6 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     companion object {
-        @JvmField
-        var appContext: Context? = null
+        lateinit var appContext: Context
     }
 }

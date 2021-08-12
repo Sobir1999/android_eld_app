@@ -23,6 +23,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -154,14 +155,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     int startseq, endseq;
     int reccount = 0;
 
-    public static final String MyPREFERENCES = "nightModePrefs";
-    public static final String Key_ISNIGHTMODE = "isNightMODE";
-    public static final String My_LAST_STATUS = "myLastStatus";
-    public static final String My_LAST_STATUS_KEY = "myLastStatusKey";
-
     private StatusDaoViewModel statusDaoViewModel;
     private DayDaoViewModel daoViewModel;
-    private EldJsonViewModel jsonViewModel;
     private Menu optionMenu;
     private final ArrayList<String> daysArray = new ArrayList<>();
 
@@ -174,7 +169,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     public void initView() {
         super.initView();
 
-
         setLocale(loadLocal());
 
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
@@ -184,8 +178,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 
-//        daoViewModel = (DayDaoViewModel) getIntent().getBundleExtra("bundle").getSerializable("dayDao");
-//        statusDaoViewModel = (StatusDaoViewModel) getIntent().getBundleExtra("bundle").getSerializable("statusDao");
         optimizeViewModels();
 
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -235,14 +227,11 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         getDrawerToggleEvent();
         getDrawerTouchEvent();
 
-        createlocalFolder();
         setTodayAttr();
 
         clickLGDDButtons();
 
         setActivateDr();
-
-        openRecapFragment();
 
         startService();
 
@@ -265,20 +254,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-//        ChangeDateTimeBroadcast changeDateTimeBroadcast = new ChangeDateTimeBroadcast() {
-//            @Override
-//            public void onDayChanged() {
-//                setTodayAttr();
-//            }
-//        };
-//
-//        registerReceiver(changeDateTimeBroadcast, ChangeDateTimeBroadcast.getIntentFilter());
-    }
-
     public void setActivateDr() {
 
         Button activateDr = findViewById(R.id.idDRWithExeption);
@@ -295,19 +270,12 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         }
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
         alertDialog.setTitle("Activate DR with exception")
-                .setMultiChoiceItems(items, checked, (dialog, which, isChecked) -> checked[which] = isChecked)
+                .setSingleChoiceItems(items, 2, (dialog, which) -> Log.d("ECEPT", "onClick: " + which))
                 .setPositiveButton("Ok", (dialog, which) -> Toast.makeText(MainActivity.this, "ok", Toast.LENGTH_SHORT).show()).setNegativeButton("Cancel", (dialog, which) -> Toast.makeText(MainActivity.this, "cancel", Toast.LENGTH_SHORT).show());
         AlertDialog alert = alertDialog.create();
         alert.show();
 
     }
-
-    private void openRecapFragment() {
-
-        TextView recap = findViewById(R.id.idRecap);
-        recap.setOnClickListener(v -> loadLGDDFragmentForRecap(RecapFragment.newInstance()));
-    }
-
 
     private void clickLGDDButtons() {
         TextView inspectionMode, addDvir;
@@ -315,13 +283,13 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         TextView recap = findViewById(R.id.idRecap);
         log = findViewById(R.id.idTableBtnLog);
         general = findViewById(R.id.idTableBtnGeneral);
-        addDvirFragment = findViewById(R.id.AddDvirFragment);
+//        addDvirFragment = findViewById(R.id.AddDvirFragment);
         doc = findViewById(R.id.idTableBtnDocs);
         dvir = findViewById(R.id.idTableBtnDVIR);
         inspectionMode = findViewById(R.id.idSpinnerInspection);
         addDvir = findViewById(R.id.idTableDvir);
 
-        addDvirFragment.setOnClickListener(v -> loadLGDDFragment(AddDvirFragment.newInstance(daoViewModel)));
+        addDvir.setOnClickListener(v -> loadLGDDFragment((AddDvirFragment.newInstance(daoViewModel))));
 
         log.setOnClickListener(v -> loadLGDDFragment(LGDDFragment.newInstance(0, daoViewModel)));
 
@@ -331,11 +299,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
         dvir.setOnClickListener(v -> loadLGDDFragment(LGDDFragment.newInstance(3, daoViewModel)));
 
-        recap.setOnClickListener(v -> {
-            Toast.makeText(MainActivity.this, "Clicked Recap", Toast.LENGTH_SHORT).show();
-            Log.d("RECAP", "onClick: ");
-//                toggleRightDrawer();
-        });
+        recap.setOnClickListener(v -> loadLGDDFragment(RecapFragment.newInstance()));
 
         inspectionMode.setOnClickListener(v -> {
             loadLGDDFragment(InspectionModuleFragment.newInstance());
@@ -346,15 +310,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     private void loadLGDDFragment(Fragment fragment) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
-        fragmentTransaction.addToBackStack("fragment");
-        fragmentTransaction.replace(R.id.drawer_layout, fragment);
-        fragmentTransaction.commit();
-    }
-
-    private void loadLGDDFragmentForRecap(Fragment fragment) {
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fm.beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.anim.fade_in_from_right, R.anim.fade_out_to_right);
         fragmentTransaction.addToBackStack("fragment");
         fragmentTransaction.replace(R.id.drawer_layout, fragment);
         fragmentTransaction.commit();
@@ -371,7 +326,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         statusDaoViewModel = ViewModelProviders.of(this).get(StatusDaoViewModel.class);
         statusDaoViewModel.getmAllStatus().observe(this, truckStatusEntities -> {
             for (int i = 0; i < truckStatusEntities.size(); i++) {
-//                    Log.d("STATUS", "onChanged: " + truckStatusEntities.get(i).getFrom_status() + " " + truckStatusEntities.get(i).getTo_status() + "\n" + truckStatusEntities.get(i).getTime() + "\n" + truckStatusEntities.get(i).getSeconds());
                 if (truckStatusEntities.get(i).getTime().equalsIgnoreCase(today)) {
                     MainActivity.this.truckStatusEntities.add(truckStatusEntities.get(i));
                 }
@@ -393,15 +347,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             e.printStackTrace();
         }
 
-        Log.d("_ID", "optimizeViewModels: " + a);
-
         daoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
         daoViewModel.getMgetAllDays().observe(this, dayEntities -> {
-//                for (int i = 0; i < dayEntities.size(); i++) {
-//                    Log.d("DAY", "onChanged: " + dayEntities.get(i).getDay() + " " + dayEntities.get(i).getDay_name() + " " + dayEntities.get(i).getId());
-//                }
-//                lastAdapter.setDayEntities(dayEntities);
-//                daoViewModel.insertDay(new DayEntity(today, ));
         });
 
     }
@@ -414,48 +361,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
         day.setText(time.split(" ")[0]);
         month.setText(today);
-    }
-
-    private void createlocalFolder() {
-        if (checkPermission()) {
-            File myDir = new File(Environment.getExternalStorageDirectory() + "/FastLogz");
-            File image = new File(Environment.getExternalStorageDirectory() + "/FastLogz/Images");
-            File documents = new File(Environment.getExternalStorageDirectory() + "/FastLogz/Documents");
-            if (!myDir.exists()) {
-                myDir.mkdirs();
-                image.mkdirs();
-                documents.mkdirs();
-            } else {
-                Log.d("TAG", "createlocalFolser: Not created");
-            }
-        } else {
-            requestPermission();
-        }
-    }
-
-    private boolean checkPermission() {
-        int result = ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        return result == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void requestPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            Toast.makeText(MainActivity.this, "Write External Storage permission allows us to do store images. Please allow this permission in App Settings.", Toast.LENGTH_LONG).show();
-        } else {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 100) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.e("value", "Permission Granted, Now you can use local drive .");
-            } else {
-                Log.e("value", "Permission Denied, You cannot use local drive .");
-            }
-        }
     }
 
     private int getCurrentSeconds() {

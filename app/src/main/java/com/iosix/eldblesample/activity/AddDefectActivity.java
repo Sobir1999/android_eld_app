@@ -1,35 +1,33 @@
 package com.iosix.eldblesample.activity;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Lifecycle;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.tabs.TabLayout;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.base.BaseActivity;
-import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
+import com.iosix.eldblesample.fragments.AddDefectFragment;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import static com.iosix.eldblesample.MyApplication.userData;
 
 public class AddDefectActivity extends BaseActivity {
-    private List<String> selectedList = new ArrayList<>();
-    private final String[] maintitle = {
-            "Buzuq",
-            "Siniq",
-            "Ishlamaydi",
-            "Dabdala",
-    };
+
+    private TabLayout tabLayout;
+    private ViewPager2 viewPager;
+    private boolean isTruckSelected;
 
     @Override
     protected int getLayoutId() {
@@ -40,62 +38,58 @@ public class AddDefectActivity extends BaseActivity {
     public void initView() {
         super.initView();
 
+        isTruckSelected = getIntent().getBooleanExtra("isTruckSelected", false);
+
+        tabLayout = findViewById(R.id.tabLayout);
+        viewPager = findViewById(R.id.viewpager);
         ImageView backButton = findViewById(R.id.idImageBack);
         TextView save = findViewById(R.id.save);
         backButton.setOnClickListener(v -> onBackPressed());
-        save.setOnClickListener(v-> createDialog("Add a note to your defect", "Notes", 1));
+        save.setOnClickListener(v -> createDialog(v.getContext()));
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_activated_1, maintitle);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        DefectsFragmentAdapter adapter = new DefectsFragmentAdapter(fragmentManager, getLifecycle(), isTruckSelected);
+        viewPager.setAdapter(adapter);
 
-        ListView list = findViewById(R.id.listView);
-        list.setAdapter(adapter);
-        list.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        tabLayout.addTab(tabLayout.newTab().setText("Unit"));
+        if (isTruckSelected) tabLayout.addTab(tabLayout.newTab().setText("Trailer"));
+//        tabLayout.addTab(tabLayout.newTab().setText("Trailer"));
 
-        list.setOnItemClickListener((parent, view, position, id) -> selectedItems(maintitle[position]));
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                tabLayout.selectTab(tabLayout.getTabAt(position));
+            }
+        });
     }
 
-    private void selectedItems(String s) {
-        if (selectedList.contains(s)) {
-            selectedList.remove(s);
-        } else {
-            selectedList.add(s);
-        }
-    }
-
-    private void back(String note) {
-        Intent intent = getIntent();
-        Bundle sendList = new Bundle();
-        sendList.putStringArrayList("list", (ArrayList<String>) selectedList);
-        if (selectedList.isEmpty()) {
-            setResult(RESULT_CANCELED, intent);
-        } else {
-            intent.putExtra("defectsList", defects());
-            intent.putExtra("notes", note);
-            intent.putStringArrayListExtra("list", (ArrayList<String>) selectedList);
-            setResult(RESULT_OK, intent);
-        }
-        finish();
-    }
-
-        String defects(){
-        StringBuilder defects = new StringBuilder();
-        for(int i = 0; i < selectedList.size(); i++){
-            defects.append(selectedList.get(i)).append("\n");
-        }
-        return defects.toString();
-    }
-
-    private void createDialog(String title, String hint, int type) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(title);
+    private void createDialog(Context context) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+        dialog.setTitle("Add a note to your defect");
 
         View v = getLayoutInflater().inflate(R.layout.add_unit_trailer_dialog_view, null, false);
         EditText editText = v.findViewById(R.id.idAddUnitTrailerEdit);
-        editText.setHint(hint);
+        editText.setHint("Notes");
 
-        dialog.setPositiveButton("Ok", (dialog12, which) -> {
-            if (type == 1 && !editText.getText().toString().equalsIgnoreCase("")) {
+        dialog.setPositiveButton("OK", (dialog12, which) -> {
+            if (!editText.getText().toString().equalsIgnoreCase("")) {
                 back(editText.getText().toString());
             }
         });
@@ -104,8 +98,48 @@ public class AddDefectActivity extends BaseActivity {
 
         dialog.setView(v);
         dialog.show();
-
-//        editText.getText().toString().trim();
     }
 
+    private void back(String note) {
+        String unitDefects = userData.getDefects(1);
+        String trailerDefects = userData.getDefects(2);
+
+        Intent intent = getIntent();
+        if (unitDefects.equals("") && trailerDefects.equals("")) {
+            setResult(RESULT_CANCELED, intent);
+        } else {
+            intent.putExtra("unitDefects", userData.getDefects(1));
+            intent.putExtra("trailerDefects", userData.getDefects(2));
+            intent.putExtra("notes", note);
+            setResult(RESULT_OK, intent);
+            userData.clearDefects(1);
+            userData.clearDefects(2);
+        }
+        finish();
+    }
+
+}
+
+class DefectsFragmentAdapter extends FragmentStateAdapter {
+    boolean isTruckSelected = false;
+
+    public DefectsFragmentAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, boolean isTruckSelected) {
+        super(fragmentManager, lifecycle);
+        this.isTruckSelected = isTruckSelected;
+    }
+
+    @NonNull
+    @Override
+    public Fragment createFragment(int position) {
+        if (position == 0) {
+            return new AddDefectFragment(1);
+        }
+        return new AddDefectFragment(2);
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return isTruckSelected ? 2 : 1;
+    }
 }

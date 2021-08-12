@@ -1,7 +1,6 @@
 package com.iosix.eldblesample.fragments;
 
 import android.app.AlertDialog;
-import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -9,8 +8,11 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,33 +21,38 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.activity.AddDefectActivity;
+import com.iosix.eldblesample.adapters.TrailerRecyclerAdapter;
+import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
 import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static android.app.Activity.RESULT_OK;
 
-public class AddDvirFragment extends Fragment{
-    private TextView addUnit;
+public class AddDvirFragment extends Fragment {
+    private TextView addUnit, nextText;
     private TextView units;
     private TextView addTrailer;
     private TextView trailers;
-    private TextView defectsList;
+    private TextView unitDefects, trailerDefects, unitDefectsTitle, trailerDefectsTitle;
     private TextView addTime;
     private TextView notes;
     private ImageView backView;
     private LinearLayout defects, addDefect;
     private AppBarLayout appBarLayout;
     private DayDaoViewModel daoViewModel;
+    private final String selectedUnit = "No Unit Selected";
+    private ArrayList<TrailersEntity> selectedTrailers;
+    private TrailerRecyclerAdapter adapter;
+    private String unitDefectsString = "", trailerDefectsString = "";
 
     public static AddDvirFragment newInstance(DayDaoViewModel dayDaoViewModel) {
         AddDvirFragment fragment = new AddDvirFragment();
@@ -69,33 +76,61 @@ public class AddDvirFragment extends Fragment{
         units = v.findViewById(R.id.idAddDvirUnitNumberText);
         addTrailer = v.findViewById(R.id.idAddDvirTrailerText);
         trailers = v.findViewById(R.id.idAddDvirTrailerNumberText);
-        trailers = v.findViewById(R.id.idAddDvirTrailerNumberText);
-        defectsList = v.findViewById(R.id.defectsList);
+        unitDefects = v.findViewById(R.id.unitDefects);
+        trailerDefects = v.findViewById(R.id.trailerDefects);
+        unitDefectsTitle = v.findViewById(R.id.unitDefectsTitle);
+        trailerDefectsTitle = v.findViewById(R.id.trailerDefectsTitle);
         addTime = v.findViewById(R.id.idDefectTimeText);
         notes = v.findViewById(R.id.notes);
         addDefect = v.findViewById(R.id.addDefect);
         defects = v.findViewById(R.id.defects);
         backView = v.findViewById(R.id.idImageBack);
-        TextView nextText = v.findViewById(R.id.idAddDvirNext);
+        nextText = v.findViewById(R.id.idAddDvirNext);
         appBarLayout = v.findViewById(R.id.idAppbar);
-
-
-        daoViewModel.getGetAllVehicles().observe(requireActivity(), dayEntities -> {
-            for (int i = 0; i < dayEntities.size(); i++) {
-                Log.d("ADDDVIR", "onChanged: " + dayEntities.get(i).getName());
-            }
-        });
+        RecyclerView recyclerView = v.findViewById(R.id.idTrailersRecyclerView);
 
         buttonClicks(container);
 
-        nextText.setOnClickListener(v1 -> {
-            loadFragment(new SignatureFragment());
-            appBarLayout.setVisibility(View.GONE);
+        daoViewModel = ViewModelProviders.of(requireActivity()).get(DayDaoViewModel.class);
+        daoViewModel.getGetAllVehicles().observe((LifecycleOwner) requireContext(), vehiclesEntities -> units.setText(vehiclesEntities.isEmpty() ? selectedUnit : vehiclesEntities.get(0).getName()));
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        adapter = new TrailerRecyclerAdapter(selectedTrailers);
+        recyclerView.setAdapter(adapter);
+
+        adapterListener();
+
+        return v;
+    }
+
+    private void adapterListener() {
+        adapter.setUpdateListener((position) -> {
+            AlertDialog.Builder builderSingle = new AlertDialog.Builder(getContext());
+            builderSingle.setTitle("Select Trailers");
+
+            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_selectable_list_item);
+            daoViewModel.getGetAllTrailers().observe((LifecycleOwner) requireContext(), trailersEntities -> {
+                for (int i = 0; i < trailersEntities.size(); i++) {
+                    arrayAdapter.add(trailersEntities.get(i).getNumber());
+                }
+            });
+
+            builderSingle.setNegativeButton("cancel", (dialog, which) -> dialog.dismiss());
+
+            builderSingle.setAdapter(arrayAdapter, (dialog, which) -> {
+                String strName = arrayAdapter.getItem(which);
+                selectedTrailers.get(position).setNumber(strName);
+                adapter.notifyDataSetChanged();
+            });
+            builderSingle.show();
+
+            adapter.notifyDataSetChanged();
         });
 
-        addDefect.setOnClickListener(v1 -> startActivityForResult(new Intent(requireContext(), AddDefectActivity.class), 100));
-        defects.setOnClickListener(v1 -> startActivityForResult(new Intent(requireContext(), AddDefectActivity.class), 100));
-        return v;
+        adapter.setDeleteListener((position) -> {
+            selectedTrailers.remove(position);
+            adapter.notifyDataSetChanged();
+        });
     }
 
     @Override
@@ -108,11 +143,23 @@ public class AddDvirFragment extends Fragment{
                 addDefect.setVisibility(View.GONE);
                 defects.setVisibility(View.VISIBLE);
 
-                defectsList.setText(data.getStringExtra("defectsList"));
-                notes.setText(data.getStringExtra("notes"));
+                unitDefectsString = data.getStringExtra("unitDefects");
+                trailerDefectsString = data.getStringExtra("trailerDefects");
 
-                ArrayList<String> listB = data.getExtras().getStringArrayList("list");
-                Toast.makeText(requireActivity(), listB.toString(), Toast.LENGTH_SHORT).show();
+                unitDefects.setText(unitDefectsString);
+                trailerDefects.setText(trailerDefectsString);
+
+                if (unitDefectsString.equals("")) {
+                    unitDefectsTitle.setVisibility(View.GONE);
+                    unitDefects.setVisibility(View.GONE);
+                }
+
+                if (trailerDefectsString.equals("")) {
+                    trailerDefectsTitle.setVisibility(View.GONE);
+                    trailerDefects.setVisibility(View.GONE);
+                }
+
+                notes.setText(data.getStringExtra("notes"));
 
             } else {
                 Toast.makeText(requireContext(), "Not selected item", Toast.LENGTH_SHORT).show();
@@ -125,51 +172,79 @@ public class AddDvirFragment extends Fragment{
 
     @SuppressWarnings("deprecation")
     private void buttonClicks(ViewGroup context) {
+        selectedTrailers = new ArrayList<>();
+
         addUnit.setOnClickListener(v -> createDialog(context, "Add Unit", "Add Unit", 1));
 
         units.setOnClickListener(v -> {
             AlertDialog.Builder builderSingle = new AlertDialog.Builder(getContext());
-            builderSingle.setTitle("Select One Name:-");
+            builderSingle.setTitle("Select Unit");
 
-            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.select_dialog_singlechoice);
-            arrayAdapter.add("Hardik");
-            arrayAdapter.add("Archit");
-            arrayAdapter.add("Jignesh");
-            arrayAdapter.add("Umang");
-            arrayAdapter.add("Gatti");
+            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_selectable_list_item);
+            daoViewModel.getGetAllVehicles().observe((LifecycleOwner) requireContext(), vehiclesEntities -> {
+                for (int i = 0; i < vehiclesEntities.size(); i++) {
+                    arrayAdapter.add(vehiclesEntities.get(i).getName());
+                }
+            });
 
             builderSingle.setNegativeButton("cancel", (dialog, which) -> dialog.dismiss());
 
-//            builderSingle.setAdapter(arrayAdapter, (dialog, which) -> {
-//                String strName = arrayAdapter.getItem(which);
-//                AlertDialog.Builder builderInner = new AlertDialog.Builder(getContext());
-//                builderInner.setMessage(strName);
-//                builderInner.setTitle("Your Selected Item is");
-//                builderInner.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog,int which) {
-//                        dialog.dismiss();
-//                    }
-//                });
-//                builderInner.show();
-//            });
+            builderSingle.setAdapter(arrayAdapter, (dialog, which) -> {
+                String strName = arrayAdapter.getItem(which);
+                units.setText(strName);
+            });
             builderSingle.show();
         });
 
         addTrailer.setOnClickListener(v -> createDialog(context, "Add Trailer", "Add Trailer", 2));
 
-        addTime.setOnClickListener(v->{
+        addTime.setOnClickListener(v -> {
             DialogFragment timeFragment = new TimePickerFragment();
-            timeFragment.show(getFragmentManager() != null ? getFragmentManager() : null, "time picker");
+            assert getFragmentManager() != null;
+            timeFragment.show(getFragmentManager(), "time picker");
         });
 
         trailers.setOnClickListener(v -> {
+            AlertDialog.Builder builderSingle = new AlertDialog.Builder(getContext());
+            builderSingle.setTitle("Select Trailers");
 
+            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_selectable_list_item);
+            daoViewModel.getGetAllTrailers().observe((LifecycleOwner) requireContext(), trailersEntities -> {
+                for (int i = 0; i < trailersEntities.size(); i++) {
+                    arrayAdapter.add(trailersEntities.get(i).getNumber());
+                }
+            });
+
+            builderSingle.setNegativeButton("cancel", (dialog, which) -> dialog.dismiss());
+
+            builderSingle.setAdapter(arrayAdapter, (dialog, which) -> {
+                String strName = arrayAdapter.getItem(which);
+                selectedTrailers.add(new TrailersEntity(strName));
+                adapter.notifyDataSetChanged();
+            });
+            builderSingle.show();
         });
 
         backView.setOnClickListener(v -> {
             assert getFragmentManager() != null;
             getFragmentManager().popBackStack();
+        });
+
+        nextText.setOnClickListener(v1 -> {
+            loadFragment(SignatureFragment.newInstance(!unitDefectsString.equalsIgnoreCase("") || !trailerDefectsString.equalsIgnoreCase("")));
+            appBarLayout.setVisibility(View.GONE);
+        });
+
+        addDefect.setOnClickListener(v1 -> {
+            Intent intent = new Intent(requireContext(), AddDefectActivity.class);
+            intent.putExtra("isTruckSelected", !selectedTrailers.isEmpty());
+            startActivityForResult(intent, 100);
+        });
+
+        defects.setOnClickListener(v1 -> {
+            Intent intent = new Intent(requireContext(), AddDefectActivity.class);
+            intent.putExtra("isTruckSelected", !selectedTrailers.isEmpty());
+            startActivityForResult(intent, 100);
         });
     }
 
@@ -184,6 +259,16 @@ public class AddDvirFragment extends Fragment{
         dialog.setPositiveButton("Ok", (dialog12, which) -> {
             if (type == 1 && !editText.getText().toString().equalsIgnoreCase("")) {
                 daoViewModel.insertVehicle(new VehiclesEntity(editText.getText().toString()));
+            } else if (type == 2 && !editText.getText().toString().equalsIgnoreCase("")) {
+                try {
+                    daoViewModel.insertTrailer(new TrailersEntity(editText.getText().toString()));
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else if (type == 1 && editText.getText().toString().equalsIgnoreCase("")) {
+                Toast.makeText(requireContext(), "Insert Unit Number!!!", Toast.LENGTH_SHORT).show();
+            } else if (type == 2 && editText.getText().toString().equalsIgnoreCase("")) {
+                Toast.makeText(requireContext(), "Insert Trailer Number!!!", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -195,13 +280,36 @@ public class AddDvirFragment extends Fragment{
 //        editText.getText().toString().trim();
     }
 
+    @SuppressWarnings("deprecation")
     private void loadFragment(Fragment fragment) {
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getParentFragmentManager();
         assert fm != null;
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
         fragmentTransaction.addToBackStack("fragment");
         fragmentTransaction.replace(R.id.fragment_container_add_dvir, fragment);
         fragmentTransaction.commit();
+    }
 
+    private String getDialogString() {
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(getContext());
+        builderSingle.setTitle("Select Trailers");
+        final String[] strName = new String[1];
+
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_selectable_list_item);
+        daoViewModel.getGetAllTrailers().observe((LifecycleOwner) requireContext(), trailersEntities -> {
+            for (int i = 0; i < trailersEntities.size(); i++) {
+                arrayAdapter.add(trailersEntities.get(i).getNumber());
+            }
+        });
+
+        builderSingle.setNegativeButton("cancel", (dialog, which) -> dialog.dismiss());
+
+        builderSingle.setAdapter(arrayAdapter, (dialog, which) -> {
+            strName[0] = arrayAdapter.getItem(which);
+            adapter.notifyDataSetChanged();
+        });
+        builderSingle.show();
+
+        return strName[0];
     }
 }
