@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">FastLogz</string>
-    <string name="off">OFF</string>
+    <string name="off">DÉSACTIVÉ</string>
 
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
     <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
@@ -12,7 +12,7 @@
     <string name="sleeper_berth">Couchette</string>
     <string name="dr">DR</string>
     <string name="driving">Conduite</string>
-    <string name="on">AU</string>
+    <string name="on">ALLUMÉ</string>
     <string name="on_duty">En service</string>
     <string name="previous_log">Journal précédent</string>
     <string name="next_log">Journal suivant</string>

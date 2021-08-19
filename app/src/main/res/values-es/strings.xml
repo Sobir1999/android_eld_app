@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">FastLogz</string>
-    <string name="off">OFF</string>
+    <string name="off">APAGADO</string>
 
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
     <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
@@ -31,7 +31,7 @@
     <string name="vehicles">Vehículos</string>
     <string name="trailers">Remolques</string>
     <string name="carrier">Transportadora</string>
-    <string name="suncoast_transportation_ilc">Transporte de Suncoast Ilc</string>
+    <string name="suncoast_transportation_ilc">Suncoast transportation Ilc</string>
     <string name="_500_houston_texas_77091">500,Houston,Texas,77091</string>
     <string name="home_terminal_address">Dirección de la terminal de casa</string>
     <string name="_500_houston_texas">500,Houston,Texas,…</string>
