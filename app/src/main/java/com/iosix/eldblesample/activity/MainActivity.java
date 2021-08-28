@@ -2,6 +2,7 @@ package com.iosix.eldblesample.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
@@ -13,6 +14,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,6 +32,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
@@ -135,6 +138,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     private final String today = time.split(" ")[1] + " " + time.split(" ")[2];
     private ArrayList<LogEntity> truckStatusEntities;
     private APIInterface apiInterface;
+    private TextView lastDaysCheck;
+    private ImageView toDaySelect;
 
     private double latitude;
     private double longtitude;
@@ -159,6 +164,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     private DayDaoViewModel daoViewModel;
     private Menu optionMenu;
     private final ArrayList<String> daysArray = new ArrayList<>();
+    private RecyclerViewLastAdapter lastAdapter;
 
     @Override
     protected int getLayoutId() {
@@ -172,8 +178,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         setLocale(loadLocal());
 
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        Window w = getWindow();
-//            w.setStatusBarColor(R.color.colorPrimaryDark);
 
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
@@ -188,27 +192,12 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         setBluetoothDataEnabled(this);
 
         //Last Days Recycler Adapter
-        RecyclerViewLastAdapter lastAdapter = new RecyclerViewLastAdapter(this, daoViewModel, statusDaoViewModel);
+        lastAdapter = new RecyclerViewLastAdapter(this, daoViewModel, statusDaoViewModel);
         last_recycler_view.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true));
         last_recycler_view.setAdapter(lastAdapter);
+        lastAdapter.notifyDataSetChanged();
 
-        lastAdapter.setListener(new RecyclerViewLastAdapter.LastDaysRecyclerViewItemClickListener() {
-            @Override
-            public void onclickItem(String s) {
-                if (daysArray.contains(s)) {
-                    daysArray.remove(s);
-                } else {
-                    daysArray.add(s);
-                }
-
-                optionMenu.findItem(R.id.shareMenu).setVisible(!daysArray.isEmpty());
-            }
-
-            @Override
-            public void onclickDvir(String s) {
-                loadLGDDFragment(AddDvirFragment.newInstance(daoViewModel));
-            }
-        });
+        lastAdapterClicked();
 
         // Set the toolbar
         activity_main_toolbar = findViewById(R.id.activity_main_toolbar);
@@ -234,24 +223,77 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         setActivateDr();
 
         startService();
+        update();
+    }
 
-        try {
-            Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData());
+    private void update() {
+        new Thread() {
+            @SuppressLint("DefaultLocale")
+            @SuppressWarnings("BusyWait")
+            public void run() {
+                while (true) {
+                    runOnUiThread(() -> {
+                        TextView statusTime = findViewById(R.id.idStatusTime);
+                        int last = getLastStatusSec();
+                        int current = (int) SystemClock.uptimeMillis() / 1000;
+                        int hour = (current - last) / 3600;
+                        int min = ((current - last) % 3600) / 60;
+                        statusTime.setText(String.format("%02dh %02dm", hour, min));
+                    });
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
+    }
 
-            sendData.enqueue(new Callback<SendExampleModelData>() {
-                @Override
-                public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
-                    Log.d("JSON", "onResponse: " + response.body());
+    private void lastAdapterClicked() {
+        lastAdapter.setListener(new RecyclerViewLastAdapter.LastDaysRecyclerViewItemClickListener() {
+            @Override
+            public void onclickItem(String s) {
+                if (daysArray.contains(s)) {
+                    daysArray.remove(s);
+                } else {
+                    daysArray.add(s);
                 }
 
-                @Override
-                public void onFailure(Call<SendExampleModelData> call, Throwable t) {
-                    Log.d("JSON", "onResponse: " + t.getMessage());
-                }
-            });
-        } catch (Exception e) {
-            Toast.makeText(MainActivity.this, "1. " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
+                optionMenu.findItem(R.id.shareMenu).setVisible(!daysArray.isEmpty());
+            }
+
+            @Override
+            public void onclickDvir(String s) {
+                loadLGDDFragment(AddDvirFragment.newInstance());
+            }
+        });
+
+        lastDaysCheck = findViewById(R.id.idLastDaysCheckAll);
+        toDaySelect = findViewById(R.id.idTableRadioBtn);
+
+        lastDaysCheck.setOnClickListener(v -> {
+            if (lastAdapter.isSelected()) {
+                lastAdapter.setSelected(false);
+                daysArray.clear();
+                toDaySelect.setImageResource(R.drawable.state_unchacked);
+                lastDaysCheck.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_check_circle_outline_24, 0);
+                lastAdapter.notifyDataSetChanged();
+            } else {
+                daoViewModel.getMgetAllDays().observe(this, dayEntities -> {
+                    for (int i = 0; i < dayEntities.size(); i++) {
+                        daysArray.add(dayEntities.get(i).getDay_name());
+                    }
+                });
+
+                lastAdapter.setSelected(true);
+                toDaySelect.setImageResource(R.drawable.state_checked);
+                lastDaysCheck.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.state_checked, 0);
+                lastAdapter.notifyDataSetChanged();
+            }
+
+            optionMenu.findItem(R.id.shareMenu).setVisible(!daysArray.isEmpty());
+        });
     }
 
     public void setActivateDr() {
@@ -289,7 +331,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         inspectionMode = findViewById(R.id.idSpinnerInspection);
         addDvir = findViewById(R.id.idTableDvir);
 
-        addDvir.setOnClickListener(v -> loadLGDDFragment((AddDvirFragment.newInstance(daoViewModel))));
+        addDvir.setOnClickListener(v -> loadLGDDFragment((AddDvirFragment.newInstance())));
 
         log.setOnClickListener(v -> loadLGDDFragment(LGDDFragment.newInstance(0, daoViewModel)));
 
@@ -338,14 +380,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             }
             setTopLastPos(last_status);
         });
-
-        long a = 0;
-
-        try {
-            a = daoViewModel.insertDay(new DayEntity(today, time.split(" ")[0]));
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
 
         daoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
         daoViewModel.getMgetAllDays().observe(this, dayEntities -> {
@@ -421,21 +455,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         SharedPreferences pref = getApplicationContext()
                 .getSharedPreferences("MyPref", Context.MODE_PRIVATE);
         return pref.getInt("last_S_T", 0);
-    }
-
-    private void setTopStatusTime() {
-        final TextView statusTime = findViewById(R.id.idStatusTime);
-        new Handler().postDelayed(new Runnable() {
-            @SuppressLint("DefaultLocale")
-            @Override
-            public void run() {
-                int last = getLastStatusSec();
-                int current = (int) SystemClock.uptimeMillis() / 1000;
-                int hour = (current - last) / 3600;
-                int min = ((current - last) % 3600) / 60;
-                statusTime.setText(String.format("%02dh %02dm", hour, min));
-            }
-        }, 500);
     }
 
     public void restartActivity() {

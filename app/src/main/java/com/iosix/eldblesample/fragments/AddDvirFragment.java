@@ -1,11 +1,13 @@
 package com.iosix.eldblesample.fragments;
 
 import android.app.AlertDialog;
+import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LifecycleOwner;
@@ -32,6 +34,7 @@ import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -54,11 +57,14 @@ public class AddDvirFragment extends Fragment {
     private TrailerRecyclerAdapter adapter;
     private String unitDefectsString = "", trailerDefectsString = "";
 
-    public static AddDvirFragment newInstance(DayDaoViewModel dayDaoViewModel) {
+    public AddDvirFragment() {
+    }
+
+    public static AddDvirFragment newInstance() {
         AddDvirFragment fragment = new AddDvirFragment();
-        Bundle args = new Bundle();
-        fragment.daoViewModel = dayDaoViewModel;
-        fragment.setArguments(args);
+//        Bundle args = new Bundle();d
+//        fragment.daoViewModel = dayDaoViewModel;
+//        fragment.setArguments(args);
         return fragment;
     }
 

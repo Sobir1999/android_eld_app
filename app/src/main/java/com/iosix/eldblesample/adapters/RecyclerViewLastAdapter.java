@@ -33,25 +33,23 @@ import java.util.Objects;
 
 public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLastAdapter.ViewHolder> {
     private List<DayEntity> dayEntities;
+    private List<DayEntity> selectedDays = new ArrayList<>();
     private List<LogEntity> truckStatusEntities;
     private LastDaysRecyclerViewItemClickListener listener;
     private Context ctx;
-    private DayDaoViewModel dViewModel;
-    private StatusDaoViewModel sViewModel;
+    private boolean isSelected = false;
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
 
     public void setListener(LastDaysRecyclerViewItemClickListener listener) {
         this.listener = listener;
     }
-
-//    public void setDayEntities(List<DayEntity> dayEntities) {
-//        this.dayEntities = dayEntities;
-//        notifyDataSetChanged();
-//    }
-//
-//    public void setTruckStatusEntities(List<LogEntity> truckStatusEntities) {
-//        this.truckStatusEntities = truckStatusEntities;
-//        notifyDataSetChanged();
-//    }
 
     public RecyclerViewLastAdapter(Context context, DayDaoViewModel daoViewModel, StatusDaoViewModel statusDaoViewModel) {
         dayEntities = new ArrayList<>();
@@ -62,12 +60,6 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
 
         statusDaoViewModel.getmAllStatus().observe((LifecycleOwner) ctx, truckStatusEntities -> RecyclerViewLastAdapter.this.truckStatusEntities = truckStatusEntities);
     }
-
-//    private void bindModelData() {
-//
-//
-//        notifyDataSetChanged();
-//    }
 
     @NonNull
     @Override
@@ -121,15 +113,16 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
                     listener.onclickDvir(dayEntity.getDay());
                 }
             });
+
+            if (isSelected) {
+                imageView.setImageResource(R.drawable.state_checked);
+            } else {
+                imageView.setImageResource(R.drawable.state_unchacked);
+            }
         }
 
         private void itemsClicked() {
-            clickable.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    customRulerChart.setVisibility(customRulerChart.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
-                }
-            });
+            clickable.setOnClickListener(v -> customRulerChart.setVisibility(customRulerChart.getVisibility() == View.GONE ? View.VISIBLE : View.GONE));
         }
     }
 
@@ -148,4 +141,5 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
 
         void onclickDvir(String s);
     }
+
 }

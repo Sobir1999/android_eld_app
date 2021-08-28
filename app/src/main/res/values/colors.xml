@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#EB212D</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#851DC6</color>
+    <color name="colorPrimaryDark">#7B0BC1</color>
     <color name="colorAccent">#61CFDD</color>
 
     <color name="colorBackgroundMainView">#E3E3E3</color>
 
-    <color name="colorStatusOFF">#DAD9DC</color>
-    <color name="colorStatusOFFBold">#B3B3B3</color>
-    <color name="colorStatusSB">#F4E879</color>
+    <color name="colorStatusOFF">#E9E9E9</color>
+    <color name="colorStatusOFFBold">#8C8C8C</color>
+    <color name="colorStatusSB">#FFEFDF</color>
     <color name="colorStatusSBBold">#CCC056</color>
-    <color name="colorStatusDR">#B4E380</color>
-    <color name="colorStatusDRBold">#90BC5E</color>
-    <color name="colorStatusON">#5CACEC</color>
-    <color name="textSelected">#665CACEC</color>
-    <color name="colorStatusONBold">#3A88C6</color>
+    <color name="colorStatusDR">#FDAC32</color>
+    <color name="colorStatusDRBold">#C2ECA2</color>
+    <color name="colorStatusON">#63A83D</color>
+    <color name="textSelected">#E4C1FA</color>
+    <color name="colorStatusONBold">#851DC6</color>
 
     <color name="colorActionText">#61CFDD</color>
     <color name="alertColor">#EC3434</color>

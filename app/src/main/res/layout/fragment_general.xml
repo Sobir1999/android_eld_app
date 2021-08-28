@@ -50,11 +50,13 @@
             tools:ignore="MissingConstraints" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/idDriverNameCons"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
+            android:layout_height="wrap_content"
             android:background="#FFFFFF">
 
             <TextView
+                android:id="@+id/idDriverNameText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
@@ -80,6 +82,26 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                app:layout_constraintTop_toBottomOf="@id/idDriverNameText"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:ignore="MissingConstraints">
+
+                <EditText
+                    android:id="@+id/idDriverNameEdit"
+                    android:text="Murad"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <EditText
+                    android:id="@+id/idDriverFamilyEdit"
+                    android:text="Babtov"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

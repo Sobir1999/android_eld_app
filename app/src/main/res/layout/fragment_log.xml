@@ -41,23 +41,23 @@
             app:layout_constraintTop_toBottomOf="@id/idCustomChart"
             tools:ignore="MissingConstraints" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="35dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/weight_station_button_bg"
-            android:drawableStart="@drawable/balance"
-            android:drawablePadding="6dp"
-            android:paddingStart="6dp"
-            android:paddingEnd="6dp"
-            android:text="@string/weight_station"
-            android:textAllCaps="false"
-            android:textColor="#3A3838"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/idCustomChart" />
+<!--        <Button-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="35dp"-->
+<!--            android:layout_marginTop="10dp"-->
+<!--            android:layout_marginEnd="10dp"-->
+<!--            android:layout_marginBottom="10dp"-->
+<!--            android:background="@drawable/weight_station_button_bg"-->
+<!--            android:drawableStart="@drawable/balance"-->
+<!--            android:drawablePadding="6dp"-->
+<!--            android:paddingStart="6dp"-->
+<!--            android:paddingEnd="6dp"-->
+<!--            android:text="@string/weight_station"-->
+<!--            android:textAllCaps="false"-->
+<!--            android:textColor="#3A3838"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/idCustomChart" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
