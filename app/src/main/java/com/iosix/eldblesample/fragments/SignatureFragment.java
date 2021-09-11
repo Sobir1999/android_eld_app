@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.iosix.eldblesample.R;
+import com.iosix.eldblesample.roomDatabase.entities.MechanicSignatureEntity;
 import com.iosix.eldblesample.roomDatabase.entities.SignatureEntity;
 import com.iosix.eldblesample.viewModel.SignatureViewModel;
 
@@ -56,9 +57,10 @@ public class SignatureFragment extends Fragment {
 
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-    private SignaturePad signature;
-    private TextView previousSignature, clearSignature, save, drawSignature;
-    private boolean hasSignature = false;
+    private SignaturePad signature,mechanicSignature;
+    private TextView previousSignature, clearSignature, save, drawSignature,drawMecanicSignature;
+    private boolean hasSignature = false,hasMechanicSignature = false;
+    private boolean isDefectsCorrected = false;
     private Context context;
     private Bitmap bitmap;
     private SignatureViewModel signatureViewModel;
@@ -107,6 +109,8 @@ public class SignatureFragment extends Fragment {
         mechamnicTextView = view.findViewById(R.id.idClearSignTextViewMechanic);
         mechanicCons = view.findViewById(R.id.idMechanicCons);
         mechanicText = view.findViewById(R.id.idMechanicSignatureText);
+        mechanicSignature = view.findViewById(R.id.idSignatureMechanic);
+        drawMecanicSignature = view.findViewById(R.id.idTvDrawSignatureMechanic);
 
         signatureViewModel = new SignatureViewModel(requireActivity().getApplication());
         signatureViewModel = ViewModelProviders.of((FragmentActivity) requireContext()).get(SignatureViewModel.class);
@@ -183,37 +187,117 @@ public class SignatureFragment extends Fragment {
             }
         });
 
+
+
         clearSignature.setOnClickListener(v -> signature.clear());
 
         previousSignature.setOnClickListener(v -> signature.setSignatureBitmap(bitmap));
 
+        mechanicSignature.setOnSignedListener(new SignaturePad.OnSignedListener() {
+            @Override
+            public void onStartSigning() {
+                mechamnicTextView.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
+                mechamnicTextView.setClickable(true);
+                drawMecanicSignature.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onSigned() {
+                mechamnicTextView.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
+                mechamnicTextView.setClickable(true);
+                drawMecanicSignature.setVisibility(View.GONE);
+                hasMechanicSignature = true;
+
+            }
+
+            @Override
+            public void onClear() {
+                mechamnicTextView.setTextColor(getResources().getColor(R.color.SignatureColorDefault));
+                mechamnicTextView.setClickable(false);
+                drawMecanicSignature.setVisibility(View.VISIBLE);
+                hasMechanicSignature = false;
+
+            }
+        });
+
+        mechamnicTextView.setOnClickListener(v -> mechanicSignature.clear());
+
         save.setOnClickListener(v -> {
 
-            if (hasSignature) {
-                Bitmap signatureBitmap = signature.getSignatureBitmap();
-                SignatureEntity signatureEntity = new SignatureEntity(signatureBitmap);
-                try {
-                    signatureViewModel.insertSignature(signatureEntity);
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
+            if (isDefectsCorrected){
+                if (hasSignature && hasMechanicSignature) {
+
+                    Bitmap signatureBitmap = signature.getSignatureBitmap();
+                    Bitmap mechanicBitmap = mechanicSignature.getSignatureBitmap();
+
+                    SignatureEntity signatureEntity = new SignatureEntity(signatureBitmap);
+                    try {
+                        signatureViewModel.insertSignature(signatureEntity);
+                    } catch (ExecutionException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    MechanicSignatureEntity mechanicSignatureEntity = new MechanicSignatureEntity(mechanicBitmap);
+                    try {
+                        signatureViewModel.insertMechanicSignature(mechanicSignatureEntity);
+                    } catch (ExecutionException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (addJpgSignatureToGallery(signatureBitmap)) {
+                        Toast.makeText(context, "Signature saved into the Gallery", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Unable to store the signature", Toast.LENGTH_SHORT).show();
+                    }
+                    if (addJpgSignatureToGallery(mechanicBitmap)) {
+                        Toast.makeText(context, "Signature saved into the Gallery", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Unable to store the signature", Toast.LENGTH_SHORT).show();
+                    }
+                } else{
+                     if (hasMechanicSignature){
+                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+                        alertDialog.setTitle("Signature missed")
+                                .setMessage("Sign or take your saved signatures")
+                                .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
+                        AlertDialog alert = alertDialog.create();
+                        alert.show();
+                    }else {
+                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+                        alertDialog.setTitle("Signature missed")
+                                .setMessage("Mechanic must sign")
+                                .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
+                        AlertDialog alert = alertDialog.create();
+                        alert.show();
+                    }
                 }
-                if (addJpgSignatureToGallery(signatureBitmap)) {
-                    Toast.makeText(context, "Signature saved into the Gallery", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(context, "Unable to store the signature", Toast.LENGTH_SHORT).show();
+            }else {
+                if (hasSignature){
+                    Bitmap signatureBitmap = signature.getSignatureBitmap();
+                    SignatureEntity signatureEntity = new SignatureEntity(signatureBitmap);
+                    try {
+                        signatureViewModel.insertSignature(signatureEntity);
+                    } catch (ExecutionException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (addJpgSignatureToGallery(signatureBitmap)) {
+                        Toast.makeText(context, "Signature saved into the Gallery", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Unable to store the signature", Toast.LENGTH_SHORT).show();
+                    }
+                }else {
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+                    alertDialog.setTitle("Signature missed")
+                            .setMessage("Sign or take your saved signatures")
+                            .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
+                    AlertDialog alert = alertDialog.create();
+                    alert.show();
                 }
-            } else {
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-                alertDialog.setTitle("Signature missed")
-                        .setMessage("Sign or take your saved signatures")
-                        .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
-                AlertDialog alert = alertDialog.create();
-                alert.show();
             }
         });
     }
 
     private void selectRadio() {
+
         if (mParam1) {
             correct_defect.setChecked(true);
             no_defect.setClickable(false);
@@ -222,10 +306,13 @@ public class SignatureFragment extends Fragment {
                     mechanicCons.setVisibility(View.VISIBLE);
                     mechamnicTextView.setVisibility(View.VISIBLE);
                     mechanicText.setVisibility(View.VISIBLE);
+                    isDefectsCorrected = true;
+
                 } else {
                     mechanicCons.setVisibility(View.GONE);
                     mechamnicTextView.setVisibility(View.GONE);
                     mechanicText.setVisibility(View.GONE);
+                    isDefectsCorrected = false;
                 }
             });
         } else {

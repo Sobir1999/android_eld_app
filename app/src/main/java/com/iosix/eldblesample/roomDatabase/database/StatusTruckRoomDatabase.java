@@ -20,6 +20,7 @@ import com.iosix.eldblesample.roomDatabase.entities.DvirEntity;
 import com.iosix.eldblesample.roomDatabase.entities.GeneralEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 import com.iosix.eldblesample.roomDatabase.entities.MainOfficeEntity;
+import com.iosix.eldblesample.roomDatabase.entities.MechanicSignatureEntity;
 import com.iosix.eldblesample.roomDatabase.entities.SignatureEntity;
 import com.iosix.eldblesample.roomDatabase.entities.TrailerDefectsEntity;
 import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
@@ -29,8 +30,9 @@ import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 @Database(entities = {LogEntity.class, DayEntity.class, DvirEntity.class, GeneralEntity.class,
         TrailersEntity.class, TrailerDefectsEntity.class,
         UnitDefectsEntity.class, VehiclesEntity.class,
-        MainOfficeEntity.class, SignatureEntity.class
-}, version = 8)
+        MainOfficeEntity.class, SignatureEntity.class,
+        MechanicSignatureEntity.class
+}, version = 10)
 @TypeConverters(Converter.class)
 public abstract class StatusTruckRoomDatabase extends RoomDatabase {
 
