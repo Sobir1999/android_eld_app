@@ -166,9 +166,8 @@ public class SignatureFragment extends Fragment {
                     previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorDefault));
                     previousSignature.setClickable(false);
                 }
+
                 drawSignature.setVisibility(View.GONE);
-
-
             }
 
             @Override

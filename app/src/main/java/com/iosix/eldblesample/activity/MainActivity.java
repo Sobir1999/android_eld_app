@@ -2,6 +2,7 @@ package com.iosix.eldblesample.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
@@ -13,6 +14,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,6 +32,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
@@ -135,6 +138,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     private final String today = time.split(" ")[1] + " " + time.split(" ")[2];
     private ArrayList<LogEntity> truckStatusEntities;
     private APIInterface apiInterface;
+    private TextView lastDaysCheck;
+    private ImageView toDaySelect;
 
     private double latitude;
     private double longtitude;
@@ -159,6 +164,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     private DayDaoViewModel daoViewModel;
     private Menu optionMenu;
     private final ArrayList<String> daysArray = new ArrayList<>();
+    private RecyclerViewLastAdapter lastAdapter;
 
     @Override
     protected int getLayoutId() {
@@ -168,12 +174,11 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     @Override
     public void initView() {
         super.initView();
+        UserData userData = new UserData(this);
 
-        setLocale(loadLocal());
+        setLocale(userData.getLang());
 
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        Window w = getWindow();
-//            w.setStatusBarColor(R.color.colorPrimaryDark);
 
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
@@ -188,27 +193,12 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         setBluetoothDataEnabled(this);
 
         //Last Days Recycler Adapter
-        RecyclerViewLastAdapter lastAdapter = new RecyclerViewLastAdapter(this, daoViewModel, statusDaoViewModel);
+        lastAdapter = new RecyclerViewLastAdapter(this, daoViewModel, statusDaoViewModel);
         last_recycler_view.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true));
         last_recycler_view.setAdapter(lastAdapter);
+        lastAdapter.notifyDataSetChanged();
 
-        lastAdapter.setListener(new RecyclerViewLastAdapter.LastDaysRecyclerViewItemClickListener() {
-            @Override
-            public void onclickItem(String s) {
-                if (daysArray.contains(s)) {
-                    daysArray.remove(s);
-                } else {
-                    daysArray.add(s);
-                }
-
-                optionMenu.findItem(R.id.shareMenu).setVisible(!daysArray.isEmpty());
-            }
-
-            @Override
-            public void onclickDvir(String s) {
-                loadLGDDFragment(AddDvirFragment.newInstance(daoViewModel));
-            }
-        });
+        lastAdapterClicked();
 
         // Set the toolbar
         activity_main_toolbar = findViewById(R.id.activity_main_toolbar);
@@ -234,24 +224,77 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         setActivateDr();
 
         startService();
+        update();
+    }
 
-        try {
-            Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData());
+    private void update() {
+        new Thread() {
+            @SuppressLint("DefaultLocale")
+            @SuppressWarnings("BusyWait")
+            public void run() {
+                while (true) {
+                    runOnUiThread(() -> {
+                        TextView statusTime = findViewById(R.id.idStatusTime);
+                        int last = getLastStatusSec();
+                        int current = (int) SystemClock.uptimeMillis() / 1000;
+                        int hour = (current - last) / 3600;
+                        int min = ((current - last) % 3600) / 60;
+                        statusTime.setText(String.format("%02dh %02dm", hour, min));
+                    });
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
+    }
 
-            sendData.enqueue(new Callback<SendExampleModelData>() {
-                @Override
-                public void onResponse(Call<SendExampleModelData> call, Response<SendExampleModelData> response) {
-                    Log.d("JSON", "onResponse: " + response.body());
+    private void lastAdapterClicked() {
+        lastAdapter.setListener(new RecyclerViewLastAdapter.LastDaysRecyclerViewItemClickListener() {
+            @Override
+            public void onclickItem(String s) {
+                if (daysArray.contains(s)) {
+                    daysArray.remove(s);
+                } else {
+                    daysArray.add(s);
                 }
 
-                @Override
-                public void onFailure(Call<SendExampleModelData> call, Throwable t) {
-                    Log.d("JSON", "onResponse: " + t.getMessage());
-                }
-            });
-        } catch (Exception e) {
-            Toast.makeText(MainActivity.this, "1. " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
+                optionMenu.findItem(R.id.shareMenu).setVisible(!daysArray.isEmpty());
+            }
+
+            @Override
+            public void onclickDvir(String s) {
+                loadLGDDFragment(AddDvirFragment.newInstance());
+            }
+        });
+
+        lastDaysCheck = findViewById(R.id.idLastDaysCheckAll);
+        toDaySelect = findViewById(R.id.idTableRadioBtn);
+
+        lastDaysCheck.setOnClickListener(v -> {
+            if (lastAdapter.isSelected()) {
+                lastAdapter.setSelected(false);
+                daysArray.clear();
+                toDaySelect.setImageResource(R.drawable.state_unchacked);
+                lastDaysCheck.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_check_circle_outline_24, 0);
+                lastAdapter.notifyDataSetChanged();
+            } else {
+                daoViewModel.getMgetAllDays().observe(this, dayEntities -> {
+                    for (int i = 0; i < dayEntities.size(); i++) {
+                        daysArray.add(dayEntities.get(i).getDay_name());
+                    }
+                });
+
+                lastAdapter.setSelected(true);
+                toDaySelect.setImageResource(R.drawable.state_checked);
+                lastDaysCheck.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.state_checked, 0);
+                lastAdapter.notifyDataSetChanged();
+            }
+
+            optionMenu.findItem(R.id.shareMenu).setVisible(!daysArray.isEmpty());
+        });
     }
 
     public void setActivateDr() {
@@ -289,7 +332,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         inspectionMode = findViewById(R.id.idSpinnerInspection);
         addDvir = findViewById(R.id.idTableDvir);
 
-        addDvir.setOnClickListener(v -> loadLGDDFragment((AddDvirFragment.newInstance(daoViewModel))));
+        addDvir.setOnClickListener(v -> loadLGDDFragment((AddDvirFragment.newInstance())));
 
         log.setOnClickListener(v -> loadLGDDFragment(LGDDFragment.newInstance(0, daoViewModel)));
 
@@ -339,14 +382,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             setTopLastPos(last_status);
         });
 
-        long a = 0;
-
-        try {
-            a = daoViewModel.insertDay(new DayEntity(today, time.split(" ")[0]));
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
-
         daoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
         daoViewModel.getMgetAllDays().observe(this, dayEntities -> {
         });
@@ -383,7 +418,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
     public void saveLanguage(String language) {
         SharedPreferences pref = getApplicationContext()
-                .getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+                .getSharedPreferences("userData", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString("lan", language);
         editor.apply();
@@ -391,13 +426,13 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
     private String loadLocal() {
         SharedPreferences pref = getApplicationContext()
-                .getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+                .getSharedPreferences("userData", Context.MODE_PRIVATE);
         return pref.getString("lan", "en");
     }
 
     public void saveLastPosition(int last_P) {
         SharedPreferences pref = getApplicationContext()
-                .getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+                .getSharedPreferences("userData", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt("last_P", last_P);
         editor.apply();
@@ -405,7 +440,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
     private int getLastP() {
         SharedPreferences pref = getApplicationContext()
-                .getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+                .getSharedPreferences("userData", Context.MODE_PRIVATE);
         return pref.getInt("last_P", 0);
     }
 
@@ -421,21 +456,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         SharedPreferences pref = getApplicationContext()
                 .getSharedPreferences("MyPref", Context.MODE_PRIVATE);
         return pref.getInt("last_S_T", 0);
-    }
-
-    private void setTopStatusTime() {
-        final TextView statusTime = findViewById(R.id.idStatusTime);
-        new Handler().postDelayed(new Runnable() {
-            @SuppressLint("DefaultLocale")
-            @Override
-            public void run() {
-                int last = getLastStatusSec();
-                int current = (int) SystemClock.uptimeMillis() / 1000;
-                int hour = (current - last) / 3600;
-                int min = ((current - last) % 3600) / 60;
-                statusTime.setText(String.format("%02dh %02dm", hour, min));
-            }
-        }, 500);
     }
 
     public void restartActivity() {
@@ -700,6 +720,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 //                    mDataView.append(jsonString);
 //                    EventBus.getDefault().postSticky(new MessageModel(status, jsonString));
                 EventBus.getDefault().postSticky(new MessageModel(status, "EldDtcCallback"));
+//                EventBus.getDefault().postSticky(new MessageModel("status1", "EldDtcCallback1"));
+                Log.d("TEST", "onDtcDetected: 1");
 //                    mScrollView.fullScroll(View.FOCUS_DOWN);
             });
         }
@@ -715,6 +737,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 //                    mDataView.append(status + "\n");
 //                    EventBus.getDefault().postSticky(new MessageModel("", status));
                     EventBus.getDefault().postSticky(new MessageModel("", "EldFirmwareUpdateCallback"));
+//                    EventBus.getDefault().postSticky(new MessageModel("status2", "EldFirmwareUpdateCallback2"));
+                    Log.d("TEST", "onDtcDetected: 2");
 //                    mScrollView.fullScroll(View.FOCUS_DOWN);
                 }
             });
@@ -729,6 +753,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             runOnUiThread(() -> {
 //                    mStatusView.append("Current firmware: " + mEldManager.GetFirmwareVersion() + " Available firmware: " + mEldManager.CheckFirmwareUpdate() + "\r\n");
                 EventBus.getDefault().postSticky(new MessageModel("Current firmware: " + mEldManager.GetFirmwareVersion() + " Available firmware: " + mEldManager.CheckFirmwareUpdate() + "\r\n", ""));
+//                EventBus.getDefault().postSticky(new MessageModel("Current firmware: 3", "3"));
+                Log.d("TEST", "onDtcDetected: 3");
             });
         }
     }
@@ -742,6 +768,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                     public void run() {
 //                        mStatusView.append("Request Debug Failed\n");
                         EventBus.getDefault().postSticky(new MessageModel("Request Debug Failed\n", ""));
+//                        EventBus.getDefault().postSticky(new MessageModel("Request Debug Failed4", "4"));
+                        Log.d("TEST", "onDtcDetected: 4");
                     }
                 });
             } else {
@@ -750,6 +778,9 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                     public void run() {
 //                        mStatusView.append("Request Debug Succeeded\n");
                         EventBus.getDefault().postSticky(new MessageModel("Request Debug Succeeded\n", ""));
+//                        EventBus.getDefault().postSticky(new MessageModel("Request Debug Succeeded5", "5"));
+                        Log.d("TEST", "onDtcDetected: 5");
+
                     }
                 });
             }
@@ -1131,6 +1162,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             runOnUiThread(() -> {
                 //todo mDataView.append("New State of connection" + Integer.toString(newState, 10) + "\n");
                 EventBus.getDefault().postSticky(new MessageModel("newState", "EldBleConnectionStateChangeCallback"));
+//                EventBus.getDefault().postSticky(new MessageModel("newState6", "EldBleConnectionStateChangeCallback6"));
+                Log.d("TEST", "onDtcDetected: 6");
             });
         }
     };
@@ -1142,6 +1175,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
 //                    mDataView.append(dataRec.getBroadcastString().trim() + "\n");
                 EventBus.getDefault().postSticky(new MessageModel("", dataRec.getBroadcastString().trim() + "\n"));
+//                EventBus.getDefault().postSticky(new MessageModel("status 7", "7"));
+                Log.d("TEST", "onDtcDetected: 7");
                 EldCachedPeriodicRecord p = (EldCachedPeriodicRecord) (dataRec);
 
                 try {
@@ -1179,6 +1214,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 //                                p.getSequence(), p.getFirmwareVersion()));
 
                     EventBus.getDefault().postSticky(new MessageModel("", dataRec.getBroadcastString().trim() + "\n"));
+//                    EventBus.getDefault().postSticky(new MessageModel("status 8", "8"));
+                    Log.d("TEST", "onDtcDetected: 8");
 
                     try {
                         Call<SendExampleModelData> sendData = apiInterface.sendData(new SendExampleModelData(p.getEngineState(), p.getVin(), p.getRpm(), p.getSpeed(), p.getTripDistance(), p.getEngineHours(), p.getTripHours(), p.getVoltage(),
@@ -1207,8 +1244,10 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                     //Shows how to get to the specific record types created based on the broadcast info
 
 //                        mStatusView.append(dataRec.getBroadcastString());
-                    EventBus.getDefault().postSticky(new MessageModel(dataRec.getBroadcastString(), ""));
+//                    EventBus.getDefault().postSticky(new MessageModel(dataRec.getBroadcastString(), ""));
                     EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback3"));
+//                    EventBus.getDefault().postSticky(new MessageModel("status 9", "EldBleDataCallback9"));
+                    Log.d("TEST", "onDtcDetected: 9");
 
                     if (reqdelinprogress) {
                         reccount++;
@@ -1262,6 +1301,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                             Toast.makeText(MainActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                         EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback4M"));
+//                        EventBus.getDefault().postSticky(new MessageModel("status 10", "EldBleDataCallback4M 10"));
+                        Log.d("TEST", "onDtcDetected: 10");
 
                         // mDataView.append("CACHED REC"+((EldCachedPeriodicRecord)(dataRec)).getBroadcastString());
 
@@ -1326,6 +1367,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
                         // mDataView.append("CACHED REC"+((EldCachedPeriodicRecord)(rec)).getBroadcastString());
                         EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback6"));
+//                        EventBus.getDefault().postSticky(new MessageModel("status 11", "EldBleDataCallback 11"));
+                        Log.d("TEST", "onDtcDetected: 11");
 
                     }
                 } else if (RecordType == EldBroadcastTypes.ELD_ENGINE_PARAMETERS_RECORD) {
@@ -1354,6 +1397,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
                     //mDataView.append("Engine Rec was sent" + ((EldEngineRecord) (rec)).getBroadcastString());
                     EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback7"));
+//                    EventBus.getDefault().postSticky(new MessageModel("status 12", "EldBleDataCallback 12"));
+                    Log.d("TEST", "onDtcDetected: 12");
 
 
                 } else if (RecordType == EldBroadcastTypes.ELD_EMISSIONS_PARAMETERS_RECORD) {
@@ -1377,6 +1422,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 //                        mStatusView.append("" + rec.getScrInducementFaultStatus() + " ");
 //                        mStatusView.append("\n");
                     EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback8"));
+//                    EventBus.getDefault().postSticky(new MessageModel("status 13", "EldBleDataCallback 13"));
+                    Log.d("TEST", "onDtcDetected: 13");
 
 
                 } else if (RecordType == EldBroadcastTypes.ELD_TRANSMISSION_PARAMETERS_RECORD) {
@@ -1391,6 +1438,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 //                        mStatusView.append("" + rec.getTorqueConverterOilOutletTemp_c() + " ");
 //                        mStatusView.append("\n");
                     EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback9"));
+//                    EventBus.getDefault().postSticky(new MessageModel("status 14", "EldBleDataCallback 14"));
+                    Log.d("TEST", "onDtcDetected: 14");
 
                 } else if (RecordType == EldBroadcastTypes.ELD_FUEL_RECORD) {
                     EldFuelRecord rec = (EldFuelRecord) dataRec;
@@ -1410,6 +1459,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 //                        mStatusView.append("" + rec.getStateAnticipate() + " ");
 //                        mStatusView.append("\n");
                     EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback10"));
+//                    EventBus.getDefault().postSticky(new MessageModel("status 15", "EldBleDataCallback 15"));
+                    Log.d("TEST", "onDtcDetected: 15");
 
                 } else if (RecordType == EldBroadcastTypes.ELD_DIAGNOSTIC_RECORD) {
                     diagnosticEnabled = true;
@@ -1433,6 +1484,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                 runOnUiThread(() -> {
 //                        mStatusView.append("ELD " + strDevice + " found, now connecting...\n");
                     EventBus.getDefault().postSticky(new MessageModel("ELD " + strDevice + " found, now connecting...\n", ""));
+//                    EventBus.getDefault().postSticky(new MessageModel("status 16", "16"));
+                    Log.d("TEST", "onDtcDetected: 17");
                 });
 
                 EldBleError res = mEldManager.ConnectToEld(bleDataCallback, subscribedRecords, bleConnectionStateChangeCallback);
@@ -1441,6 +1494,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                     runOnUiThread(() -> {
 //                            mStatusView.append("Connection Failed\n");
                         EventBus.getDefault().postSticky(new MessageModel("Connection Failed\n", ""));
+//                        EventBus.getDefault().postSticky(new MessageModel("satus 17", "17"));
+                        Log.d("TEST", "onDtcDetected: 18");
                     });
                 }
 
@@ -1448,6 +1503,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                 runOnUiThread(() -> {
 //                        mStatusView.append("No ELD found\n");
                     EventBus.getDefault().postSticky(new MessageModel("No ELD found\n", ""));
+//                    EventBus.getDefault().postSticky(new MessageModel("status 18", "18"));
+                    Log.d("TEST", "onDtcDetected: 19");
                 });
             }
         }
@@ -1467,6 +1524,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                 runOnUiThread(() -> {
 //                        mStatusView.append("ELD " + strDevice + " found, now connecting...\n");
                     EventBus.getDefault().postSticky(new MessageModel("ELD " + strDevice + " found, now connecting...\n", ""));
+//                    EventBus.getDefault().postSticky(new MessageModel("status 19", "19"));
+                    Log.d("TEST", "onDtcDetected: 20");
                 });
 
                 EldBleError res = mEldManager.ConnectToEld(bleDataCallback, subscribedRecords, bleConnectionStateChangeCallback, strDevice);
@@ -1475,6 +1534,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                     runOnUiThread(() -> {
 //                            mStatusView.append("Connection Failed\n");
                         EventBus.getDefault().postSticky(new MessageModel("Connection Failed\n", ""));
+//                        EventBus.getDefault().postSticky(new MessageModel("status 20", "20"));
+                        Log.d("TEST", "onDtcDetected: 21");
                     });
                 }
 
@@ -1482,6 +1543,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                 runOnUiThread(() -> {
 //                        mStatusView.append("No ELD found\n");
                     EventBus.getDefault().postSticky(new MessageModel("No ELD found\n", ""));
+//                    EventBus.getDefault().postSticky(new MessageModel("status 21", "21"));
+                    Log.d("TEST", "onDtcDetected: 22");
                 });
             }
         }
@@ -1495,10 +1558,14 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             if (resultCode == RESULT_OK) {
 //                mStatusView.append("Bluetooth enabled - now scanning for ELD\n");
                 EventBus.getDefault().postSticky(new MessageModel("Bluetooth enabled - now scanning for ELD\n", ""));
+//                EventBus.getDefault().postSticky(new MessageModel("status 22", "22"));
+                Log.d("TEST", "onDtcDetected: 23");
                 mEldManager.ScanForElds(bleScanCallback);
             } else {
 //                mStatusView.append("Unable to enable bluetooth\n");
                 EventBus.getDefault().postSticky(new MessageModel("Unable to enable bluetooth\n", ""));
+//                EventBus.getDefault().postSticky(new MessageModel("status 23", "23"));
+                Log.d("TEST", "onDtcDetected: 24");
             }
         }
     }

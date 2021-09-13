@@ -1,9 +1,19 @@
 <resources>
     <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">#373F68</item>
-        <item name="colorPrimaryDark">#171E50</item>
+        <item name="colorPrimary">#0B0B0B</item>
+        <item name="colorPrimaryDark">#070707</item>
         <item name="colorAccent">#417C83</item>
+
+<!--        <color name="colorStatusOFF">#FF0000</color>-->
+<!--        <color name="colorStatusOFFBold">#8C8C8C</color>-->
+<!--        <color name="colorStatusSB">#FFEFDF</color>-->
+<!--        <color name="colorStatusSBBold">#CCC056</color>-->
+<!--        <color name="colorStatusDR">#FDAC32</color>-->
+<!--        <color name="colorStatusDRBold">#C2ECA2</color>-->
+<!--        <color name="colorStatusON">#63A83D</color>-->
+<!--        <color name="textSelected">#E4C1FA</color>-->
+<!--        <color name="colorStatusONBold">#851DC6</color>-->
 
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

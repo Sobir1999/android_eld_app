@@ -2,6 +2,7 @@
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -52,8 +53,7 @@ import static com.iosix.eldblesample.MyApplication.userData;
         View view = inflater.inflate(R.layout.fragment_language, container, false);
         loadViews(view);
         setLocalLang(userData.getLang());
-        Log.d("LAN", "onCreateView: " + userData.getLang());
-//        eng.setChecked(true);
+
         return view;
     }
 
@@ -122,6 +122,31 @@ import static com.iosix.eldblesample.MyApplication.userData;
         res.updateConfiguration(conf, dm);
         userData.saveLang(lang);
     }
+
+//        public void setLocale(String lang) {
+//            Locale myLocale = new Locale(lang);
+//            Resources res = getResources();
+//            DisplayMetrics dm = res.getDisplayMetrics();
+//            Configuration conf = res.getConfiguration();
+//            conf.locale = myLocale;
+//            res.updateConfiguration(conf, dm);
+//
+//            saveLanguage(lang);
+//        }
+
+//        public void saveLanguage(String language) {
+//            SharedPreferences pref = requireContext()
+//                    .getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+//            SharedPreferences.Editor editor = pref.edit();
+//            editor.putString("lan", language);
+//            editor.apply();
+//        }
+//
+//        private String loadLocal() {
+//            SharedPreferences pref = requireContext()
+//                    .getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+//            return pref.getString("lan", "en");
+//        }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode,Intent data) {
