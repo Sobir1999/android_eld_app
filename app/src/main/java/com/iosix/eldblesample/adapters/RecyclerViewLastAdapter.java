@@ -23,8 +23,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.customViews.CustomStableRulerChart;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
+import com.iosix.eldblesample.roomDatabase.entities.DvirEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
+import com.iosix.eldblesample.viewModel.DvirViewModel;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
 
 import java.util.ArrayList;
@@ -33,6 +35,7 @@ import java.util.Objects;
 
 public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLastAdapter.ViewHolder> {
     private List<DayEntity> dayEntities;
+    private List<DvirEntity> dvirEntities;
     private List<DayEntity> selectedDays = new ArrayList<>();
     private List<LogEntity> truckStatusEntities;
     private LastDaysRecyclerViewItemClickListener listener;
@@ -51,12 +54,14 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
         this.listener = listener;
     }
 
-    public RecyclerViewLastAdapter(Context context, DayDaoViewModel daoViewModel, StatusDaoViewModel statusDaoViewModel) {
+    public RecyclerViewLastAdapter(Context context, DayDaoViewModel daoViewModel, StatusDaoViewModel statusDaoViewModel, DvirViewModel dvirViewModel) {
         dayEntities = new ArrayList<>();
+        dvirEntities = new ArrayList<>();
         truckStatusEntities = new ArrayList<>();
         ctx = context;
 
         daoViewModel.getMgetAllDays().observe((LifecycleOwner) ctx, dayEntities -> RecyclerViewLastAdapter.this.dayEntities = dayEntities);
+        dvirViewModel.getMgetDvirs().observe((LifecycleOwner) ctx, dvirEntities -> RecyclerViewLastAdapter.this.dvirEntities = dvirEntities);
 
         statusDaoViewModel.getmAllStatus().observe((LifecycleOwner) ctx, truckStatusEntities -> RecyclerViewLastAdapter.this.truckStatusEntities = truckStatusEntities);
     }
@@ -101,6 +106,14 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
             day_week.setText(dayEntity.getDay());
             customRulerChart.setArrayList(getDayTruckEntity(dayEntity.getDay()));
 
+            if (dvirEntities.size() != 0){
+                for (int i = 0; i < dvirEntities.size(); i++) {
+                    if (dvirEntities.get(i).getDay().equals(dayEntity.getDay()) ){
+                        no_dvir.setText("Dvir");
+                    }
+                }
+            }
+
             imageView.setOnClickListener(v -> {
                 imageView.setImageResource(imageView.getDrawable().getConstantState().equals(imageView.getContext().getDrawable(R.drawable.state_checked).getConstantState()) ? R.drawable.state_unchacked : R.drawable.state_checked);
                 if (listener != null) {
@@ -110,7 +123,7 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
 
             no_dvir.setOnClickListener(v -> {
                 if (listener != null) {
-                    listener.onclickDvir(dayEntity.getDay());
+                    listener.onclickDvir(dayEntity.getDay(),dvirEntities);
                 }
             });
 
@@ -139,7 +152,7 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
     public interface LastDaysRecyclerViewItemClickListener {
         void onclickItem(String s);
 
-        void onclickDvir(String s);
+        void onclickDvir(String s,List<DvirEntity> dvirEntity);
     }
 
 }

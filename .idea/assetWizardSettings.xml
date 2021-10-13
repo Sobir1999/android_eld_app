@@ -37,7 +37,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\User\Downloads\signature.png" />
+                                                <entry key="imagePath" value="C:\Users\User\Downloads\delete.svg" />
                                                 <entry key="opacityPercent" value="80" />
                                                 <entry key="paddingPercent" value="5" />
                                               </map>
@@ -74,8 +74,8 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="C:\Users\User\Downloads\signature.png" />
-                                      <entry key="outputName" value="signature" />
+                                      <entry key="imageAsset" value="C:\Users\User\Downloads\delete.svg" />
+                                      <entry key="outputName" value="delete" />
                                       <entry key="theme" value="CUSTOM" />
                                       <entry key="themeColor" value="0466f8" />
                                     </map>
@@ -330,7 +330,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/keyboard_arrow_up/baseline_keyboard_arrow_up_24.xml" />
+                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/clear/baseline_clear_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -340,8 +340,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="dirver_name_icon" />
-                            <entry key="sourceFile" value="C:\Users\User\Downloads\repair.svg" />
+                            <entry key="color" value="817e7e" />
+                            <entry key="outputName" value="ic_baseline_clear_24" />
+                            <entry key="sourceFile" value="C:\Users\User\Downloads\delete.svg" />
                           </map>
                         </option>
                       </PersistentState>

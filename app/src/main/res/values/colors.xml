@@ -28,4 +28,5 @@
 
     <color name="SignatureColorDefault">#9953BFED</color>
     <color name="SignatureColorWhenClicked">#08ACF6</color>
+    <color name="SatisfactionColor">#2D9B05</color>
 </resources>

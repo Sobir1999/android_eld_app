@@ -1,13 +1,13 @@
 package com.iosix.eldblesample.fragments;
 
 import android.app.AlertDialog;
-import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LifecycleOwner;
@@ -34,13 +34,12 @@ import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static android.app.Activity.RESULT_OK;
 
 public class AddDvirFragment extends Fragment {
+    private final static String TAG_FRAGMENT = "ADDDVIR_FRAGMENT";
     private TextView addUnit, nextText;
     private TextView units;
     private TextView addTrailer;
@@ -49,6 +48,8 @@ public class AddDvirFragment extends Fragment {
     private TextView addTime;
     private TextView notes;
     private ImageView backView;
+    private EditText locationEditText;
+    String time,location,mNotes;
     private LinearLayout defects, addDefect;
     private AppBarLayout appBarLayout;
     private DayDaoViewModel daoViewModel;
@@ -56,21 +57,32 @@ public class AddDvirFragment extends Fragment {
     private ArrayList<TrailersEntity> selectedTrailers;
     private TrailerRecyclerAdapter adapter;
     private String unitDefectsString = "", trailerDefectsString = "";
+    private ArrayList<String> arrayList;
+    private String day;
 
     public AddDvirFragment() {
     }
 
-    public static AddDvirFragment newInstance() {
+    public static AddDvirFragment newInstance(String day) {
         AddDvirFragment fragment = new AddDvirFragment();
-//        Bundle args = new Bundle();d
-//        fragment.daoViewModel = dayDaoViewModel;
-//        fragment.setArguments(args);
+        Bundle args = new Bundle();
+        args.putString("PARAM",day);
+        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            day = getArguments().getString("PARAM");
+        }
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        appBarLayout.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -93,7 +105,10 @@ public class AddDvirFragment extends Fragment {
         backView = v.findViewById(R.id.idImageBack);
         nextText = v.findViewById(R.id.idAddDvirNext);
         appBarLayout = v.findViewById(R.id.idAppbar);
+        locationEditText = v.findViewById(R.id.idDefectLocationEdit);
+
         RecyclerView recyclerView = v.findViewById(R.id.idTrailersRecyclerView);
+
 
         buttonClicks(container);
 
@@ -237,7 +252,42 @@ public class AddDvirFragment extends Fragment {
         });
 
         nextText.setOnClickListener(v1 -> {
-            loadFragment(SignatureFragment.newInstance(!unitDefectsString.equalsIgnoreCase("") || !trailerDefectsString.equalsIgnoreCase("")));
+
+            if(!locationEditText.getText().toString().equals("")){
+                location = locationEditText.getText().toString();
+            }else {
+                location = "Unknown Location";
+            }
+            time = addTime.getText().toString() + " CDT";
+            mNotes = notes.getText().toString();
+
+            String unitDefectsString1;
+            String trailerDefectsString1;
+
+            if (unitDefectsString.equals("")){
+                unitDefectsString1 = "No unit selected";
+            }else {
+                unitDefectsString1 = unitDefectsString;
+            }
+
+            if (trailerDefectsString.equals("")){
+                trailerDefectsString1 = "No trailer selected";
+            }else {
+                trailerDefectsString1 = trailerDefectsString;
+            }
+
+            arrayList = new ArrayList<>();
+            arrayList.add(units.getText().toString());
+            arrayList.add(trailers.getText().toString());
+            arrayList.add(unitDefectsString1);
+            arrayList.add(trailerDefectsString1);
+            arrayList.add(time);
+            arrayList.add(location);
+            arrayList.add(mNotes);
+            arrayList.add(day);
+
+
+            loadFragment(SignatureFragment.newInstance((!unitDefectsString.equalsIgnoreCase("") || !trailerDefectsString.equalsIgnoreCase("")),arrayList,day));
             appBarLayout.setVisibility(View.GONE);
         });
 
@@ -286,15 +336,7 @@ public class AddDvirFragment extends Fragment {
 //        editText.getText().toString().trim();
     }
 
-    @SuppressWarnings("deprecation")
-    private void loadFragment(Fragment fragment) {
-        FragmentManager fm = getParentFragmentManager();
-        assert fm != null;
-        FragmentTransaction fragmentTransaction = fm.beginTransaction();
-        fragmentTransaction.addToBackStack("fragment");
-        fragmentTransaction.replace(R.id.fragment_container_add_dvir, fragment);
-        fragmentTransaction.commit();
-    }
+
 
     private String getDialogString() {
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(getContext());
@@ -318,4 +360,15 @@ public class AddDvirFragment extends Fragment {
 
         return strName[0];
     }
+
+
+    private void loadFragment(Fragment fragment){
+        FragmentManager fm = getFragmentManager();
+        assert fm != null;
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container_add_dvir, fragment,TAG_FRAGMENT);
+        fragmentTransaction.addToBackStack("fragment");
+        fragmentTransaction.commit();
+    }
+
 }

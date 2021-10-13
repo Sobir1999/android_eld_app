@@ -35,7 +35,7 @@ public abstract class ChangeDateTimeBroadcast extends BroadcastReceiver {
     public ChangeDateTimeBroadcast() {
     }
 
-    public abstract void onDayChanged();
+    public abstract void onDayChanged() throws ExecutionException, InterruptedException;
 
     private boolean isSameDay(Date currentDate){
         return dateFormat.format(currentDate).equals(dateFormat.format(date));
@@ -51,24 +51,21 @@ public abstract class ChangeDateTimeBroadcast extends BroadcastReceiver {
                     || action.equals(Intent.ACTION_TIMEZONE_CHANGED)
                     || action.equals(Intent.ACTION_TIME_TICK))){
                 date = currentDate;
-                onDayChanged();
+                try {
+                    onDayChanged();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
         daoViewModel = ViewModelProviders.of((FragmentActivity) context).get(DayDaoViewModel.class);
         statusDaoViewModel = ViewModelProviders.of((FragmentActivity) context).get(StatusDaoViewModel.class);
-        try {
-            daoViewModel.insertDay(new DayEntity(Day.getDayTime1(), Day.getDayName2()));
-            statusDaoViewModel.getmAllStatus().observe((LifecycleOwner) context, logEntities -> {
-                if (!logEntities.isEmpty()) {
-                    statusDaoViewModel.insertStatus(new LogEntity(logEntities.get(logEntities.size() - 1).getTo_status(), logEntities.get(logEntities.size() - 1).getTo_status(), null, null, null, Day.getDayTime1(), 0));
-                } else {
-                    statusDaoViewModel.insertStatus(new LogEntity(0, 0, null, null, null, Day.getDayTime1(), 0));
-                }
-            });
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
+
+
+
 //        daoViewModel.
 
 //        MediaPlayer mediaPlayer = MediaPlayer.create(context, Settings.System.DEFAULT_RINGTONE_URI);

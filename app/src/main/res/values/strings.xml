@@ -110,4 +110,5 @@
     <string name="draw_your_signature">Draw your signature</string>
     <string name="trailer_defects">Trailer Defects</string>
     <string name="mechanic_signature">Mechanic Signature</string>
+    <string name="vehicle" translatable="false">Vehicle:</string>
 </resources>

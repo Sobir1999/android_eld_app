@@ -9,6 +9,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.iosix.eldblesample.R;
@@ -22,6 +25,10 @@ import org.greenrobot.eventbus.ThreadMode;
 public class GeneralFragment extends Fragment {
     private ViewPager pager;
     private GeneralFragmentPagerAdapter adapter;
+    private TextView driverFullName;
+    private EditText driverName,driverSurname;
+    private String driverNameString,driverSurnameString;
+    private LinearLayout driverInfo;
 
     public static GeneralFragment newInstance() {
         GeneralFragment fragment = new GeneralFragment();
@@ -40,10 +47,36 @@ public class GeneralFragment extends Fragment {
 //        pager.setCurrentItem(adapter.getCount(), true);
 //
 //        onPager();
+        driverFullName = view.findViewById(R.id.idDriverNameText);
+        driverName = view.findViewById(R.id.idDriverNameEdit);
+        driverSurname = view.findViewById(R.id.idDriverFamilyEdit);
+        driverInfo = view.findViewById(R.id.idDriverInfo);
 
         return view;
     }
 
+    private void getGeneralInfo(){
+
+        driverNameString = "Murad";
+        driverNameString = "Babatov";
+
+        driverInfo.setOnClickListener(v -> {
+
+            if (v.findViewById(R.id.idDriverInfoEdit).getVisibility() == View.GONE){
+                v.findViewById(R.id.idDriverInfoEdit).setVisibility(View.VISIBLE);
+            }else {
+                if (!driverName.getText().toString().equals("")){
+                    driverNameString = driverName.getText().toString();
+                }else {
+//                    driverNameString = driverName.
+                }
+
+                if (!driverSurname.getText().toString().equals("")){
+                    driverSurnameString = driverSurname.getText().toString();
+                }
+            }
+        });
+    }
 
     @Override
     public void onStart() {

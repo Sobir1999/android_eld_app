@@ -18,6 +18,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DiffUtil;
 
@@ -30,21 +32,28 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
+import com.google.android.material.appbar.AppBarLayout;
 import com.iosix.eldblesample.R;
+import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
+import com.iosix.eldblesample.roomDatabase.entities.DvirEntity;
 import com.iosix.eldblesample.roomDatabase.entities.MechanicSignatureEntity;
 import com.iosix.eldblesample.roomDatabase.entities.SignatureEntity;
+import com.iosix.eldblesample.viewModel.DayDaoViewModel;
+import com.iosix.eldblesample.viewModel.DvirViewModel;
 import com.iosix.eldblesample.viewModel.SignatureViewModel;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 
@@ -54,10 +63,14 @@ public class SignatureFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     private boolean mParam1;
+    private ArrayList<String> mParams;
+    private DayDaoViewModel daoViewModel;
+    private DvirViewModel dvirViewModel;
 
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
     private SignaturePad signature,mechanicSignature;
+    private LinearLayout mechanicLayout;
     private TextView previousSignature, clearSignature, save, drawSignature,drawMecanicSignature;
     private boolean hasSignature = false,hasMechanicSignature = false;
     private boolean isDefectsCorrected = false;
@@ -68,15 +81,19 @@ public class SignatureFragment extends Fragment {
     private ConstraintLayout mechanicCons;
     private TextView mechamnicTextView, mechanicText;
     private ImageView img;
+    private String day;
+    private AppBarLayout appBarLayout;
 
     public SignatureFragment() {
         // Required empty public constructor
     }
 
-    public static SignatureFragment newInstance(boolean param1) {
+    public static SignatureFragment newInstance(boolean param1,ArrayList<String> params,String day) {
         SignatureFragment fragment = new SignatureFragment();
         Bundle args = new Bundle();
         args.putBoolean(ARG_PARAM1, param1);
+        args.putStringArrayList(ARG_PARAM2, params);
+        args.putString("PARAM",day);
         fragment.setArguments(args);
         return fragment;
     }
@@ -87,6 +104,8 @@ public class SignatureFragment extends Fragment {
 
         if (getArguments() != null) {
             mParam1 = getArguments().getBoolean(ARG_PARAM1);
+            mParams = getArguments().getStringArrayList(ARG_PARAM2);
+            day = getArguments().getString("PARAM");
         }
     }
 
@@ -111,6 +130,8 @@ public class SignatureFragment extends Fragment {
         mechanicText = view.findViewById(R.id.idMechanicSignatureText);
         mechanicSignature = view.findViewById(R.id.idSignatureMechanic);
         drawMecanicSignature = view.findViewById(R.id.idTvDrawSignatureMechanic);
+        mechanicLayout = view.findViewById(R.id.idMechanicLayout);
+        appBarLayout = view.findViewById(R.id.idAppbarSignature);
 
         signatureViewModel = new SignatureViewModel(requireActivity().getApplication());
         signatureViewModel = ViewModelProviders.of((FragmentActivity) requireContext()).get(SignatureViewModel.class);
@@ -122,21 +143,23 @@ public class SignatureFragment extends Fragment {
             }
         });
 
+
+        verifyStoragePermissions(requireActivity());
         isFirstTime();
         selectRadio();
 
         actionFunctions();
 
+        img.setOnClickListener(v -> {
+            assert getFragmentManager() != null;
+            getFragmentManager().popBackStack();
+        });
+
         return view;
     }
 
     private void actionFunctions() {
-        img.setOnClickListener(v -> {
-            //noinspection deprecation
-            assert getFragmentManager() != null;
-            //noinspection deprecation
-            getFragmentManager().popBackStack();
-        });
+
 
         signature.setOnSignedListener(new SignaturePad.OnSignedListener() {
             @Override
@@ -223,6 +246,15 @@ public class SignatureFragment extends Fragment {
 
         save.setOnClickListener(v -> {
 
+            daoViewModel = new DayDaoViewModel(this.getActivity().getApplication());
+
+            daoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
+            daoViewModel.getMgetAllDays().observe(getViewLifecycleOwner(), dayEntities -> {
+            });
+
+            dvirViewModel = new DvirViewModel(requireActivity().getApplication());
+            dvirViewModel = ViewModelProviders.of((FragmentActivity) requireContext()).get(DvirViewModel.class);
+
             if (isDefectsCorrected){
                 if (hasSignature && hasMechanicSignature) {
 
@@ -242,16 +274,24 @@ public class SignatureFragment extends Fragment {
                     } catch (ExecutionException | InterruptedException e) {
                         e.printStackTrace();
                     }
-                    if (addJpgSignatureToGallery(signatureBitmap)) {
-                        Toast.makeText(context, "Signature saved into the Gallery", Toast.LENGTH_SHORT).show();
+                    if (addJpgSignatureToGallery(signatureBitmap) && addJpgSignatureToGallery(mechanicBitmap)) {
+                        try {
+                            dvirViewModel.insertDvir(new DvirEntity(
+                                    mParams.get(0),mParams.get(1),mParams.get(2),mParams.get(3),true,
+                                    mParams.get(4),mParams.get(5),mParams.get(6), day
+                            ));
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        loadFragment(LGDDFragment.newInstance(3,daoViewModel,mParams));
+                        appBarLayout.setVisibility(View.GONE);
                     } else {
                         Toast.makeText(context, "Unable to store the signature", Toast.LENGTH_SHORT).show();
                     }
-                    if (addJpgSignatureToGallery(mechanicBitmap)) {
-                        Toast.makeText(context, "Signature saved into the Gallery", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(context, "Unable to store the signature", Toast.LENGTH_SHORT).show();
-                    }
+
                 } else{
                      if (hasMechanicSignature){
                         AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
@@ -279,7 +319,29 @@ public class SignatureFragment extends Fragment {
                         e.printStackTrace();
                     }
                     if (addJpgSignatureToGallery(signatureBitmap)) {
-                        Toast.makeText(context, "Signature saved into the Gallery", Toast.LENGTH_SHORT).show();
+
+                        try {
+                            if (!mParams.get(2).equals("No unit selected") || !mParams.get(3).equals("No trailer selected")){
+                            dvirViewModel.insertDvir(new DvirEntity(
+                                    mParams.get(0),mParams.get(1),mParams.get(2),mParams.get(3),false,
+                                    mParams.get(4),mParams.get(5),mParams.get(6), day
+                            ));
+                            }else {
+                                dvirViewModel.insertDvir(new DvirEntity(
+                                        mParams.get(0),mParams.get(1),mParams.get(2),mParams.get(3),true,
+                                        mParams.get(4),mParams.get(5),mParams.get(6), day
+                                ));
+                            }
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        dvirViewModel.getMgetDvirs().observe(getViewLifecycleOwner(),dvirEntities -> {
+                        });
+
+                        loadFragment(LGDDFragment.newInstance(3,daoViewModel,mParams));
+                        appBarLayout.setVisibility(View.GONE);
                     } else {
                         Toast.makeText(context, "Unable to store the signature", Toast.LENGTH_SHORT).show();
                     }
@@ -302,15 +364,11 @@ public class SignatureFragment extends Fragment {
             no_defect.setClickable(false);
             corrected_defect.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked) {
-                    mechanicCons.setVisibility(View.VISIBLE);
-                    mechamnicTextView.setVisibility(View.VISIBLE);
-                    mechanicText.setVisibility(View.VISIBLE);
+                    mechanicLayout.setVisibility(View.VISIBLE);
                     isDefectsCorrected = true;
 
                 } else {
-                    mechanicCons.setVisibility(View.GONE);
-                    mechamnicTextView.setVisibility(View.GONE);
-                    mechanicText.setVisibility(View.GONE);
+                    mechanicLayout.setVisibility(View.INVISIBLE);
                     isDefectsCorrected = false;
                 }
             });
@@ -397,5 +455,14 @@ public class SignatureFragment extends Fragment {
             previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorDefault));
             previousSignature.setClickable(false);
         }
+    }
+
+
+    private void loadFragment(Fragment fragment) {
+        FragmentManager fm = getParentFragmentManager();
+        assert fm != null;
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        fragmentTransaction.replace(R.id.idFragmentSignatureContainer, fragment);
+        fragmentTransaction.commit();
     }
 }

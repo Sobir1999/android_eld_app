@@ -4,28 +4,39 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "dvir")
+@Entity(tableName = "dvir_table")
 public class DvirEntity {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private int id;
     @ColumnInfo(name = "unit")
     private String unit;
+    @ColumnInfo(name = "trailer")
+    private String trailer;
+    @ColumnInfo(name = "unitDefect")
+    private String unitDefect;
+    @ColumnInfo(name = "trailerDefect")
+    private String trailerDefect;
+    @ColumnInfo(name = "hasMechanicSignature")
+    private boolean hasMechanicSignature;
     @ColumnInfo(name = "time")
     private String time;
     @ColumnInfo(name = "location")
     private String location;
-    @ColumnInfo(name = "signature")
-    private String signature;
+    @ColumnInfo(name = "note")
+    private String note;
     @ColumnInfo(name = "day")
     private String day;
 
-    public DvirEntity(int id, String unit, String time, String location, String signature, String day) {
-        this.id = id;
+    public DvirEntity(String unit,String trailer,String unitDefect,String trailerDefect,boolean hasMechanicSignature, String time, String location, String note, String day) {
         this.unit = unit;
+        this.trailer = trailer;
+        this.unitDefect = unitDefect;
+        this.trailerDefect = trailerDefect;
+        this.hasMechanicSignature = hasMechanicSignature;
         this.time = time;
         this.location = location;
-        this.signature = signature;
+        this.note = note;
         this.day = day;
     }
 
@@ -45,6 +56,38 @@ public class DvirEntity {
         this.unit = unit;
     }
 
+    public String getTrailer() {
+        return trailer;
+    }
+
+    public void setTrailer(String trailer) {
+        this.trailer = trailer;
+    }
+
+    public String getUnitDefect() {
+        return unitDefect;
+    }
+
+    public void setUnitDefect(String unitDefect) {
+        this.unitDefect = unitDefect;
+    }
+
+    public String getTrailerDefect() {
+        return trailerDefect;
+    }
+
+    public void setTrailerDefect(String trailerDefect) {
+        this.trailerDefect = trailerDefect;
+    }
+
+    public boolean getHasMechanicSignature() {
+        return hasMechanicSignature;
+    }
+
+    public void setHasMechanicSignature(boolean hasMechanicSignature) {
+        this.hasMechanicSignature = hasMechanicSignature;
+    }
+
     public String getTime() {
         return time;
     }
@@ -61,12 +104,12 @@ public class DvirEntity {
         this.location = location;
     }
 
-    public String getSignature() {
-        return signature;
+    public String getNote() {
+        return note;
     }
 
-    public void setSignature(String signature) {
-        this.signature = signature;
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public String getDay() {

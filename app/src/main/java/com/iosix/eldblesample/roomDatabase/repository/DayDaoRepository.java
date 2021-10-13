@@ -52,6 +52,9 @@ public class DayDaoRepository {
     public void deleteDay(DayEntity entity) {
         new deleterDayAsync(dayDao).execute(entity);
     }
+    public void deleteAllDays() {
+        new deleteAllDaysAsync(dayDao).execute();
+    }
 
     public LiveData<List<LogEntity>> getmAllStatus() {
         return mAllStatus;
@@ -106,8 +109,8 @@ public class DayDaoRepository {
         }
 
         @Override
-        protected Void doInBackground(VehiclesEntity... dayEntities) {
-            dao.insertVehicle(dayEntities[0]);
+        protected Void doInBackground(VehiclesEntity... vehiclesEntities) {
+            dao.insertVehicle(vehiclesEntities[0]);
             return null;
         }
     }
@@ -122,6 +125,20 @@ public class DayDaoRepository {
         @Override
         protected Long doInBackground(DayEntity... dayEntities) {
             dao.deleteDay(dayEntities[0]);
+            return null;
+        }
+    }
+
+    private static class deleteAllDaysAsync extends AsyncTask<DayEntity, Void, Long> {
+        private DayDao dao;
+
+        deleteAllDaysAsync(DayDao dayDao) {
+            this.dao = dayDao;
+        }
+
+        @Override
+        protected Long doInBackground(DayEntity... dayEntities) {
+            dao.deleteAllDay();
             return null;
         }
     }

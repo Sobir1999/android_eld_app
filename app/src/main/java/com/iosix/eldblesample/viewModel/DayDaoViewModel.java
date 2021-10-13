@@ -44,6 +44,9 @@ public class DayDaoViewModel extends AndroidViewModel {
     public void deleteDay(DayEntity entity) {
         repository.deleteDay(entity);
     }
+    public void deleteAllDays() {
+        repository.deleteAllDays();
+    }
 
     public void insertVehicle(VehiclesEntity vehiclesEntity) {
         repository.insertVehicle(vehiclesEntity);

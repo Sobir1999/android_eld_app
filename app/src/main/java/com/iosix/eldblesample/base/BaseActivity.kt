@@ -143,4 +143,5 @@ abstract class BaseActivity : AppCompatActivity() {
     companion object {
         lateinit var appContext: Context
     }
+
 }

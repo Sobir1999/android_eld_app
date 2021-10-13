@@ -23,7 +23,6 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <supports-screens
@@ -43,6 +42,7 @@
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true"
         tools:ignore="ExtraText">
+
         <service
             android:name=".services.MyIntentService"
             android:exported="false" />
@@ -50,12 +50,11 @@
             android:name=".services.MyBroadcastService"
             android:enabled="true"
             android:exported="false" />
-
-        <service android:name=".services.foreground.ForegroundService"/>
+        <service android:name=".services.foreground.ForegroundService" />
 
         <activity android:name=".activity.ForgotPasswordActivity" />
-        <activity android:name=".activity.LoginActivity"/>
-        <activity android:name=".activity.AddDefectActivity"/>
+        <activity android:name=".activity.LoginActivity" />
+        <activity android:name=".activity.AddDefectActivity" />
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -12,6 +12,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.iosix.eldblesample.fragments.GeneralFragment;
 import com.iosix.eldblesample.roomDatabase.converter.Converter;
+import com.iosix.eldblesample.roomDatabase.daos.DVIRDao;
 import com.iosix.eldblesample.roomDatabase.daos.DayDao;
 import com.iosix.eldblesample.roomDatabase.daos.SignatureDao;
 import com.iosix.eldblesample.roomDatabase.daos.StatusTruckDao;
@@ -32,13 +33,14 @@ import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
         UnitDefectsEntity.class, VehiclesEntity.class,
         MainOfficeEntity.class, SignatureEntity.class,
         MechanicSignatureEntity.class
-}, version = 10)
+}, version = 11)
 @TypeConverters(Converter.class)
 public abstract class StatusTruckRoomDatabase extends RoomDatabase {
 
     public abstract StatusTruckDao statusTruckDao();
     public abstract DayDao dayDao();
     public abstract SignatureDao getSignatureDao();
+    public abstract DVIRDao dvirDao();
 
     private static StatusTruckRoomDatabase INSTANCE;
 

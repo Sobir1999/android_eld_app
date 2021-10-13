@@ -72,7 +72,6 @@ public class InspectionModuleFragment extends Fragment {
                     .setContext(requireContext())
                     .fromViewSource()
                     .fromView(content)
-                    .setPageSize(PdfGenerator.PageSize.A4)
                     .setFileName("Log Reports")
                     .setFolderName("FastLogz/")
                     .openPDFafterGeneration(true)
