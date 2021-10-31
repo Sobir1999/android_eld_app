@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.iosix.eldblesample.R;
+import com.iosix.eldblesample.adapters.DvirlistAdapter;
 import com.iosix.eldblesample.models.ExampleSMSModel;
 import com.iosix.eldblesample.roomDatabase.entities.DvirEntity;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
@@ -37,22 +39,19 @@ import java.util.zip.Inflater;
 
 public class DVIRFragment extends Fragment {
     private boolean hasDefects = false;
-    private ArrayList<String> mParams;
-    private TextView textView,vehicleName,time,location,satsfaction,notes,unitDefects;
-    private ImageView bottomArrow,delete,imgSatisfaction,arrowUp;
+    private TextView textView;
+    private ImageView imageView;
     private Button createButton;
-    private LinearLayout container1,container2,unitsContainer;
-    private View view;
+    private LinearLayout container1;
     private DvirViewModel dvirViewModel;
     private String currDay;
-    private List<DvirEntity> dvirEntities;
-    private int currpos;
+    private DvirlistAdapter adapter;
+    private RecyclerView dvir_recyclerview;
 
 
-    public static DVIRFragment newInstance(ArrayList<String> params,String currDay) {
+    public static DVIRFragment newInstance(String currDay) {
         DVIRFragment fragment = new DVIRFragment();
         Bundle args = new Bundle();
-        args.putStringArrayList("ARG_PARAM2", params);
         args.putString("ARG_PARAM1", currDay);
         fragment.setArguments(args);
         return fragment;
@@ -63,7 +62,6 @@ public class DVIRFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParams = getArguments().getStringArrayList("ARG_PARAM2");
             currDay = getArguments().getString("ARG_PARAM1");
         }
     }
@@ -74,128 +72,51 @@ public class DVIRFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_d_v_i_r, container, false);
         container1 = v.findViewById(R.id.idDVIRContainer1);
-        container2 = v.findViewById(R.id.idDVIRContainer2);
         textView = v.findViewById(R.id.idDvirExText);
         createButton = v.findViewById(R.id.create_new_dvir_button);
-        vehicleName = v.findViewById(R.id.idTVVehicleName);
-        time = v.findViewById(R.id.idTvVehicleTime);
-        location = v.findViewById(R.id.idTvVehicleLocation);
-        bottomArrow = v.findViewById(R.id.idDVIRBottomArrow);
-        arrowUp = v.findViewById(R.id.idDVIRArrowUp);
-        delete = v.findViewById(R.id.idDVIRDelete);
-        satsfaction = v.findViewById(R.id.idTvVehicleSatisfaction);
-        imgSatisfaction = v.findViewById(R.id.ImageView);
-        notes = v.findViewById(R.id.idDVIRNotes);
-        unitDefects = v.findViewById(R.id.idUnitDefectName);
-        view = v.findViewById(R.id.idDVIRView);
-        unitsContainer = v.findViewById(R.id.idUnitsContainer);
-
-
-        dvirEntities = new ArrayList<>();
+        dvir_recyclerview = v.findViewById(R.id.idDvirRecyclerView);
 
         dvirViewModel = new DvirViewModel(requireActivity().getApplication());
         dvirViewModel = ViewModelProviders.of((FragmentActivity) requireContext()).get(DvirViewModel.class);
 
-        dvirViewModel.getMgetDvirs().observe(getViewLifecycleOwner(),dvirEntities1 -> {
-            dvirEntities = dvirEntities1;
-        });
+        adapter = new DvirlistAdapter(requireContext(),dvirViewModel,currDay);
+        dvir_recyclerview.setVisibility(View.VISIBLE);
+        container1.setVisibility(View.GONE);
+        dvir_recyclerview.setAdapter(adapter);
 
         dvirViewModel.getCurrentName().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(String s)
             {
-                addDvir(s);
-                Log.d("Yes",s);
-            }
-        });
-
-        addDvir(currDay);
-
-        delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(requireContext());
-                alertDialog.setTitle("Delete DVIR?")
-                        .setNegativeButton("No", (dialog, which) ->
-                                alertDialog.setCancelable(true))
-                .setPositiveButton("Yes",((dialog, which) -> {
-                    dvirViewModel.deleteDvir(dvirEntities.get(currpos));
+                adapter = new DvirlistAdapter(requireContext(),dvirViewModel,s);
+                dvir_recyclerview.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+                container1.setVisibility(View.GONE);
+                dvir_recyclerview.setVisibility(View.VISIBLE);
+                if (adapter.getItemCount() != 0) {
+                    dvirViewModel.getMgetDvirs().observe(getViewLifecycleOwner(),dvirEntities1 -> {
+                        dvir_recyclerview.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+                        if (adapter.getItemCount() == 0){
+                            container1.setVisibility(View.VISIBLE);
+                            dvir_recyclerview.setVisibility(View.GONE);
+                        }
+                    });
+                }else {
                     container1.setVisibility(View.VISIBLE);
-                    container2.setVisibility(View.GONE);
-                }));
-                AlertDialog alert = alertDialog.create();
-                alert.show();
-
+                    dvir_recyclerview.setVisibility(View.GONE);
+                }
             }
         });
 
 
-//        createButton.setOnClickListener(button ->{
-//                loadFragment(AddDvirFragment.newInstance(currDay));
-//        });
+
+        createButton.setOnClickListener(button ->{
+                loadFragment(AddDvirFragment.newInstance(currDay));
+        });
         return v;
     }
 
-    private void addDvir(String s){
-
-        int val = 0;
-            if (dvirEntities != null){
-                for (int i = 0; i < dvirEntities.size(); i++) {
-                    if (dvirEntities.get(i).getDay().equals(s)) {
-
-                        val++;
-                        currpos = i;
-                        container1.setVisibility(View.GONE);
-                        container2.setVisibility(View.VISIBLE);
-                        time.setText(dvirEntities.get(i).getTime());
-                        location.setText(dvirEntities.get(i).getLocation());
-                        unitDefects.setText(dvirEntities.get(i).getUnitDefect());
-                        notes.setText(dvirEntities.get(i).getNote());
-                        vehicleName.setText(dvirEntities.get(i).getTrailer());
-                        if (dvirEntities.get(i).getHasMechanicSignature()) {
-                            satsfaction.setText("Veihcle Satisfactory");
-                            satsfaction.setTextColor(Color.parseColor("#2D9B05"));
-                            imgSatisfaction.setBackgroundResource(R.drawable.ic_baseline_verified_24);
-                        } else {
-                            satsfaction.setText("Veihcle Unsatisfactory");
-                            satsfaction.setTextColor(Color.parseColor("#C10303"));
-                            imgSatisfaction.setBackgroundResource(R.drawable.ic_baseline_info_24);
-                        }
-
-                        view.setVisibility(View.GONE);
-                        unitsContainer.setVisibility(View.GONE);
-
-                        bottomArrow.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                view.setVisibility(View.VISIBLE);
-                                unitsContainer.setVisibility(View.VISIBLE);
-                                arrowUp.setVisibility(View.VISIBLE);
-                                bottomArrow.setVisibility(View.GONE);
-                            }
-                        });
-
-                        arrowUp.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                view.setVisibility(View.GONE);
-                                unitsContainer.setVisibility(View.GONE);
-                                arrowUp.setVisibility(View.GONE);
-                                bottomArrow.setVisibility(View.VISIBLE);
-                            }
-                        });
-                    }
-                }
-                if (val == 0){
-                    container1.setVisibility(View.VISIBLE);
-                    container2.setVisibility(View.GONE);
-                }
-            }else {
-                container1.setVisibility(View.VISIBLE);
-                container2.setVisibility(View.GONE);
-            }
-    }
 
     @Override
     public void onStart() {
@@ -217,5 +138,13 @@ public class DVIRFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+    }
+
+    private void loadFragment(Fragment fragment){
+        FragmentManager fm = getFragmentManager();
+        assert fm != null;
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        fragmentTransaction.replace(R.id.idFragmentContainer, fragment);
+        fragmentTransaction.commit();
     }
 }

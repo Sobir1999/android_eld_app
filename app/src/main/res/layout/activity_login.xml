@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:src="@drawable/logo"
-        android:layout_marginVertical="20dp"/>
+        android:layout_marginVertical="30dp"/>
 
     <EditText
         android:id="@+id/idEditTextLogin"
@@ -66,26 +66,5 @@
         android:textColor="#FFFFFF"
         android:layout_marginTop="30dp"/>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center"
-        android:layout_marginTop="30dp">
-
-        <ImageView
-            android:id="@+id/idImageViewFacebookLogo"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:src="@drawable/facebook"/>
-
-        <ImageView
-            android:layout_marginStart="10dp"
-            android:id="@+id/idImageViewGoogleLogo"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:src="@drawable/google"/>
-
-    </LinearLayout>
 
 </LinearLayout>

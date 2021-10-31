@@ -10,6 +10,7 @@ import com.iosix.eldblesample.base.BaseActivity;
 import com.iosix.eldblesample.enums.Day;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
+import com.iosix.eldblesample.shared_prefs.SessionManager;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
 
@@ -56,15 +57,20 @@ public class SplashActivity extends BaseActivity {
 
         final Handler handler = new Handler();
         handler.postDelayed(() -> {
-            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-
-//                Bundle bundle = new Bundle();
-//                bundle.putSerializable("dayDao", daoViewModel);
-//                bundle.putSerializable("statusDao", statusDaoViewModel);
-//                intent.putExtra("bundle", bundle);
-//                intent.putExtra("dayDao", (Serializable) daoViewModel);
-            startActivity(intent);
-            finish();
+            SessionManager sessionManager = new SessionManager(this);
+            if(sessionManager.fetchAccessToken() == null){
+                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            }else {
+                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            }
         }, 100);
 //        }, 3000);
     }

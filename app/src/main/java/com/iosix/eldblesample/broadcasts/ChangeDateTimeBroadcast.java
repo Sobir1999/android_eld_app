@@ -18,6 +18,7 @@ import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -27,30 +28,27 @@ import static com.iosix.eldblesample.utils.Utils.setBluetoothDataEnabled;
 
 public abstract class ChangeDateTimeBroadcast extends BroadcastReceiver {
 
-    private Date date = new Date();
+    private Date curDate = new Date();
     private final DateFormat dateFormat = new SimpleDateFormat("yyMMdd", Locale.getDefault());
     private DayDaoViewModel daoViewModel;
     private StatusDaoViewModel statusDaoViewModel;
 
-    public ChangeDateTimeBroadcast() {
-    }
 
     public abstract void onDayChanged() throws ExecutionException, InterruptedException;
 
     private boolean isSameDay(Date currentDate){
-        return dateFormat.format(currentDate).equals(dateFormat.format(date));
+        return dateFormat.format(currentDate).equals(dateFormat.format(curDate));
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (Intent.ACTION_DATE_CHANGED.equalsIgnoreCase(intent.getAction())) {
             String action = intent.getAction();
             Date currentDate = new Date();
 
             if (action != null && !isSameDay(currentDate) && (action.equals(Intent.ACTION_TIME_CHANGED)
                     || action.equals(Intent.ACTION_TIMEZONE_CHANGED)
                     || action.equals(Intent.ACTION_TIME_TICK))){
-                date = currentDate;
+                curDate = currentDate;
                 try {
                     onDayChanged();
                 } catch (ExecutionException e) {
@@ -59,7 +57,6 @@ public abstract class ChangeDateTimeBroadcast extends BroadcastReceiver {
                     e.printStackTrace();
                 }
             }
-        }
 
         daoViewModel = ViewModelProviders.of((FragmentActivity) context).get(DayDaoViewModel.class);
         statusDaoViewModel = ViewModelProviders.of((FragmentActivity) context).get(StatusDaoViewModel.class);

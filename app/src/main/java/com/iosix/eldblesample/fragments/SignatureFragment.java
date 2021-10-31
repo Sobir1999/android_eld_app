@@ -54,6 +54,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
@@ -77,6 +78,7 @@ public class SignatureFragment extends Fragment {
     private Context context;
     private Bitmap bitmap;
     private SignatureViewModel signatureViewModel;
+    List<SignatureEntity> signatureEntities = new ArrayList<>();
     private RadioButton no_defect, correct_defect, corrected_defect;
     private ConstraintLayout mechanicCons;
     private TextView mechamnicTextView, mechanicText;
@@ -136,19 +138,22 @@ public class SignatureFragment extends Fragment {
         signatureViewModel = new SignatureViewModel(requireActivity().getApplication());
         signatureViewModel = ViewModelProviders.of((FragmentActivity) requireContext()).get(SignatureViewModel.class);
         signatureViewModel.getMgetAllSignatures().observe(getViewLifecycleOwner(), signatureEntities -> {
-            if (signatureEntities.size() > 0) {
-                bitmap = signatureEntities.get(signatureEntities.size() - 1).getSignatureBitmap();
-            } else {
-                bitmap = null;
-            }
+            this.signatureEntities = signatureEntities;
         });
 
+        if (signatureEntities.size() > 0) {
+            bitmap = signatureEntities.get(signatureEntities.size() - 1).getSignatureBitmap();
+            Log.d("Signature missed", String.valueOf(signatureEntities.size()));
+
+        } else {
+            bitmap = null;
+        }
 
         verifyStoragePermissions(requireActivity());
-        isFirstTime();
+        isFirstTime(bitmap);
         selectRadio();
 
-        actionFunctions();
+        actionFunctions(bitmap);
 
         img.setOnClickListener(v -> {
             assert getFragmentManager() != null;
@@ -158,7 +163,7 @@ public class SignatureFragment extends Fragment {
         return view;
     }
 
-    private void actionFunctions() {
+    private void actionFunctions(Bitmap bitmap) {
 
 
         signature.setOnSignedListener(new SignaturePad.OnSignedListener() {
@@ -213,7 +218,14 @@ public class SignatureFragment extends Fragment {
 
         clearSignature.setOnClickListener(v -> signature.clear());
 
-        previousSignature.setOnClickListener(v -> signature.setSignatureBitmap(bitmap));
+
+        if(bitmap != null){
+            previousSignature.setClickable(true);
+            previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
+        previousSignature.setOnClickListener(v -> {
+                signature.setSignatureBitmap(bitmap);
+        });
+        }
 
         mechanicSignature.setOnSignedListener(new SignaturePad.OnSignedListener() {
             @Override
@@ -275,6 +287,8 @@ public class SignatureFragment extends Fragment {
                         e.printStackTrace();
                     }
                     if (addJpgSignatureToGallery(signatureBitmap) && addJpgSignatureToGallery(mechanicBitmap)) {
+                        String currDay;
+                        currDay = mParams.get(7);
                         try {
                             dvirViewModel.insertDvir(new DvirEntity(
                                     mParams.get(0),mParams.get(1),mParams.get(2),mParams.get(3),true,
@@ -286,7 +300,7 @@ public class SignatureFragment extends Fragment {
                             e.printStackTrace();
                         }
 
-                        loadFragment(LGDDFragment.newInstance(3,daoViewModel,mParams));
+                        loadFragment(LGDDFragment.newInstance(3,daoViewModel,currDay));
                         appBarLayout.setVisibility(View.GONE);
                     } else {
                         Toast.makeText(context, "Unable to store the signature", Toast.LENGTH_SHORT).show();
@@ -320,6 +334,8 @@ public class SignatureFragment extends Fragment {
                     }
                     if (addJpgSignatureToGallery(signatureBitmap)) {
 
+                        String currDay;
+                        currDay = mParams.get(7);
                         try {
                             if (!mParams.get(2).equals("No unit selected") || !mParams.get(3).equals("No trailer selected")){
                             dvirViewModel.insertDvir(new DvirEntity(
@@ -340,7 +356,7 @@ public class SignatureFragment extends Fragment {
                         dvirViewModel.getMgetDvirs().observe(getViewLifecycleOwner(),dvirEntities -> {
                         });
 
-                        loadFragment(LGDDFragment.newInstance(3,daoViewModel,mParams));
+                        loadFragment(LGDDFragment.newInstance(3,daoViewModel,currDay));
                         appBarLayout.setVisibility(View.GONE);
                     } else {
                         Toast.makeText(context, "Unable to store the signature", Toast.LENGTH_SHORT).show();
@@ -447,7 +463,7 @@ public class SignatureFragment extends Fragment {
         }
     }
 
-    void isFirstTime() {
+    void isFirstTime(Bitmap bitmap) {
         if (bitmap != null) {
             previousSignature.setClickable(true);
             previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
@@ -463,6 +479,7 @@ public class SignatureFragment extends Fragment {
         assert fm != null;
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
         fragmentTransaction.replace(R.id.idFragmentSignatureContainer, fragment);
+        fragmentTransaction.addToBackStack("fragment");
         fragmentTransaction.commit();
     }
 }

@@ -28,6 +28,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -101,6 +102,7 @@ import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.DvirEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 import com.iosix.eldblesample.services.foreground.ForegroundService;
+import com.iosix.eldblesample.shared_prefs.SessionManager;
 import com.iosix.eldblesample.shared_prefs.UserData;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
@@ -138,12 +140,14 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     private Switch nightModeSwitch;
     private int current_status = EnumsConstants.STATUS_OFF;
     private int last_status;
-    private final String time = "" + Calendar.getInstance().getTime();
-    private final String today = time.split(" ")[1] + " " + time.split(" ")[2];
+    private String time = "" + Calendar.getInstance().getTime();
+    private String today = time.split(" ")[1] + " " + time.split(" ")[2];
     private ArrayList<LogEntity> truckStatusEntities;
     private APIInterface apiInterface;
     private TextView lastDaysCheck;
+    private TextView idLogout;
     private ImageView toDaySelect;
+    private ChangeDateTimeBroadcast changeDateTimeBroadcast;
 
     private double latitude;
     private double longtitude;
@@ -175,6 +179,12 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     @Override
     protected int getLayoutId() {
         return R.layout.activity_main;
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.clear();
     }
 
     @Override
@@ -233,13 +243,11 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         getDrawerToggleEvent();
         getDrawerTouchEvent();
 
-
-
         clickLGDDButtons();
 
         setActivateDr();
 
-        setTodayAttr();
+        setTodayAttr(time,today);
 
         startService();
 
@@ -296,17 +304,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
                             hasDvir = true;
 
-                            ArrayList<String> arrayList = new ArrayList<>();
-                            arrayList.add(dvirEntity.get(i).getUnit());
-                            arrayList.add(dvirEntity.get(i).getTrailer());
-                            arrayList.add(dvirEntity.get(i).getUnitDefect());
-                            arrayList.add(dvirEntity.get(i).getTrailerDefect());
-                            arrayList.add(dvirEntity.get(i).getTime());
-                            arrayList.add(dvirEntity.get(i).getLocation());
-                            arrayList.add(dvirEntity.get(i).getNote());
-                            arrayList.add(dvirEntity.get(i).getDay());
-
-                            loadLGDDFragment(LGDDFragment.newInstance(3,daoViewModel,arrayList));
+                            loadLGDDFragment(LGDDFragment.newInstance(3,daoViewModel,dvirEntity.get(i).getDay()));
                        }
                     }
                 }else {
@@ -380,6 +378,27 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         dvir = findViewById(R.id.idTableBtnDVIR);
         inspectionMode = findViewById(R.id.idSpinnerInspection);
         addDvir = findViewById(R.id.idTableDvir);
+        idLogout = findViewById(R.id.idLogout);
+
+        idLogout.setOnClickListener(v -> {
+            SessionManager sessionManager = new SessionManager(this);
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+            alertDialog.setTitle("Do you want to Log out")
+                    .setPositiveButton("Yes", (dialog, which) ->{
+                        sessionManager.clearAccessToken();
+                        sessionManager.clearToken();
+                        Intent intent = new Intent(MainActivity.this, SplashActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
+                    })
+                    .setNegativeButton("No",((dialog, which) -> {
+                        dialog.cancel();
+                    }));
+            AlertDialog alert = alertDialog.create();
+            alert.show();
+        });
 
         dvirViewModel = new DvirViewModel(this.getApplication());
         dvirViewModel = ViewModelProviders.of(this).get(DvirViewModel.class);
@@ -403,18 +422,11 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
                         addDvir.setText("Dvir");
 
-                        ArrayList<String> arrayList = new ArrayList<>();
-                        arrayList.add(dvirEntities.get(i).getTime());
-                        arrayList.add(dvirEntities.get(i).getLocation());
-                        arrayList.add(dvirEntities.get(i).getLocation());
-                        arrayList.add(dvirEntities.get(i).getLocation());
-                        arrayList.add(dvirEntities.get(i).getUnit());
-                        arrayList.add(dvirEntities.get(i).getNote());
-                        arrayList.add(dvirEntities.get(i).getDay());
+                        String c = dvirEntities.get(i).getDay();
 
                         addDvir.setOnClickListener(v ->
-                                loadLGDDFragment((LGDDFragment.newInstance(3, daoViewModel, arrayList))));
-                        dvir.setOnClickListener(v -> loadLGDDFragment(LGDDFragment.newInstance(3, daoViewModel,arrayList)));
+                                loadLGDDFragment((LGDDFragment.newInstance(3, daoViewModel,c))));
+                        dvir.setOnClickListener(v -> loadLGDDFragment(LGDDFragment.newInstance(3, daoViewModel,c)));
                     }
                 }if (!hasDvir){
                     addDvir.setText("No Dvir");
@@ -484,11 +496,10 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     }
 
     @SuppressLint("SetTextI18n")
-    private void setTodayAttr() {
+    private void setTodayAttr(String time,String today) {
         TextView day = findViewById(R.id.idTableDay);
         TextView month = findViewById(R.id.idTableMonth);
         TextView lastDays = findViewById(R.id.idLas14DayText);
-
         day.setText(time.split(" ")[0]);
         month.setText(today);
     }
@@ -1632,8 +1643,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                     EventBus.getDefault().postSticky(new MessageModel("ELD " + strDevice + " found, now connecting...\n", ""));
 //                    EventBus.getDefault().postSticky(new MessageModel("status 19", "19"));
                     Log.d("TEST", "onDtcDetected: 20");
-//                    Intent intent = new Intent(MainActivity.this,BleConnect.class);
-//                    startActivity(intent);
+
                 });
 
                 EldBleError res = mEldManager.ConnectToEld(bleDataCallback, subscribedRecords, bleConnectionStateChangeCallback, strDevice);
@@ -1699,9 +1709,12 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         intent.putExtra("data", data);
         startService(intent);
 
-        ChangeDateTimeBroadcast changeDateTimeBroadcast = new ChangeDateTimeBroadcast() {
+        changeDateTimeBroadcast = new ChangeDateTimeBroadcast() {
             @Override
             public void onDayChanged() throws ExecutionException, InterruptedException {
+                time = "" + Calendar.getInstance().getTime();
+                today = time.split(" ")[1] + " " + time.split(" ")[2];
+                Log.d("data","data");
                 daoViewModel.deleteAllDays();
                 for (int i = 14; i >= 0; i--) {
                     String time = Day.getCalculatedDate(-i);
@@ -1713,11 +1726,13 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                         e.printStackTrace();
                     }
                 }
-                setTodayAttr();
+                setTodayAttr(time,today);
+                clickLGDDButtons();
             }
         };
 
         registerReceiver(changeDateTimeBroadcast, ChangeDateTimeBroadcast.getIntentFilter());
+
     }
 
     /**
@@ -1739,6 +1754,11 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         String s = "" + digit;
         if (s.length() == 1) s = "0" + s;
         return s;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
 }

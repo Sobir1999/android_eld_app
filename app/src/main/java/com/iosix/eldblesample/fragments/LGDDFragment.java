@@ -21,6 +21,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.activity.MainActivity;
@@ -37,26 +38,27 @@ import java.util.List;
 
 public class LGDDFragment extends Fragment{
     private TabLayout tabLayout;
+    private AppBarLayout appBarLayout;
     private ViewPager viewPager;
     private LGDDFragmentAdapter adapter;
     private FragmentManager manager;
-    private TextView textFrag;
+    private TextView textFrag,addFrag;
     private int index = 0;
     private int pos;
     private DayDaoViewModel dayDaoViewModel;
     private DvirViewModel dvirViewModel;
     private List<DayEntity> dayEntities = new ArrayList<>();
     private String currDay;
-    private ArrayList<String> mParams;
+    private String mParams;
 
     private String[] str = {"1", "2", "3", "5", "6"};
 
-    public static LGDDFragment newInstance(int position, DayDaoViewModel viewModel,ArrayList<String> mParams) {
+    public static LGDDFragment newInstance(int position, DayDaoViewModel viewModel,String mParams) {
         LGDDFragment fragment = new LGDDFragment();
         fragment.dayDaoViewModel = viewModel;
         Bundle args = new Bundle();
         args.putInt("position", position);
-        args.putStringArrayList("params",mParams);
+        args.putString("params",mParams);
         fragment.setArguments(args);
         return fragment;
     }
@@ -102,7 +104,7 @@ public class LGDDFragment extends Fragment{
         Bundle bundle = getArguments();
         assert bundle != null;
         pos = bundle.getInt("position");
-        mParams = bundle.getStringArrayList("params");
+        mParams = bundle.getString("params");
 
         view.findViewById(R.id.idImageBack).setOnClickListener(v -> {
             getActivity().finish();
@@ -112,13 +114,22 @@ public class LGDDFragment extends Fragment{
         });
 
         textFrag = view.findViewById(R.id.idTextFrag);
+        addFrag = view.findViewById(R.id.idAddFrag);
+
+        addFrag.setOnClickListener(v -> {
+            if (pos == 3){
+                loadFragment(AddDvirFragment.newInstance(currDay));
+                tabLayout.setVisibility(View.GONE);
+                appBarLayout.setVisibility(View.GONE);
+            }
+        });
 
 
         if (mParams != null){
-            currDay = mParams.get(7);
+            currDay = mParams;
             dvirViewModel.getCurrentName().setValue(currDay);
             for (int i = 0; i < dayEntities.size(); i++) {
-                if (dayEntities.get(i).getDay().equals(mParams.get(7))){
+                if (dayEntities.get(i).getDay().equals(mParams)){
                     index = i;
                 }
             }
@@ -128,10 +139,11 @@ public class LGDDFragment extends Fragment{
         }
 
         textFrag.setText(currDay);
-        adapter = new LGDDFragmentAdapter(getChildFragmentManager(), 1, currDay,mParams);
+        adapter = new LGDDFragmentAdapter(getChildFragmentManager(), 1, currDay);
 
         tabLayout = view.findViewById(R.id.tab_layout);
         viewPager = view.findViewById(R.id.pager);
+        appBarLayout = view.findViewById(R.id.idAppbar);
 
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(pos);
@@ -184,6 +196,16 @@ public class LGDDFragment extends Fragment{
                 EventBus.getDefault().postSticky(new ExampleSMSModel(currDay));
             }
         });
+    }
+
+    private void loadFragment(Fragment fragment){
+        FragmentManager fm = getFragmentManager();
+        assert fm != null;
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        fragmentTransaction.replace(R.id.idFragmentContainer, fragment);
+        fragmentTransaction.detach(fragment);
+        fragmentTransaction.attach(fragment);
+        fragmentTransaction.commit();
     }
 
 }

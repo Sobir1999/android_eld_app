@@ -92,6 +92,7 @@
                 android:textStyle="bold"
                 android:gravity="end" />
 
+
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -158,6 +159,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/distance_container"
                 android:orientation="horizontal">
 
             <TextView
@@ -193,14 +195,14 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/idDistanceLayout"
                 android:layout_marginStart="15dp"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <EditText
                     android:id="@+id/idDistanceEdit"
                     android:hint="0.0"
+                    android:text="0.0"
                     android:textSize="14sp"
                     android:textColor="@color/black"
-                    android:textColorHint="@color/black"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
@@ -259,6 +261,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
+                android:visibility="gone"
+                android:id="@+id/shipping_docs_layout"
                 android:orientation="horizontal">
 
                 <EditText
@@ -299,7 +303,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:id="@+id/vehicles_layout">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -333,16 +338,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone"
+                android:id="@+id/idVehiclesLayout">
 
-                <EditText
+                <TextView
+                    android:id="@+id/idVehiclesEdit"
+                    style="@style/TextAppearance.AppCompat"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:layout_weight="10"
-                    android:hint="Enter BOL/DOC Number Manually"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:id="@+id/idVehiclesEdit"/>
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="10dp"
+                    android:gravity="center_vertical"
+                    android:padding="10dp"
+                    app:drawableEndCompat="@drawable/keyboard_bottom_arrow" />
 
                 <ImageView
                     android:layout_width="0dp"
@@ -365,39 +374,82 @@
             tools:ignore="MissingConstraints" />
 
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:background="#FFFFFF">
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/trailers_layout">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:fontFamily="sans-serif"
+                    android:text="@string/trailers"
+                    android:textSize="14sp"
+                    android:textColor="#000000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_trailers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginTop="15dp"
+                    android:fontFamily="sans-serif"
+                    android:text="@string/Plus"
+                    android:textSize="17sp"
+                    android:textColor="#03A9F4"
+                    android:textStyle="bold"
+                    android:gravity="end"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:fontFamily="sans-serif"
-                android:text="@string/trailers"
-                android:textSize="16sp"
-                android:textColor="#000000"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:orientation="horizontal"
+                android:visibility="gone"
+                android:id="@+id/idTrailersLayout">
 
-            <TextView
-                android:id="@+id/tv_trailers"
-                android:layout_width="wrap_content"
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="10"
+                    android:hint="Enter Trailer Manually"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:id="@+id/idTrailersEdit"/>
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginTop="5dp"
+                    android:src="@drawable/ic_baseline_clear_24"
+                    android:id="@+id/idTrailersClear"/>
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/idTrailersRecyclerView"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
-                android:fontFamily="sans-serif"
-                android:text="@string/Plus"
-                android:textSize="17sp"
-                android:textColor="#03A9F4"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:visibility="gone"
+                android:layout_marginStart="15dp"
+                />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
         <View
             android:background="@color/colorBackgroundMainView"
@@ -451,7 +503,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:id="@+id/layout_carrier">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -479,6 +532,7 @@
                     android:textStyle="bold"
                     android:gravity="end"/>
 
+
             </LinearLayout>
 
             <LinearLayout
@@ -486,11 +540,11 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/idCarrierLayout"
                 android:layout_marginStart="15dp"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <EditText
                     android:id="@+id/idCarrierEdit"
-                    android:hint="@string/suncoast_transportation_ilc"
+                    android:hint="@string/enter_information"
                     android:textSize="14sp"
                     android:textColor="@color/black"
                     android:textColorHint="@color/black"

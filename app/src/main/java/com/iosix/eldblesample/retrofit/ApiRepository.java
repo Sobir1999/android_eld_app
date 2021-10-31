@@ -30,4 +30,21 @@ public class ApiRepository {
             return null;
         }
     }
+
+    public void createUser(Student student){
+        new createUser(apiInterface).execute(student);
+    }
+
+    private static class createUser extends AsyncTask<Student,Void,Void>{
+        private APIInterface apiInterface;
+
+        public createUser(APIInterface apiInterface){this.apiInterface = apiInterface;}
+
+        @Override
+        protected Void doInBackground(Student... students) {
+            apiInterface.createUser(students[0]);
+            return null;
+        }
+    }
+
 }

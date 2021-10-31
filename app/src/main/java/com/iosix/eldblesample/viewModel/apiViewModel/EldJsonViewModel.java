@@ -20,4 +20,8 @@ public class EldJsonViewModel extends AndroidViewModel {
     public void sendData(SendExampleModelData data) {
         repository.sendEldData(data);
     }
+
+    public void createUser(Student student) {
+        repository.createUser(student);
+    }
 }

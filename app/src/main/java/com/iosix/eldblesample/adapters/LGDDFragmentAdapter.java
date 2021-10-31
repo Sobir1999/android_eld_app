@@ -15,13 +15,11 @@ import java.util.ArrayList;
 
 public class LGDDFragmentAdapter extends FragmentPagerAdapter {
     private String curr;
-    private ArrayList<String> mParams;
     private String[] tabs = new String[]{"Log", "General", "Docs", "DVIR"};
 
-    public LGDDFragmentAdapter(@NonNull FragmentManager fm, int behavior, String curr, ArrayList<String> params) {
+    public LGDDFragmentAdapter(@NonNull FragmentManager fm, int behavior, String curr) {
         super(fm, behavior);
         this.curr = curr;
-        this.mParams = params;
     }
 
     @NonNull
@@ -38,7 +36,7 @@ public class LGDDFragmentAdapter extends FragmentPagerAdapter {
 //                DocsFragment doc = new DocsFragment();
                 return DocsFragment.newInstance(curr);
             case 3:
-                return DVIRFragment.newInstance(mParams,curr);
+                return DVIRFragment.newInstance(curr);
             default:
                 return null;
         }
