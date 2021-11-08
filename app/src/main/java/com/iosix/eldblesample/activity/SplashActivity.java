@@ -43,13 +43,13 @@ public class SplashActivity extends BaseActivity {
 
             try {
                 daoViewModel.insertDay(new DayEntity(Day.getDayTime1(time), Day.getDayName2(time)));
-                statusDaoViewModel.getmAllStatus().observe((LifecycleOwner) this, logEntities -> {
-                    if (!logEntities.isEmpty()) {
-                        statusDaoViewModel.insertStatus(new LogEntity(logEntities.get(logEntities.size() - 1).getTo_status(), logEntities.get(logEntities.size() - 1).getTo_status(), null, null, null, Day.getDayTime1(time), 0));
-                    } else {
-                        statusDaoViewModel.insertStatus(new LogEntity(0, 0, null, null, null, Day.getDayTime1(time), 0));
-                    }
-                });
+//                statusDaoViewModel.getmAllStatus().observe((LifecycleOwner) this, logEntities -> {
+//                    if (!logEntities.isEmpty()) {
+//                        statusDaoViewModel.insertStatus(new LogEntity(logEntities.get(logEntities.size() - 1).getTo_status(), logEntities.get(logEntities.size() - 1).getTo_status(), null, null, null, Day.getDayTime1(time), 0));
+//                    } else {
+//                        statusDaoViewModel.insertStatus(new LogEntity(0, 0, null, null, null, Day.getDayTime1(time), 0));
+//                    }
+//                });
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
