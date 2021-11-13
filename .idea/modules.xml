@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android_eld_app.iml" filepath="$PROJECT_DIR$/.idea/modules/android_eld_app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/EldBleLib-release/android_eld_app.EldBleLib-release.iml" filepath="$PROJECT_DIR$/.idea/modules/EldBleLib-release/android_eld_app.EldBleLib-release.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/android_eld_app.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/android_eld_app.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/eld.iml" filepath="$PROJECT_DIR$/.idea/modules/eld.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/EldBleLib-release/eld.EldBleLib-release.iml" filepath="$PROJECT_DIR$/.idea/modules/EldBleLib-release/eld.EldBleLib-release.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/eld.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/eld.app.iml" />
     </modules>
   </component>
 </project>
