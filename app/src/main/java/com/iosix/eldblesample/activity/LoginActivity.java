@@ -1,5 +1,6 @@
 package com.iosix.eldblesample.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -12,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -38,6 +40,7 @@ public class LoginActivity extends BaseActivity {
     private EldJsonViewModel eldJsonViewModel;
     private APIInterface apiInterface;
     private SessionManager sessionManager;
+    private ProgressDialog mProgress;
 
     @Override
     protected int getLayoutId() {
@@ -47,7 +50,7 @@ public class LoginActivity extends BaseActivity {
     @Override
     public void initView() {
         super.initView();
-
+        getWindow().setStatusBarColor(ActivityCompat.getColor(this,R.color.example));
 
         Button button = findViewById(R.id.idLoginButton);
         EditText login = findViewById(R.id.idEditTextLogin);
@@ -61,6 +64,12 @@ public class LoginActivity extends BaseActivity {
 
         sessionManager = new SessionManager(this);
 
+        mProgress = new ProgressDialog(this);
+        mProgress.setTitle("Processing...");
+        mProgress.setMessage("Please wait...");
+        mProgress.setCancelable(false);
+        mProgress.setIndeterminate(true);
+
         forgot_password.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -70,9 +79,11 @@ public class LoginActivity extends BaseActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mProgress.show();
                 if (isConnected()){
 
                     if (login.getText().toString().equals("") || password.getText().toString().equals("")){
+                        mProgress.cancel();
                         Toast.makeText(LoginActivity.this,"Please fill all free spaces!",Toast.LENGTH_SHORT).show();
                     }else {
                         apiInterface.createUser(new Student(login.getText().toString(),password.getText().toString()))
@@ -91,10 +102,12 @@ public class LoginActivity extends BaseActivity {
                                         sessionManager.saveAccessToken(loginResponse.getAccessToken());
                                         sessionManager.saveToken(loginResponse.getrefreshToken());
                                         Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                                        intent.putExtra("JSON",1);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                         startActivity(intent);
                                     }else {
+                                        mProgress.cancel();
                                         Toast.makeText(LoginActivity.this, "No active account found with the given credentials", Toast.LENGTH_SHORT).show();
                                     }
                                 } catch (IOException e) {
@@ -108,9 +121,9 @@ public class LoginActivity extends BaseActivity {
 
                             }
                         });
-
                     }
                 }else {
+                    mProgress.cancel();
                     Toast.makeText(LoginActivity.this,"CHeck internet connection",Toast.LENGTH_SHORT).show();
                 }
             }

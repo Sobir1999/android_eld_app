@@ -11,11 +11,14 @@ import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.iosix.eldblesample.fragments.GeneralFragment;
+import com.iosix.eldblesample.models.User;
 import com.iosix.eldblesample.roomDatabase.converter.Converter;
 import com.iosix.eldblesample.roomDatabase.daos.DVIRDao;
 import com.iosix.eldblesample.roomDatabase.daos.DayDao;
+import com.iosix.eldblesample.roomDatabase.daos.GeneralDao;
 import com.iosix.eldblesample.roomDatabase.daos.SignatureDao;
 import com.iosix.eldblesample.roomDatabase.daos.StatusTruckDao;
+import com.iosix.eldblesample.roomDatabase.daos.UserDao;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.DvirEntity;
 import com.iosix.eldblesample.roomDatabase.entities.GeneralEntity;
@@ -32,8 +35,8 @@ import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
         TrailersEntity.class, TrailerDefectsEntity.class,
         UnitDefectsEntity.class, VehiclesEntity.class,
         MainOfficeEntity.class, SignatureEntity.class,
-        MechanicSignatureEntity.class
-}, version = 11)
+        MechanicSignatureEntity.class, User.class
+}, version = 14)
 @TypeConverters(Converter.class)
 public abstract class StatusTruckRoomDatabase extends RoomDatabase {
 
@@ -41,6 +44,8 @@ public abstract class StatusTruckRoomDatabase extends RoomDatabase {
     public abstract DayDao dayDao();
     public abstract SignatureDao getSignatureDao();
     public abstract DVIRDao dvirDao();
+    public abstract UserDao userDao();
+    public abstract GeneralDao generalDao();
 
     private static StatusTruckRoomDatabase INSTANCE;
 

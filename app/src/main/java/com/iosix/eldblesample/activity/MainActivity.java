@@ -2,7 +2,6 @@ package com.iosix.eldblesample.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
@@ -12,10 +11,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,21 +23,16 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
 import android.os.SystemClock;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -48,7 +40,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -88,14 +79,12 @@ import com.iosix.eldblesample.dialogs.ConnectToEldDialog;
 import com.iosix.eldblesample.dialogs.SearchEldDeviceDialog;
 import com.iosix.eldblesample.enums.Day;
 import com.iosix.eldblesample.enums.EnumsConstants;
-import com.iosix.eldblesample.fragments.AddDvirFragment;
 import com.iosix.eldblesample.fragments.InspectionModuleFragment;
-import com.iosix.eldblesample.fragments.LGDDFragment;
 import com.iosix.eldblesample.fragments.LanguageFragment;
 import com.iosix.eldblesample.fragments.RecapFragment;
-import com.iosix.eldblesample.interfaces.AlertDialogItemClickInterface;
 import com.iosix.eldblesample.models.MessageModel;
 import com.iosix.eldblesample.models.SendExampleModelData;
+import com.iosix.eldblesample.models.User;
 import com.iosix.eldblesample.retrofit.APIInterface;
 import com.iosix.eldblesample.retrofit.ApiClient;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
@@ -107,11 +96,10 @@ import com.iosix.eldblesample.shared_prefs.UserData;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
-import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
+import com.iosix.eldblesample.viewModel.UserViewModel;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -126,9 +114,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.iosix.eldblesample.MyApplication.context;
 import static com.iosix.eldblesample.MyApplication.userData;
-import static com.iosix.eldblesample.utils.Utils.setBluetoothDataEnabled;
 
 public class MainActivity extends BaseActivity implements TimePickerDialog.OnTimeSetListener {
 
@@ -144,7 +130,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     private String today = time.split(" ")[1] + " " + time.split(" ")[2];
     private ArrayList<LogEntity> truckStatusEntities;
     private APIInterface apiInterface;
-    private TextView lastDaysCheck;
+    private TextView lastDaysCheck,idUsername;
     private TextView idLogout;
     private ImageView toDaySelect;
     private ChangeDateTimeBroadcast changeDateTimeBroadcast;
@@ -171,6 +157,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     private StatusDaoViewModel statusDaoViewModel;
     private DayDaoViewModel daoViewModel;
     private DvirViewModel dvirViewModel;
+    private UserViewModel userViewModel;
     private List<DvirEntity> dvirEntities;
     private Menu optionMenu;
     private final ArrayList<String> daysArray = new ArrayList<>();
@@ -184,13 +171,16 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.clear();
+//        outState.clear();
     }
 
     @Override
     public void initView() {
         super.initView();
         UserData userData = new UserData(this);
+
+        userViewModel = new UserViewModel(this.getApplication());
+        userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
 
         setLocale(userData.getLang());
 
@@ -206,13 +196,11 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         CustomLiveRulerChart customRulerChart = findViewById(R.id.idCustomLiveChart);
         customRulerChart.setArrayList(truckStatusEntities);
 
-        setBluetoothDataEnabled(this);
+//        setBluetoothDataEnabled(this);
 
         //Last Days Recycler Adapter
 
         daoViewModel.getMgetAllDays().observe(this,dayEntities -> {
-
-
 
             lastAdapter = new RecyclerViewLastAdapter(this, daoViewModel, statusDaoViewModel,dvirViewModel);
             last_recycler_view.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true));
@@ -236,6 +224,10 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
 
         mEldManager = EldManager.GetEldManager(this, "123456789A");
+
+        if (getIntent().getIntExtra("JSON",0) == 1){
+            getUSerInfo();
+        }
 
         onClickCustomBtn();
         onClickVisiblityCanAndSaveBtn();
@@ -278,6 +270,31 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         }.start();
     }
 
+    private void getUSerInfo(){
+
+        userViewModel.deleteUser();
+        apiInterface.getUser().enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()){
+                    User user = response.body();
+                    Log.d(user.getName(),user.getName());
+                    Log.d(user.getName(),user.getLastName());
+                    Log.d(user.getName(),user.getPhone());
+                    userViewModel.insertUser(new User(user.getName(),user.getLastName(),user.getPhone(),user.getDriverId(),
+                            user.getCoDriver(),user.getHomeTerminalAddress(),user.getTimeZone(),
+                            user.getTrailNumber(),user.getNotes(),user.getVehicleId()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.d("Adverse diving",t.getMessage());
+            }
+        });
+
+    }
+
     private void lastAdapterClicked() {
         lastAdapter.setListener(new RecyclerViewLastAdapter.LastDaysRecyclerViewItemClickListener() {
             @Override
@@ -304,14 +321,21 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
                             hasDvir = true;
 
-                            loadLGDDFragment(LGDDFragment.newInstance(3,daoViewModel,dvirEntity.get(i).getDay()));
+                            Intent intent = new Intent(MainActivity.this, LGDDActivity.class);
+                            intent.putExtra("position", 3);
+                            intent.putExtra("currDay",dvirEntity.get(i).getDay());
+                            startActivity(intent);
                        }
                     }
                 }else {
-                    loadLGDDFragment(AddDvirFragment.newInstance(s));
+                    Intent intent = new Intent(MainActivity.this, AddDvirActivity.class);
+                    intent.putExtra("currDay",s);
+                    startActivity(intent);
                 }
                 if (!hasDvir){
-                    loadLGDDFragment(AddDvirFragment.newInstance(s));
+                    Intent intent = new Intent(MainActivity.this, AddDvirActivity.class);
+                    intent.putExtra("currDay",s);
+                    startActivity(intent);
                 }
             }
         });
@@ -368,17 +392,25 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     }
 
     private void clickLGDDButtons() {
-        TextView inspectionMode, addDvir;
-        Button log, general, doc, dvir, addDvirFragment;
+        TextView inspectionMode, addDvir,idPhoneNumber;
+        Button log, general, doc, dvir;
         TextView recap = findViewById(R.id.idRecap);
         log = findViewById(R.id.idTableBtnLog);
         general = findViewById(R.id.idTableBtnGeneral);
-//        addDvirFragment = findViewById(R.id.AddDvirFragment);
         doc = findViewById(R.id.idTableBtnDocs);
         dvir = findViewById(R.id.idTableBtnDVIR);
         inspectionMode = findViewById(R.id.idSpinnerInspection);
         addDvir = findViewById(R.id.idTableDvir);
         idLogout = findViewById(R.id.idLogout);
+        idUsername = findViewById(R.id.idUsername);
+        idPhoneNumber = findViewById(R.id.idPhoneNumber);
+
+        userViewModel.getMgetUser().observe(this,user -> {
+            if (user != null){
+                idUsername.setText(user.getName() + " " + user.getLastName());
+                idPhoneNumber.setText(user.getPhone());
+            }
+        });
 
         idLogout.setOnClickListener(v -> {
             SessionManager sessionManager = new SessionManager(this);
@@ -408,10 +440,20 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
             if (dvirEntities.size() == 0){
 
-                addDvir.setText("No Dvir");
-                addDvir.setOnClickListener(v ->
-                        loadLGDDFragment(AddDvirFragment.newInstance(today)));
-                dvir.setOnClickListener(v -> loadLGDDFragment(LGDDFragment.newInstance(3, daoViewModel,null)));
+                addDvir.setText("No DVIR");
+                addDvir.setOnClickListener(v ->{
+                            Intent intent = new Intent(MainActivity.this, AddDvirActivity.class);
+                            intent.putExtra("currDay",today);
+                            startActivity(intent);
+                        }
+                );
+                dvir.setOnClickListener(v -> {
+                            Intent intent = new Intent(this, LGDDActivity.class);
+                            intent.putExtra("position", 3);
+//                            intent.putExtra("currDay",c);
+                            startActivity(intent);
+                        }
+                );
 
             }else {
 
@@ -420,33 +462,68 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
                         hasDvir = true;
 
-                        addDvir.setText("Dvir");
+                        addDvir.setText("DVIR");
 
                         String c = dvirEntities.get(i).getDay();
 
-                        addDvir.setOnClickListener(v ->
-                                loadLGDDFragment((LGDDFragment.newInstance(3, daoViewModel,c))));
-                        dvir.setOnClickListener(v -> loadLGDDFragment(LGDDFragment.newInstance(3, daoViewModel,c)));
+                        addDvir.setOnClickListener(v ->{
+                            Intent intent = new Intent(this, LGDDActivity.class);
+                            intent.putExtra("position", 3);
+                            intent.putExtra("currDay",c);
+                            startActivity(intent);
+                                }
+                        );
+                        dvir.setOnClickListener(v -> {
+                                    Intent intent = new Intent(this, LGDDActivity.class);
+                                    intent.putExtra("position", 3);
+                                    intent.putExtra("currDay",c);
+                                    startActivity(intent);
+                                }
+                        );
                     }
                 }if (!hasDvir){
-                    addDvir.setText("No Dvir");
-                    addDvir.setOnClickListener(v ->
-                            loadLGDDFragment(AddDvirFragment.newInstance(today)));
-                    dvir.setOnClickListener(v -> loadLGDDFragment(LGDDFragment.newInstance(3, daoViewModel,null)));
+                    addDvir.setText("No DVIR");
+                    addDvir.setOnClickListener(v ->{
+                                Intent intent = new Intent(MainActivity.this, AddDvirActivity.class);
+                                intent.putExtra("currDay",today);
+                                startActivity(intent);
+                            }
+                    );
+                    dvir.setOnClickListener(v -> {
+                                Intent intent = new Intent(this, LGDDActivity.class);
+                                intent.putExtra("position", 3);
+//                intent.putExtra("currDay",null);
+                                startActivity(intent);
+                            }
+                    );
                 }
-
-
-
             }
         });
 
+        log.setOnClickListener(v ->{
+                Intent intent = new Intent(this, LGDDActivity.class);
+                intent.putExtra("position", 0);
+//                intent.putExtra("currDay",null);
+                startActivity(intent);
+            }
+        );
 
 
-        log.setOnClickListener(v -> loadLGDDFragment(LGDDFragment.newInstance(0, daoViewModel,null)));
+        general.setOnClickListener(v -> {
+                    Intent intent = new Intent(this, LGDDActivity.class);
+                    intent.putExtra("position", 1);
+//                intent.putExtra("currDay",null);
+                    startActivity(intent);
+                }
+        );
 
-        general.setOnClickListener(v -> loadLGDDFragment(LGDDFragment.newInstance(1, daoViewModel,null)));
-
-        doc.setOnClickListener(v -> loadLGDDFragment(LGDDFragment.newInstance(2, daoViewModel,null)));
+        doc.setOnClickListener(v ->{
+                    Intent intent = new Intent(this, LGDDActivity.class);
+                    intent.putExtra("position", 2);
+//                intent.putExtra("currDay",null);
+                    startActivity(intent);
+                }
+        );
 
 
         recap.setOnClickListener(v -> loadLGDDFragment(RecapFragment.newInstance()));
@@ -785,17 +862,17 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
-        }
-//        else {
-//            // Checking for fragment count on back stack
-//            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-//                // Go to the previous fragment
-//                getSupportFragmentManager().popBackStack();
-//            }
+        }else {
+            // Checking for fragment count on back stack
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                // Go to the previous fragment
+                getSupportFragmentManager().popBackStack();
+            }
             else {
                 // Exit the app
                 super.onBackPressed();
 //            }
+            }
         }
     }
 
@@ -1362,6 +1439,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                     EventBus.getDefault().postSticky(new MessageModel("", "EldBleDataCallback3"));
 //                    EventBus.getDefault().postSticky(new MessageModel("status 9", "EldBleDataCallback9"));
                     Log.d("TEST", "onDtcDetected: 9");
+
 
                     if (reqdelinprogress) {
                         reccount++;

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:clickable="true"
     android:focusable="true"
-    android:background="@color/colorBackgroundMainView"
+    android:background="?attr/customBgViewColor"
     android:orientation="vertical"
     tools:context=".fragments.LogFragment">
 
@@ -21,7 +21,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="8dp"
-        android:background="#FFFFFF"
+        android:background="?attr/customBgColor"
         tools:ignore="MissingConstraints">
 
         <com.iosix.eldblesample.customViews.CustomStableRulerChart
@@ -37,7 +37,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/colorBackgroundMainView"
+            android:background="?attr/customBgViewColor"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/idCustomChart"
@@ -66,7 +66,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="10dp"
-        android:background="@color/colorBackgroundMainView"
+        android:background="?attr/customBgViewColor"
         tools:ignore="MissingConstraints" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -76,6 +76,6 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="10dp"
-        android:background="#FFFFFF" />
+        android:background="?attr/customBgColor" />
 
 </LinearLayout>

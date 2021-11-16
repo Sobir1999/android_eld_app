@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colorBackgroundMainView"
+    android:background="?attr/customBgViewColor"
     android:fitsSystemWindows="true"
     tools:context=".activity.AddDefectActivity"
     android:clickable="true"

@@ -9,7 +9,7 @@
         android:id="@+id/idActivityMainView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorBackgroundMainView"
+        android:background="?attr/customBgViewColor"
         android:clickable="true"
         android:focusable="true"
         android:orientation="vertical"
@@ -18,7 +18,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#fff"
+            android:background="?attr/customBgColor"
             android:paddingHorizontal="8dp"
             android:paddingVertical="16dp">
 
@@ -33,12 +33,13 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="?attr/customBgViewColor"
                     android:padding="10dp">
 
                     <ImageView
                         android:id="@+id/idStatusImage"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
                         android:layout_marginHorizontal="10dp"
                         android:src="@drawable/ic_baseline_power_settings_new_24"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -52,6 +53,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:text="@string/off"
+                        android:textSize="16sp"
+                        android:textColor="?attr/customTextHintColor"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toRightOf="@id/idStatusImage"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -62,6 +65,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="00:00:00"
+                        android:textSize="17sp"
+                        android:textColor="?attr/customTextColor"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
@@ -78,7 +83,7 @@
                 tools:ignore="MissingConstraints">
 
                 <TextView
-                    style="@style/TextAppearance.AppCompat.Body2"
+                    android:textColor="?attr/customTextColor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/change_status"
@@ -93,6 +98,7 @@
                     android:background="@drawable/background_dr_with_exception_btn"
                     android:paddingHorizontal="20dp"
                     android:text="DR With Exeption"
+                    android:textSize="15sp"
                     android:textColor="@color/colorAccent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -110,8 +116,10 @@
 
                 <LinearLayout
                     android:id="@+id/idIncludeOff"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="1:1"
+                    android:padding="3dp"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
                     app:layout_constraintLeft_toLeftOf="parent"
@@ -119,8 +127,8 @@
 
                     <androidx.cardview.widget.CardView
                         android:id="@+id/cardOff"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         app:cardBackgroundColor="@color/colorStatusOFF"
                         app:cardCornerRadius="10dp">
 
@@ -151,13 +159,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="@string/off_duty" />
+                        android:text="@string/off_duty"
+                        android:textColor="?attr/customTextHintColor"/>
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/idIncludeSb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="1:1"
+                    android:padding="3dp"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
                     app:layout_constraintLeft_toRightOf="@id/idIncludeOff"
@@ -165,8 +176,8 @@
 
                     <androidx.cardview.widget.CardView
                         android:id="@+id/cardSB"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         app:cardBackgroundColor="@color/colorStatusSB"
                         app:cardCornerRadius="10dp">
 
@@ -197,14 +208,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="@string/sleeper_berth" />
+                        android:text="@string/sleeper_berth"
+                        android:textColor="?attr/customTextHintColor"/>
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/idIncludeDr"
                     layout="@layout/custom_button_dr_item"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="1:1"
+                    android:padding="3dp"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
                     app:layout_constraintLeft_toRightOf="@id/idIncludeSb"
@@ -212,8 +226,8 @@
 
                     <androidx.cardview.widget.CardView
                         android:id="@+id/cardDR"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         app:cardBackgroundColor="@color/colorStatusDR"
                         app:cardCornerRadius="10dp">
 
@@ -244,14 +258,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="@string/driving" />
+                        android:text="@string/driving"
+                        android:textColor="?attr/customTextHintColor"/>
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/idIncludeOn"
                     layout="@layout/custom_button_on_item"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="1:1"
+                    android:padding="3dp"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
                     app:layout_constraintLeft_toRightOf="@id/idIncludeDr"
@@ -259,8 +276,8 @@
 
                     <androidx.cardview.widget.CardView
                         android:id="@+id/cardON"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         app:cardBackgroundColor="@color/colorStatusON"
                         app:cardCornerRadius="10dp">
 
@@ -291,7 +308,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="@string/on_duty" />
+                        android:text="@string/on_duty"
+                        android:textColor="?attr/customTextHintColor"/>
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -301,6 +319,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:visibility="gone"
+                android:background="?attr/customBgColor"
                 app:layout_constraintTop_toBottomOf="@+id/idStatusButton"
                 tools:ignore="MissingConstraints">
 
@@ -315,6 +334,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Location"
+                        android:textColor="?attr/customTextColor"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -324,6 +344,7 @@
                         android:layout_height="wrap_content"
                         android:drawableRight="@drawable/ic_baseline_location_on_24"
                         android:text="Your Location"
+                        android:textColor="?attr/customTextColor"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -334,6 +355,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Your Location"
+                    android:backgroundTint="?attr/customTextHintColor"
+                    android:textColorHint="?attr/customTextHintColor"
+                    android:textColor="?attr/customTextColor"
                     android:inputType="textCapSentences"
                     app:layout_constraintTop_toBottomOf="@id/isVisLocationCons" />
 
@@ -349,6 +373,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Notes"
+                        android:textColor="?attr/customTextColor"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -357,6 +382,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Add notes"
+                        android:textColor="?attr/customTextColor"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -368,6 +394,9 @@
                     android:layout_height="wrap_content"
                     android:drawableRight="@drawable/note_add_icon"
                     android:hint="Enter notes"
+                    android:backgroundTint="?attr/customTextHintColor"
+                    android:textColorHint="?attr/customTextHintColor"
+                    android:textColor="?attr/customTextColor"
                     android:inputType="textCapSentences"
                     app:layout_constraintTop_toBottomOf="@id/isVisNotesCons" />
 
@@ -383,6 +412,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Document"
+                        android:textColor="?attr/customTextColor"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -392,6 +422,7 @@
                         android:layout_height="wrap_content"
                         android:drawableRight="@drawable/ic_baseline_attach_file_24"
                         android:text="Attach"
+                        android:textColor="?attr/customTextColor"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -439,7 +470,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="10dp"
-            android:background="#fff"
+            android:background="?attr/customBgColor"
             android:clickable="true"
             android:focusable="true"
             android:orientation="vertical">
@@ -455,6 +486,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/today"
+                    android:textSize="14sp"
+                    android:textColor="?attr/customTextColor"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -468,6 +501,8 @@
                     android:drawableRight="@drawable/ic_baseline_restore_24"
                     android:drawablePadding="5dp"
                     android:text="@string/recap"
+                    android:textSize="14sp"
+                    android:textColor="?attr/customTextColor"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -477,7 +512,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/colorBackgroundMainView"
+                android:background="?attr/customBgViewColor"
                 tools:ignore="MissingConstraints" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -494,6 +529,8 @@
                     android:drawableLeft="@drawable/ic_baseline_edit_24"
                     android:drawablePadding="5dp"
                     android:text="Sat"
+                    android:textSize="14sp"
+                    android:textColor="?attr/customTextColor"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:ignore="MissingConstraints" />
@@ -504,6 +541,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:text="Apr 11"
+                    android:textColor="?attr/customTextHintColor"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toRightOf="@id/idTableDay"
                     app:layout_constraintRight_toLeftOf="@id/idTableView"
@@ -514,7 +552,7 @@
                     android:id="@+id/idTableView"
                     android:layout_width="2dp"
                     android:layout_height="30dp"
-                    android:background="@color/colorBackgroundMainView"
+                    android:background="?attr/customBgViewColor"
                     app:layout_constraintLeft_toRightOf="@id/idTableMonth"
                     app:layout_constraintRight_toLeftOf="@id/idTableTime"
                     tools:ignore="MissingConstraints" />
@@ -525,6 +563,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
                     android:text="00h 00m"
+                    android:textColor="?attr/customTextHintColor"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toRightOf="@id/idTableView"
                     app:layout_constraintRight_toLeftOf="@id/idTableDvir"
@@ -538,6 +577,8 @@
                     android:layout_height="wrap_content"
                     android:drawablePadding="5dp"
                     android:text="@string/no_dvir"
+                    android:textSize="14sp"
+                    android:textColor="?attr/customTextColor"
                     app:drawableLeftCompat="@drawable/ic_baseline_settings_applications_24"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toRightOf="@id/idTableTime"
@@ -559,7 +600,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/colorBackgroundMainView"
+                android:background="?attr/customBgViewColor"
                 tools:ignore="MissingConstraints" />
 
             <com.iosix.eldblesample.customViews.CustomLiveRulerChart
@@ -572,7 +613,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:background="@color/colorBackgroundMainView"
+                android:background="?attr/customBgViewColor"
                 tools:ignore="MissingConstraints" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -609,9 +650,9 @@
                     android:id="@+id/idTableBtnDocs"
                     android:layout_width="0dp"
                     android:layout_height="30dp"
-                    android:layout_margin="5dp"
                     android:background="@drawable/background_table_section_button"
-                    android:text="Docs"
+                    android:text="Signature"
+                    android:textSize="14sp"
                     android:textColor="@color/colorAccent"
                     app:layout_constraintLeft_toRightOf="@id/idTableBtnGeneral"
                     app:layout_constraintRight_toLeftOf="@id/idTableBtnDVIR"
@@ -635,7 +676,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#fff"
+            android:background="?attr/customBgColor"
             android:clickable="true"
             android:focusable="true"
             android:orientation="vertical">
@@ -652,6 +693,8 @@
                     android:layout_height="wrap_content"
                     android:drawablePadding="5dp"
                     android:text="Last 14 days"
+                    android:textSize="15sp"
+                    android:textColor="?attr/customTextHintColor"
                     app:drawableLeftCompat="@drawable/ic_baseline_calendar_today_24"
                     tools:ignore="MissingConstraints" />
 
@@ -662,6 +705,8 @@
                     android:layout_height="wrap_content"
                     android:drawablePadding="5dp"
                     android:text="@string/check_all"
+                    android:textSize="15sp"
+                    android:textColor="?attr/customTextColor"
                     app:drawableRightCompat="@drawable/ic_baseline_check_circle_outline_24"
                     app:layout_constraintRight_toRightOf="parent"
                     tools:ignore="MissingConstraints" />

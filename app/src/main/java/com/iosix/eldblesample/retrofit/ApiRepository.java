@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 
 import com.iosix.eldblesample.models.SendExampleModelData;
 import com.iosix.eldblesample.models.Student;
+import com.iosix.eldblesample.models.User;
 import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
 
 public class ApiRepository {
@@ -43,6 +44,38 @@ public class ApiRepository {
         @Override
         protected Void doInBackground(Student... students) {
             apiInterface.createUser(students[0]);
+            return null;
+        }
+    }
+
+    public void getUser(){
+        new getUser(apiInterface).execute();
+    }
+
+    private static class getUser extends AsyncTask<User,Void,Void>{
+        private APIInterface apiInterface;
+
+        public getUser(APIInterface apiInterface){this.apiInterface = apiInterface;}
+
+        @Override
+        protected Void doInBackground(User... users) {
+            apiInterface.getUser();
+            return null;
+        }
+    }
+
+    public void refreshToken(String refreshToken){
+        new refreshToken(apiInterface).execute(refreshToken);
+    }
+
+    private static class refreshToken extends AsyncTask<String,Void,Void>{
+        private APIInterface apiInterface;
+
+        public refreshToken(APIInterface apiInterface){this.apiInterface = apiInterface;}
+
+        @Override
+        protected Void doInBackground(String... refreshTokens) {
+            apiInterface.refreshToken(refreshTokens[0]);
             return null;
         }
     }

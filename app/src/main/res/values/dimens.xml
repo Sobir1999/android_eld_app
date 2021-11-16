@@ -4,7 +4,7 @@
     <dimen name="card_view_corner_radius">6dp</dimen>
 
     <dimen name="nav_header_height">100dp</dimen>
-    <dimen name="navigation_drawer_width">260dp</dimen>
+    <dimen name="navigation_drawer_width">280dp</dimen>
 
     <dimen name="title_text_size">18sp</dimen>
     <dimen name="big_text_size">16sp</dimen>

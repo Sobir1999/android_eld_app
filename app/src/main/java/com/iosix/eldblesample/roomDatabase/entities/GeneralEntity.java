@@ -1,5 +1,7 @@
 package com.iosix.eldblesample.roomDatabase.entities;
 
+import android.graphics.Bitmap;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -12,7 +14,7 @@ public class GeneralEntity {
     @ColumnInfo(name = "driver_name")
     private String driver_name;
     @ColumnInfo(name = "distance")
-    private float distance;
+    private String distance;
     @ColumnInfo(name = "vehicle")
     private String vehicle;
     @ColumnInfo(name = "trailer1")
@@ -28,12 +30,12 @@ public class GeneralEntity {
     @ColumnInfo(name = "note")
     private String note;
     @ColumnInfo(name = "signature")
-    private String signature;
+    private Bitmap signature;
     @ColumnInfo (name = "day")
     private String day;
 
-    public GeneralEntity(int id, String driver_name, float distance, String vehicle, String trailer1, String trailer2, String co_driver_name, String from_info, String to_info, String note, String signature, String day) {
-        this.id = id;
+    public GeneralEntity(String driver_name, String distance, String vehicle, String trailer1, String trailer2, String co_driver_name, String from_info, String to_info, String note, Bitmap signature, String day) {
+//        this.id = id;
         this.driver_name = driver_name;
         this.distance = distance;
         this.vehicle = vehicle;
@@ -87,11 +89,11 @@ public class GeneralEntity {
         this.driver_name = driver_name;
     }
 
-    public float getDistance() {
+    public String getDistance() {
         return distance;
     }
 
-    public void setDistance(float distance) {
+    public void setDistance(String distance) {
         this.distance = distance;
     }
 
@@ -127,11 +129,11 @@ public class GeneralEntity {
         this.note = note;
     }
 
-    public String getSignature() {
+    public Bitmap getSignature() {
         return signature;
     }
 
-    public void setSignature(String signature) {
+    public void setSignature(Bitmap signature) {
         this.signature = signature;
     }
 

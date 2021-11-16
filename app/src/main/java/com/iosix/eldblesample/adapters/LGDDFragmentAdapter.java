@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class LGDDFragmentAdapter extends FragmentPagerAdapter {
     private String curr;
-    private String[] tabs = new String[]{"Log", "General", "Docs", "DVIR"};
+    private String[] tabs = new String[]{"Log", "General", "Signature", "DVIR"};
 
     public LGDDFragmentAdapter(@NonNull FragmentManager fm, int behavior, String curr) {
         super(fm, behavior);

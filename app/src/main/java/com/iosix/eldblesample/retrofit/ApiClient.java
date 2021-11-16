@@ -15,40 +15,31 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
+
     private static final Context context = BaseActivity.appContext;
-    public static final String BASE_URL = "http://logisticadmin.napaautomotive.uz/";
+     public static final String BASE_URL = "https://shaxbozaka-logistic.herokuapp.com/";
     private static Retrofit retrofit = null;
-//    private static final String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjI0MDExMjg2LCJqdGkiOiI2MGU2MGFiZDM2MWU0N2Y2YjgyNWVkNzI1NGJiYjQ1ZCIsInVzZXJfaWQiOjl9.yOV4obu7lOXpEZrYgO7MBXRvWZQriK0qX1Gb7FEcXRo";
-//eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjI0MDExMjg2LCJqdGkiOiI2MGU2MGFiZDM2MWU0N2Y2YjgyNWVkNzI1NGJiYjQ1ZCIsInVzZXJfaWQiOjl9.yOV4obu7lOXpEZrYgO7MBXRvWZQriK0qX1Gb7FEcXRo
+
     public static Retrofit getClient() {
 
-//        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-//        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-//        OkHttpClient client = new OkHttpClient.Builder()
-//                .addInterceptor(interceptor).build();
+        TokenServiceHolder myServiceHolder = new TokenServiceHolder();
+        SessionManager sessionManager = new SessionManager(context);
+        OkHttpClient okHttpClient;
 
-        assert context != null;
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(chain -> {
-                    SessionManager sessionManager = new SessionManager(context);
-                        Request.Builder newRequest  = chain.request().newBuilder();
-                    if (sessionManager.fetchAccessToken() != null){
-                                newRequest.addHeader("Authorization", "Bearer " + sessionManager.fetchAccessToken());
-                    }
-                    return chain.proceed(newRequest.build());
-                })
-                .addInterceptor(new ChuckInterceptor(context))
-                .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
+        if (sessionManager.fetchAccessToken() != null){
+            okHttpClient = new OkHttpClientInstance.Builder(context, myServiceHolder)
+                .addHeader("Authorization", "Bearer " + sessionManager.fetchAccessToken())
                 .build();
+        }else {
+            okHttpClient = new OkHttpClientInstance.Builder(context, myServiceHolder)
+                    .build();
+        }
 
-        retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
-                .build();
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(okHttpClient)
+                    .build();
 
         return retrofit;
     }

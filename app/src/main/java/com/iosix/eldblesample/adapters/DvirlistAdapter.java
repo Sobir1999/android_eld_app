@@ -3,6 +3,7 @@ package com.iosix.eldblesample.adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.iosix.eldblesample.R;
+import com.iosix.eldblesample.fragments.DVIRFragment;
 import com.iosix.eldblesample.roomDatabase.entities.DvirEntity;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
 
@@ -25,24 +27,21 @@ public class DvirlistAdapter extends RecyclerView.Adapter<DvirlistAdapter.Dvirli
 
     private List<DvirEntity> dvirEntities;
     private Context ctx;
-    private String s;
     private DvirViewModel dvirViewModel;
 
 
     public DvirlistAdapter(Context context, DvirViewModel dvirViewModel,String currday) {
+        this.dvirViewModel = dvirViewModel;
         dvirEntities = new ArrayList<>();
         ctx = context;
-        s = currday;
-        this.dvirViewModel = dvirViewModel;
-        dvirViewModel.getMgetDvirs().observe((LifecycleOwner) ctx, dvirEntities -> {
-            DvirlistAdapter.this.dvirEntities.clear();
-                    for (int i = 0; i < dvirEntities.size() ; i++) {
-                        if (dvirEntities.get(i).getDay().equals(currday)){
-                            DvirlistAdapter.this.dvirEntities.add(dvirEntities.get(i));
-                        }
-                    }
+        dvirViewModel.getMgetDvirs().observe((LifecycleOwner) ctx, dvirEntities1 -> {
+            dvirEntities.clear();
+            for (int i = 0; i < dvirEntities1.size() ; i++) {
+                if (dvirEntities1.get(i).getDay().equals(currday)){
+                    dvirEntities.add(dvirEntities1.get(i));
                 }
-        );
+            }
+        });
     }
 
     @NonNull
@@ -54,7 +53,10 @@ public class DvirlistAdapter extends RecyclerView.Adapter<DvirlistAdapter.Dvirli
 
     @Override
     public void onBindViewHolder(@NonNull DvirlistViewHolder holder, int position) {
-        holder.onBind(dvirViewModel,dvirEntities.get(position));
+        Log.d("Veihcle Satisfactory"," " + dvirEntities.size());
+        if (dvirEntities.size() > 0){
+            holder.onBind(dvirEntities.get(position));
+        }
     }
 
     @Override
@@ -66,9 +68,9 @@ public class DvirlistAdapter extends RecyclerView.Adapter<DvirlistAdapter.Dvirli
 
     public class DvirlistViewHolder extends RecyclerView.ViewHolder{
 
-        private TextView vehicleName,time,location,satsfaction,notes,unitDefects;
+        private TextView vehicleName,time,location,satsfaction,notes,unitDefects,trailerDefects;
         private ImageView bottomArrow,delete,imgSatisfaction,arrowUp;
-        private LinearLayout unitsContainer;
+        private LinearLayout unitsContainer,addDefect;
         private View view;
 
         public DvirlistViewHolder(@NonNull View itemView) {
@@ -85,17 +87,63 @@ public class DvirlistAdapter extends RecyclerView.Adapter<DvirlistAdapter.Dvirli
             unitDefects = itemView.findViewById(R.id.idUnitDefectName);
             view = itemView.findViewById(R.id.idDVIRView);
             unitsContainer = itemView.findViewById(R.id.idUnitsContainer);
+            trailerDefects = itemView.findViewById(R.id.idTrailerDefect);
+            addDefect = itemView.findViewById(R.id.addDefect);
         }
 
-        void onBind(DvirViewModel dvirViewModel,DvirEntity dvirEntity){
+        void onBind(DvirEntity dvirEntity){
 
-            if (dvirEntities != null){
+            if (dvirEntity != null){
 
                 time.setText(dvirEntity.getTime());
                 location.setText(dvirEntity.getLocation());
-                unitDefects.setText(dvirEntity.getUnitDefect());
-                notes.setText(dvirEntity.getNote());
-                vehicleName.setText(dvirEntity.getTrailer());
+                if (dvirEntity.getUnitDefect().equals("No unit selected") && dvirEntity.getTrailerDefect().equals("No trailer selected")){
+                    unitsContainer.setVisibility(View.GONE);
+                    addDefect.setVisibility(View.GONE);
+                    bottomArrow.setOnClickListener(v -> {
+                        view.setVisibility(View.VISIBLE);
+                        addDefect.setVisibility(View.VISIBLE);
+                        arrowUp.setVisibility(View.VISIBLE);
+                        bottomArrow.setVisibility(View.GONE);
+                    });
+
+                    arrowUp.setOnClickListener(v -> {
+                        view.setVisibility(View.GONE);
+                        addDefect.setVisibility(View.GONE);
+                        arrowUp.setVisibility(View.GONE);
+                        bottomArrow.setVisibility(View.VISIBLE);
+                    });
+                }else {
+                    addDefect.setVisibility(View.GONE);
+                    unitsContainer.setVisibility(View.GONE);
+                    bottomArrow.setOnClickListener(v -> {
+                        view.setVisibility(View.VISIBLE);
+                        unitsContainer.setVisibility(View.VISIBLE);
+                        arrowUp.setVisibility(View.VISIBLE);
+                        bottomArrow.setVisibility(View.GONE);
+                    });
+
+                    arrowUp.setOnClickListener(v -> {
+                        view.setVisibility(View.GONE);
+                        unitsContainer.setVisibility(View.GONE);
+                        arrowUp.setVisibility(View.GONE);
+                        bottomArrow.setVisibility(View.VISIBLE);
+                    });
+                    if(dvirEntity.getUnitDefect().equals("No unit selected")){
+                        trailerDefects.setText(dvirEntity.getTrailerDefect());
+                        unitDefects.setText("No unit defects");
+                        notes.setText(dvirEntity.getNote());
+                    }else if(dvirEntity.getTrailerDefect().equals("No trailer selected")){
+                        unitDefects.setText(dvirEntity.getUnitDefect());
+                        notes.setText(dvirEntity.getNote());
+                        trailerDefects.setText("No trailer defects");
+                    }else{
+                        trailerDefects.setText(dvirEntity.getTrailerDefect());
+                        unitDefects.setText(dvirEntity.getUnitDefect());
+                        notes.setText(dvirEntity.getNote());
+                    }
+                }
+                    vehicleName.setText(dvirEntity.getTrailer());
                 if (dvirEntity.getHasMechanicSignature()) {
                     satsfaction.setText("Veihcle Satisfactory");
                     satsfaction.setTextColor(Color.parseColor("#2D9B05"));
@@ -108,19 +156,7 @@ public class DvirlistAdapter extends RecyclerView.Adapter<DvirlistAdapter.Dvirli
                 view.setVisibility(View.GONE);
                 unitsContainer.setVisibility(View.GONE);
 
-                bottomArrow.setOnClickListener(v -> {
-                    view.setVisibility(View.VISIBLE);
-                    unitsContainer.setVisibility(View.VISIBLE);
-                    arrowUp.setVisibility(View.VISIBLE);
-                    bottomArrow.setVisibility(View.GONE);
-                });
 
-                arrowUp.setOnClickListener(v -> {
-                    view.setVisibility(View.GONE);
-                    unitsContainer.setVisibility(View.GONE);
-                    arrowUp.setVisibility(View.GONE);
-                    bottomArrow.setVisibility(View.VISIBLE);
-                });
                 delete.setOnClickListener(v -> {
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(ctx);
                     alertDialog.setTitle("Delete DVIR?")

@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 //import com.iosix.eldblesample.models.ExampleTimeModel;
 
 import com.iosix.eldblesample.enums.TableConstants;
+import com.iosix.eldblesample.shared_prefs.UserData;
 
 public abstract class CustomRulerChart extends View {
     private Paint table_paint = new Paint();
@@ -31,6 +32,7 @@ public abstract class CustomRulerChart extends View {
     private float CUSTOM_TABLE_HEIGHT;
     private float CUSTOM_TABLE_ROW_WIDTH;
 
+    private UserData userData;
     public CustomRulerChart(Context context) {
         super(context);
         init(context);
@@ -47,6 +49,8 @@ public abstract class CustomRulerChart extends View {
     }
 
     private void init(Context context) {
+
+        userData = new UserData(getContext());
 
         CUSTOM_WIDTH = context.getResources().getDisplayMetrics().widthPixels;
 
@@ -104,7 +108,11 @@ public abstract class CustomRulerChart extends View {
     }
 
     private void onDrawTable(Canvas canvas) {
-        table_paint.setColor(Color.BLACK);
+        if (!userData.getMode()){
+            table_paint.setColor(Color.BLACK);
+        }else {
+            table_paint.setColor(Color.WHITE);
+        }
         table_paint.setStyle(Paint.Style.STROKE);
         table_paint.setStrokeWidth(1f);
 
@@ -228,11 +236,17 @@ public abstract class CustomRulerChart extends View {
     }
 
     private void onDrawText(Canvas canvas) {
-        table_time_paint.setColor(Color.BLACK);
+
         float time_size = 16f;
         table_time_paint.setTextSize(time_size);
 
-        table_time_paint_tex.setColor(Color.BLACK);
+        if (!userData.getMode()){
+            table_time_paint.setColor(Color.BLACK);
+            table_time_paint_tex.setColor(Color.BLACK);
+        }else {
+            table_time_paint.setColor(Color.WHITE);
+            table_time_paint_tex.setColor(Color.WHITE);
+        }
         table_time_paint_tex.setTextSize(1.5f * time_size);
 
         table_text_paint.setColor(Color.BLACK);

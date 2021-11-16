@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="#eee"
+    android:background="?attr/customBgViewColor"
     android:clickable="true"
     android:focusable="true"
     tools:context=".fragments.DVIRFragment">
@@ -19,7 +19,7 @@
             android:gravity="center"
             android:visibility="visible"
             android:orientation="vertical"
-            android:background="@color/white"
+            android:background="?attr/customBgColor"
             android:layout_margin="10dp">
 
             <ImageView
@@ -35,7 +35,7 @@
                 android:layout_marginTop="10dp"
                 android:text="@string/create_new_dvir"
                 android:layout_gravity="center"
-                android:textColor="#000000"
+                android:textColor="?attr/customTextColor"
                 android:textSize="17sp"
                 android:textStyle="bold"/>
 

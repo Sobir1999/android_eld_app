@@ -84,8 +84,8 @@ public class CustomLiveRulerChart extends CustomRulerChart {
         for (int i = 0; i < arrayList.size(); i++) {
             startY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * arrayList.get(i).getFrom_status()) / 4;
             endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * arrayList.get(i).getTo_status()) / 4;
-            endX = START_POINT_X + (arrayList.get(i).getSeconds() * 8) / CUSTOM_TABLE_WIDTH;
-//            endX = START_POINT_X + arrayList.get(i).getSeconds() / 3600;
+//            endX = START_POINT_X + (arrayList.get(i).getSeconds() * 8) / CUSTOM_TABLE_WIDTH;
+            endX = START_POINT_X + arrayList.get(i).getSeconds() / 3600;
             canvas.drawLine(startX, startY, endX, startY, paintArray.get(arrayList.get(i).getFrom_status()));
             canvas.drawLine(endX, startY, endX, endY, paintArray.get(arrayList.get(i).getFrom_status()));
             startX = endX;

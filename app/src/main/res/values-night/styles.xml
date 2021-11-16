@@ -5,7 +5,15 @@
         <item name="colorPrimaryDark">#070707</item>
         <item name="colorAccent">#417C83</item>
 
-<!--        <color name="colorStatusOFF">#FF0000</color>-->
+        <item name="customBgColor">@color/black</item>
+        <item name="customTextColor">@color/white</item>
+        <item name="customBgViewColor">@color/customTextHintColor</item>
+        <item name="customTextHintColor">@color/customBgViewColor</item>
+
+
+
+
+        <!--        <color name="colorStatusOFF">#FF0000</color>-->
 <!--        <color name="colorStatusOFFBold">#8C8C8C</color>-->
 <!--        <color name="colorStatusSB">#FFEFDF</color>-->
 <!--        <color name="colorStatusSBBold">#CCC056</color>-->
@@ -19,5 +27,10 @@
         <item name="windowNoTitle">true</item>
         <item name="android:actionMenuTextColor">#C8C2C2</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+    </style>
+
+    <style name="MyRadioButton" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorControlActivated">@color/colorPrimary</item>
     </style>
 </resources>

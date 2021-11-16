@@ -111,4 +111,11 @@
     <string name="trailer_defects">Trailer Defects</string>
     <string name="mechanic_signature">Mechanic Signature</string>
     <string name="vehicle" translatable="false">Vehicle:</string>
+    <string name="enter_city">Enter City</string>
+    <string name="select_state_province">Select State/Province</string>
+    <string name="enter_zip">Enter Zip</string>
+    <string name="cancel">Cancel</string>
+    <string name="enter_main_office_address">Enter main office address</string>
+    <string name="clear">Clear</string>
+    <string name="submit">Submit</string>
 </resources>

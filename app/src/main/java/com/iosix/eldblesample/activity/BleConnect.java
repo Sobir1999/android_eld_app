@@ -30,6 +30,7 @@ import com.iosix.eldblelib.EldBufferRecord;
 import com.iosix.eldblelib.EldCachedNewTimeRecord;
 import com.iosix.eldblelib.EldCachedNewVinRecord;
 import com.iosix.eldblelib.EldCachedPeriodicRecord;
+import com.iosix.eldblelib.EldCachedPoweronRecord;
 import com.iosix.eldblelib.EldDriverBehaviorRecord;
 import com.iosix.eldblelib.EldDtcCallback;
 import com.iosix.eldblelib.EldEmissionsRecord;
@@ -618,18 +619,18 @@ public class BleConnect extends BaseActivity {
                         ((EldDriverBehaviorRecord) (rec)).getAbsStatus();
                         //((EldCachedPeriodicRecord)(rec)).getUnixTime();
 
-    //                            mStatusView.append("" + rec.getCruiseSetSpeed_kph() + " ");
-    //                            mStatusView.append("" + rec.getCruiseStatus() + " ");
-    //                            mStatusView.append("" + rec.getThrottlePosition_pct() + " ");
-    //                            mStatusView.append("" + rec.getAcceleratorPosition_pct() + " ");
-    //                            mStatusView.append("" + rec.getBrakePosition_pct() + " ");
-    //                            mStatusView.append("" + rec.getSeatBeltStatus() + " ");
-    //                            mStatusView.append("" + rec.getSteeringWheelAngle_deg() + " ");
-    //                            mStatusView.append("" + rec.getAbsStatus() + " ");
-    //                            mStatusView.append("" + rec.getTractionStatus() + " ");
-    //                            mStatusView.append("" + rec.getStabilityStatus() + " ");
-    //                            mStatusView.append("" + rec.getBrakeSystemPressure_kpa() + " ");
-    //                            mStatusView.append("\n");
+                                mStatusView.append("" + rec.getCruiseSetSpeed_kph() + " ");
+                                mStatusView.append("" + rec.getCruiseStatus() + " ");
+                                mStatusView.append("" + rec.getThrottlePosition_pct() + " ");
+                                mStatusView.append("" + rec.getAcceleratorPosition_pct() + " ");
+                                mStatusView.append("" + rec.getBrakePosition_pct() + " ");
+                                mStatusView.append("" + rec.getSeatBeltStatus() + " ");
+                                mStatusView.append("" + rec.getSteeringWheelAngle_deg() + " ");
+                                mStatusView.append("" + rec.getAbsStatus() + " ");
+                                mStatusView.append("" + rec.getTractionStatus() + " ");
+                                mStatusView.append("" + rec.getStabilityStatus() + " ");
+                                mStatusView.append("" + rec.getBrakeSystemPressure_kpa() + " ");
+                                mStatusView.append("\n");
 
                         // mDataView.append("CACHED REC"+((EldCachedPeriodicRecord)(rec)).getBroadcastString());
 
@@ -764,6 +765,8 @@ public class BleConnect extends BaseActivity {
                 so = (EldScanObject) deviceList.get(0);
                 strDevice = so.getDeviceId();
                 MAC = strDevice;
+//                so.getDeviceId();
+//                so.getRssi();
                 runOnUiThread(() -> mStatusView.append("ELD " + strDevice + " found, now connecting...\n"));
 
                 EldBleError res = mEldManager.ConnectToEld(bleDataCallback, subscribedRecords, bleConnectionStateChangeCallback, strDevice);

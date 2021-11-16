@@ -6,6 +6,8 @@
 
     <color name="colorBackgroundMainView">#E3E3E3</color>
 
+    <color name="colorButtonNormal">@color/black</color>
+
     <color name="colorStatusOFF">#E9E9E9</color>
     <color name="colorStatusOFFBold">#8C8C8C</color>
     <color name="colorStatusSB">#FFEFDF</color>
@@ -25,6 +27,8 @@
 
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
+    <color name="customBgViewColor">#D1CFCF</color>
+    <color name="customTextHintColor">#3E3D3D</color>
 
     <color name="SignatureColorDefault">#9953BFED</color>
     <color name="SignatureColorWhenClicked">#08ACF6</color>

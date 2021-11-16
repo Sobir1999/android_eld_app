@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -11,8 +12,12 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import com.iosix.eldblesample.R
+import com.iosix.eldblesample.roomDatabase.daos.UserDao
+import com.iosix.eldblesample.shared_prefs.UserData
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 
 @Suppress("DEPRECATION")
@@ -23,8 +28,16 @@ abstract class BaseActivity : AppCompatActivity() {
     var toolbar: Toolbar? = null
         private set
     private var bundle: Bundle? = null
+    private var userData: UserData? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        userData = UserData(applicationContext)
+        if(userData!!.mode){
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        }else{
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
         appContext = applicationContext
         setContentView(layoutId)
         bundle = savedInstanceState
@@ -52,7 +65,7 @@ abstract class BaseActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
             false
         )
-        window.statusBarColor = Color.TRANSPARENT
+//        window.statusBarColor = Color.TRANSPARENT
 //            window.navigationBarColor = getColors(
 ////                R.color.colorBackground,
 //                appContext

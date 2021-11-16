@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:clickable="true"
     android:focusable="true"
+    android:background="?attr/customBgViewColor"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -14,16 +15,16 @@
         android:layout_marginTop="10dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:background="#FFFFFF">
+        android:background="?attr/customBgColor">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="#FFFFFF">
+            android:layout_height="wrap_content"
+            android:paddingVertical="15dp">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -37,7 +38,7 @@
                 android:layout_marginStart="10dp"
                 android:text="@string/main_info"
                 android:textStyle="bold"
-                android:textColor="#000000"
+                android:textColor="?attr/customTextColor"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/imageView_info"
@@ -46,7 +47,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
-            android:background="@color/colorBackgroundMainView"
+            android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             tools:ignore="MissingConstraints" />
@@ -55,8 +56,7 @@
             android:id="@+id/idDriverNameCons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="#FFFFFF">
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -74,7 +74,7 @@
                 android:fontFamily="sans-serif"
                 android:text="@string/driver_name"
                 android:textSize="14sp"
-                android:textColor="#000000"
+                android:textColor="?attr/customTextColor"
                 android:textStyle="bold"
                  />
 
@@ -143,7 +143,7 @@
         </LinearLayout>
 
         <View
-            android:background="@color/colorBackgroundMainView"
+            android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginStart="15dp"
@@ -153,7 +153,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFFFFF"
             android:orientation="vertical">
 
             <LinearLayout
@@ -171,7 +170,7 @@
                 android:fontFamily="sans-serif"
                 android:text="@string/distance"
                 android:textSize="14sp"
-                android:textColor="#000000"
+                android:textColor="?attr/customTextColor"
                 android:textStyle="bold" />
 
             <TextView
@@ -200,18 +199,18 @@
                 <EditText
                     android:id="@+id/idDistanceEdit"
                     android:hint="0.0"
-                    android:text="0.0"
                     android:textSize="14sp"
                     android:textColor="@color/black"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:inputType="number" />
 
             </LinearLayout>
 
         </LinearLayout>
 
         <View
-            android:background="@color/colorBackgroundMainView"
+            android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginStart="15dp"
@@ -221,7 +220,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFFFFF"
             android:orientation="vertical">
 
             <LinearLayout
@@ -238,7 +236,7 @@
                 android:fontFamily="sans-serif"
                 android:text="@string/shipping_docs"
                 android:textSize="14sp"
-                android:textColor="#000000"
+                android:textColor="?attr/customTextColor"
                 android:textStyle="bold" />
 
             <TextView
@@ -287,7 +285,7 @@
         </LinearLayout>
 
         <View
-            android:background="@color/colorBackgroundMainView"
+            android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginStart="15dp"
@@ -297,7 +295,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFFFFF"
             android:orientation="vertical">
 
             <LinearLayout
@@ -315,7 +312,7 @@
                     android:fontFamily="sans-serif"
                     android:text="@string/vehicles"
                     android:textSize="14sp"
-                    android:textColor="#000000"
+                    android:textColor="?attr/customTextColor"
                     android:textStyle="bold" />
 
                 <TextView
@@ -366,7 +363,7 @@
         </LinearLayout>
 
         <View
-            android:background="@color/colorBackgroundMainView"
+            android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginStart="15dp"
@@ -377,7 +374,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFFFFF"
             android:orientation="vertical">
 
             <LinearLayout
@@ -395,7 +391,7 @@
                     android:fontFamily="sans-serif"
                     android:text="@string/trailers"
                     android:textSize="14sp"
-                    android:textColor="#000000"
+                    android:textColor="?attr/customTextColor"
                     android:textStyle="bold" />
 
                 <TextView
@@ -428,6 +424,7 @@
                     android:layout_weight="10"
                     android:hint="Enter Trailer Manually"
                     android:textSize="14sp"
+                    android:paddingBottom="10dp"
                     android:textColor="@color/black"
                     android:id="@+id/idTrailersEdit"/>
 
@@ -452,15 +449,14 @@
         </LinearLayout>
 
         <View
-            android:background="@color/colorBackgroundMainView"
+            android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
             android:layout_height="10dp"
             tools:ignore="MissingConstraints" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="#FFFFFF">
+            android:layout_height="60dp">
 
             <ImageView
                 android:layout_width="20dp"
@@ -478,7 +474,7 @@
                 android:layout_marginStart="10dp"
                 android:text="@string/carrier"
                 android:textStyle="bold"
-                android:textColor="#000000"
+                android:textColor="?attr/customTextColor"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/imageView_carrier"
@@ -489,7 +485,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
-            android:background="@color/colorBackgroundMainView"
+            android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             tools:ignore="MissingConstraints" />
@@ -497,7 +493,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFFFFF"
             android:orientation="vertical">
 
             <LinearLayout
@@ -515,7 +510,7 @@
                     android:fontFamily="sans-serif"
                     android:text="@string/carrier"
                     android:textSize="14sp"
-                    android:textColor="#000000"
+                    android:textColor="?attr/customTextColor"
                     android:textStyle="bold" />
 
                 <TextView
@@ -546,6 +541,7 @@
                     android:id="@+id/idCarrierEdit"
                     android:hint="@string/enter_information"
                     android:textSize="14sp"
+                    android:paddingBottom="10dp"
                     android:textColor="@color/black"
                     android:textColorHint="@color/black"
                     android:layout_width="match_parent"
@@ -556,7 +552,7 @@
         </LinearLayout>
 
         <View
-            android:background="@color/colorBackgroundMainView"
+            android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginStart="15dp"
@@ -566,7 +562,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="55dp"
-            android:background="#FFFFFF">
+            android:id="@+id/idMainOffice">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -575,7 +571,7 @@
                 android:fontFamily="sans-serif"
                 android:text="Main office"
                 android:textSize="14sp"
-                android:textColor="#000000"
+                android:textColor="?attr/customTextColor"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -598,7 +594,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
-            android:background="@color/colorBackgroundMainView"
+            android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginStart="15dp"
@@ -607,8 +603,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:background="#FFFFFF">
+            android:layout_height="55dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -617,7 +612,7 @@
                 android:fontFamily="sans-serif"
                 android:text="@string/home_terminal_address"
                 android:textSize="14sp"
-                android:textColor="#000000"
+                android:textColor="?attr/customTextColor"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -640,15 +635,14 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
-            android:background="@color/colorBackgroundMainView"
+            android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
             android:layout_height="10dp"
             tools:ignore="MissingConstraints" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="#FFFFFF">
+            android:layout_height="60dp">
 
             <ImageView
                 android:layout_width="20dp"
@@ -666,7 +660,7 @@
                 android:layout_marginStart="10dp"
                 android:text="@string/others"
                 android:textStyle="bold"
-                android:textColor="#000000"
+                android:textColor="?attr/customTextColor"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/imageView_folder"
@@ -675,15 +669,14 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
-            android:background="@color/colorBackgroundMainView"
+            android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             tools:ignore="MissingConstraints" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:background="#FFFFFF">
+            android:layout_height="55dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -692,7 +685,7 @@
                 android:fontFamily="sans-serif"
                 android:text="@string/co_drivers"
                 android:textSize="14sp"
-                android:textColor="#000000"
+                android:textColor="?attr/customTextColor"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -714,42 +707,131 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:background="#FFFFFF">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/from_container"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:fontFamily="sans-serif"
+                    android:text="@string/from"
+                    android:textSize="14sp"
+                    android:textColor="?attr/customTextColor"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_from_destination"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:fontFamily="sans-serif"
+                    android:text="@string/enter_information"
+                    android:textSize="14sp"
+                    android:textColor="#03A9F4"
+                    android:textStyle="bold"
+                    android:gravity="end"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/idfromLayout"
                 android:layout_marginStart="15dp"
-                android:fontFamily="sans-serif"
-                android:text="@string/from"
-                android:textSize="14sp"
-                android:textColor="#000000"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:visibility="gone">
 
-            <TextView
-                android:id="@+id/tv_from_destination"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
-                android:fontFamily="sans-serif"
-                android:text="@string/enter_information"
-                android:textSize="14sp"
-                android:textColor="#03A9F4"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                <EditText
+                    android:id="@+id/idfromEdit"
+                    android:hint="@string/enter_information"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
+        </LinearLayout>
 
         <View
-            android:background="@color/colorBackgroundMainView"
+            android:background="?attr/customBgViewColor"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            tools:ignore="MissingConstraints" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/to_container"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:fontFamily="sans-serif"
+                    android:text="@string/to"
+                    android:textSize="14sp"
+                    android:textColor="?attr/customTextColor"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_to_destination"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:fontFamily="sans-serif"
+                    android:text="@string/enter_information"
+                    android:textSize="14sp"
+                    android:textColor="#03A9F4"
+                    android:textStyle="bold"
+                    android:gravity="end"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/idtoLayout"
+                android:layout_marginStart="15dp"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/idtoEdit"
+                    android:hint="@string/enter_information"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+        <View
+            android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginStart="15dp"
@@ -758,50 +840,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:background="#FFFFFF">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:fontFamily="sans-serif"
-                android:text="@string/to"
-                android:textSize="14sp"
-                android:textColor="#000000"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/tv_to_destination"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
-                android:fontFamily="sans-serif"
-                android:text="@string/enter_information"
-                android:textSize="14sp"
-                android:textColor="#03A9F4"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <View
-            android:background="@color/colorBackgroundMainView"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            tools:ignore="MissingConstraints" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:background="#FFFFFF">
+            android:layout_height="55dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -810,7 +849,7 @@
                 android:fontFamily="sans-serif"
                 android:text="@string/notes"
                 android:textSize="14sp"
-                android:textColor="#000000"
+                android:textColor="?attr/customTextColor"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -833,32 +872,25 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
-            android:background="@color/colorBackgroundMainView"
+            android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
             tools:ignore="MissingConstraints" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:background="#FFFFFF">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:fontFamily="sans-serif"
-                android:text="@string/signature"
-                android:textSize="14sp"
-                android:textColor="#000000"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/idSaveGeneral"
+            android:text="@string/save"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:layout_gravity="center"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/general_button"
+            android:textColor="@color/white"/>
 
         <View
             android:background="@color/colorBackgroundMainView"

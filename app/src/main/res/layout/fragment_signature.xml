@@ -4,65 +4,64 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackgroundMainView"
+    android:background="?attr/customBgViewColor"
     android:clickable="true"
     android:focusable="true"
-    android:id="@+id/idFragmentSignatureContainer"
     tools:context=".fragments.SignatureFragment">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/idAppbarSignature"
-        style="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:ignore="MissingConstraints">
+<!--    <com.google.android.material.appbar.AppBarLayout-->
+<!--        android:id="@+id/idAppbarSignature"-->
+<!--        style="@style/ThemeOverlay.AppCompat.Dark.ActionBar"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        tools:ignore="MissingConstraints">-->
 
-        <androidx.appcompat.widget.Toolbar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/activity_signature_toolbar">
+<!--        <androidx.appcompat.widget.Toolbar-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:id="@+id/activity_signature_toolbar">-->
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                tools:ignore="MissingConstraints">
+<!--            <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:padding="5dp"-->
+<!--                tools:ignore="MissingConstraints">-->
 
-                <ImageView
-                    android:id="@+id/idImageBack"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/fragment_back"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+<!--                <ImageView-->
+<!--                    android:id="@+id/idImageBack"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:src="@drawable/fragment_back"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintLeft_toLeftOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent" />-->
 
-                <TextView
-                    android:id="@+id/idTextFrag"
-                    style="@style/TextAppearance.AppCompat.Large"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/signature"
-                    android:textColor="#fff"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+<!--                <TextView-->
+<!--                    android:id="@+id/idTextFrag"-->
+<!--                    style="@style/TextAppearance.AppCompat.Large"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="@string/signature"-->
+<!--                    android:textColor="#fff"-->
+<!--                    android:textStyle="bold"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintLeft_toLeftOf="parent"-->
+<!--                    app:layout_constraintRight_toRightOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent" />-->
 
-                <TextView
-                    android:id="@+id/idAddDvirSave"
-                    style="@style/TextAppearance.AppCompat.Medium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/save_signature"
-                    android:textColor="#fff"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.appcompat.widget.Toolbar>
-    </com.google.android.material.appbar.AppBarLayout>
+<!--                <TextView-->
+<!--                    android:id="@+id/idAddDvirSave"-->
+<!--                    style="@style/TextAppearance.AppCompat.Medium"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="@string/save_signature"-->
+<!--                    android:textColor="#fff"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintRight_toRightOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent" />-->
+<!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
+<!--        </androidx.appcompat.widget.Toolbar>-->
+<!--    </com.google.android.material.appbar.AppBarLayout>-->
 
 
     <ScrollView
@@ -71,7 +70,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/idAppbarSignature">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -84,7 +83,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginRight="8dp"
-                android:background="@color/white"
+                android:background="?attr/customBgColor"
                 android:orientation="vertical"
                 tools:ignore="MissingConstraints">
 
@@ -104,7 +103,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:text="@string/driver_singature"
-                        android:textColor="@color/black"
+                        android:textColor="?attr/customTextColor"
                         android:textSize="17sp"
                         android:textStyle="bold" />
 
@@ -113,7 +112,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
-                    android:background="@color/colorBackgroundMainView" />
+                    android:background="?attr/customBgViewColor" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -131,18 +130,24 @@
                             android:id="@+id/idNoDefects"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/no_defects" />
+                            android:text="@string/no_defects"
+                            android:buttonTint="?attr/customTextColor"
+                            android:textColor="?attr/customTextColor"/>
 
                         <RadioButton
                             android:id="@+id/idNeedCorrected"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:buttonTint="?attr/customTextColor"
+                            android:textColor="?attr/customTextColor"
                             android:text="@string/above_defects_need_to_be_corrected" />
 
                         <RadioButton
                             android:id="@+id/idCorrected"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:buttonTint="?attr/customTextColor"
+                            android:textColor="?attr/customTextColor"
                             android:text="@string/above_defects_corrected" />
                     </RadioGroup>
                 </LinearLayout>
@@ -152,7 +157,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="25dp"
                     android:text="@string/driver_singature"
-                    android:textColor="@color/black"
+                    android:textColor="?attr/customTextColor"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -171,13 +176,14 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:penColor="@color/black" />
+                        app:penColor="?attr/customTextColor" />
 
                     <TextView
                         android:id="@+id/idTvDrawSignature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/draw_your_signature"
+                        android:textColor="?attr/customTextHintColor"
                         android:textSize="15sp"
                         android:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -233,7 +239,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="25dp"
                     android:text="@string/mechanic_signature"
-                    android:textColor="@color/black"
+                    android:textColor="?attr/customTextColor"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -253,13 +259,14 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:penColor="@color/black" />
+                        app:penColor="?attr/customTextColor" />
 
                     <TextView
                         android:id="@+id/idTvDrawSignatureMechanic"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/draw_your_signature"
+                        android:textColor="?attr/customTextHintColor"
                         android:textSize="15sp"
                         android:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="parent"

@@ -5,15 +5,16 @@
     android:layout_width="@dimen/navigation_drawer_width"
     android:layout_height="match_parent"
     android:layout_gravity="start"
-    android:background="#fff"
+    android:background="?attr/customBgColor"
     android:paddingVertical="20dp"
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_gravity="center"
-        android:gravity="center"
+        android:layout_gravity="start"
+        android:layout_marginStart="20dp"
+        android:layout_marginVertical="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -23,17 +24,29 @@
             android:layout_height="60dp" />
 
         <TextView
-            android:text="Murad\nBabatov"
-            android:layout_marginVertical="10dp"
-            android:textSize="20sp"
+            android:text="Murad Babatov"
+            android:id="@+id/idUsername"
+            android:layout_marginTop="20dp"
+            android:textSize="17sp"
             android:textStyle="bold"
+            android:textColor="?attr/customTextColor"
+            android:textAlignment="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text="11111111111"
+            android:textColor="?attr/customTextHintColor"
+            android:id="@+id/idPhoneNumber"
+            android:layout_marginBottom="20dp"
+            android:textSize="15sp"
             android:textAlignment="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
 
     <View
-        android:background="@color/colorBackgroundMainView"
+        android:background="?attr/customBgViewColor"
         android:layout_width="match_parent"
         android:layout_height="1dp" />
 
@@ -56,6 +69,7 @@
         <TextView
             android:id="@+id/idNightText"
             android:text="Night Mode"
+            android:textColor="?attr/customTextColor"
             app:layout_constraintLeft_toRightOf="@id/idNightIc"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -66,17 +80,17 @@
 
         <Switch
             android:id="@+id/idNightChoose"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_margin="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:ignore="MissingConstraints,UseSwitchCompatOrMaterialXml" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
-        android:background="@color/colorBackgroundMainView"
+        android:background="?attr/customBgViewColor"
         android:layout_width="match_parent"
         android:layout_height="1dp" />
 
@@ -94,6 +108,7 @@
         <TextView
             android:id="@+id/idSpinnerLanguage"
             android:text="@string/languages"
+            android:textColor="?attr/customTextColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
@@ -112,6 +127,7 @@
         <TextView
             android:id="@+id/idSpinnerInspection"
             android:text="@string/inspection_mode"
+            android:textColor="?attr/customTextColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
@@ -130,6 +146,7 @@
         <TextView
             android:id="@+id/idLogout"
             android:text="@string/log_out"
+            android:textColor="?attr/customTextColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>

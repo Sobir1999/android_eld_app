@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProviders;
@@ -16,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,15 +27,21 @@ import android.widget.Toast;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.adapters.GeneralFragmentPagerAdapter;
 import com.iosix.eldblesample.adapters.TrailerRecyclerAdapter;
+import com.iosix.eldblesample.dialogs.MainOfficeAddressDialog;
 import com.iosix.eldblesample.models.ExampleSMSModel;
+import com.iosix.eldblesample.roomDatabase.entities.GeneralEntity;
 import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
+import com.iosix.eldblesample.shared_prefs.SessionManager;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
+import com.iosix.eldblesample.viewModel.GeneralViewModel;
+import com.iosix.eldblesample.viewModel.UserViewModel;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class GeneralFragment extends Fragment {
 //    private ViewPager pager;
@@ -42,17 +50,23 @@ public class GeneralFragment extends Fragment {
     private TrailerRecyclerAdapter adapter;
     private ArrayList<TrailersEntity> selectedTrailers;
     private DayDaoViewModel daoViewModel;
+    private UserViewModel userViewModel;
+    private GeneralViewModel generalViewModel;
+    private SessionManager sessionManager;
 
 
     private Context context;
+    private Button idSaveGeneral;
     private RecyclerView idTrailersRecyclerView;
     private ImageView idShippingClear,idTrailersClear,idVehiclesClear;
-    private TextView driverFullName,tvDistance,tvShippingdocs,tvTrailers,idVehiclesEdit,tv_carrier;
-    private EditText driverName,driverSurname,distanceEdit,ShippingDocsEdit,idTrailersEdit,idCarrierEdit;
-    private String driverNameString,driverSurnameString;
+    private TextView driverFullName,tvDistance,tvShippingdocs,tvTrailers,idVehiclesEdit,
+            tv_carrier,tv_terminal_address,tv_from_destination,tv_to_destination;
+    private EditText driverName,driverSurname,distanceEdit,ShippingDocsEdit,idTrailersEdit,
+            idCarrierEdit,idfromEdit,idtoEdit;
+    private ConstraintLayout idMainOffice;
     private LinearLayout driverInfo,distanceContainer,idDistanceLayout,
             shippingDocsLayout,trailersLayout,idTrailersLayout,vehiclesLayout,idVehiclesLayout,
-            layout_carrier,idCarrierLayout;
+            layout_carrier,idCarrierLayout,from_container,idfromLayout,to_container,idtoLayout;
 
     public static GeneralFragment newInstance() {
         GeneralFragment fragment = new GeneralFragment();
@@ -66,12 +80,15 @@ public class GeneralFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_general, container, false);
         context = container.getContext();
-//        pager = view.findViewById(R.id.idGeneralFragmentPage);
-//        adapter = new GeneralFragmentPagerAdapter(getContext());
-//        pager.setAdapter(adapter);
-//        pager.setCurrentItem(adapter.getCount(), true);
-//
-//        onPager();
+
+        userViewModel = new UserViewModel(this.requireActivity().getApplication());
+        userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
+
+        generalViewModel = new GeneralViewModel(this.requireActivity().getApplication());
+        generalViewModel = ViewModelProviders.of(this).get(GeneralViewModel.class);
+
+        sessionManager = new SessionManager(requireContext());
+
         driverFullName = view.findViewById(R.id.tv_driver_name);
         driverName = view.findViewById(R.id.idDriverNameEdit);
         driverSurname = view.findViewById(R.id.idDriverFamilyEdit);
@@ -98,9 +115,39 @@ public class GeneralFragment extends Fragment {
         tv_carrier = view.findViewById(R.id.tv_carrier);
         idCarrierLayout = view.findViewById(R.id.idCarrierLayout);
         idCarrierEdit = view.findViewById(R.id.idCarrierEdit);
+        idMainOffice = view.findViewById(R.id.idMainOffice);
+        tv_terminal_address = view.findViewById(R.id.tv_terminal_address);
+        from_container = view.findViewById(R.id.from_container);
+        tv_from_destination = view.findViewById(R.id.tv_from_destination);
+        idfromLayout = view.findViewById(R.id.idfromLayout);
+        idfromEdit = view.findViewById(R.id.idfromEdit);
+        to_container = view.findViewById(R.id.to_container);
+        tv_to_destination = view.findViewById(R.id.tv_to_destination);
+        idtoLayout = view.findViewById(R.id.idtoLayout);
+        idtoEdit = view.findViewById(R.id.idtoEdit);
+        idSaveGeneral = view.findViewById(R.id.idSaveGeneral);
+
+        userViewModel.getMgetUser().observe(getViewLifecycleOwner(),user -> {
+            if (user != null){
+                driverFullName.setText(user.getName() + " " + user.getLastName());
+                tv_terminal_address.setText(user.getHomeTerminalAddress());
+            }
+        });
 
         getGeneralInfo();
 
+        idSaveGeneral.setOnClickListener(v -> {
+            try {
+                generalViewModel.insertGeneral(
+                        new GeneralEntity(driverFullName.getText().toString(),tvDistance.getText().toString(),
+                                null,null,null,null,tv_from_destination.getText().toString(),
+                                tv_to_destination.getText().toString(),null,sessionManager.fetchSignature(),null));
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
         return view;
     }
 
@@ -109,34 +156,35 @@ public class GeneralFragment extends Fragment {
         selectedTrailers = new ArrayList<>();
         daoViewModel = ViewModelProviders.of(requireActivity()).get(DayDaoViewModel.class);
 
-        driverInfo.setOnClickListener(v -> {
 
-            String s = driverFullName.getText().toString();
-            Log.d("getGeneralInfo: ", s);
-
-            driverNameString = s.substring(0,s.indexOf(" "));
-            driverSurnameString = s.substring(s.indexOf(" ")+1);
-
-            if (v.findViewById(R.id.idDriverInfoEdit).getVisibility() == View.GONE){
-                v.findViewById(R.id.idDriverInfoEdit).setVisibility(View.VISIBLE);
-            }else {
-                if (!driverName.getText().toString().equals(driverNameString) && !driverName.getText().toString().equals("")){
-                    driverNameString = driverName.getText().toString();
-                }else {
-                    driverNameString = s.substring(0,s.indexOf(" "));
-                }
-
-                if (!driverSurname.getText().toString().equals("") && !driverSurname.getText().toString().equals(driverSurnameString) ){
-                    driverSurnameString = driverSurname.getText().toString();
-                }else {
-                    driverSurnameString = s.substring(s.indexOf(" ")+1);
-                }
-                driverFullName.setText(driverNameString + " " +driverSurnameString);
-                Log.d("getGeneralInfo: ", driverFullName.getText().toString());
-                v.findViewById(R.id.idDriverInfoEdit).setVisibility(View.GONE);
-
-            }
-        });
+//        driverInfo.setOnClickListener(v -> {
+//
+//            String s = driverFullName.getText().toString();
+//            Log.d("getGeneralInfo: ", s);
+//
+//            driverNameString = s.substring(0,s.indexOf(" "));
+//            driverSurnameString = s.substring(s.indexOf(" ")+1);
+//
+//            if (v.findViewById(R.id.idDriverInfoEdit).getVisibility() == View.GONE){
+//                v.findViewById(R.id.idDriverInfoEdit).setVisibility(View.VISIBLE);
+//            }else {
+//                if (!driverName.getText().toString().equals(driverNameString) && !driverName.getText().toString().equals("")){
+//                    driverNameString = driverName.getText().toString();
+//                }else {
+//                    driverNameString = s.substring(0,s.indexOf(" "));
+//                }
+//
+//                if (!driverSurname.getText().toString().equals("") && !driverSurname.getText().toString().equals(driverSurnameString) ){
+//                    driverSurnameString = driverSurname.getText().toString();
+//                }else {
+//                    driverSurnameString = s.substring(s.indexOf(" ")+1);
+//                }
+//                driverFullName.setText(driverNameString + " " +driverSurnameString);
+//                Log.d("getGeneralInfo: ", driverFullName.getText().toString());
+//                v.findViewById(R.id.idDriverInfoEdit).setVisibility(View.GONE);
+//
+//            }
+//        });
 
         distanceContainer.setOnClickListener(v1 -> {
             if (idDistanceLayout.getVisibility() == View.GONE){
@@ -166,7 +214,6 @@ public class GeneralFragment extends Fragment {
                     ShippingDocsEdit.setHint(strName);
                     shippingDocsLayout.setVisibility(View.VISIBLE);
                 }else {
-
                     AlertDialog.Builder alertDialog1 = new AlertDialog.Builder(context);
                     alertDialog1.setTitle("Warning!")
                             .setMessage("You don't have shipping documents for selection")
@@ -290,6 +337,33 @@ public class GeneralFragment extends Fragment {
                     tv_carrier.setText(idCarrierEdit.getText().toString());
                 }
                 idCarrierLayout.setVisibility(View.GONE);
+            }
+        });
+
+        idMainOffice.setOnClickListener(v -> {
+            MainOfficeAddressDialog cdd=new MainOfficeAddressDialog(requireContext());
+            cdd.show();
+        });
+
+        from_container.setOnClickListener(v -> {
+            if (idfromLayout.getVisibility() != View.GONE){
+                idfromLayout.setVisibility(View.GONE);
+                if (idfromEdit.getText() != null){
+                    tv_from_destination.setText(idfromEdit.getText().toString());
+                }
+            }else {
+                idfromLayout.setVisibility(View.VISIBLE);
+            }
+        });
+
+        to_container.setOnClickListener(v -> {
+            if (idtoLayout.getVisibility() != View.GONE){
+                idtoLayout.setVisibility(View.GONE);
+                if(idtoEdit.getText() != null){
+                    tv_to_destination.setText(idtoEdit.getText().toString());
+                }
+            }else {
+                idtoLayout.setVisibility(View.VISIBLE);
             }
         });
     }

@@ -109,7 +109,7 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
             if (dvirEntities.size() != 0){
                 for (int i = 0; i < dvirEntities.size(); i++) {
                     if (dvirEntities.get(i).getDay().equals(dayEntity.getDay()) ){
-                        no_dvir.setText("Dvir");
+                        no_dvir.setText("DVIR");
                     }
                 }
             }

@@ -67,7 +67,7 @@ public abstract class ChangeDateTimeBroadcast extends BroadcastReceiver {
 
 //        MediaPlayer mediaPlayer = MediaPlayer.create(context, Settings.System.DEFAULT_RINGTONE_URI);
 //        mediaPlayer.start();
-        setBluetoothDataEnabled(context);
+//        setBluetoothDataEnabled(context);
 //        Log.d("BR", "onReceive: ChangedT");
 
     }

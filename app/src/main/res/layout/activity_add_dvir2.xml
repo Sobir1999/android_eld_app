@@ -3,10 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_container_add_dvir"
+    android:clickable="true"
+    android:focusable="true"
+    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.MainActivity"
-    android:background="#eee">
+    tools:context=".activity.AddDvirActivity"
+    android:background="?attr/customBgViewColor">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/idAppbar"
@@ -73,14 +76,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp"
+            android:padding="10dp"
             tools:ignore="MissingConstraints">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="@dimen/card_view_corner_radius"
-                app:cardBackgroundColor="@color/white">
+                app:cardBackgroundColor="?attr/customBgColor">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -96,6 +99,7 @@
                         android:gravity="center_vertical"
                         android:padding="10dp"
                         android:text="@string/unit"
+                        android:textColor="?attr/customTextColor"
                         android:textStyle="bold"
                         app:drawableEndCompat="@drawable/add_unit"
                         app:drawableStartCompat="@drawable/driving" />
@@ -104,7 +108,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
                         android:layout_marginVertical="10dp"
-                        android:background="#eee" />
+                        android:background="?attr/customBgViewColor" />
 
                     <TextView
                         android:id="@+id/idAddDvirUnitNumberText"
@@ -115,6 +119,7 @@
                         android:gravity="center_vertical"
                         android:padding="10dp"
                         android:text="2412"
+                        android:textColor="?attr/customTextHintColor"
                         app:drawableEndCompat="@drawable/keyboard_bottom_arrow" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -122,9 +127,9 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="15dp"
                 app:cardCornerRadius="@dimen/card_view_corner_radius"
-                app:cardBackgroundColor="#fff">
+                app:cardBackgroundColor="?attr/customBgColor">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -140,6 +145,7 @@
                         android:gravity="center_vertical"
                         android:padding="10dp"
                         android:text="@string/trailers"
+                        android:textColor="?attr/customTextColor"
                         android:textStyle="bold"
                         app:drawableEndCompat="@drawable/add_unit"
                         app:drawableStartCompat="@drawable/driving" />
@@ -148,7 +154,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
                         android:layout_marginVertical="10dp"
-                        android:background="#eee" />
+                        android:background="?attr/customBgViewColor" />
 
                     <TextView
                         android:id="@+id/idAddDvirTrailerNumberText"
@@ -159,13 +165,14 @@
                         android:gravity="center_vertical"
                         android:padding="10dp"
                         android:text="Select trailers"
+                        android:textColor="?attr/customTextHintColor"
                         app:drawableEndCompat="@drawable/keyboard_bottom_arrow" />
 
                     <View
                         android:layout_width="wrap_content"
                         android:layout_height="2dp"
                         android:layout_marginVertical="5dp"
-                        android:background="#eee" />
+                        android:background="?attr/customBgViewColor" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/idTrailersRecyclerView"
@@ -187,6 +194,7 @@
                             android:drawablePadding="10dp"
                             android:gravity="center_vertical"
                             android:text="@string/no_defect_detected"
+                            android:textColor="?attr/customTextColor"
                             app:drawableStartCompat="@drawable/defect_settings"
                             app:drawableTint="#aaa" />
 
@@ -198,7 +206,7 @@
                             android:background="@drawable/add_defect_text_background"
                             android:gravity="center"
                             android:text="@string/click_here_to_add_defects"
-                            android:textColor="#aaa" />
+                            android:textColor="?attr/customTextHintColor" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -214,7 +222,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/unit_defects"
-                            android:textColor="@color/black"
+                            android:textColor="?attr/customTextColor"
                             android:textStyle="bold" />
 
                         <TextView
@@ -222,7 +230,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/dual_vertical_margin"
-                            android:textColor="@color/black" />
+                            android:textColor="?attr/customTextColor" />
 
                         <TextView
                             android:id="@+id/trailerDefectsTitle"
@@ -230,7 +238,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/activity_vertical_margin"
                             android:text="@string/trailer_defects"
-                            android:textColor="@color/black"
+                            android:textColor="?attr/customTextColor"
                             android:textStyle="bold" />
 
                         <TextView
@@ -238,14 +246,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/dual_vertical_margin"
-                            android:textColor="@color/black" />
+                            android:textColor="?attr/customTextColor" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/activity_vertical_margin"
                             android:text="@string/notes"
-                            android:textColor="@color/black"
+                            android:textColor="?attr/customTextColor"
                             android:textStyle="bold" />
 
                         <TextView
@@ -253,7 +261,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/dual_vertical_margin"
-                            android:textColor="@color/black" />
+                            android:textColor="?attr/customTextColor" />
 
                     </LinearLayout>
 
@@ -267,13 +275,19 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/time"
+                            android:textColor="?attr/customTextColor"
+                            android:textSize="16sp"
                             android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/idDefectTimeText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="05:05 AM CDT"
+                            android:hint="Create time"
+                            android:textColorHint="?attr/customTextHintColor"
+                            android:textSize="16sp"
+                            android:textAlignment="viewEnd"
+                            android:textColor="?attr/customTextColor"
                             style="@style/TextAppearance.AppCompat.Small"
                             app:drawableEndCompat="@drawable/keyboard_bottom_arrow"
                             app:layout_constraintRight_toRightOf="parent"
@@ -283,7 +297,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
-                        android:background="#eee" />
+                        android:background="?attr/customBgViewColor" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -296,7 +310,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Location"
+                            android:textColor="?attr/customTextColor"
                             android:textStyle="bold"
+                            android:textSize="16sp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintRight_toLeftOf="@id/idDefectLocationEdit"
@@ -309,8 +325,11 @@
                             android:background="@android:color/transparent"
                             android:hint="Your Location"
                             android:inputType="text"
+                            android:textSize="16sp"
                             android:textAlignment="viewEnd"
-                            android:textColor="@color/design_default_color_primary_dark"
+                            android:textColor="?attr/customTextColor"
+                            android:textColorHint="?attr/customTextColor"
+                            android:backgroundTint="?attr/customTextHintColor"
                             app:drawableEndCompat="@drawable/ic_baseline_location_on_24"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintLeft_toRightOf="@id/idLocationT"
@@ -323,9 +342,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
                         android:layout_marginBottom="10dp"
-                        android:background="#eee" />
+                        android:background="?attr/customBgViewColor" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
         </LinearLayout>
     </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

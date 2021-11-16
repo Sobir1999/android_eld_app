@@ -24,6 +24,8 @@
         <TextView
             android:id="@+id/idTableDay"
             android:text="Sun"
+            android:textSize="14sp"
+            android:textColor="?attr/customTextColor"
             android:drawablePadding="5dp"
             style="@style/TextAppearance.AppCompat.Menu"
             android:drawableLeft="@drawable/ic_baseline_edit_24"
@@ -36,6 +38,8 @@
         <TextView
             android:id="@+id/idTableMonth"
             android:text="Apr 11"
+            android:textSize="14sp"
+            android:textColor="?attr/customTextHintColor"
             android:layout_marginRight="5dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -46,7 +50,7 @@
 
         <View
             android:id="@+id/idTableView"
-            android:background="@color/colorBackgroundMainView"
+            android:background="?attr/customBgViewColor"
             app:layout_constraintRight_toLeftOf="@id/idTableDvir"
             app:layout_constraintLeft_toRightOf="@id/idTableDay"
             app:layout_constraintTop_toTopOf="parent"
@@ -58,6 +62,8 @@
         <TextView
             android:id="@+id/idTableTime"
             android:text="00h 00m"
+            android:textSize="14sp"
+            android:textColor="?attr/customTextHintColor"
             android:layout_marginLeft="5dp"
             app:layout_constraintLeft_toRightOf="@id/idTableView"
             app:layout_constraintTop_toTopOf="parent"
@@ -69,6 +75,8 @@
         <TextView
             android:id="@+id/idTableDvir"
             android:text="@string/no_dvir"
+            android:textSize="14sp"
+            android:textColor="?attr/customTextColor"
             android:drawablePadding="5dp"
             style="@style/TextAppearance.AppCompat.Subhead"
             app:layout_constraintLeft_toRightOf="@id/idTableTime"
@@ -103,7 +111,7 @@
     <View
         android:id="@+id/idBottomView"
         app:layout_constraintTop_toBottomOf="@id/idBasic"
-        android:background="@color/colorBackgroundMainView"
+        android:background="?attr/customBgViewColor"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         tools:ignore="MissingConstraints" />
