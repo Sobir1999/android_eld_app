@@ -81,7 +81,7 @@ public abstract class CustomRulerChart extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        int desiredWidth = Math.round(START_POINT_X + START_POINT_X + CUSTOM_TABLE_WIDTH + getPaddingRight() + getPaddingLeft());
+        int desiredWidth = Math.round(START_POINT_X + CUSTOM_TABLE_WIDTH + getPaddingRight() + getPaddingLeft());
         int desiredHeight = Math.round(START_POINT_Y + CUSTOM_TABLE_HEIGHT + getPaddingTop() + getPaddingBottom());
 
         int measureWith = reconcileSize(desiredWidth, widthMeasureSpec);

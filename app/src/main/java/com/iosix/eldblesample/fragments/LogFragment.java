@@ -55,6 +55,5 @@ public class LogFragment extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSMSHandler(ExampleSMSModel sendModels){
-
     }
 }
