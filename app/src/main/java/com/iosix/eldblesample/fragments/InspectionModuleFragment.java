@@ -29,6 +29,7 @@ public class InspectionModuleFragment extends Fragment {
     Button beginInspection, sendLogs, sendELDFile;
     ImageView img;
     View content;
+    String filename;
 
     public InspectionModuleFragment() {
         // Required empty public constructor
@@ -66,55 +67,9 @@ public class InspectionModuleFragment extends Fragment {
         img.setOnClickListener(v -> getFragmentManager().popBackStack());
 
         sendLogs.setOnClickListener(v -> {
-//            loadFragment(SendLogFragment.newInstance());
+            loadFragment(SendToEmailFragment.newInstance());
 
-            PdfGenerator.getBuilder()
-                    .setContext(requireContext())
-                    .fromViewSource()
-                    .fromView(content)
-                    .setFileName("Log Reports")
-                    .setFolderName("FastLogz/")
-                    .openPDFafterGeneration(true)
-                    .build(new PdfGeneratorListener() {
-                        @Override
-                        public void showLog(String log) {
-                            super.showLog(log);
-                        }
-
-                        @Override
-                        public void onStartPDFGeneration() {
-
-                        }
-
-                        @Override
-                        public void onFinishPDFGeneration() {
-
-                        }
-
-                        @SuppressLint("IntentReset")
-                        @Override
-                        public void onSuccess(SuccessResponse response) {
-                            super.onSuccess(response);
-//                            Log.d("PDF", "onSuccess: PDF generated" + response.getPdfDocument());
 //
-//                            String username = "axrorbekbebitovich97@gmail.com";
-//                            String password = "04kun10oy1997yil";
-//
-//                            String message = "It is message";
-//
-//                            Properties prop = new Properties();
-//                            prop.put("mail.smtp.auth", "true");
-//                            prop.put("mail.smtp.starttls.enable", "true");
-//                            prop.put("mail.smtp.host", "smtp.gmail.com");
-//                            prop.put("mail.smtp.port", "587");
-
-                        }
-
-                        @Override
-                        public void onFailure(FailureResponse failureResponse) {
-                            super.onFailure(failureResponse);
-                        }
-                    });
         });
 
         beginInspection.setOnClickListener(v -> {

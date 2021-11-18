@@ -1,7 +1,9 @@
 package com.iosix.eldblesample.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.se.omapi.Session;
@@ -23,6 +25,7 @@ import com.iosix.eldblesample.models.Student;
 import com.iosix.eldblesample.retrofit.APIInterface;
 import com.iosix.eldblesample.retrofit.ApiClient;
 import com.iosix.eldblesample.shared_prefs.SessionManager;
+import com.iosix.eldblesample.shared_prefs.SharedPrefs;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
 import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
 
@@ -32,8 +35,9 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
 public class LoginActivity extends BaseActivity {
+
+    public static final String MY_PREFS_NAME = "MyPrefsFile";
 
     private EldJsonViewModel eldJsonViewModel;
     private APIInterface apiInterface;
@@ -53,6 +57,7 @@ public class LoginActivity extends BaseActivity {
         EditText login = findViewById(R.id.idEditTextLogin);
         EditText password = findViewById(R.id.idEditTextPassword);
         TextView forgot_password = findViewById(R.id.idTextViewForgotPassword);
+
 
         eldJsonViewModel = new EldJsonViewModel(this.getApplication());
         eldJsonViewModel = ViewModelProviders.of(this).get(EldJsonViewModel.class);
@@ -94,6 +99,12 @@ public class LoginActivity extends BaseActivity {
                                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                         startActivity(intent);
+                                        @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
+                                        editor.putString("login",login.getText().toString());
+                                        editor.putString("password",password.getText().toString());
+
+                                        editor.apply();
+
                                     }else {
                                         Toast.makeText(LoginActivity.this, "No active account found with the given credentials", Toast.LENGTH_SHORT).show();
                                     }
