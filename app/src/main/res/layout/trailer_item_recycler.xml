@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="5dp"
+    android:background="?attr/customBgColor"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -11,7 +12,7 @@
         android:layout_width="0dp"
         android:text="@string/uzbek"
         android:gravity="center_vertical"
-        android:textColor="@color/black"
+        android:textColor="?attr/customTextColor"
         android:textSize="14sp"
         android:drawableRight="@drawable/trailer_bottom"
         app:layout_constraintRight_toLeftOf="@id/idTrailerDelete"

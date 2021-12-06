@@ -57,9 +57,9 @@ public class BeginInspectionFragment extends Fragment {
         idTimeZone = view.findViewById(R.id.idTimeZone);
         idDistance = view.findViewById(R.id.idDistance);
         idCarrier = view.findViewById(R.id.idCarrier);
-        idTruckTracktorId = view.findViewById(R.id.idTruckTracktorId);
-        idTrailerID = view.findViewById(R.id.idTrailerID);
-        idTruckTracktorVIN = view.findViewById(R.id.idTruckTracktorVIN);
+//        idTruckTracktorId = view.findViewById(R.id.idTruckTracktorId);
+//        idTrailerID = view.findViewById(R.id.idTrailerID);
+//        idTruckTracktorVIN = view.findViewById(R.id.idTruckTracktorVIN);
         idELDProvider = view.findViewById(R.id.idELDProvider);
         idMainOffice = view.findViewById(R.id.idMainOffice);
         idHomeTerminal = view.findViewById(R.id.idHomeTerminal);

@@ -86,12 +86,13 @@ public class DVIRFragment extends Fragment {
 
         dvirEntities = new ArrayList<>();
 
-//        adapter = new DvirlistAdapter(getContext(),dvirViewModel,currDay);
-//        if (adapter.getItemCount() != 0){
-//            dvir_recyclerview.setVisibility(View.VISIBLE);
-//            container1.setVisibility(View.GONE);
-//            dvir_recyclerview.setAdapter(adapter);
-//        }
+        dvirViewModel.getMgetDvirs().observe(getViewLifecycleOwner(),dvirEntities1 -> {
+            adapter = new DvirlistAdapter(getContext(),dvirViewModel,currDay);
+                dvir_recyclerview.setVisibility(View.VISIBLE);
+                container1.setVisibility(View.GONE);
+                dvir_recyclerview.setAdapter(adapter);
+        });
+
 
         dvirViewModel.getCurrentName().observe(getViewLifecycleOwner(), s -> {
             adapter = new DvirlistAdapter(requireContext(),dvirViewModel,s);

@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="end"
-        android:background="#FFFFFF">
+        android:background="?attr/customBgColor">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -45,20 +45,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:background="?attr/customBgColor">
 
                     <TextView
                         android:id="@+id/idTimeDrive"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/_00h_00m"
-                        android:textColor="#000000"
+                        android:textColor="?attr/customTextColor"
                         android:textSize="14sp"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Drive"
+                        android:textColor="?attr/customTextHintColor"
                         android:textSize="12sp"/>
 
                 </LinearLayout>
@@ -82,21 +84,23 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
-                        android:gravity="center">
+                        android:gravity="center"
+                        android:background="?attr/customBgColor">
 
                         <TextView
                             android:id="@+id/idTimeShift"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/_00h_00m"
-                            android:textColor="#000000"
+                            android:textColor="?attr/customTextColor"
                             android:textSize="14sp"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Shift"
-                            android:textSize="12sp"/>
+                            android:textSize="12sp"
+                            android:textColor="?attr/customTextHintColor"/>
 
                     </LinearLayout>
 
@@ -116,7 +120,7 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 app:cardCornerRadius="50dp"
-                app:cardBackgroundColor="#0E0400"
+                app:cardBackgroundColor="#531D07"
                 android:layout_marginHorizontal="20dp">
 
                 <androidx.cardview.widget.CardView
@@ -128,20 +132,22 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
-                        android:gravity="center">
+                        android:gravity="center"
+                        android:background="?attr/customBgColor">
 
                         <TextView
                             android:id="@+id/idTimeCycle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/_00h_00m"
-                            android:textColor="#000000"
+                            android:textColor="?attr/customTextColor"
                             android:textSize="14sp"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Cycle"
+                            android:textColor="?attr/customTextHintColor"
                             android:textSize="12sp"/>
 
                     </LinearLayout>
@@ -165,20 +171,22 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
-                        android:gravity="center">
+                        android:gravity="center"
+                        android:background="?attr/customBgColor">
 
                         <TextView
                             android:id="@+id/idTimeUntilRestBreak"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/_00h_00m"
-                            android:textColor="#000000"
+                            android:textColor="?attr/customTextColor"
                             android:textSize="14sp"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Until Rest Break"
+                            android:textColor="?attr/customTextHintColor"
                             android:textSize="12sp"/>
 
                     </LinearLayout>
@@ -203,13 +211,14 @@
                 android:layout_marginStart="5dp"
                 android:text="Exclude Split in Shift"
                 android:textAllCaps="true"
-                android:textColor="#000000"
+                android:textColor="?attr/customTextColor"
                 android:textSize="15sp" />
 
             <RadioButton
                 android:id="@+id/idRadioButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:theme="@style/MyRadioButton"
                 android:layout_alignParentEnd="true"/>
 
         </RelativeLayout>
@@ -217,7 +226,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="0.3dp"
-            android:background="#393434"/>
+            android:background="?attr/customBgViewColor"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -232,7 +241,7 @@
                 android:layout_marginStart="5dp"
                 android:text="Rest Break"
                 android:textAllCaps="true"
-                android:textColor="#000000"
+                android:textColor="?attr/customTextColor"
                 android:textSize="15sp" />
 
             <TextView
@@ -242,14 +251,14 @@
                 android:layout_alignParentEnd="true"
                 android:text="Done"
                 android:textSize="14sp"
-                android:textColor="#000000"/>
+                android:textColor="?attr/customTextColor"/>
 
         </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="0.3dp"
-            android:background="#393434"/>
+            android:background="?attr/customBgViewColor"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -264,7 +273,7 @@
                 android:layout_marginStart="5dp"
                 android:text="Cycle Restart"
                 android:textAllCaps="true"
-                android:textColor="#000000"
+                android:textColor="?attr/customTextColor"
                 android:textSize="15sp" />
 
             <TextView
@@ -274,14 +283,14 @@
                 android:layout_alignParentEnd="true"
                 android:text="@string/_00h_00m"
                 android:textSize="14sp"
-                android:textColor="#000000"/>
+                android:textColor="?attr/customTextColor"/>
 
         </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="0.3dp"
-            android:background="#393434"/>
+            android:background="?attr/customBgViewColor"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -296,7 +305,7 @@
                 android:layout_marginStart="5dp"
                 android:text="Shift Restart"
                 android:textAllCaps="true"
-                android:textColor="#000000"
+                android:textColor="?attr/customTextColor"
                 android:textSize="15sp" />
 
             <TextView
@@ -306,14 +315,14 @@
                 android:layout_alignParentEnd="true"
                 android:text="@string/_00h_00m"
                 android:textSize="14sp"
-                android:textColor="#000000"/>
+                android:textColor="?attr/customTextColor"/>
 
         </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="0.3dp"
-            android:background="#393434"/>
+            android:background="?attr/customBgViewColor"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -328,7 +337,7 @@
                 android:layout_marginStart="5dp"
                 android:text="Avaible Tomorrow"
                 android:textAllCaps="true"
-                android:textColor="#000000"
+                android:textColor="?attr/customTextColor"
                 android:textSize="15sp" />
 
             <TextView
@@ -338,14 +347,14 @@
                 android:layout_alignParentEnd="true"
                 android:text="@string/_00h_00m"
                 android:textSize="14sp"
-                android:textColor="#000000"/>
+                android:textColor="?attr/customTextColor"/>
 
         </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="0.3dp"
-            android:background="#393434"/>
+            android:background="?attr/customBgViewColor"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -360,7 +369,7 @@
                 android:layout_marginStart="5dp"
                 android:text="Avaible Today"
                 android:textAllCaps="true"
-                android:textColor="#000000"
+                android:textColor="?attr/customTextColor"
                 android:textSize="15sp" />
 
             <TextView
@@ -370,14 +379,14 @@
                 android:layout_alignParentEnd="true"
                 android:text="@string/_00h_00m"
                 android:textSize="14sp"
-                android:textColor="#000000"/>
+                android:textColor="?attr/customTextColor"/>
 
         </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="0.3dp"
-            android:background="#393434"/>
+            android:background="?attr/customBgViewColor"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -392,7 +401,7 @@
                 android:layout_marginStart="5dp"
                 android:text="Worked Today"
                 android:textAllCaps="true"
-                android:textColor="#000000"
+                android:textColor="?attr/customTextColor"
                 android:textSize="15sp" />
 
             <TextView
@@ -402,14 +411,14 @@
                 android:layout_alignParentEnd="true"
                 android:text="@string/_00h_00m"
                 android:textSize="14sp"
-                android:textColor="#000000"/>
+                android:textColor="?attr/customTextColor"/>
 
         </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:background="#391C1C14"
+            android:background="?attr/customBgViewColor"
             android:orientation="horizontal">
 
             <TextView
@@ -419,7 +428,7 @@
                 android:textAllCaps="true"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="10dp"
-                android:textColor="#000000"
+                android:textColor="?attr/customTextColor"
                 android:textSize="16sp"/>
 
         </LinearLayout>

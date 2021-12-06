@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.adapters.GeneralFragmentPagerAdapter;
 import com.iosix.eldblesample.adapters.TrailerRecyclerAdapter;
+import com.iosix.eldblesample.dialogs.HomeTerminalDialog;
 import com.iosix.eldblesample.dialogs.MainOfficeAddressDialog;
 import com.iosix.eldblesample.models.ExampleSMSModel;
 import com.iosix.eldblesample.roomDatabase.entities.GeneralEntity;
@@ -60,13 +61,15 @@ public class GeneralFragment extends Fragment {
     private RecyclerView idTrailersRecyclerView;
     private ImageView idShippingClear,idTrailersClear,idVehiclesClear;
     private TextView driverFullName,tvDistance,tvShippingdocs,tvTrailers,idVehiclesEdit,
-            tv_carrier,tv_terminal_address,tv_from_destination,tv_to_destination;
+            tv_carrier,tv_terminal_address,tv_from_destination,tv_to_destination,tv_notes;
     private EditText driverName,driverSurname,distanceEdit,ShippingDocsEdit,idTrailersEdit,
-            idCarrierEdit,idfromEdit,idtoEdit;
+            idCarrierEdit,idfromEdit,idtoEdit,idNotesEdit;
     private ConstraintLayout idMainOffice;
     private LinearLayout driverInfo,distanceContainer,idDistanceLayout,
             shippingDocsLayout,trailersLayout,idTrailersLayout,vehiclesLayout,idVehiclesLayout,
-            layout_carrier,idCarrierLayout,from_container,idfromLayout,to_container,idtoLayout;
+            layout_carrier,idCarrierLayout,from_container,idfromLayout,to_container,idtoLayout,notes_container,idNotesLayout;
+
+    private String s;
 
     public static GeneralFragment newInstance() {
         GeneralFragment fragment = new GeneralFragment();
@@ -125,11 +128,15 @@ public class GeneralFragment extends Fragment {
         tv_to_destination = view.findViewById(R.id.tv_to_destination);
         idtoLayout = view.findViewById(R.id.idtoLayout);
         idtoEdit = view.findViewById(R.id.idtoEdit);
+        notes_container = view.findViewById(R.id.notes_container);
+        idNotesLayout = view.findViewById(R.id.idNotesLayout);
+        idNotesEdit = view.findViewById(R.id.idNotesEdit);
+        tv_notes = view.findViewById(R.id.tv_notes);
         idSaveGeneral = view.findViewById(R.id.idSaveGeneral);
 
         userViewModel.getMgetUser().observe(getViewLifecycleOwner(),user -> {
             if (user != null){
-                driverFullName.setText(user.getName() + " " + user.getLastName());
+                s = user.getName() + " " + user.getLastName();
                 tv_terminal_address.setText(user.getHomeTerminalAddress());
             }
         });
@@ -157,34 +164,31 @@ public class GeneralFragment extends Fragment {
         daoViewModel = ViewModelProviders.of(requireActivity()).get(DayDaoViewModel.class);
 
 
-//        driverInfo.setOnClickListener(v -> {
-//
-//            String s = driverFullName.getText().toString();
-//            Log.d("getGeneralInfo: ", s);
-//
-//            driverNameString = s.substring(0,s.indexOf(" "));
-//            driverSurnameString = s.substring(s.indexOf(" ")+1);
-//
-//            if (v.findViewById(R.id.idDriverInfoEdit).getVisibility() == View.GONE){
-//                v.findViewById(R.id.idDriverInfoEdit).setVisibility(View.VISIBLE);
-//            }else {
-//                if (!driverName.getText().toString().equals(driverNameString) && !driverName.getText().toString().equals("")){
-//                    driverNameString = driverName.getText().toString();
-//                }else {
-//                    driverNameString = s.substring(0,s.indexOf(" "));
-//                }
-//
-//                if (!driverSurname.getText().toString().equals("") && !driverSurname.getText().toString().equals(driverSurnameString) ){
-//                    driverSurnameString = driverSurname.getText().toString();
-//                }else {
-//                    driverSurnameString = s.substring(s.indexOf(" ")+1);
-//                }
-//                driverFullName.setText(driverNameString + " " +driverSurnameString);
-//                Log.d("getGeneralInfo: ", driverFullName.getText().toString());
-//                v.findViewById(R.id.idDriverInfoEdit).setVisibility(View.GONE);
-//
-//            }
-//        });
+        driverInfo.setOnClickListener(v -> {
+
+            String driverNameString = s.substring(0,s.indexOf(" "));
+            String driverSurnameString = s.substring(s.indexOf(" ")+1);
+
+            if (v.findViewById(R.id.idDriverInfoEdit).getVisibility() == View.GONE){
+                v.findViewById(R.id.idDriverInfoEdit).setVisibility(View.VISIBLE);
+            }else {
+                if (!driverName.getText().toString().equals(driverNameString) && !driverName.getText().toString().equals("")){
+                    driverNameString = driverName.getText().toString();
+                }else {
+                    driverNameString = s.substring(0,s.indexOf(" "));
+                }
+
+                if (!driverSurname.getText().toString().equals("") && !driverSurname.getText().toString().equals(driverSurnameString) ){
+                    driverSurnameString = driverSurname.getText().toString();
+                }else {
+                    driverSurnameString = s.substring(s.indexOf(" ")+1);
+                }
+                driverFullName.setText(driverNameString + " " +driverSurnameString);
+                Log.d("getGeneralInfo: ", driverFullName.getText().toString());
+                v.findViewById(R.id.idDriverInfoEdit).setVisibility(View.GONE);
+
+            }
+        });
 
         distanceContainer.setOnClickListener(v1 -> {
             if (idDistanceLayout.getVisibility() == View.GONE){
@@ -345,6 +349,11 @@ public class GeneralFragment extends Fragment {
             cdd.show();
         });
 
+        tv_terminal_address.setOnClickListener(v -> {
+            HomeTerminalDialog cdd=new HomeTerminalDialog(requireContext());
+            cdd.show();
+        });
+
         from_container.setOnClickListener(v -> {
             if (idfromLayout.getVisibility() != View.GONE){
                 idfromLayout.setVisibility(View.GONE);
@@ -364,6 +373,17 @@ public class GeneralFragment extends Fragment {
                 }
             }else {
                 idtoLayout.setVisibility(View.VISIBLE);
+            }
+        });
+
+        notes_container.setOnClickListener(v -> {
+            if (idNotesLayout.getVisibility() != View.GONE){
+                idNotesLayout.setVisibility(View.GONE);
+                if(idNotesEdit.getText() != null){
+                    tv_notes.setText(idNotesEdit.getText().toString());
+                }
+            }else {
+                idNotesLayout.setVisibility(View.VISIBLE);
             }
         });
     }

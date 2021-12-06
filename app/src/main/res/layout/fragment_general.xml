@@ -116,6 +116,7 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginBottom="10dp"
                 android:visibility="gone"
+                android:background="?attr/customBgColor"
                 android:id="@+id/idDriverInfoEdit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -124,18 +125,20 @@
                 <EditText
                     android:id="@+id/idDriverNameEdit"
                     android:hint="First Name"
-                    android:text="Murad"
                     android:textSize="14sp"
-                    android:textColor="@color/black"
+                    android:textColor="?attr/customTextColor"
+                    android:textColorHint="?attr/customTextHintColor"
+                    android:backgroundTint="?attr/customTextHintColor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
                 <EditText
                     android:id="@+id/idDriverFamilyEdit"
                     android:hint="Last Name"
-                    android:text="Babatov"
                     android:textSize="14sp"
-                    android:textColor="@color/black"
+                    android:textColor="?attr/customTextColor"
+                    android:textColorHint="?attr/customTextHintColor"
+                    android:backgroundTint="?attr/customTextHintColor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </LinearLayout>
@@ -194,13 +197,16 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/idDistanceLayout"
                 android:layout_marginStart="15dp"
-                android:visibility="gone">
+                android:visibility="gone"
+                android:background="?attr/customBgColor">
 
                 <EditText
                     android:id="@+id/idDistanceEdit"
                     android:hint="0.0"
                     android:textSize="14sp"
-                    android:textColor="@color/black"
+                    android:textColorHint="?attr/customTextHintColor"
+                    android:textColor="?attr/customTextColor"
+                    android:backgroundTint="?attr/customTextHintColor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number" />
@@ -269,7 +275,9 @@
                     android:layout_weight="10"
                     android:hint="Enter BOL/DOC Number Manually"
                     android:textSize="14sp"
-                    android:textColor="@color/black"
+                    android:textColor="?attr/customTextColor"
+                    android:textColorHint="?attr/customTextHintColor"
+                    android:backgroundTint="?attr/customTextHintColor"
                     android:id="@+id/idShippingDocsEdit"/>
 
                 <ImageView
@@ -337,6 +345,7 @@
                 android:layout_marginStart="15dp"
                 android:orientation="horizontal"
                 android:visibility="gone"
+                android:background="?attr/customBgColor"
                 android:id="@+id/idVehiclesLayout">
 
                 <TextView
@@ -348,6 +357,8 @@
                     android:drawablePadding="10dp"
                     android:gravity="center_vertical"
                     android:padding="10dp"
+                    android:textColor="?attr/customTextColor"
+                    android:textColorHint="?attr/customTextHintColor"
                     app:drawableEndCompat="@drawable/keyboard_bottom_arrow" />
 
                 <ImageView
@@ -416,6 +427,7 @@
                 android:layout_marginStart="15dp"
                 android:orientation="horizontal"
                 android:visibility="gone"
+                android:background="?attr/customBgColor"
                 android:id="@+id/idTrailersLayout">
 
                 <EditText
@@ -425,7 +437,9 @@
                     android:hint="Enter Trailer Manually"
                     android:textSize="14sp"
                     android:paddingBottom="10dp"
-                    android:textColor="@color/black"
+                    android:textColor="?attr/customTextColor"
+                    android:textColorHint="?attr/customTextHintColor"
+                    android:backgroundTint="?attr/customTextHintColor"
                     android:id="@+id/idTrailersEdit"/>
 
                 <ImageView
@@ -443,6 +457,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
+                android:background="?attr/customBgColor"
                 android:layout_marginStart="15dp"
                 />
 
@@ -535,15 +550,17 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/idCarrierLayout"
                 android:layout_marginStart="15dp"
-                android:visibility="gone">
+                android:visibility="gone"
+                android:background="?attr/customBgColor">
 
                 <EditText
                     android:id="@+id/idCarrierEdit"
                     android:hint="@string/enter_information"
                     android:textSize="14sp"
                     android:paddingBottom="10dp"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/black"
+                    android:textColor="?attr/customTextColor"
+                    android:textColorHint="?attr/customTextHintColor"
+                    android:backgroundTint="?attr/customTextHintColor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
@@ -757,7 +774,9 @@
                     android:id="@+id/idfromEdit"
                     android:hint="@string/enter_information"
                     android:textSize="14sp"
-                    android:textColor="@color/black"
+                    android:textColor="?attr/customTextColor"
+                    android:textColorHint="?attr/customTextHintColor"
+                    android:backgroundTint="?attr/customTextHintColor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
@@ -823,7 +842,9 @@
                     android:id="@+id/idtoEdit"
                     android:hint="@string/enter_information"
                     android:textSize="14sp"
-                    android:textColor="@color/black"
+                    android:textColor="?attr/customTextColor"
+                    android:textColorHint="?attr/customTextHintColor"
+                    android:backgroundTint="?attr/customTextHintColor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
@@ -838,38 +859,65 @@
             android:layout_marginEnd="15dp"
             tools:ignore="MissingConstraints" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="55dp">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/notes_container"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:fontFamily="sans-serif"
+                    android:text="@string/notes"
+                    android:textSize="14sp"
+                    android:textColor="?attr/customTextColor"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_notes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:fontFamily="sans-serif"
+                    android:text="@string/loads"
+                    android:textSize="14sp"
+                    android:textColor="#03A9F4"
+                    android:textStyle="bold"
+                    android:gravity="end"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/idNotesLayout"
                 android:layout_marginStart="15dp"
-                android:fontFamily="sans-serif"
-                android:text="@string/notes"
-                android:textSize="14sp"
-                android:textColor="?attr/customTextColor"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:visibility="gone">
 
-            <TextView
-                android:id="@+id/tv_notes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
-                android:fontFamily="sans-serif"
-                android:text="@string/loads"
-                android:textSize="14sp"
-                android:textColor="#03A9F4"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                <EditText
+                    android:id="@+id/idNotesEdit"
+                    android:hint="@string/enter_notes"
+                    android:textSize="14sp"
+                    android:textColor="?attr/customTextColor"
+                    android:textColorHint="?attr/customTextHintColor"
+                    android:backgroundTint="?attr/customTextHintColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
+        </LinearLayout>
 
         <View
             android:background="?attr/customBgViewColor"

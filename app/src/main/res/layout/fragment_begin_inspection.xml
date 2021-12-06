@@ -35,12 +35,12 @@
 
                 <TextView
                     android:id="@+id/idTextFrag"
+                    style="@style/TextAppearance.AppCompat.Widget.ActionMode.Title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/log_reports"
                     android:textColor="#fff"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    style="@style/TextAppearance.AppCompat.Widget.ActionMode.Title"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -233,7 +233,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Distance:"
+                        android:text="Eld ID"
                         android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
                         android:textStyle="bold"
@@ -244,12 +244,93 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="0.0 mi"
                         android:textSize="6.5sp"
                         android:textColor="?attr/customTextHintColor"
-                        android:id="@+id/idDistance"
+                        android:id="@+id/idEldId"
                         android:padding="3dp"
                         android:background="@drawable/table_item_border"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Time Zone Offset"
+                        android:textSize="6.5sp"
+                        android:textColor="?attr/customTextColor"
+                        android:textStyle="bold"
+                        android:padding="3dp"
+                        android:background="@drawable/table_item_border"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="6.5sp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:id="@+id/idTimeZoneOffset"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"/>
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0.2dp"
+                    android:layout_marginEnd="0.2dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="ELD Provider:"
+                        android:textSize="6.5sp"
+                        android:textColor="?attr/customTextColor"
+                        android:textStyle="bold"
+                        android:padding="3dp"
+                        android:background="@drawable/table_item_border"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="EzLogZ"
+                        android:textSize="6.5sp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:id="@+id/idELDProvider"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"/>
+
+
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="24 Period Starting Time"
+                        android:textSize="6.5sp"
+                        android:textColor="?attr/customTextColor"
+                        android:textStyle="bold"
+                        android:padding="3dp"
+                        android:background="@drawable/table_item_border"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="6.5sp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:id="@+id/idStartingTime"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"/>
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0.2dp"
+                    android:layout_marginEnd="0.2dp">
 
                     <TextView
                         android:layout_width="0dp"
@@ -273,41 +354,11 @@
                         android:background="@drawable/table_item_border"
                         android:padding="3dp"/>
 
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="0.2dp"
-                    android:layout_marginEnd="0.2dp">
-
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Truck Tracktor ID:"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:background="@drawable/table_item_border"
-                        android:padding="3dp"/>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="None"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
-                        android:id="@+id/idTruckTracktorId"
-                        android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Trailer ID:"
+                        android:text="Vehicles(VIN)"
                         android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
                         android:textStyle="bold"
@@ -318,10 +369,10 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="None"
+                        android:text=""
                         android:textSize="6.5sp"
                         android:textColor="?attr/customTextHintColor"
-                        android:id="@+id/idTrailerID"
+                        android:id="@+id/idVehicleVin"
                         android:background="@drawable/table_item_border"
                         android:padding="3dp"/>
 
@@ -337,7 +388,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Truch Tracktor VIN:"
+                        android:text="USDOT#"
                         android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
                         android:textStyle="bold"
@@ -351,7 +402,7 @@
                         android:text="None"
                         android:textSize="6.5sp"
                         android:textColor="?attr/customTextHintColor"
-                        android:id="@+id/idTruckTracktorVIN"
+                        android:id="@+id/idUsDots"
                         android:padding="3dp"
                         android:background="@drawable/table_item_border"/>
 
@@ -359,7 +410,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="ELD Provider:"
+                        android:text="Exemp Driver Status"
                         android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
                         android:textStyle="bold"
@@ -370,10 +421,10 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="EzLogZ"
+                        android:text="None"
                         android:textSize="6.5sp"
                         android:textColor="?attr/customTextHintColor"
-                        android:id="@+id/idELDProvider"
+                        android:id="@+id/ExempDriverStatus"
                         android:background="@drawable/table_item_border"
                         android:padding="3dp"/>
 
@@ -411,6 +462,37 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:text="Trailers"
+                        android:textSize="6.5sp"
+                        android:textColor="?attr/customTextColor"
+                        android:textStyle="bold"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="None"
+                        android:textSize="6.5sp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:id="@+id/idTrailers"
+                        android:padding="3dp"
+                        android:background="@drawable/table_item_border"/>
+
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0.2dp"
+                    android:layout_marginEnd="0.2dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:text="Home Terminal:"
                         android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
@@ -429,38 +511,30 @@
                         android:background="@drawable/table_item_border"
                         android:padding="3dp"/>
 
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="0.2dp"
-                    android:layout_marginEnd="0.2dp">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Shipping ID:"
+                        android:text="Distance:"
                         android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
                         android:textStyle="bold"
-                        android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"/>
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="3"
-                        android:text="None"
+                        android:layout_weight="1"
+                        android:text="0.0 mi"
                         android:textSize="6.5sp"
                         android:textColor="?attr/customTextHintColor"
-                        android:id="@+id/idShippingID"
+                        android:id="@+id/idDistance"
                         android:padding="3dp"
                         android:background="@drawable/table_item_border"/>
 
                 </TableRow>
-
 
                 <TableRow
                     android:layout_width="match_parent"
@@ -524,7 +598,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Current Location:"
+                        android:text="Shipping ID:"
                         android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
                         android:textStyle="bold"
@@ -535,9 +609,164 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3"
+                        android:text="None"
+                        android:textSize="6.5sp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:id="@+id/idShippingID"
+                        android:padding="3dp"
+                        android:background="@drawable/table_item_border"/>
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0.2dp"
+                    android:layout_marginEnd="0.2dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Start/End Engine Hours"
+                        android:textSize="6.5sp"
+                        android:textColor="?attr/customTextColor"
+                        android:textStyle="bold"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="None"
+                        android:textSize="6.5sp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:id="@+id/idStartEndHours"
+                        android:padding="3dp"
+                        android:background="@drawable/table_item_border"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Start/End Odometr"
+                        android:textSize="6.5sp"
+                        android:textColor="?attr/customTextColor"
+                        android:textStyle="bold"
+                        android:padding="3dp"
+                        android:background="@drawable/table_item_border"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="None"
+                        android:textSize="6.5sp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:id="@+id/idStartEndOdometr"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"/>
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0.2dp"
+                    android:layout_marginEnd="0.2dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Malfunction Indicators"
+                        android:textSize="6.5sp"
+                        android:textColor="?attr/customTextColor"
+                        android:textStyle="bold"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="None"
+                        android:textSize="6.5sp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:id="@+id/idIndicators"
+                        android:padding="3dp"
+                        android:background="@drawable/table_item_border"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Data Diagnostic Indicators"
+                        android:textSize="6.5sp"
+                        android:textColor="?attr/customTextColor"
+                        android:textStyle="bold"
+                        android:padding="3dp"
+                        android:background="@drawable/table_item_border"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="None"
+                        android:textSize="6.5sp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:id="@+id/idDiagnosticIndicators"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"/>
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0.2dp"
+                    android:layout_marginEnd="0.2dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Current Location:"
+                        android:textSize="6.5sp"
+                        android:textColor="?attr/customTextColor"
+                        android:textStyle="bold"
+                        android:padding="3dp"
+                        android:background="@drawable/table_item_border"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:textSize="6.5sp"
                         android:textColor="?attr/customTextHintColor"
                         android:id="@+id/idCurrentLocation"
+                        android:padding="3dp"
+                        android:background="@drawable/table_item_border"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Unidentified Driver Records"
+                        android:textSize="6.5sp"
+                        android:textColor="?attr/customTextColor"
+                        android:textStyle="bold"
+                        android:padding="3dp"
+                        android:background="@drawable/table_item_border"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="6.5sp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:id="@+id/idUnidentifiedDriverRecords"
                         android:padding="3dp"
                         android:background="@drawable/table_item_border"/>
 
