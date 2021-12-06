@@ -31,6 +31,7 @@ public class ForgotPasswordActivity extends BaseActivity {
             startActivity(intent);
         });
 
+
         button.setOnClickListener(v -> {
             if (editText.getText().toString().equals("")){
                 Toast.makeText(ForgotPasswordActivity.this,"Please create your Email address",Toast.LENGTH_SHORT).show();
