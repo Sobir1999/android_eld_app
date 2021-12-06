@@ -1,10 +1,8 @@
 package com.iosix.eldblesample.activity;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Handler;
 
-import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProviders;
 import com.iosix.eldblesample.R;
@@ -30,7 +28,6 @@ public class SplashActivity extends BaseActivity {
     @Override
     public void initView() {
         super.initView();
-        getWindow().setStatusBarColor(ActivityCompat.getColor(this,R.color.example));
 
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
@@ -48,9 +45,6 @@ public class SplashActivity extends BaseActivity {
                 daoViewModel.insertDay(new DayEntity(Day.getDayTime1(time), Day.getDayName2(time)));
 //                statusDaoViewModel.getmAllStatus().observe((LifecycleOwner) this, logEntities -> {
 //                    if (!logEntities.isEmpty()) {
-//                        for (LogEntity logEntity : logEntities ){
-//
-//                        }
 //                        statusDaoViewModel.insertStatus(new LogEntity(logEntities.get(logEntities.size() - 1).getTo_status(), logEntities.get(logEntities.size() - 1).getTo_status(), null, null, null, Day.getDayTime1(time), 0));
 //                    } else {
 //                        statusDaoViewModel.insertStatus(new LogEntity(0, 0, null, null, null, Day.getDayTime1(time), 0));
