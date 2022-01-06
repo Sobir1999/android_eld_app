@@ -15,3 +15,4 @@ public class ExampleSMSModel {
         this.s = s;
     }
 }
+

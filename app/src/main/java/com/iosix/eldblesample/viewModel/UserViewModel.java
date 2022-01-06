@@ -16,15 +16,20 @@ public class UserViewModel extends AndroidViewModel {
 
     private final UserRepository repository;
     private final LiveData<User> mgetUser;
+    private final LiveData<List<User>> mgetDrivers;
 
     public UserViewModel(Application application) {
         super(application);
         repository = new UserRepository(application);
         mgetUser = repository.getUser();
+        mgetDrivers = repository.getDrivers();
     }
 
     public LiveData<User> getMgetUser() {
         return mgetUser;
+    }
+    public LiveData<List<User>> getMgetDrivers() {
+        return mgetDrivers;
     }
 
     public void insertUser(User user) {

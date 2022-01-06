@@ -59,7 +59,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Drive"
+                        android:text="@string/drive"
                         android:textColor="?attr/customTextHintColor"
                         android:textSize="12sp"/>
 
@@ -98,7 +98,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Shift"
+                            android:text="@string/shift"
                             android:textSize="12sp"
                             android:textColor="?attr/customTextHintColor"/>
 
@@ -146,7 +146,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Cycle"
+                            android:text="@string/cycle"
                             android:textColor="?attr/customTextHintColor"
                             android:textSize="12sp"/>
 
@@ -185,7 +185,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Until Rest Break"
+                            android:text="@string/until_rest_break"
                             android:textColor="?attr/customTextHintColor"
                             android:textSize="12sp"/>
 
@@ -209,7 +209,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="5dp"
-                android:text="Exclude Split in Shift"
+                android:text="@string/exclude_split_in_shift"
                 android:textAllCaps="true"
                 android:textColor="?attr/customTextColor"
                 android:textSize="15sp" />
@@ -239,7 +239,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="5dp"
-                android:text="Rest Break"
+                android:text="@string/rest_break"
                 android:textAllCaps="true"
                 android:textColor="?attr/customTextColor"
                 android:textSize="15sp" />
@@ -249,7 +249,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:text="Done"
+                android:text="@string/done"
                 android:textSize="14sp"
                 android:textColor="?attr/customTextColor"/>
 
@@ -271,7 +271,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="5dp"
-                android:text="Cycle Restart"
+                android:text="@string/cycle_restart"
                 android:textAllCaps="true"
                 android:textColor="?attr/customTextColor"
                 android:textSize="15sp" />
@@ -303,7 +303,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="5dp"
-                android:text="Shift Restart"
+                android:text="@string/shift_restart"
                 android:textAllCaps="true"
                 android:textColor="?attr/customTextColor"
                 android:textSize="15sp" />
@@ -335,7 +335,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="5dp"
-                android:text="Avaible Tomorrow"
+                android:text="@string/avaible_tomorrow"
                 android:textAllCaps="true"
                 android:textColor="?attr/customTextColor"
                 android:textSize="15sp" />
@@ -367,7 +367,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="5dp"
-                android:text="Avaible Today"
+                android:text="@string/avaible_today"
                 android:textAllCaps="true"
                 android:textColor="?attr/customTextColor"
                 android:textSize="15sp" />
@@ -399,7 +399,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="5dp"
-                android:text="Worked Today"
+                android:text="@string/worked_today"
                 android:textAllCaps="true"
                 android:textColor="?attr/customTextColor"
                 android:textSize="15sp" />
@@ -424,7 +424,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hos Recap"
+                android:text="@string/hos_recap"
                 android:textAllCaps="true"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="10dp"
@@ -433,247 +433,11 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Week Days"
-                    android:textColor="#000000"
-                    android:textSize="14sp"
-                    android:paddingTop="15dp"
-                    android:paddingLeft="10dp"
-                    android:id="@+id/idWeekDay1"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Week Days"
-                    android:textColor="#000000"
-                    android:textSize="14sp"
-                    android:paddingTop="20dp"
-                    android:paddingLeft="10dp"
-                    android:id="@+id/idWeekDay2"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Week Days"
-                    android:textColor="#000000"
-                    android:textSize="14sp"
-                    android:paddingTop="20dp"
-                    android:paddingLeft="10dp"
-                    android:id="@+id/idWeekDay3"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Week Days"
-                    android:textColor="#000000"
-                    android:textSize="14sp"
-                    android:paddingTop="20dp"
-                    android:paddingLeft="10dp"
-                    android:id="@+id/idWeekDay4"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Week Days"
-                    android:textColor="#000000"
-                    android:textSize="14sp"
-                    android:paddingTop="20dp"
-                    android:paddingLeft="10dp"
-                    android:id="@+id/idWeekDay5"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Week Days"
-                    android:textColor="#000000"
-                    android:textSize="14sp"
-                    android:paddingTop="20dp"
-                    android:paddingLeft="10dp"
-                    android:id="@+id/idWeekDay6"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Week Days"
-                    android:textColor="#000000"
-                    android:textSize="14sp"
-                    android:paddingTop="20dp"
-                    android:paddingLeft="10dp"
-                    android:id="@+id/idWeekDay7"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Date"
-                    android:textColor="#595858"
-                    android:textSize="14sp"
-                    android:paddingTop="15dp"
-                    android:layout_gravity="center"
-                    android:id="@+id/idDayRecap1"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Date"
-                    android:textColor="#595858"
-                    android:textSize="14sp"
-                    android:paddingTop="20dp"
-                    android:layout_gravity="center"
-                    android:id="@+id/idDayRecap2"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Date"
-                    android:textColor="#595858"
-                    android:textSize="14sp"
-                    android:paddingTop="20dp"
-                    android:layout_gravity="center"
-                    android:id="@+id/idDayRecap3"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Date"
-                    android:textColor="#595858"
-                    android:textSize="14sp"
-                    android:paddingTop="20dp"
-                    android:layout_gravity="center"
-                    android:id="@+id/idDayRecap4"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Date"
-                    android:textColor="#595858"
-                    android:textSize="14sp"
-                    android:paddingTop="20dp"
-                    android:layout_gravity="center"
-                    android:id="@+id/idDayRecap5"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Date"
-                    android:textColor="#595858"
-                    android:textSize="14sp"
-                    android:paddingTop="20dp"
-                    android:layout_gravity="center"
-                    android:id="@+id/idDayRecap6"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Date"
-                    android:textColor="#595858"
-                    android:textSize="14sp"
-                    android:paddingTop="20dp"
-                    android:layout_gravity="center"
-                    android:id="@+id/idDayRecap7"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:background="#391C1C14">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/_00h_00m"
-                    android:textColor="#000000"
-                    android:textSize="14sp"
-                    android:paddingTop="15dp"
-                    android:layout_gravity="center"
-                    android:id="@+id/idTimeRecap1"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/_00h_00m"
-                    android:textColor="#000000"
-                    android:textSize="14sp"
-                    android:paddingTop="20dp"
-                    android:layout_gravity="center"
-                    android:id="@+id/idTimeRecap2"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/_00h_00m"
-                    android:textColor="#000000"
-                    android:textSize="14sp"
-                    android:paddingTop="20dp"
-                    android:layout_gravity="center"
-                    android:id="@+id/idTimeRecap3"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/_00h_00m"
-                    android:textColor="#000000"
-                    android:textSize="14sp"
-                    android:paddingTop="20dp"
-                    android:layout_gravity="center"
-                    android:id="@+id/idTimeRecap4"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/_00h_00m"
-                    android:textColor="#000000"
-                    android:textSize="14sp"
-                    android:paddingTop="20dp"
-                    android:layout_gravity="center"
-                    android:id="@+id/idTimeRecap5"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/_00h_00m"
-                    android:textColor="#000000"
-                    android:textSize="14sp"
-                    android:paddingTop="20dp"
-                    android:layout_gravity="center"
-                    android:id="@+id/idTimeRecap6"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/_00h_00m"
-                    android:textColor="#000000"
-                    android:textSize="14sp"
-                    android:paddingTop="20dp"
-                    android:layout_gravity="center"
-                    android:id="@+id/idTimeRecap7"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
+            android:id="@+id/idRecapRecyclerView"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
     </LinearLayout>
 

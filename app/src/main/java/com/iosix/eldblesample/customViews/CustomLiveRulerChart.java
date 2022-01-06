@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -84,8 +85,8 @@ public class CustomLiveRulerChart extends CustomRulerChart {
         for (int i = 0; i < arrayList.size(); i++) {
             startY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * arrayList.get(i).getFrom_status()) / 4;
             endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * arrayList.get(i).getTo_status()) / 4;
-            endX = START_POINT_X + (arrayList.get(i).getSeconds() * 8) / CUSTOM_TABLE_WIDTH;
-//            endX = START_POINT_X + arrayList.get(i).getSeconds() / 3600;
+//            endX = START_POINT_X + (arrayList.get(i).getSeconds() * 8) / CUSTOM_TABLE_WIDTH;
+            endX = START_POINT_X + (arrayList.get(i).getSeconds() / (3600*24f))*CUSTOM_TABLE_WIDTH;
             canvas.drawLine(startX, startY, endX, startY, paintArray.get(arrayList.get(i).getFrom_status()));
             canvas.drawLine(endX, startY, endX, endY, paintArray.get(arrayList.get(i).getFrom_status()));
             startX = endX;
@@ -106,7 +107,7 @@ public class CustomLiveRulerChart extends CustomRulerChart {
         }
 
         if (!arrayList.isEmpty()) {
-            canvas.drawLine(endX, endY, START_POINT_X + (currentDate * 8) / CUSTOM_TABLE_WIDTH, endY, paintArray.get(arrayList.get(arrayList.size() - 1).getTo_status()));
+            canvas.drawLine(endX, endY, START_POINT_X + ((currentDate / (3600*24f)) * CUSTOM_TABLE_WIDTH), endY, paintArray.get(arrayList.get(arrayList.size() - 1).getTo_status()));
 
             if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_OFF) {
                 off += (currentDate - start);
@@ -122,7 +123,7 @@ public class CustomLiveRulerChart extends CustomRulerChart {
             }
         } else {
             endY = TableConstants.START_POINT_Y + CUSTOM_TABLE_HEIGHT/8 + (CUSTOM_TABLE_HEIGHT*last_status)/4;
-            canvas.drawLine(TableConstants.START_POINT_X, endY, START_POINT_X + (currentDate*8)/CUSTOM_TABLE_WIDTH, endY, paintArray.get(last_status));
+            canvas.drawLine(TableConstants.START_POINT_X, endY, START_POINT_X + ((currentDate / (3600*24f)) * CUSTOM_TABLE_WIDTH), endY, paintArray.get(last_status));
 
             if (last_status == EnumsConstants.STATUS_OFF) {
                 off = currentDate;

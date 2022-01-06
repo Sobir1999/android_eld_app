@@ -20,7 +20,8 @@ public class HomeTerminalDialog extends Dialog implements android.view.View.OnCl
     public Dialog d;
     public TextView save, cancel,selectState;
     public EditText idinformationEdit,idCityEdit,idZipEdit;
-    public String information,city,zip;
+    public String information,city,zip,state;
+    OnMyDialogResult mDialogResult;
 
     public HomeTerminalDialog(Context context) {
         super(context);
@@ -55,28 +56,40 @@ public class HomeTerminalDialog extends Dialog implements android.view.View.OnCl
                 }
                 if (idZipEdit.getText() != null){
                     zip = idZipEdit.getText().toString();
+                }if(selectState.getText() != null){
+                state = selectState.getText().toString();
+                }if(mDialogResult != null){
+                    mDialogResult.finish(information,city,zip,state);
                 }
                 break;
             case R.id.idCancelText:
                 dismiss();
                 break;
-            case R.id.idSelectStateText:
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(c);
-                alertDialog.setTitle("Select State");
-
-                final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_selectable_list_item);
-
-                alertDialog.setNegativeButton("cancel", (dialog, which) -> dialog.dismiss());
-
-                alertDialog.setAdapter(arrayAdapter, (dialog, which) -> {
-                    String strName = arrayAdapter.getItem(which);
-                    selectState.setText(strName);
-                });
-                alertDialog.show();
-                break;
-            default:
-                break;
+//            case R.id.idSelectStateText:
+//                AlertDialog.Builder alertDialog = new AlertDialog.Builder(c);
+//                alertDialog.setTitle("Select State");
+//
+//                final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_selectable_list_item);
+//
+//                alertDialog.setNegativeButton("cancel", (dialog, which) -> dialog.dismiss());
+//
+//                alertDialog.setAdapter(arrayAdapter, (dialog, which) -> {
+//                    String strName = arrayAdapter.getItem(which);
+//                    selectState.setText(strName);
+//                });
+//                alertDialog.show();
+//                break;
+//            default:
+//                break;
         }
         dismiss();
+    }
+
+    public void setDialogResult(OnMyDialogResult dialogResult){
+        mDialogResult = dialogResult;
+    }
+
+    public interface OnMyDialogResult{
+        void finish(String information,String city,String zip,String state);
     }
 }

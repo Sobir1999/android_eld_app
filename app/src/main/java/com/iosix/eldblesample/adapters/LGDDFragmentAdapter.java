@@ -27,11 +27,9 @@ public class LGDDFragmentAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                LogFragment log = new LogFragment();
-                return log;
+                return LogFragment.newInstance(curr);
             case 1:
-                GeneralFragment general = new GeneralFragment();
-                return general;
+                return GeneralFragment.newInstance(curr);
             case 2:
 //                DocsFragment doc = new DocsFragment();
                 return DocsFragment.newInstance(curr);

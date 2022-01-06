@@ -121,6 +121,8 @@
                         android:text="2412"
                         android:textColor="?attr/customTextHintColor"
                         app:drawableEndCompat="@drawable/keyboard_bottom_arrow" />
+
+
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 

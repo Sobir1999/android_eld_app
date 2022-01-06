@@ -28,6 +28,7 @@ public class DvirlistAdapter extends RecyclerView.Adapter<DvirlistAdapter.Dvirli
     private List<DvirEntity> dvirEntities;
     private Context ctx;
     private DvirViewModel dvirViewModel;
+    private DvirlistAdapterItemClickListener listener;
 
 
     public DvirlistAdapter(Context context, DvirViewModel dvirViewModel,String currday) {
@@ -64,6 +65,10 @@ public class DvirlistAdapter extends RecyclerView.Adapter<DvirlistAdapter.Dvirli
         if (dvirEntities != null){
             return dvirEntities.size();
         }else return 0;
+    }
+
+    public void setListener(DvirlistAdapter.DvirlistAdapterItemClickListener listener) {
+        this.listener = listener;
     }
 
     public class DvirlistViewHolder extends RecyclerView.ViewHolder{
@@ -158,19 +163,18 @@ public class DvirlistAdapter extends RecyclerView.Adapter<DvirlistAdapter.Dvirli
 
 
                 delete.setOnClickListener(v -> {
-                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(ctx);
-                    alertDialog.setTitle("Delete DVIR?")
-                            .setNegativeButton("No", (dialog, which) ->
-                                    alertDialog.setCancelable(true))
-                            .setPositiveButton("Yes",((dialog, which) -> {
-                                dvirViewModel.deleteDvir(dvirEntity);
-//                                        container1.setVisibility(View.VISIBLE);
-//                                        container2.setVisibility(View.GONE);
-                            }));
-                    AlertDialog alert = alertDialog.create();
-                    alert.show();
+                    if (listener != null) {
+                        listener.onclickDelete(dvirEntity);
+                    }
+
                 });
             }
         }
+    }
+
+    public interface DvirlistAdapterItemClickListener {
+        void onclickDelete(DvirEntity dvirEntity);
+
+//        void onclickDvir(String s,List<DvirEntity> dvirEntity);
     }
 }

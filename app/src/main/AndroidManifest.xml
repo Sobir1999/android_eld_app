@@ -43,7 +43,7 @@
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true"
         tools:ignore="ExtraText">
-        <activity android:name=".activity.AddDvirActivity"></activity>
+        <activity android:name=".activity.AddDvirActivity" />
         <activity
             android:name=".activity.LGDDActivity"
             android:configChanges="uiMode" />
@@ -60,7 +60,6 @@
             android:exported="false" />
         <service android:name=".services.foreground.ForegroundService" />
 
-        <activity android:name=".activity.ForgotPasswordActivity" />
         <activity
             android:name=".activity.LoginActivity"
             android:configChanges="uiMode" />

@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.activity.AddDvirActivity;
@@ -87,10 +88,35 @@ public class DVIRFragment extends Fragment {
         dvirEntities = new ArrayList<>();
 
         dvirViewModel.getMgetDvirs().observe(getViewLifecycleOwner(),dvirEntities1 -> {
-            adapter = new DvirlistAdapter(getContext(),dvirViewModel,currDay);
-                dvir_recyclerview.setVisibility(View.VISIBLE);
-                container1.setVisibility(View.GONE);
-                dvir_recyclerview.setAdapter(adapter);
+            for (DvirEntity dvirEntity: dvirEntities1) {
+                if (dvirEntity.getDay().equals(currDay)){
+                    dvirEntities.add(dvirEntity);
+                }
+                Log.d("AAA",String.valueOf(dvirEntities.size()));
+                if (dvirEntities.size() > 0){
+                    adapter = new DvirlistAdapter(getContext(),dvirViewModel,currDay);
+                    dvir_recyclerview.setVisibility(View.VISIBLE);
+                    container1.setVisibility(View.GONE);
+                    dvir_recyclerview.setAdapter(adapter);
+                    adapter.setListener(dvirEntity1 -> {
+                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(requireContext());
+                        alertDialog.setTitle("Delete DVIR?")
+                                .setNegativeButton("No", (dialog, which) ->
+                                        alertDialog.setCancelable(true))
+                                .setPositiveButton("Yes",((dialog, which) -> {
+                                    dvirViewModel.deleteDvir(dvirEntity1);
+                                    dvir_recyclerview.setVisibility(View.GONE);
+                                    container1.setVisibility(View.VISIBLE);
+                                }));
+                        AlertDialog alert = alertDialog.create();
+                        alert.show();
+
+                    });
+                }else {
+                    dvir_recyclerview.setVisibility(View.GONE);
+                    container1.setVisibility(View.VISIBLE);
+                }
+            }
         });
 
 

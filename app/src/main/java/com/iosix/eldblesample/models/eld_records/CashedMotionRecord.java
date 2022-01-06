@@ -19,7 +19,7 @@ public class CashedMotionRecord {
     private double engineHours;
 
     @SerializedName("point")
-    private ArrayList<String> point;
+    private Point point;
 
     @SerializedName("gps_speed")
     private int gps_speed;
@@ -27,7 +27,7 @@ public class CashedMotionRecord {
     @SerializedName("type")
     private String type;
 
-    public CashedMotionRecord(double rpm, double speed, double odometer, double engineHours, ArrayList<String> point, int gps_speed, String type) {
+    public CashedMotionRecord(double rpm, double speed, double odometer, double engineHours, Point point, int gps_speed, String type) {
         this.rpm = rpm;
         this.speed = speed;
         this.odometer = odometer;
@@ -69,11 +69,11 @@ public class CashedMotionRecord {
         this.engineHours = engineHours;
     }
 
-    public ArrayList<String> getPoint() {
+    public Point getPoint() {
         return point;
     }
 
-    public void setPoint(ArrayList<String> point) {
+    public void setPoint(Point point) {
         this.point = point;
     }
 

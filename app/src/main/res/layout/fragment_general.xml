@@ -92,55 +92,6 @@
                 android:textStyle="bold"
                 android:gravity="end" />
 
-
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/idDriverArrowUp"
-                    android:visibility="gone"
-                    android:gravity="right">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginEnd="15dp"
-                    android:src="@drawable/ic_baseline_keyboard_arrow_up_24" />
-
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                app:layout_constraintTop_toBottomOf="@id/idDriverNameText"
-                android:orientation="vertical"
-                android:layout_marginStart="15dp"
-                android:layout_marginBottom="10dp"
-                android:visibility="gone"
-                android:background="?attr/customBgColor"
-                android:id="@+id/idDriverInfoEdit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:ignore="MissingConstraints">
-
-                <EditText
-                    android:id="@+id/idDriverNameEdit"
-                    android:hint="First Name"
-                    android:textSize="14sp"
-                    android:textColor="?attr/customTextColor"
-                    android:textColorHint="?attr/customTextHintColor"
-                    android:backgroundTint="?attr/customTextHintColor"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <EditText
-                    android:id="@+id/idDriverFamilyEdit"
-                    android:hint="Last Name"
-                    android:textSize="14sp"
-                    android:textColor="?attr/customTextColor"
-                    android:textColorHint="?attr/customTextHintColor"
-                    android:backgroundTint="?attr/customTextHintColor"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
             </LinearLayout>
 
         </LinearLayout>
@@ -189,27 +140,6 @@
                 android:textColor="#03A9F4"
                 android:textStyle="bold"
                 android:gravity="end"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/idDistanceLayout"
-                android:layout_marginStart="15dp"
-                android:visibility="gone"
-                android:background="?attr/customBgColor">
-
-                <EditText
-                    android:id="@+id/idDistanceEdit"
-                    android:hint="0.0"
-                    android:textSize="14sp"
-                    android:textColorHint="?attr/customTextHintColor"
-                    android:textColor="?attr/customTextColor"
-                    android:backgroundTint="?attr/customTextHintColor"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="number" />
 
             </LinearLayout>
 
@@ -542,27 +472,6 @@
                     android:textStyle="bold"
                     android:gravity="end"/>
 
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/idCarrierLayout"
-                android:layout_marginStart="15dp"
-                android:visibility="gone"
-                android:background="?attr/customBgColor">
-
-                <EditText
-                    android:id="@+id/idCarrierEdit"
-                    android:hint="@string/enter_information"
-                    android:textSize="14sp"
-                    android:paddingBottom="10dp"
-                    android:textColor="?attr/customTextColor"
-                    android:textColorHint="?attr/customTextHintColor"
-                    android:backgroundTint="?attr/customTextHintColor"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
 
             </LinearLayout>
 

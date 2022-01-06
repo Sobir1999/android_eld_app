@@ -19,7 +19,6 @@
     <string name="change_status">Change Status</string>
     <string name="today">Today</string>
     <string name="recap">RECAP</string>
-    <string name="no_dvir">No DVIR</string>
     <string name="check_all">CHECK ALL</string>
     <string name="main_info">Main Info</string>
     <string name="driver_name">Driver name</string>
@@ -112,6 +111,7 @@
     <string name="mechanic_signature">Mechanic Signature</string>
     <string name="vehicle" translatable="false">Vehicle:</string>
     <string name="enter_city">Enter City</string>
+    <string name="enter_state">Enter State/Province</string>
     <string name="select_state_province">Select State/Province</string>
     <string name="enter_zip">Enter Zip</string>
     <string name="cancel">Cancel</string>
@@ -119,4 +119,22 @@
     <string name="clear">Clear</string>
     <string name="submit">Submit</string>
     <string name="enter_notes">Enter Notes</string>
+    <string name="no_dvir">No DVIR</string>
+    <string name="dvir">DVIR</string>
+    <string name="hos_recap">Hos Recap</string>
+    <string name="worked_today">Worked Today</string>
+    <string name="avaible_today">Avaible Today</string>
+    <string name="avaible_tomorrow">Avaible Tomorrow</string>
+    <string name="shift_restart">Shift Restart</string>
+    <string name="cycle_restart">Cycle Restart</string>
+    <string name="done">Done</string>
+    <string name="rest_break">Rest Break</string>
+    <string name="exclude_split_in_shift">Exclude Split in Shift</string>
+    <string name="until_rest_break">Until Rest Break</string>
+    <string name="cycle">Cycle</string>
+    <string name="shift">Shift</string>
+    <string name="drive">Drive</string>
+    <string name="weekdays">Weekdays</string>
+    <string name="day">Day</string>
+    <string name="recent_statuses">Recent statuses</string>
 </resources>

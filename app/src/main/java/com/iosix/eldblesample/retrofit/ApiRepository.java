@@ -5,9 +5,13 @@ import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
 
+import com.iosix.eldblesample.models.Data;
+import com.iosix.eldblesample.models.Driver;
 import com.iosix.eldblesample.models.SendExampleModelData;
 import com.iosix.eldblesample.models.Student;
 import com.iosix.eldblesample.models.User;
+import com.iosix.eldblesample.models.Vehicle;
+import com.iosix.eldblesample.models.VehicleData;
 import com.iosix.eldblesample.models.eld_records.BufferRecord;
 import com.iosix.eldblesample.models.eld_records.CachedEngineRecord;
 import com.iosix.eldblesample.models.eld_records.CashedMotionRecord;
@@ -20,6 +24,8 @@ import com.iosix.eldblesample.models.eld_records.NewTimeRecord;
 import com.iosix.eldblesample.models.eld_records.PowerOnRecord;
 import com.iosix.eldblesample.models.eld_records.TransmissionRecord;
 import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
+
+import java.util.List;
 
 public class ApiRepository {
     private APIInterface apiInterface;
@@ -257,6 +263,38 @@ public class ApiRepository {
         @Override
         protected Void doInBackground(User... users) {
             apiInterface.getUser();
+            return null;
+        }
+    }
+
+    public void getAllDrivers(){
+        new getAllDrivers(apiInterface).execute();
+    }
+
+    private static class getAllDrivers extends AsyncTask<Data,Void,Void>{
+        private APIInterface apiInterface;
+
+        public getAllDrivers(APIInterface apiInterface){this.apiInterface = apiInterface;}
+
+        @Override
+        protected Void doInBackground(Data... users) {
+            apiInterface.getAllDrivers();
+            return null;
+        }
+    }
+
+    public void getAllVehicles(){
+        new getAllDrivers(apiInterface).execute();
+    }
+
+    private static class getAllVehicles extends AsyncTask<VehicleData,Void,Void>{
+        private APIInterface apiInterface;
+
+        public getAllVehicles(APIInterface apiInterface){this.apiInterface = apiInterface;}
+
+        @Override
+        protected Void doInBackground(VehicleData... users) {
+            apiInterface.getAllDrivers();
             return null;
         }
     }

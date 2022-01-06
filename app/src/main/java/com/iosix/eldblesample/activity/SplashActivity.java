@@ -14,11 +14,14 @@ import com.iosix.eldblesample.shared_prefs.SessionManager;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class SplashActivity extends BaseActivity {
     private StatusDaoViewModel statusDaoViewModel;
     private DayDaoViewModel daoViewModel;
+    private List<LogEntity> logEntities;
 
     @Override
     protected int getLayoutId() {
@@ -37,23 +40,31 @@ public class SplashActivity extends BaseActivity {
         statusDaoViewModel = ViewModelProviders.of(this).get(StatusDaoViewModel.class);
         daoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
 
+        logEntities = new ArrayList<>();
+        statusDaoViewModel.getmAllStatus().observe(this,logEntities1 -> {
+            if (statusDaoViewModel.getmAllStatus().getValue() != null){
+                logEntities = logEntities1;
+            }
+        });
+
         for (int i = 14; i >= 0; i--) {
 
             String time = Day.getCalculatedDate(-i);
 
             try {
                 daoViewModel.insertDay(new DayEntity(Day.getDayTime1(time), Day.getDayName2(time)));
-//                statusDaoViewModel.getmAllStatus().observe((LifecycleOwner) this, logEntities -> {
-//                    if (!logEntities.isEmpty()) {
-//                        statusDaoViewModel.insertStatus(new LogEntity(logEntities.get(logEntities.size() - 1).getTo_status(), logEntities.get(logEntities.size() - 1).getTo_status(), null, null, null, Day.getDayTime1(time), 0));
-//                    } else {
-//                        statusDaoViewModel.insertStatus(new LogEntity(0, 0, null, null, null, Day.getDayTime1(time), 0));
-//                    }
-//                });
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
         }
+
+//        if(statusDaoViewModel.getmAllStatus().getValue() != null){
+//            statusDaoViewModel.getmAllStatus().observe((LifecycleOwner) this, logEntities -> {
+//                    statusDaoViewModel.insertStatus(new LogEntity(logEntities.get(logEntities.size() - 1).getTo_status(), logEntities.get(logEntities.size() - 1).getTo_status(), null, null, null, Day.getDayTime1(Day.getCalculatedDate(0)), 0));
+//            });
+//        }else {
+//            statusDaoViewModel.insertStatus(new LogEntity(0, 0, null, null, null, Day.getDayTime1(Day.getCalculatedDate(0)), 0));
+//        }
 
         final Handler handler = new Handler();
         handler.postDelayed(() -> {

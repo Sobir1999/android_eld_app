@@ -63,10 +63,4 @@
         android:textColor="?attr/customTextHintColor"
         tools:ignore="MissingConstraints" />
 
-    <TextView
-        android:id="@+id/idDataResult"
-        app:layout_constraintTop_toBottomOf="@id/idLinear"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:ignore="MissingConstraints" />
 </androidx.constraintlayout.widget.ConstraintLayout>

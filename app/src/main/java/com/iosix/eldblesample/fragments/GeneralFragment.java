@@ -61,7 +61,7 @@ public class GeneralFragment extends Fragment {
     private RecyclerView idTrailersRecyclerView;
     private ImageView idShippingClear,idTrailersClear,idVehiclesClear;
     private TextView driverFullName,tvDistance,tvShippingdocs,tvTrailers,idVehiclesEdit,
-            tv_carrier,tv_terminal_address,tv_from_destination,tv_to_destination,tv_notes;
+            tv_carrier,tv_terminal_address,tv_from_destination,tv_to_destination,tv_main_office,tv_notes;
     private EditText driverName,driverSurname,distanceEdit,ShippingDocsEdit,idTrailersEdit,
             idCarrierEdit,idfromEdit,idtoEdit,idNotesEdit;
     private ConstraintLayout idMainOffice;
@@ -71,7 +71,7 @@ public class GeneralFragment extends Fragment {
 
     private String s;
 
-    public static GeneralFragment newInstance() {
+    public static GeneralFragment newInstance(String c) {
         GeneralFragment fragment = new GeneralFragment();
         Bundle args = new Bundle();
         return fragment;
@@ -93,13 +93,9 @@ public class GeneralFragment extends Fragment {
         sessionManager = new SessionManager(requireContext());
 
         driverFullName = view.findViewById(R.id.tv_driver_name);
-        driverName = view.findViewById(R.id.idDriverNameEdit);
-        driverSurname = view.findViewById(R.id.idDriverFamilyEdit);
         driverInfo = view.findViewById(R.id.idDriverNameCons);
         distanceContainer = view.findViewById(R.id.distance_container);
-        distanceEdit = view.findViewById(R.id.idDistanceEdit);
         tvDistance = view.findViewById(R.id.tv_distance);
-        idDistanceLayout = view.findViewById(R.id.idDistanceLayout);
         tvShippingdocs = view.findViewById(R.id.tv_shipping_docs);
         ShippingDocsEdit = view.findViewById(R.id.idShippingDocsEdit);
         shippingDocsLayout = view.findViewById(R.id.shipping_docs_layout);
@@ -116,8 +112,6 @@ public class GeneralFragment extends Fragment {
         idVehiclesLayout = view.findViewById(R.id.idVehiclesLayout);
         layout_carrier = view.findViewById(R.id.layout_carrier);
         tv_carrier = view.findViewById(R.id.tv_carrier);
-        idCarrierLayout = view.findViewById(R.id.idCarrierLayout);
-        idCarrierEdit = view.findViewById(R.id.idCarrierEdit);
         idMainOffice = view.findViewById(R.id.idMainOffice);
         tv_terminal_address = view.findViewById(R.id.tv_terminal_address);
         from_container = view.findViewById(R.id.from_container);
@@ -133,28 +127,30 @@ public class GeneralFragment extends Fragment {
         idNotesEdit = view.findViewById(R.id.idNotesEdit);
         tv_notes = view.findViewById(R.id.tv_notes);
         idSaveGeneral = view.findViewById(R.id.idSaveGeneral);
+        tv_main_office = view.findViewById(R.id.tv_main_office);
 
         userViewModel.getMgetUser().observe(getViewLifecycleOwner(),user -> {
             if (user != null){
                 s = user.getName() + " " + user.getLastName();
+                driverFullName.setText(s);
                 tv_terminal_address.setText(user.getHomeTerminalAddress());
             }
         });
 
         getGeneralInfo();
 
-        idSaveGeneral.setOnClickListener(v -> {
-            try {
-                generalViewModel.insertGeneral(
-                        new GeneralEntity(driverFullName.getText().toString(),tvDistance.getText().toString(),
-                                null,null,null,null,tv_from_destination.getText().toString(),
-                                tv_to_destination.getText().toString(),null,sessionManager.fetchSignature(),null));
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
+//        idSaveGeneral.setOnClickListener(v -> {
+//            try {
+//                generalViewModel.insertGeneral(
+//                        new GeneralEntity(driverFullName.getText().toString(),tvDistance.getText().toString(),
+//                                null,null,null,null,tv_from_destination.getText().toString(),
+//                                tv_to_destination.getText().toString(),null,sessionManager.fetchSignature(),null));
+//            } catch (ExecutionException e) {
+//                e.printStackTrace();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        });
         return view;
     }
 
@@ -162,45 +158,6 @@ public class GeneralFragment extends Fragment {
 
         selectedTrailers = new ArrayList<>();
         daoViewModel = ViewModelProviders.of(requireActivity()).get(DayDaoViewModel.class);
-
-
-        driverInfo.setOnClickListener(v -> {
-
-            String driverNameString = s.substring(0,s.indexOf(" "));
-            String driverSurnameString = s.substring(s.indexOf(" ")+1);
-
-            if (v.findViewById(R.id.idDriverInfoEdit).getVisibility() == View.GONE){
-                v.findViewById(R.id.idDriverInfoEdit).setVisibility(View.VISIBLE);
-            }else {
-                if (!driverName.getText().toString().equals(driverNameString) && !driverName.getText().toString().equals("")){
-                    driverNameString = driverName.getText().toString();
-                }else {
-                    driverNameString = s.substring(0,s.indexOf(" "));
-                }
-
-                if (!driverSurname.getText().toString().equals("") && !driverSurname.getText().toString().equals(driverSurnameString) ){
-                    driverSurnameString = driverSurname.getText().toString();
-                }else {
-                    driverSurnameString = s.substring(s.indexOf(" ")+1);
-                }
-                driverFullName.setText(driverNameString + " " +driverSurnameString);
-                Log.d("getGeneralInfo: ", driverFullName.getText().toString());
-                v.findViewById(R.id.idDriverInfoEdit).setVisibility(View.GONE);
-
-            }
-        });
-
-        distanceContainer.setOnClickListener(v1 -> {
-            if (idDistanceLayout.getVisibility() == View.GONE){
-                idDistanceLayout.setVisibility(View.VISIBLE);
-            }else {
-                if(!distanceEdit.getText().toString().equals(tvDistance.getText().toString()) && !distanceEdit.getText().toString().equals("")){
-                    tvDistance.setText(distanceEdit.getText().toString());
-                }
-                idDistanceLayout.setVisibility(View.GONE);
-
-            }
-        });
 
         tvShippingdocs.setOnClickListener(v2 -> {
 
@@ -331,27 +288,6 @@ public class GeneralFragment extends Fragment {
         });
         idVehiclesClear.setOnClickListener(v -> {
             idVehiclesLayout.setVisibility(View.GONE);
-        });
-
-        layout_carrier.setOnClickListener(v -> {
-            if (idCarrierLayout.getVisibility() == View.GONE){
-                idCarrierLayout.setVisibility(View.VISIBLE);
-            }else {
-                if(!idCarrierEdit.getText().toString().equals("")){
-                    tv_carrier.setText(idCarrierEdit.getText().toString());
-                }
-                idCarrierLayout.setVisibility(View.GONE);
-            }
-        });
-
-        idMainOffice.setOnClickListener(v -> {
-            MainOfficeAddressDialog cdd=new MainOfficeAddressDialog(requireContext());
-            cdd.show();
-        });
-
-        tv_terminal_address.setOnClickListener(v -> {
-            HomeTerminalDialog cdd=new HomeTerminalDialog(requireContext());
-            cdd.show();
         });
 
         from_container.setOnClickListener(v -> {

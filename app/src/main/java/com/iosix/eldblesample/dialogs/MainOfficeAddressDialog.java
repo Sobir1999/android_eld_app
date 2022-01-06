@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.iosix.eldblesample.R;
@@ -21,9 +22,10 @@ public class MainOfficeAddressDialog extends Dialog implements android.view.View
     public Dialog d;
     public TextView save, cancel,selectState;
     public EditText idinformationEdit,idCityEdit,idZipEdit;
-    public String information,city,zip;
+    public String information,city,zip,state;
+    OnMyDialogResult mDialogResult;
 
-    public MainOfficeAddressDialog( Context context) {
+    public MainOfficeAddressDialog(Context context) {
         super(context);
         c = context;
     }
@@ -56,28 +58,46 @@ public class MainOfficeAddressDialog extends Dialog implements android.view.View
                 }
                 if (idZipEdit.getText() != null){
                     zip = idZipEdit.getText().toString();
+                }if(selectState.getText() != null){
+                    state = selectState.getText().toString();
+                }
+                if(mDialogResult != null){
+                    mDialogResult.finish(information,city,zip,state);
                 }
                 break;
             case R.id.idCancelText:
                 dismiss();
                 break;
-            case R.id.idSelectStateText:
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(c);
-                alertDialog.setTitle("Select State");
-
-                final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_selectable_list_item);
-
-                alertDialog.setNegativeButton("cancel", (dialog, which) -> dialog.dismiss());
-
-                alertDialog.setAdapter(arrayAdapter, (dialog, which) -> {
-                    String strName = arrayAdapter.getItem(which);
-                    selectState.setText(strName);
-                });
-                alertDialog.show();
-                break;
-            default:
-                break;
+//            case R.id.idSelectStateText:
+//                AlertDialog.Builder alertDialog = new AlertDialog.Builder(c);
+//                alertDialog.setTitle("Select State");
+//
+//                final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_selectable_list_item);
+//                arrayAdapter.add("Select State");
+//                alertDialog.setNegativeButton("cancel", (dialog, which) -> {
+//                        dialog.dismiss();
+//                });
+//
+//                alertDialog.setAdapter(arrayAdapter, (dialog, which) -> {
+//                    String strName = arrayAdapter.getItem(which);
+//                    selectState.setText(strName);
+//                    state = strName;
+//                });
+//                alertDialog.show();
+//
+//                break;
+//            default:
+//                break;
         }
+
         dismiss();
+    }
+
+    public void setDialogResult(OnMyDialogResult dialogResult){
+        mDialogResult = dialogResult;
+    }
+
+        public interface OnMyDialogResult{
+        void finish(String information,String city,String zip,String state);
     }
 }

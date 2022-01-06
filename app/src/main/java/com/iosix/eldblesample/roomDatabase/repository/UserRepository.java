@@ -18,12 +18,14 @@ public class UserRepository {
 
     private final UserDao userDao;
     private final LiveData<User> getUser;
+    private final LiveData<List<User>> getDrivers;
 
 
     public UserRepository(Application application) {
         StatusTruckRoomDatabase db = StatusTruckRoomDatabase.getINSTANCE(application);
         userDao = db.userDao();
         getUser = userDao.getUser();
+        getDrivers = userDao.getDrivers();
     }
 
     public LiveData<User> getUser() {
@@ -32,6 +34,10 @@ public class UserRepository {
 
     public void insertUser(User user) {
         new UserRepository.insertUserAsync(userDao).execute(user);
+    }
+
+    public LiveData<List<User>> getDrivers() {
+        return getDrivers;
     }
 
     public void deleteUser() {

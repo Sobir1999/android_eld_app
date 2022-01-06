@@ -171,19 +171,19 @@
                         android:id="@+id/idSignature"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@drawable/add_defect_text_background"
+                        android:background="@drawable/add_signature_background"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:penColor="?attr/customTextColor" />
+                        app:penColor="@color/black" />
 
                     <TextView
                         android:id="@+id/idTvDrawSignature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/draw_your_signature"
-                        android:textColor="?attr/customTextHintColor"
+                        android:textColor="@color/customTextHintColor"
                         android:textSize="15sp"
                         android:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -254,19 +254,19 @@
                         android:id="@+id/idSignatureMechanic"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@drawable/add_defect_text_background"
+                        android:background="@drawable/add_signature_background"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:penColor="?attr/customTextColor" />
+                        app:penColor="@color/black" />
 
                     <TextView
                         android:id="@+id/idTvDrawSignatureMechanic"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/draw_your_signature"
-                        android:textColor="?attr/customTextHintColor"
+                        android:textColor="@color/customTextHintColor"
                         android:textSize="15sp"
                         android:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="parent"

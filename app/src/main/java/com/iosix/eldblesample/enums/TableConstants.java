@@ -4,7 +4,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 public class TableConstants {
-    public static float START_POINT_X = 100.0f;
+    public static float START_POINT_X = 80.0f;
     public static float START_POINT_Y = 50.0f;
     private static Paint paint;
     private static float textWidth = 3f;

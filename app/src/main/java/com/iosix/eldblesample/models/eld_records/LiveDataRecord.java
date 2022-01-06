@@ -32,10 +32,10 @@ public class LiveDataRecord {
     private double battery_voltage;
 
     @SerializedName("date")
-    private Date date;
+    private Float date;
 
     @SerializedName("point")
-    private ArrayList<Double> point;
+    private Point point;
 
     @SerializedName("gps_speed")
     private int gps_speed;
@@ -58,15 +58,7 @@ public class LiveDataRecord {
     @SerializedName("firmware_version")
     private String firmware_version;
 
-    public Boolean getEngine_state() {
-        return engine_state;
-    }
-
-    public void setEngine_state(Boolean engine_state) {
-        this.engine_state = engine_state;
-    }
-
-    public LiveDataRecord(Boolean engine_state, String vin, double speed, double odometer, double trip_distance, double engine_hours, double trip_hours, double battery_voltage, Date date, ArrayList<Double> point, int gps_speed, int course, int number_of_satellites, int altitude, double dop, int sequence_number, String firmware_version) {
+    public LiveDataRecord(Boolean engine_state, String vin, double speed, double odometer, double trip_distance, double engine_hours, double trip_hours, double battery_voltage, Float date, Point point, int gps_speed, int course, int number_of_satellites, int altitude, double dop, int sequence_number, String firmware_version) {
         this.engine_state = engine_state;
         this.vin = vin;
         this.speed = speed;
@@ -84,6 +76,14 @@ public class LiveDataRecord {
         this.dop = dop;
         this.sequence_number = sequence_number;
         this.firmware_version = firmware_version;
+    }
+
+    public Boolean getEngine_state() {
+        return engine_state;
+    }
+
+    public void setEngine_state(Boolean engine_state) {
+        this.engine_state = engine_state;
     }
 
     public String getVin() {
@@ -142,19 +142,19 @@ public class LiveDataRecord {
         this.battery_voltage = battery_voltage;
     }
 
-    public Date getDate() {
+    public Float getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(Float date) {
         this.date = date;
     }
 
-    public ArrayList<Double> getPoint() {
+    public Point getPoint() {
         return point;
     }
 
-    public void setPoint(ArrayList<Double> point) {
+    public void setPoint(Point point) {
         this.point = point;
     }
 

@@ -7,10 +7,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
@@ -28,7 +26,6 @@ public class AddDefectActivity extends BaseActivity {
 
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
-    private boolean isTruckSelected;
 
     @Override
     protected int getLayoutId() {
@@ -40,7 +37,7 @@ public class AddDefectActivity extends BaseActivity {
         super.initView();
 //        getWindow().setStatusBarColor(ActivityCompat.getColor(this,R.color.colorPrimaryDark));
 
-        isTruckSelected = getIntent().getBooleanExtra("isTruckSelected", false);
+        boolean isTruckSelected = getIntent().getBooleanExtra("isTruckSelected", false);
 
         tabLayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.viewpager);
@@ -123,7 +120,7 @@ public class AddDefectActivity extends BaseActivity {
 }
 
 class DefectsFragmentAdapter extends FragmentStateAdapter {
-    boolean isTruckSelected = false;
+    boolean isTruckSelected;
 
     public DefectsFragmentAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, boolean isTruckSelected) {
         super(fragmentManager, lifecycle);

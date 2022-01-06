@@ -3,6 +3,7 @@ package com.iosix.eldblesample.dialogs;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.view.Window;
 import android.widget.ProgressBar;
@@ -20,7 +21,7 @@ import org.greenrobot.eventbus.ThreadMode;
 public class SearchEldDeviceDialog extends Dialog {
     private ProgressBar progressBar;
     private String resultSearching = "";
-    private TextView resultText, dataView;
+    private TextView resultText;
 
     public SearchEldDeviceDialog(@NonNull Context context) {
         super(context);
@@ -32,27 +33,21 @@ public class SearchEldDeviceDialog extends Dialog {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.connect_eld_progress_dialog);
 
-//        progressBar = findViewById(R.id.idProgressBar1);
         resultText = findViewById(R.id.idScanResult);
-        dataView = findViewById(R.id.idDataResult);
 
-//        progressBar.setProgress(100);
-
-//        resultText.setText(resultSearching);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageModel s) {
         resultText.append(s.getStatusView());
-        dataView.append(s.getDataView());
+        if (resultText.getText() != "" && resultText.getText() != "Bluetooth enabled - now scanning for ELD\n"){
+            final Handler handler = new Handler();
+            handler.postDelayed(this::dismiss,5000);
+        }
     }
 
     public void setResultText(TextView resultText) {
         this.resultText = resultText;
-    }
-
-    public void setDataView(TextView dataView) {
-        this.dataView = dataView;
     }
 
     @Override

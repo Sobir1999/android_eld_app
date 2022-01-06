@@ -1,15 +1,5 @@
 package com.iosix.eldblesample.activity;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
-import androidx.viewpager2.widget.ViewPager2;
-
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -24,6 +14,15 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
+
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.base.BaseActivity;
 import com.iosix.eldblesample.fragments.SignatureFragment;
@@ -32,7 +31,6 @@ import com.iosix.eldblesample.roomDatabase.entities.MechanicSignatureEntity;
 import com.iosix.eldblesample.roomDatabase.entities.SignatureEntity;
 import com.iosix.eldblesample.shared_prefs.SignaturePrefs;
 import com.iosix.eldblesample.shared_prefs.UserData;
-import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
 import com.iosix.eldblesample.viewModel.SignatureViewModel;
 
@@ -41,24 +39,16 @@ import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import static android.os.Build.VERSION.SDK_INT;
 
 public class SignatureActivity extends BaseActivity {
 
-    private ImageView img;
-    private TextView save;
-    private boolean mParam1;
     private ArrayList<String> mParams;
     private String day;
-    private ViewPager2 viewPager;
     private DvirViewModel dvirViewModel;
     private SignatureViewModel signatureViewModel;
-    private DayDaoViewModel daoViewModel;
-    private List<SignatureEntity> signatureEntities = new ArrayList<>();
-    private List<DvirEntity> dvirEntities = new ArrayList<>();
     private SignaturePrefs signaturePrefs;
 
     @Override
@@ -76,16 +66,14 @@ public class SignatureActivity extends BaseActivity {
     public void initView() {
         super.initView();
 //        getWindow().setStatusBarColor(ActivityCompat.getColor(this,R.color.colorPrimaryDark));
-        img = findViewById(R.id.idImageBack);
-        save = findViewById(R.id.idAddDvirSave);
-        viewPager = findViewById(R.id.viewpager);
+        ImageView img = findViewById(R.id.idImageBack);
+        TextView save = findViewById(R.id.idAddDvirSave);
+        ViewPager2 viewPager = findViewById(R.id.viewpager);
 
-        mParam1 = getIntent().getBooleanExtra("isTruckSelected",false);
+        boolean mParam1 = getIntent().getBooleanExtra("isTruckSelected", false);
         mParams = getIntent().getStringArrayListExtra("arrayList");
         day = getIntent().getStringExtra("day");
         signaturePrefs = new SignaturePrefs(this);
-        daoViewModel = new DayDaoViewModel(this.getApplication());
-        daoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
 
         Log.d("day","day:" + mParams.get(7));
         Log.d("day","day: " + day);
@@ -95,19 +83,17 @@ public class SignatureActivity extends BaseActivity {
         img.setOnClickListener(v -> onBackPressed());
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        SignatureFragmentAdapter adapter = new SignatureFragmentAdapter(fragmentManager, getLifecycle(),mParam1,mParams,day);
+        SignatureFragmentAdapter adapter = new SignatureFragmentAdapter(fragmentManager, getLifecycle(), mParam1,mParams,day);
         viewPager.setAdapter(adapter);
 
         signatureViewModel = new SignatureViewModel(this.getApplication());
         signatureViewModel = ViewModelProviders.of(this).get(SignatureViewModel.class);
         signatureViewModel.getMgetAllSignatures().observe(this, signatureEntities -> {
-            this.signatureEntities = signatureEntities;
         });
 
         dvirViewModel = new DvirViewModel(this.getApplication());
         dvirViewModel = ViewModelProviders.of(this).get(DvirViewModel.class);
         dvirViewModel.getMgetDvirs().observe(this, dvirEntities -> {
-            this.dvirEntities = dvirEntities;
         });
 
         save.setOnClickListener(v -> {
@@ -162,12 +148,10 @@ public class SignatureActivity extends BaseActivity {
                             ));
                             Intent intent = new Intent(SignatureActivity.this, LGDDActivity.class);
                             intent.putExtra("position", 3);
-                            intent.putExtra("day",currDay);
+                            intent.putExtra("currDay",currDay);
                             startActivity(intent);
 
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        } catch (InterruptedException e) {
+                        } catch (ExecutionException | InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
@@ -198,7 +182,7 @@ public class SignatureActivity extends BaseActivity {
                             ));
                             Intent intent = new Intent(this, LGDDActivity.class);
                             intent.putExtra("position", 3);
-                            intent.putExtra("day",currDay);
+                            intent.putExtra("currDay",currDay);
                             startActivity(intent);
 //                            loadFragment(LGDDFragment.newInstance(3,daoViewModel,currDay));
                         }else {
@@ -208,14 +192,12 @@ public class SignatureActivity extends BaseActivity {
                             ));
                             Intent intent = new Intent(this, LGDDActivity.class);
                             intent.putExtra("position", 3);
-                            intent.putExtra("day",currDay);
+                            intent.putExtra("currDay",currDay);
                             startActivity(intent);
 //                            loadFragment(LGDDFragment.newInstance(3,daoViewModel,currDay));
 
                         }
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
+                    } catch (ExecutionException | InterruptedException e) {
                         e.printStackTrace();
                     }
 
@@ -238,13 +220,15 @@ public class SignatureActivity extends BaseActivity {
 
         String root = Environment.getExternalStorageDirectory().toString();
         File myDir = new File(root + "/FastLogz" + "/images");
+        //noinspection ResultOfMethodCallIgnored
         myDir.mkdirs();
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String fname = "Signature_"+ timeStamp +".jpg";
 
         File file = new File(myDir, fname);
-        if (file.exists()) file.delete ();
+        if (file.exists()) //noinspection ResultOfMethodCallIgnored
+            file.delete ();
         try {
             FileOutputStream out = new FileOutputStream(file);
             UserData userData = new UserData(appContext);
@@ -284,22 +268,13 @@ public class SignatureActivity extends BaseActivity {
             }
         }
     }
-
-    private void loadFragment(Fragment fragment){
-        FragmentManager fm = getSupportFragmentManager();
-        assert fm != null;
-        FragmentTransaction fragmentTransaction = fm.beginTransaction();
-        fragmentTransaction.replace(R.id.idFragmentSignatureContainer, fragment);
-        fragmentTransaction.addToBackStack("fragment");
-        fragmentTransaction.commit();
-    }
 }
 
 class SignatureFragmentAdapter extends FragmentStateAdapter {
 
-    private boolean mParam1;
-    private ArrayList<String> mParams;
-    private String day;
+    private final boolean mParam1;
+    private final ArrayList<String> mParams;
+    private final String day;
 
     public SignatureFragmentAdapter(@NonNull FragmentManager fragmentManager,
                                     @NonNull Lifecycle lifecycle,boolean mParam1,

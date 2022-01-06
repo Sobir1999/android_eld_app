@@ -2,10 +2,14 @@ package com.iosix.eldblesample.retrofit;
 
 import androidx.lifecycle.LiveData;
 
+import com.iosix.eldblesample.models.Data;
+import com.iosix.eldblesample.models.Driver;
 import com.iosix.eldblesample.models.LoginResponse;
 import com.iosix.eldblesample.models.SendExampleModelData;
 import com.iosix.eldblesample.models.Student;
 import com.iosix.eldblesample.models.User;
+import com.iosix.eldblesample.models.Vehicle;
+import com.iosix.eldblesample.models.VehicleData;
 import com.iosix.eldblesample.models.eld_records.BufferRecord;
 import com.iosix.eldblesample.models.eld_records.CachedEngineRecord;
 import com.iosix.eldblesample.models.eld_records.CashedMotionRecord;
@@ -19,6 +23,7 @@ import com.iosix.eldblesample.models.eld_records.PowerOnRecord;
 import com.iosix.eldblesample.models.eld_records.TransmissionRecord;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -43,6 +48,12 @@ public interface APIInterface {
             @Field("refresh") String refreshToken
     );
 
+    @GET("api/drivers/")
+    Call<Data> getAllDrivers();
+
+    @GET("api/vehicles/")
+    Call<VehicleData> getAllVehicles();
+
     @POST("api/event/poweron/")
     Call<PowerOnRecord> sendPoweron(@Body PowerOnRecord record);
 
@@ -56,7 +67,7 @@ public interface APIInterface {
     Call<CashedMotionRecord> sendMotion(@Body CashedMotionRecord record);
 
     @POST("api/event/buffer/")
-    LiveData<Call<BufferRecord>> sendBuffer(@Body BufferRecord record);
+    Call<BufferRecord> sendBuffer(@Body BufferRecord record);
 
     @POST("api/event/live/")
     Call<LiveDataRecord> sendLive(@Body LiveDataRecord record);

@@ -1,19 +1,15 @@
 package com.iosix.eldblesample.activity;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.viewpager.widget.ViewPager;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.google.android.material.appbar.AppBarLayout;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.viewpager.widget.ViewPager;
+
 import com.google.android.material.tabs.TabLayout;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.adapters.LGDDFragmentAdapter;
@@ -31,22 +27,13 @@ import java.util.List;
 
 public class LGDDActivity extends BaseActivity {
 
-    private TabLayout tabLayout;
-    private AppBarLayout appBarLayout;
-    private ViewPager viewPager;
-    private LGDDFragmentAdapter adapter;
-    private FragmentManager manager;
-    private TextView textFrag,addFrag;
+    private TextView textFrag;
     private int index = 0;
-    private int pos;
-    private DayDaoViewModel dayDaoViewModel;
     private DvirViewModel dvirViewModel;
     private List<DayEntity> dayEntities = new ArrayList<>();
     private String currDay;
     private String mParams;
-    private String time = "" + Calendar.getInstance().getTime();
-
-    private String[] str = {"1", "2", "3", "5", "6"};
+    private final String time = "" + Calendar.getInstance().getTime();
 
     @Override
     protected int getLayoutId() {
@@ -62,42 +49,26 @@ public class LGDDActivity extends BaseActivity {
     @Override
     public void initView() {
         super.initView();
-//        getWindow().setStatusBarColor(ActivityCompat.getColor(this,R.color.colorPrimaryDark));
 
         dvirViewModel = new DvirViewModel(this.getApplication());
         dvirViewModel = ViewModelProviders.of(this).get(DvirViewModel.class);
 
-        dayDaoViewModel = new DayDaoViewModel(this.getApplication());
+        DayDaoViewModel dayDaoViewModel;
         dayDaoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
 
         dayDaoViewModel.getMgetAllDays().observe(this, dayEntities -> {
             LGDDActivity.this.dayEntities = dayEntities;
-            if (mParams != null){
-                currDay = mParams;
-                dvirViewModel.getCurrentName().setValue(currDay);
-                for (int i = 0; i < dayEntities.size(); i++) {
-                    if (dayEntities.get(i).getDay().equals(mParams)){
-                        index = i;
-                    }
+            dvirViewModel.getCurrentName().setValue(mParams);
+            for (int i = 0; i < dayEntities.size(); i++) {
+                if (dayEntities.get(i).getDay().equals(mParams)){
+                     index = i;
                 }
-            }else {
-                currDay = time.split(" ")[1] + " " + time.split(" ")[2];
-                dvirViewModel.getCurrentName().setValue(currDay);
-                index = dayEntities.size() - 1;
             }
-            textFrag.setText(currDay);
-            Log.d("day","currDay: " + index);
+            textFrag.setText(mParams);
         });
 
-        pos = getIntent().getIntExtra("position",0);
-        if (getIntent().getStringExtra("day") != null){
-            mParams = getIntent().getStringExtra("day");
-        }else {
+        int pos = getIntent().getIntExtra("position", 0);
             mParams = getIntent().getStringExtra("currDay");
-        }
-
-        Log.d("day","currDay: " + mParams);
-
 
         findViewById(R.id.idImageBack).setOnClickListener(v -> {
             this.finish();
@@ -107,21 +78,11 @@ public class LGDDActivity extends BaseActivity {
         });
 
         textFrag = findViewById(R.id.idTextFrag);
-//        addFrag = findViewById(R.id.idAddFrag);
-//
-//        addFrag.setOnClickListener(v -> {
-//            if (pos == 3){
-//                loadFragment(AddDvirFragment.newInstance(currDay));
-//            }
-//        });
         FragmentManager fragmentManager = getSupportFragmentManager();
-        adapter = new LGDDFragmentAdapter(fragmentManager, 1, mParams);
-        Log.d("position","position:" + currDay);
+        LGDDFragmentAdapter adapter = new LGDDFragmentAdapter(fragmentManager, 1, mParams);
 
-
-        tabLayout = findViewById(R.id.tab_layout);
-        viewPager = findViewById(R.id.pager);
-        appBarLayout = findViewById(R.id.idAppbar);
+        TabLayout tabLayout = findViewById(R.id.tab_layout);
+        ViewPager viewPager = findViewById(R.id.pager);
 
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(pos);

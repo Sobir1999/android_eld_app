@@ -34,6 +34,17 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="MissingConstraints" />
 
+        <com.iosix.eldblesample.customViews.CustomLiveRulerChart
+            android:id="@+id/idCustomChartLive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints" />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -69,13 +80,29 @@
         android:background="?attr/customBgViewColor"
         tools:ignore="MissingConstraints" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/customTextColor"
+        android:text="@string/recent_statuses"
+        android:background="?attr/customBgColor"
+        android:padding="10dp"
+        android:layout_marginHorizontal="8dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?attr/customBgViewColor"
+        tools:ignore="MissingConstraints" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView_log_page"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="10dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:background="?attr/customBgColor" />
 
 </LinearLayout>

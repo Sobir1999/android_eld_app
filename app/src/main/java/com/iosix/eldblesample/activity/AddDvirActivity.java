@@ -1,13 +1,5 @@
 package com.iosix.eldblesample.activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -16,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,20 +15,21 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.google.android.material.appbar.AppBarLayout;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.iosix.eldblesample.R;
-import com.iosix.eldblesample.adapters.DvirlistAdapter;
 import com.iosix.eldblesample.adapters.TrailerRecyclerAdapter;
 import com.iosix.eldblesample.base.BaseActivity;
 import com.iosix.eldblesample.fragments.TimePickerFragment;
-import com.iosix.eldblesample.roomDatabase.entities.DvirEntity;
 import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
 import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
-import com.iosix.eldblesample.viewModel.DvirViewModel;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.OnTimeSetListener {
@@ -53,7 +45,6 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
     private EditText locationEditText;
     String time,location,mNotes;
     private LinearLayout defects, addDefect;
-    private AppBarLayout appBarLayout;
     private DayDaoViewModel daoViewModel;
     private final String selectedUnit = "No Unit Selected";
     private ArrayList<TrailersEntity> selectedTrailers;
@@ -91,7 +82,6 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
         defects = findViewById(R.id.defects);
         backView = findViewById(R.id.idImageBack);
         nextText = findViewById(R.id.idAddDvirNext);
-        appBarLayout = findViewById(R.id.idAppbar);
         locationEditText = findViewById(R.id.idDefectLocationEdit);
 
         day = getIntent().getStringExtra("currDay");
@@ -234,7 +224,7 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
 
         nextText.setOnClickListener(v1 -> {
 
-            if(addTime.getText().toString() == ""){
+            if(addTime.getText().toString().equals("")){
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
                 alertDialog.setTitle("Time missed")
                         .setMessage("Time not created!")
@@ -361,7 +351,7 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         addTime = findViewById(R.id.idDefectTimeText);
-        addTime.setText(timeString(hourOfDay) + ":" + timeString(minute));
+        addTime.setText(String.format("%s:%s", timeString(hourOfDay), timeString(minute)));
     }
 
     private String timeString(int digit) {
