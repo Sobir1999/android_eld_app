@@ -1,11 +1,14 @@
 package com.iosix.eldblesample.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
@@ -18,12 +21,15 @@ import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.activity.MainActivity;
 import com.iosix.eldblesample.adapters.LogFragmentPagerAdapter;
 import com.iosix.eldblesample.adapters.LogRecyclerViewAdapter;
+import com.iosix.eldblesample.broadcasts.ChangeDateTimeBroadcast;
 import com.iosix.eldblesample.customViews.CustomLiveRulerChart;
 import com.iosix.eldblesample.customViews.CustomStableRulerChart;
+import com.iosix.eldblesample.enums.Day;
 import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.models.ExampleSMSModel;
 import com.iosix.eldblesample.retrofit.APIInterface;
 import com.iosix.eldblesample.retrofit.ApiClient;
+import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
@@ -34,6 +40,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.concurrent.ExecutionException;
 
 public class LogFragment extends Fragment {
     private LogFragmentPagerAdapter adapter;
@@ -43,7 +51,11 @@ public class LogFragment extends Fragment {
     private CustomLiveRulerChart idCustomChartLive;
     private DvirViewModel dvirViewModel;
     private String currDay;
+    Context _context;
     private int last_status;
+    private ChangeDateTimeBroadcast changeDateTimeBroadcast;
+    private String time = "" + Calendar.getInstance().getTime();
+    private String today = time.split(" ")[1] + " " + time.split(" ")[2];
     private RecyclerView recyclerView_log;
     private LogRecyclerViewAdapter logRecyclerViewAdapter;
 
@@ -83,10 +95,17 @@ public class LogFragment extends Fragment {
 
         });
 
+        changeDateTimeBroadcast = new ChangeDateTimeBroadcast() {
+            @Override
+            public void onDayChanged() {
+                time = "" + Calendar.getInstance().getTime();
+                today = time.split(" ")[1] + " " + time.split(" ")[2];
+            }
+        };
+        _context.registerReceiver(changeDateTimeBroadcast, ChangeDateTimeBroadcast.getIntentFilter());
+
         dvirViewModel.getCurrentName().observe(getViewLifecycleOwner(),c ->{
             ArrayList<LogEntity> truckStatusEntities = new ArrayList<>();
-
-            statusDaoViewModel = ViewModelProviders.of(this).get(StatusDaoViewModel.class);
             statusDaoViewModel.getmAllStatus().observe(getViewLifecycleOwner(), truckStatusEntities1 -> {
                 for (LogEntity logEntity: truckStatusEntities1) {
                     if (logEntity.getTime().equalsIgnoreCase(c)) {
@@ -102,7 +121,7 @@ public class LogFragment extends Fragment {
                     last_status = EnumsConstants.STATUS_OFF;
                 }
             });
-            if(c.equals(currDay)){
+            if(c.equals(today)){
                 idCustomChart.setVisibility(View.GONE);
                 idCustomChartLive.setVisibility(View.VISIBLE);
                 idCustomChartLive.setArrayList(truckStatusEntities);
@@ -115,6 +134,13 @@ public class LogFragment extends Fragment {
 
 
         return view;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context)
+    {
+        super.onAttach(context);
+        _context = context;
     }
 
     @Override
@@ -131,5 +157,12 @@ public class LogFragment extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSMSHandler(ExampleSMSModel sendModels){
+    }
+
+    @Override
+    public void onDestroyView()
+    {
+        super.onDestroyView();
+        _context.unregisterReceiver(changeDateTimeBroadcast);
     }
 }

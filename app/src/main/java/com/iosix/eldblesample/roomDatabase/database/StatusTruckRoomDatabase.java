@@ -36,7 +36,7 @@ import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
         UnitDefectsEntity.class, VehiclesEntity.class,
         MainOfficeEntity.class, SignatureEntity.class,
         MechanicSignatureEntity.class, User.class
-}, version = 14)
+}, version = 15)
 @TypeConverters(Converter.class)
 public abstract class StatusTruckRoomDatabase extends RoomDatabase {
 

@@ -1,13 +1,13 @@
 <resources>
     <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">#0B0B0B</item>
+        <item name="colorPrimary">#E8231E1E</item>
         <item name="colorPrimaryDark">#070707</item>
         <item name="colorAccent">#417C83</item>
 
-        <item name="customBgColor">@color/black</item>
+        <item name="customBgColor">@color/colorButtonNormal</item>
         <item name="customTextColor">@color/white</item>
-        <item name="customBgViewColor">@color/customTextHintColor</item>
+        <item name="customBgViewColor">@color/customBgViewColorNightmode</item>
         <item name="customTextHintColor">@color/customBgViewColor</item>
 
 
@@ -32,5 +32,11 @@
     <style name="MyRadioButton" parent="Theme.AppCompat.Light">
         <item name="colorControlNormal">@color/white</item>
         <item name="colorControlActivated">@color/colorPrimary</item>
+    </style>
+
+    <style name="MyEditTextTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorControlNormal">@color/customTextHintColor</item>
+        <item name="colorControlActivated">@color/colorActionText</item>
+        <item name="colorControlHighlight">@color/colorActionText</item>
     </style>
 </resources>

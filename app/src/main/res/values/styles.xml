@@ -34,4 +34,10 @@
         <item name="colorPrimary">@color/colorAccent</item>
     </style>
 
+    <style name="MyEditTextTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorControlNormal">@color/customBgViewColor</item>
+        <item name="colorControlActivated">@color/colorActionText</item>
+        <item name="colorControlHighlight">@color/colorActionText</item>
+    </style>
+
 </resources>

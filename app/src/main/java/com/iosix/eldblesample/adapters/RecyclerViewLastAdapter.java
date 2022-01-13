@@ -102,6 +102,8 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
 
         @SuppressLint("UseCompatLoadingForDrawables")
         void onBind(DayEntity dayEntity) {
+
+            ArrayList<DvirEntity> dvirEntity = new ArrayList<>();
             day.setText(dayEntity.getDay_name());
             day_week.setText(dayEntity.getDay());
             customRulerChart.setArrayList(getDayTruckEntity(dayEntity.getDay()));
@@ -110,6 +112,7 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
                 for (int i = 0; i < dvirEntities.size(); i++) {
                     if (dvirEntities.get(i).getDay().equals(dayEntity.getDay()) ){
                         no_dvir.setText("DVIR");
+                        dvirEntity.add(dvirEntities.get(i));
                     }
                 }
             }
@@ -123,7 +126,7 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
 
             no_dvir.setOnClickListener(v -> {
                 if (listener != null) {
-                    listener.onclickDvir(dayEntity.getDay(),dvirEntities);
+                    listener.onclickDvir(dayEntity.getDay(),dvirEntity);
                 }
             });
 
@@ -152,7 +155,7 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
     public interface LastDaysRecyclerViewItemClickListener {
         void onclickItem(String s);
 
-        void onclickDvir(String s,List<DvirEntity> dvirEntity);
+        void onclickDvir(String s,ArrayList<DvirEntity> dvirEntity);
     }
 
 }

@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.enums.TableConstants;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
+import com.iosix.eldblesample.shared_prefs.LastStatusData;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,6 +25,7 @@ public class CustomLiveRulerChart extends CustomRulerChart {
     private int currentDate;
     private int last_status;
     private int off = 0, sb = 0, dr = 0, on = 0;
+    private LastStatusData lastStatusData;
 
     private ArrayList<LogEntity> arrayList = new ArrayList();
 
@@ -50,9 +52,10 @@ public class CustomLiveRulerChart extends CustomRulerChart {
     }
 
     private void init(Context context) {
-        SharedPreferences pref = context
-                .getSharedPreferences("MyPref", Context.MODE_PRIVATE);
-        last_status = pref.getInt("last_P", 0);
+        lastStatusData = new LastStatusData(context);
+//        SharedPreferences pref = context
+//                .getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+        last_status = lastStatusData.getLastStatus();
     }
 
     public void setArrayList(ArrayList<LogEntity> arrayList) {
@@ -122,6 +125,7 @@ public class CustomLiveRulerChart extends CustomRulerChart {
                 on += (currentDate - start);
             }
         } else {
+            Log.d("MyPref", (String.valueOf(last_status)));
             endY = TableConstants.START_POINT_Y + CUSTOM_TABLE_HEIGHT/8 + (CUSTOM_TABLE_HEIGHT*last_status)/4;
             canvas.drawLine(TableConstants.START_POINT_X, endY, START_POINT_X + ((currentDate / (3600*24f)) * CUSTOM_TABLE_WIDTH), endY, paintArray.get(last_status));
 

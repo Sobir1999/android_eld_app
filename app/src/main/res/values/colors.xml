@@ -6,19 +6,19 @@
 
     <color name="colorBackgroundMainView">#E3E3E3</color>
 
-    <color name="colorButtonNormal">@color/black</color>
+    <color name="colorButtonNormal">#231E1E</color>
 
     <color name="colorStatusOFF">#E9E9E9</color>
     <color name="colorStatusOFFBold">#8C8C8C</color>
-    <color name="colorStatusSB">#FFEFDF</color>
-    <color name="colorStatusSBBold">#CCC056</color>
-    <color name="colorStatusDR">#FDAC32</color>
-    <color name="colorStatusDRBold">#C2ECA2</color>
-    <color name="colorStatusON">#63A83D</color>
+    <color name="colorStatusSB">#FAFFFACD</color>
+    <color name="colorStatusSBBold">#DD8C12</color>
+    <color name="colorStatusDR">#C2ECA2</color>
+    <color name="colorStatusDRBold">#63A83D</color>
+    <color name="colorStatusON">#AEECAAF8</color>
     <color name="textSelected">#E4C1FA</color>
     <color name="colorStatusONBold">#851DC6</color>
 
-    <color name="colorActionText">#61CFDD</color>
+    <color name="colorActionText">#08ACF6</color>
     <color name="alertColor">#EC3434</color>
 
     <color name="RecapColor">#4B4C3F3F</color>
@@ -27,8 +27,9 @@
 
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
-    <color name="customBgViewColor">#D1CFCF</color>
-    <color name="customTextHintColor">#3E3D3D</color>
+    <color name="customBgViewColor">#FCF1F1F1</color>
+    <color name="customBgViewColorNightmode">#FC202020</color>
+    <color name="customTextHintColor">#919191</color>
 
     <color name="SignatureColorDefault">#9953BFED</color>
     <color name="SignatureColorWhenClicked">#08ACF6</color>

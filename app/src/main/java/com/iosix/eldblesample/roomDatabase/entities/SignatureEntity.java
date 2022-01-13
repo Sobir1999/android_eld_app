@@ -11,7 +11,7 @@ import androidx.room.PrimaryKey;
 public class SignatureEntity {
 
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
+    @ColumnInfo(name = "signature_id")
     private int id;
 
     @ColumnInfo(name = "signature")

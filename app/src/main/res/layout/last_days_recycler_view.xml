@@ -6,17 +6,10 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <View
-        android:id="@+id/idTopView"
-        android:background="@color/colorBackgroundMainView"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        tools:ignore="MissingConstraints" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/idBasic"
-        app:layout_constraintTop_toBottomOf="@id/idTopView"
-        android:padding="10dp"
+        android:padding="15dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:ignore="MissingConstraints">
@@ -25,6 +18,7 @@
             android:id="@+id/idTableDay"
             android:text="Sun"
             android:textSize="14sp"
+            android:textStyle="bold"
             android:textColor="?attr/customTextColor"
             android:drawablePadding="5dp"
             style="@style/TextAppearance.AppCompat.Menu"
@@ -55,8 +49,8 @@
             app:layout_constraintLeft_toRightOf="@id/idTableDay"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_width="2dp"
-            android:layout_height="30dp"
+            android:layout_width="1dp"
+            android:layout_height="35dp"
             tools:ignore="MissingConstraints" />
 
         <TextView
@@ -86,7 +80,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:ignore="MissingConstraints"
-            app:drawableLeftCompat="@drawable/ic_baseline_settings_applications_24" />
+            app:drawableLeftCompat="@drawable/ic__b74e24a497d9fa32d2c7d4acf314b81" />
 
         <ImageView
             android:id="@+id/idTableRadioBtn"

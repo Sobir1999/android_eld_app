@@ -23,7 +23,7 @@ public interface SignatureDao {
     @Query("SELECT * FROM signature_table")
     public LiveData<List<SignatureEntity>> getSignature();
 
-    @Query("SELECT * FROM signature_table")
+    @Query("SELECT * FROM mechanic_signature_table")
     public LiveData<List<MechanicSignatureEntity>> getMechanicSignature();
 
 }

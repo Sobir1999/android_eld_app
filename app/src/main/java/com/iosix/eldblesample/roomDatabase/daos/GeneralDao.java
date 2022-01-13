@@ -19,7 +19,7 @@ public interface GeneralDao {
     public Long insertGeneral(GeneralEntity generalEntity);
 
 
-    @Query("SELECT * FROM dvir_table")
+    @Query("SELECT * FROM general")
     public LiveData<List<GeneralEntity>> getGenerals();
 
     @Delete

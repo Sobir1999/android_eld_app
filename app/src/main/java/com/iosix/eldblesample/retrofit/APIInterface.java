@@ -86,7 +86,6 @@ public interface APIInterface {
 
     @POST("api/event/transmission/")
     Call<TransmissionRecord> sendTransmission(@Body TransmissionRecord record);
-
 }
 
 

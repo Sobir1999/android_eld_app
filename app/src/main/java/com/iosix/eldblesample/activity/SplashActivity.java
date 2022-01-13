@@ -2,12 +2,14 @@ package com.iosix.eldblesample.activity;
 
 import android.content.Intent;
 import android.os.Handler;
+import android.util.Log;
 
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProviders;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.base.BaseActivity;
 import com.iosix.eldblesample.enums.Day;
+import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 import com.iosix.eldblesample.shared_prefs.SessionManager;
@@ -15,14 +17,13 @@ import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class SplashActivity extends BaseActivity {
     private StatusDaoViewModel statusDaoViewModel;
     private DayDaoViewModel daoViewModel;
-    private List<LogEntity> logEntities;
-
     @Override
     protected int getLayoutId() {
         return R.layout.activity_main2;
@@ -40,17 +41,9 @@ public class SplashActivity extends BaseActivity {
         statusDaoViewModel = ViewModelProviders.of(this).get(StatusDaoViewModel.class);
         daoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
 
-        logEntities = new ArrayList<>();
-        statusDaoViewModel.getmAllStatus().observe(this,logEntities1 -> {
-            if (statusDaoViewModel.getmAllStatus().getValue() != null){
-                logEntities = logEntities1;
-            }
-        });
-
+        daoViewModel.deleteAllDays();
         for (int i = 14; i >= 0; i--) {
-
             String time = Day.getCalculatedDate(-i);
-
             try {
                 daoViewModel.insertDay(new DayEntity(Day.getDayTime1(time), Day.getDayName2(time)));
             } catch (ExecutionException | InterruptedException e) {
@@ -58,13 +51,8 @@ public class SplashActivity extends BaseActivity {
             }
         }
 
-//        if(statusDaoViewModel.getmAllStatus().getValue() != null){
-//            statusDaoViewModel.getmAllStatus().observe((LifecycleOwner) this, logEntities -> {
-//                    statusDaoViewModel.insertStatus(new LogEntity(logEntities.get(logEntities.size() - 1).getTo_status(), logEntities.get(logEntities.size() - 1).getTo_status(), null, null, null, Day.getDayTime1(Day.getCalculatedDate(0)), 0));
-//            });
-//        }else {
-//            statusDaoViewModel.insertStatus(new LogEntity(0, 0, null, null, null, Day.getDayTime1(Day.getCalculatedDate(0)), 0));
-//        }
+        if(statusDaoViewModel.getmAllStatus().getValue() == null){
+        }
 
         final Handler handler = new Handler();
         handler.postDelayed(() -> {

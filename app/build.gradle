@@ -14,6 +14,12 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation":"$projectDir/schemas".toString()]
+            }
+        }
     }
     buildTypes {
         release {
@@ -137,10 +143,6 @@ dependencies {
     implementation 'io.github.inflationx:viewpump:2.0.3'
 
     implementation 'com.uttampanchasara.pdfgenerator:pdfgenerator:1.3'
-
-
-
-
 
 }
 

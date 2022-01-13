@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="10dp"
+        android:paddingTop="12dp"
         android:paddingStart="10dp"
         android:paddingEnd="10dp">
 
@@ -25,18 +25,43 @@
             android:textSize="14sp"
             android:textColor="?attr/customTextHintColor"/>
 
-        <Button
+<!--        <Button-->
+<!--            android:id="@+id/dr_button"-->
+<!--            android:layout_width="30dp"-->
+<!--            android:layout_height="18dp"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintLeft_toRightOf="@id/tv_log_id"-->
+<!--            android:layout_gravity="center_vertical"-->
+<!--            android:background="#E2ABE8AD"-->
+<!--            android:layout_marginStart="10dp"-->
+<!--            android:text="@string/dr"-->
+<!--            android:textColor="#117815"/>-->
+
+        <androidx.cardview.widget.CardView
             android:id="@+id/dr_button"
-            android:layout_width="35dp"
-            android:layout_height="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@id/tv_log_id"
-            android:layout_gravity="center_vertical"
-            android:background="#E2ABE8AD"
-            android:layout_marginStart="10dp"
-            android:text="@string/dr"
-            android:textColor="#117815"/>
+            app:cardBackgroundColor="@color/colorStatusDR"
+            app:cardCornerRadius="5dp"
+            android:layout_marginStart="10dp">
+
+           <TextView
+               android:id="@+id/dr_text"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="@string/dr"
+               android:textSize="12sp"
+               android:padding="4dp"
+               android:layout_marginHorizontal="5dp"
+               android:layout_gravity="center"
+               android:textColor="#117815"/>
+
+        </androidx.cardview.widget.CardView>
+
 
         <TextView
             android:id="@+id/tv_time_log"
@@ -49,7 +74,7 @@
             android:textColor="?attr/customTextColor"
             android:textStyle="bold"
             android:layout_marginStart="10dp"
-            android:textSize="14sp"/>
+            android:textSize="13sp"/>
 
         <TextView
             android:id="@+id/tv_space"
@@ -60,9 +85,9 @@
             app:layout_constraintLeft_toRightOf="@id/tv_time_log"
             android:text="@string/space"
             android:textColor="?attr/customTextHintColor"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:textStyle="bold"
-            android:layout_marginStart="30dp"/>
+            android:layout_marginStart="5dp"/>
 
         <TextView
             android:id="@+id/tv_timer_log"
@@ -86,6 +111,17 @@
             app:layout_constraintRight_toRightOf="parent"
             android:src="@drawable/ic_baseline_expand_more_24"/>
 
+        <ImageView
+            android:id="@+id/im_less_icon"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:src="@drawable/ic_baseline_keyboard_arrow_up_24"
+            app:tint="?attr/customTextColor" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -93,9 +129,8 @@
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp">
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="5dp">
 
         <ImageView
             android:id="@+id/iv_location"
@@ -117,7 +152,7 @@
             android:text="@string/_20mi_e_grass_valley_ca"
             android:textColor="?attr/customTextHintColor"
             android:layout_marginStart="15dp"
-            android:textSize="14sp"/>
+            android:textSize="13sp"/>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -127,10 +162,8 @@
         android:id="@+id/idStatusContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp"
         android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:layout_marginBottom="10dp">
+        android:paddingEnd="10dp">
 
     <ImageView
         android:id="@+id/iv_edit"
@@ -152,7 +185,7 @@
         android:text="@string/driving"
         android:textColor="?attr/customTextHintColor"
         android:layout_marginStart="15dp"
-        android:textSize="14sp"/>
+        android:textSize="13sp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -161,6 +194,6 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         tools:ignore="MissingConstraints"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="12dp"/>
 
 </LinearLayout>

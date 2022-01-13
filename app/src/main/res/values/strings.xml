@@ -39,7 +39,6 @@
     <string name="from">From</string>
     <string name="enter_information">Enter information</string>
     <string name="to">To</string>
-    <string name="notes">Notes</string>
     <string name="signature">Signature</string>
     <string name="loads">LOADS</string>
     <string name="upload_documents_now">Upload Documents now</string>
@@ -52,7 +51,6 @@
     <string name="space">|</string>
     <string name="_5h_45m">5h 45m</string>
     <string name="_20mi_e_grass_valley_ca">20MI E GRASS VALLEY,CA</string>
-    <string name="save">Save</string>
     <string name="languages">Languages</string>
     <string name="russian">Russian</string>
     <string name="uzbek">Uzbek</string>
@@ -87,7 +85,6 @@
     <string name="unit">Unit</string>
     <string name="enter_recepient_e_mail">Enter recepient E-mail</string>
     <string name="selected_trailers">Selected trailers</string>
-    <string name="location">Location</string>
     <string name="no_defect_detected">No defect detected</string>
     <string name="content_description">Just Image</string>
     <string name="defects">Defects</string>
@@ -137,4 +134,12 @@
     <string name="weekdays">Weekdays</string>
     <string name="day">Day</string>
     <string name="recent_statuses">Recent statuses</string>
+    <string name="add_notes">Add notes</string>
+    <string name="notes">Notes</string>
+    <string name="your_location">Your Location</string>
+    <string name="location">Location</string>
+    <string name="dr_with_exeption">DR with exception</string>
+    <string name="document">Document</string>
+    <string name="attach">Attach</string>
+    <string name="save">Save</string>
 </resources>

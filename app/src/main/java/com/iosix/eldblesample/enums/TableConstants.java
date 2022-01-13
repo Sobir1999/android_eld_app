@@ -7,12 +7,12 @@ public class TableConstants {
     public static float START_POINT_X = 80.0f;
     public static float START_POINT_Y = 50.0f;
     private static Paint paint;
-    private static float textWidth = 3f;
-    private static float textSize = 26f;
+    private static float textWidth = 3.5f;
+    private static float textSize = 25f;
 
     public static Paint getOFFPaint() {
         paint = new Paint();
-        paint.setColor(Color.parseColor("#6E6565"));
+        paint.setColor(Color.parseColor("#8C8C8C"));
         paint.setStrokeWidth(textWidth);
         paint.setTextSize(textSize);
         return paint;
@@ -21,7 +21,7 @@ public class TableConstants {
     public static Paint getSBPaint() {
         paint = new Paint();
         paint.setStrokeWidth(textWidth);
-        paint.setColor(Color.parseColor("#DAC50C"));
+        paint.setColor(Color.parseColor("#DD8C12"));
         paint.setTextSize(textSize);
         return paint;
     }
@@ -29,7 +29,7 @@ public class TableConstants {
     public static Paint getDRPaint() {
         paint = new Paint();
         paint.setStrokeWidth(textWidth);
-        paint.setColor(Color.parseColor("#1DDA82"));
+        paint.setColor(Color.parseColor("#63A83D"));
         paint.setTextSize(textSize);
         return paint;
     }
@@ -37,7 +37,7 @@ public class TableConstants {
     public static Paint getONPaint() {
         paint = new Paint();
         paint.setStrokeWidth(textWidth);
-        paint.setColor(Color.parseColor("#1A8DE8"));
+        paint.setColor(Color.parseColor("#851DC6"));
         paint.setTextSize(textSize);
         return paint;
     }

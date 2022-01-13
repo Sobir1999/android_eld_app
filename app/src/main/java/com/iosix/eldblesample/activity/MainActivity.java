@@ -104,6 +104,7 @@ import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.DvirEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 import com.iosix.eldblesample.services.foreground.ForegroundService;
+import com.iosix.eldblesample.shared_prefs.LastStatusData;
 import com.iosix.eldblesample.shared_prefs.SessionManager;
 import com.iosix.eldblesample.shared_prefs.UserData;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
@@ -144,8 +145,11 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     private String today = time.split(" ")[1] + " " + time.split(" ")[2];
     private ArrayList<LogEntity> truckStatusEntities;
     private APIInterface apiInterface;
-    private TextView lastDaysCheck,idUsername;
-    private ImageView toDaySelect;
+    private TextView lastDaysCheck,idUsername,statusOff,statusSB,statusDR,statusON;
+    private ImageView toDaySelect,imageOff,imageSB,imageDR,imageON;
+    private ChangeDateTimeBroadcast changeDateTimeBroadcast;
+    private CustomLiveRulerChart customRulerChart;
+    private LastStatusData lastStatusData;
 
     private double latitude;
     private double longtitude;
@@ -187,6 +191,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     public void initView() {
         super.initView();
         UserData userData = new UserData(this);
+        lastStatusData = new LastStatusData(this);
 
         userViewModel = new UserViewModel(this.getApplication());
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
@@ -202,7 +207,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
         drawerLayout = findViewById(R.id.drawer_layout);
         RecyclerView last_recycler_view = findViewById(R.id.idRecyclerView);
-        CustomLiveRulerChart customRulerChart = findViewById(R.id.idCustomLiveChart);
+        customRulerChart = findViewById(R.id.idCustomLiveChart);
         customRulerChart.setArrayList(truckStatusEntities);
 
 //        setBluetoothDataEnabled(this);
@@ -266,8 +271,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                 while (true) {
                     runOnUiThread(() -> {
                         TextView statusTime = findViewById(R.id.idStatusTime);
-                        int last = getLastStatusSec();
-                        int current = (int) SystemClock.uptimeMillis() / 1000;
+                        int last = lastStatusData.getLasStatSecond();
+                        int current = getCurrentSeconds();
                         int hour = (current - last) / 3600;
                         int min = ((current - last) % 3600) / 60;
                         statusTime.setText(String.format("%02dh %02dm", hour, min));
@@ -352,30 +357,14 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             }
 
             @Override
-            public void onclickDvir(String s,List<DvirEntity> dvirEntity) {
+            public void onclickDvir(String s,ArrayList<DvirEntity> dvirEntities) {
 
-                boolean hasDvir = false;
-
-                if (dvirEntity.size() != 0){
-
-                    for (int i = 0; i < dvirEntity.size(); i++) {
-
-                        if (dvirEntity.get(i).getDay().equals(s)){
-
-                            hasDvir = true;
-
-                            Intent intent = new Intent(MainActivity.this, LGDDActivity.class);
-                            intent.putExtra("position", 3);
-                            intent.putExtra("currDay",dvirEntity.get(i).getDay());
-                            startActivity(intent);
-                       }
-                    }
-                }else {
-                    Intent intent = new Intent(MainActivity.this, AddDvirActivity.class);
+                if (dvirEntities.size() != 0){
+                    Intent intent = new Intent(MainActivity.this, LGDDActivity.class);
+                    intent.putExtra("position", 3);
                     intent.putExtra("currDay",s);
                     startActivity(intent);
-                }
-                if (!hasDvir){
+                }else {
                     Intent intent = new Intent(MainActivity.this, AddDvirActivity.class);
                     intent.putExtra("currDay",s);
                     startActivity(intent);
@@ -656,13 +645,13 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 //        return pref.getString("lan", "en");
 //    }
 
-    public void saveLastPosition(int last_P) {
-        SharedPreferences pref = getApplicationContext()
-                .getSharedPreferences("userData", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("last_P", last_P);
-        editor.apply();
-    }
+//    public void saveLastPosition(int last_P) {
+//        SharedPreferences pref = getApplicationContext()
+//                .getSharedPreferences("userData", Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = pref.edit();
+//        editor.putInt("last_P", last_P);
+//        editor.apply();
+//    }
 
 //    private int getLastP() {
 //        SharedPreferences pref = getApplicationContext()
@@ -733,6 +722,14 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             sb.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSB));
             dr.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDR));
             on.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusON));
+            statusOff.setTextColor(ContextCompat.getColor(this, R.color.colorStatusOFFBold));
+            imageOff.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusOFFBold));
+            statusSB.setTextColor(ContextCompat.getColor(this, R.color.colorStatusSBBold));
+            imageSB.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusSBBold));
+            statusDR.setTextColor(ContextCompat.getColor(this, R.color.colorStatusDRBold));
+            imageDR.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusDRBold));
+            statusON.setTextColor(ContextCompat.getColor(this, R.color.colorStatusONBold));
+            imageON.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusONBold));
         });
 
         save.setOnClickListener(v -> {
@@ -741,6 +738,14 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             sb.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSB));
             dr.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDR));
             on.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusON));
+            statusOff.setTextColor(ContextCompat.getColor(this, R.color.colorStatusOFFBold));
+            imageOff.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusOFFBold));
+            statusSB.setTextColor(ContextCompat.getColor(this, R.color.colorStatusSBBold));
+            imageSB.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusSBBold));
+            statusDR.setTextColor(ContextCompat.getColor(this, R.color.colorStatusDRBold));
+            imageDR.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusDRBold));
+            statusON.setTextColor(ContextCompat.getColor(this, R.color.colorStatusONBold));
+            imageON.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusONBold));
             if (current_status != last_status) {
                 reqdelinprogress = true;
                 reccount = 0;
@@ -754,9 +759,22 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                     }
                 }
                 statusDaoViewModel.insertStatus(new LogEntity(last_status, current_status, editLocation.getText().toString(), note.getText().toString(), null, today, getCurrentSeconds()));
-                saveLastPosition(current_status);
-                saveLastStatusTime();
+                lastStatusData.saveLasStatus(current_status,getCurrentSeconds());
+//                saveLastStatusTime();
                 restartActivity();
+            }else {
+                if(last_status == EnumsConstants.STATUS_OFF){
+                    off.setClickable(false);
+                }
+                if(last_status == EnumsConstants.STATUS_SB){
+                    sb.setClickable(false);
+                }
+                if(last_status == EnumsConstants.STATUS_DR){
+                    dr.setClickable(false);
+                }
+                if(last_status == EnumsConstants.STATUS_ON){
+                    on.setClickable(false);
+                }
             }
         });
     }
@@ -770,18 +788,27 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         if (lastPos == EnumsConstants.STATUS_ON) {
             cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusON));
             statusText.setText(R.string.on);
-            icon.setImageResource(R.drawable.power);
+            statusText.setTextColor(ContextCompat.getColor(this, R.color.colorStatusONBold));
+            icon.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusONBold));
+            icon.setImageResource(R.drawable.ic_truck);
         } else if (lastPos == EnumsConstants.STATUS_SB) {
             cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSB));
+            statusText.setTextColor(ContextCompat.getColor(this, R.color.colorStatusSBBold));
+            icon.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusSBBold));
             statusText.setText(R.string.sb);
-            icon.setImageResource(R.drawable.sleeping);
+            icon.setImageResource(R.drawable.ic__1748117516352401124513);
         } else if (lastPos == EnumsConstants.STATUS_DR) {
             cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDR));
+            statusText.setTextColor(ContextCompat.getColor(this, R.color.colorStatusDRBold));
+            icon.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusDRBold));
             statusText.setText(R.string.dr);
-            icon.setImageResource(R.drawable.driving);
+            icon.setImageResource(R.drawable.ic_steering_wheel_svgrepo_com);
         } else {
             cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusOFF));
+            statusText.setTextColor(ContextCompat.getColor(this, R.color.colorStatusOFFBold));
+            icon.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusOFFBold));
             statusText.setText(R.string.off);
+            icon.setImageResource(R.drawable.ic_baseline_power_settings_new_24);
         }
     }
 
@@ -790,6 +817,14 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         sb = findViewById(R.id.cardSB);
         dr = findViewById(R.id.cardDR);
         on = findViewById(R.id.cardON);
+        imageOff = findViewById(R.id.imageOff);
+        statusOff = findViewById(R.id.statusOff);
+        imageSB = findViewById(R.id.imageSB);
+        statusSB = findViewById(R.id.statusSB);
+        imageDR = findViewById(R.id.imageDR);
+        statusDR = findViewById(R.id.statusDR);
+        imageON = findViewById(R.id.imageON);
+        statusON = findViewById(R.id.statusON);
         visiblityViewCons = findViewById(R.id.idVisibilityViewCons);
 
         off.setOnClickListener(v -> {
@@ -798,6 +833,14 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             sb.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSB));
             dr.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDR));
             on.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusON));
+            statusOff.setTextColor(ContextCompat.getColor(this, R.color.white));
+            imageOff.setColorFilter(ContextCompat.getColor(this, R.color.white));
+            statusSB.setTextColor(ContextCompat.getColor(this, R.color.colorStatusSBBold));
+            imageSB.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusSBBold));
+            statusDR.setTextColor(ContextCompat.getColor(this, R.color.colorStatusDRBold));
+            imageDR.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusDRBold));
+            statusON.setTextColor(ContextCompat.getColor(this, R.color.colorStatusONBold));
+            imageON.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusONBold));
             current_status = EnumsConstants.STATUS_OFF;
         });
 
@@ -807,6 +850,14 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             sb.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSBBold));
             dr.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDR));
             on.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusON));
+            statusOff.setTextColor(ContextCompat.getColor(this, R.color.colorStatusOFFBold));
+            imageOff.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusOFFBold));
+            statusSB.setTextColor(ContextCompat.getColor(this, R.color.white));
+            imageSB.setColorFilter(ContextCompat.getColor(this, R.color.white));
+            statusDR.setTextColor(ContextCompat.getColor(this, R.color.colorStatusDRBold));
+            imageDR.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusDRBold));
+            statusON.setTextColor(ContextCompat.getColor(this, R.color.colorStatusONBold));
+            imageON.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusONBold));
             current_status = EnumsConstants.STATUS_SB;
         });
 
@@ -816,6 +867,14 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             sb.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSB));
             dr.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDRBold));
             on.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusON));
+            statusOff.setTextColor(ContextCompat.getColor(this, R.color.colorStatusOFFBold));
+            imageOff.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusOFFBold));
+            statusSB.setTextColor(ContextCompat.getColor(this, R.color.colorStatusSBBold));
+            imageSB.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusSBBold));
+            statusDR.setTextColor(ContextCompat.getColor(this, R.color.white));
+            imageDR.setColorFilter(ContextCompat.getColor(this, R.color.white));
+            statusON.setTextColor(ContextCompat.getColor(this, R.color.colorStatusONBold));
+            imageON.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusONBold));
             current_status = EnumsConstants.STATUS_DR;
         });
 
@@ -825,6 +884,14 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             sb.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSB));
             dr.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDR));
             on.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusONBold));
+            statusOff.setTextColor(ContextCompat.getColor(this, R.color.colorStatusOFFBold));
+            imageOff.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusOFFBold));
+            statusSB.setTextColor(ContextCompat.getColor(this, R.color.colorStatusSBBold));
+            imageSB.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusSBBold));
+            statusDR.setTextColor(ContextCompat.getColor(this, R.color.colorStatusDRBold));
+            imageDR.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusDRBold));
+            statusON.setTextColor(ContextCompat.getColor(this, R.color.white));
+            imageON.setColorFilter(ContextCompat.getColor(this, R.color.white));
             current_status = EnumsConstants.STATUS_ON;
         });
     }
@@ -2092,7 +2159,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         intent.putExtra("data", data);
         startService(intent);
 
-        ChangeDateTimeBroadcast changeDateTimeBroadcast = new ChangeDateTimeBroadcast() {
+        changeDateTimeBroadcast = new ChangeDateTimeBroadcast() {
             @Override
             public void onDayChanged() {
                 time = "" + Calendar.getInstance().getTime();
@@ -2108,12 +2175,13 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                     }
                 }
                 setTodayAttr(time, today);
-                clickLGDDButtons();
+                optimizeViewModels();
+                customRulerChart.setArrayList(truckStatusEntities);
+                lastStatusData.saveLasStatus(lastStatusData.getLastStatus(),0);
+                update();
             }
         };
-
-        registerReceiver(changeDateTimeBroadcast, ChangeDateTimeBroadcast.getIntentFilter());
-
+        this.registerReceiver(changeDateTimeBroadcast, ChangeDateTimeBroadcast.getIntentFilter());
     }
 
     /**
@@ -2138,8 +2206,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onDestroy() {
+        super.onDestroy();
+        this.unregisterReceiver(changeDateTimeBroadcast);
     }
-
 }

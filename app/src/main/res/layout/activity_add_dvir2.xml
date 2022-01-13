@@ -102,11 +102,11 @@
                         android:textColor="?attr/customTextColor"
                         android:textStyle="bold"
                         app:drawableEndCompat="@drawable/add_unit"
-                        app:drawableStartCompat="@drawable/driving" />
+                        app:drawableStartCompat="@drawable/ic_truck_blue" />
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="2dp"
+                        android:layout_height="1dp"
                         android:layout_marginVertical="10dp"
                         android:background="?attr/customBgViewColor" />
 
@@ -150,11 +150,11 @@
                         android:textColor="?attr/customTextColor"
                         android:textStyle="bold"
                         app:drawableEndCompat="@drawable/add_unit"
-                        app:drawableStartCompat="@drawable/driving" />
+                        app:drawableStartCompat="@drawable/ic_trailer_svgrepo_com" />
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="2dp"
+                        android:layout_height="1dp"
                         android:layout_marginVertical="10dp"
                         android:background="?attr/customBgViewColor" />
 
@@ -194,11 +194,12 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="15dp"
                             android:drawablePadding="10dp"
+                            android:textSize="14sp"
                             android:gravity="center_vertical"
                             android:text="@string/no_defect_detected"
                             android:textColor="?attr/customTextColor"
                             app:drawableStartCompat="@drawable/defect_settings"
-                            app:drawableTint="#aaa" />
+                            />
 
                         <TextView
                             style="@style/TextAppearance.AppCompat.Large"
@@ -207,8 +208,9 @@
                             android:layout_margin="10dp"
                             android:background="@drawable/add_defect_text_background"
                             android:gravity="center"
+                            android:textSize="14sp"
                             android:text="@string/click_here_to_add_defects"
-                            android:textColor="?attr/customTextHintColor" />
+                            android:textColor="@color/colorActionText" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -270,7 +272,7 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="10dp">
+                        android:padding="16dp">
 
                         <TextView
                             style="@style/TextAppearance.AppCompat.Small"
@@ -278,17 +280,17 @@
                             android:layout_height="wrap_content"
                             android:text="@string/time"
                             android:textColor="?attr/customTextColor"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
+                            android:textSize="16sp" />
 
                         <TextView
                             android:id="@+id/idDefectTimeText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:hint="Create time"
-                            android:textColorHint="?attr/customTextHintColor"
-                            android:textSize="16sp"
+                            android:textColorHint="@color/colorActionText"
+                            android:textSize="14sp"
                             android:textAlignment="viewEnd"
+                            android:textStyle="bold"
                             android:textColor="?attr/customTextColor"
                             style="@style/TextAppearance.AppCompat.Small"
                             app:drawableEndCompat="@drawable/keyboard_bottom_arrow"
@@ -298,13 +300,13 @@
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="2dp"
+                        android:layout_height="1dp"
                         android:background="?attr/customBgViewColor" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="10dp">
+                        android:padding="16dp">
 
                         <TextView
                             android:id="@+id/idLocationT"
@@ -313,7 +315,6 @@
                             android:layout_height="wrap_content"
                             android:text="Location"
                             android:textColor="?attr/customTextColor"
-                            android:textStyle="bold"
                             android:textSize="16sp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintLeft_toLeftOf="parent"
@@ -327,10 +328,11 @@
                             android:background="@android:color/transparent"
                             android:hint="Your Location"
                             android:inputType="text"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:textAlignment="viewEnd"
-                            android:textColor="?attr/customTextColor"
-                            android:textColorHint="?attr/customTextColor"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorActionText"
+                            android:textColorHint="@color/colorActionText"
                             android:backgroundTint="?attr/customTextHintColor"
                             app:drawableEndCompat="@drawable/ic_baseline_location_on_24"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -342,7 +344,7 @@
                     <View
                         android:id="@+id/idview"
                         android:layout_width="match_parent"
-                        android:layout_height="2dp"
+                        android:layout_height="1dp"
                         android:layout_marginBottom="10dp"
                         android:background="?attr/customBgViewColor" />
                 </LinearLayout>
