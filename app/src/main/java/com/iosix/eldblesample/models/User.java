@@ -55,8 +55,16 @@ public class User {
     @ColumnInfo(name = "vehicle_id")
     private String vehicleId;
 
-    public User(String name, String lastName,String phone, String driverId, String coDriver, String homeTerminalAddress,
-                String timeZone, String trailNumber, String notes, String vehicleId) {
+    @SerializedName("image")
+    @ColumnInfo(name = "image")
+    private String image;
+
+    @SerializedName("main_office")
+    @ColumnInfo(name = "main_office")
+    private String mainOffice;
+
+    public User(String name, String lastName, String phone, String driverId, String coDriver, String homeTerminalAddress,
+                String timeZone, String trailNumber, String notes, String vehicleId, String image, String mainOffice) {
         this.name = name;
         this.lastName = lastName;
         this.phone = phone;
@@ -67,6 +75,8 @@ public class User {
         this.trailNumber = trailNumber;
         this.notes = notes;
         this.vehicleId = vehicleId;
+        this.image = image;
+        this.mainOffice = mainOffice;
     }
 
     public int getId() {
@@ -155,5 +165,21 @@ public class User {
 
     public void setVehicleId(String vehicleId) {
         this.vehicleId = vehicleId;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getMainOffice() {
+        return mainOffice;
+    }
+
+    public void setMainOffice(String mainOffice) {
+        this.mainOffice = mainOffice;
     }
 }

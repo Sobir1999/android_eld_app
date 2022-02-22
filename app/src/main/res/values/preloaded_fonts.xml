@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="preloaded_fonts" translatable="false">
+        <item>@font/advent_pro</item>
         <item>@font/archivo_black</item>
+        <item>@font/archivo_narrow</item>
+        <item>@font/montserrat</item>
+        <item>@font/nobile</item>
+        <item>@font/secular_one</item>
         <item>@font/titan_one</item>
     </array>
 </resources>

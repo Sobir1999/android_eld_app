@@ -6,7 +6,6 @@ public class TokenServiceHolder {
 
     APIInterface tokenService = null;
 
-    @Nullable
     public APIInterface get() {
         return tokenService;
     }

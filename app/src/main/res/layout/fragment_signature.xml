@@ -75,15 +75,16 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
+                android:layout_marginLeft="50dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginRight="8dp"
-                android:background="?attr/customBgColor"
+                android:layout_marginRight="50dp"
+                android:background="@drawable/background_main_view"
                 android:orientation="vertical"
                 tools:ignore="MissingConstraints">
 
@@ -94,17 +95,18 @@
                     android:padding="20dp">
 
                     <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:background="@drawable/signature" />
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="@drawable/ic__signature" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:text="@string/driver_singature"
-                        android:textColor="?attr/customTextColor"
-                        android:textSize="17sp"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="18sp"
+                        android:fontFamily="@font/montserrat"
                         android:textStyle="bold" />
 
                 </LinearLayout>
@@ -112,14 +114,14 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
+                    android:layout_marginHorizontal="20dp"
                     android:background="?attr/customBgViewColor" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
+                    android:layout_marginHorizontal="20dp"
+                    android:orientation="horizontal">
 
                     <RadioGroup
                         android:id="@+id/idRadioGroup"
@@ -131,23 +133,32 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/no_defects"
-                            android:buttonTint="?attr/customTextColor"
-                            android:textColor="?attr/customTextColor"/>
+                            android:layout_marginTop="16dp"
+                            android:fontFamily="@font/montserrat"
+                            android:textSize="15sp"
+                            android:theme="@style/MyRadioButton"
+                            android:textColor="?attr/customTextHintColor"/>
 
                         <RadioButton
                             android:id="@+id/idNeedCorrected"
+                            android:layout_marginTop="16dp"
+                            android:textSize="15sp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:buttonTint="?attr/customTextColor"
-                            android:textColor="?attr/customTextColor"
+                            android:fontFamily="@font/montserrat"
+                            android:theme="@style/MyRadioButton"
+                            android:textColor="?attr/customTextHintColor"
                             android:text="@string/above_defects_need_to_be_corrected" />
 
                         <RadioButton
                             android:id="@+id/idCorrected"
+                            android:fontFamily="@font/montserrat"
+                            android:layout_marginTop="16dp"
+                            android:textSize="15sp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:buttonTint="?attr/customTextColor"
-                            android:textColor="?attr/customTextColor"
+                            android:theme="@style/MyRadioButton"
+                            android:textColor="?attr/customTextHintColor"
                             android:text="@string/above_defects_corrected" />
                     </RadioGroup>
                 </LinearLayout>
@@ -155,22 +166,24 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="25dp"
+                    android:layout_marginStart="20dp"
                     android:text="@string/driver_singature"
-                    android:textColor="?attr/customTextColor"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@color/colorPrimary"
+                    android:fontFamily="@font/montserrat"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="140dp"
-                    android:layout_marginHorizontal="25dp"
+                    android:layout_height="match_parent"
                     android:layout_marginTop="5dp">
 
                     <com.github.gcacace.signaturepad.views.SignaturePad
                         android:id="@+id/idSignature"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="140dp"
+                        android:layout_marginHorizontal="180dp"
                         android:background="@drawable/add_signature_background"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -184,41 +197,46 @@
                         android:layout_height="wrap_content"
                         android:text="@string/draw_your_signature"
                         android:textColor="@color/customTextHintColor"
-                        android:textSize="15sp"
+                        android:textSize="20sp"
+                        android:fontFamily="@font/montserrat"
                         android:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="25dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:orientation="horizontal">
-
-                    <TextView
+                    <Button
                         android:id="@+id/idTVPreviousSignature"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="140dp"
+                        android:layout_height="30dp"
                         android:text="@string/use_previous_signature"
-                        android:textColor="@color/SignatureColorDefault"
-                        android:textSize="14sp" />
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginStart="30dp"
+                        android:fontFamily="@font/montserrat"
+                        android:textColor="@color/colorPrimary"
+                        android:textAllCaps="false"
+                        android:background="@drawable/button_bg"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
 
-                    <TextView
+
+                    <Button
                         android:id="@+id/idTVClearSignature"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="end"
-                        android:text="@string/clear_signature"
-                        android:textColor="@color/SignatureColorDefault"
-                        android:textSize="14sp" />
+                        android:layout_width="140dp"
+                        android:layout_height="30dp"
+                        android:text="@string/clear"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginEnd="30dp"
+                        android:fontFamily="@font/montserrat"
+                        android:textColor="@color/colorPrimary"
+                        android:textAllCaps="false"
+                        android:background="@drawable/button_bg"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
 
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </LinearLayout>
 
@@ -226,11 +244,11 @@
                 android:id="@+id/idMechanicLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp"
                 android:background="?attr/customBgColor"
                 android:orientation="vertical"
-                android:visibility="invisible"
+                android:visibility="gone"
                 tools:ignore="MissingConstraints">
 
                 <TextView
@@ -238,22 +256,25 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="25dp"
+                    android:layout_marginTop="16dp"
                     android:text="@string/mechanic_signature"
-                    android:textColor="?attr/customTextColor"
+                    android:textColor="@color/colorPrimary"
+                    android:fontFamily="@font/montserrat"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/idMechanicCons"
                     android:layout_width="match_parent"
-                    android:layout_height="140dp"
+                    android:layout_height="match_parent"
                     android:layout_marginHorizontal="25dp"
                     android:layout_marginTop="5dp">
 
                     <com.github.gcacace.signaturepad.views.SignaturePad
                         android:id="@+id/idSignatureMechanic"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="140dp"
+                        android:layout_marginHorizontal="180dp"
                         android:background="@drawable/add_signature_background"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -267,24 +288,48 @@
                         android:layout_height="wrap_content"
                         android:text="@string/draw_your_signature"
                         android:textColor="@color/customTextHintColor"
-                        android:textSize="15sp"
+                        android:textSize="20sp"
+                        android:fontFamily="@font/montserrat"
                         android:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
+                    <Button
+                        android:id="@+id/idTVPreviousMechanicSignature"
+                        android:layout_width="140dp"
+                        android:layout_height="30dp"
+                        android:text="@string/use_previous_signature"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginStart="30dp"
+                        android:fontFamily="@font/montserrat"
+                        android:textColor="@color/colorPrimary"
+                        android:textAllCaps="false"
+                        android:background="@drawable/button_bg"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+                    <Button
+                        android:id="@+id/idClearSignTextViewMechanic"
+                        android:layout_width="140dp"
+                        android:layout_height="30dp"
+                        android:text="@string/clear"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginEnd="30dp"
+                        android:fontFamily="@font/montserrat"
+                        android:textColor="@color/colorPrimary"
+                        android:textAllCaps="false"
+                        android:background="@drawable/button_bg"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <TextView
-                    android:id="@+id/idClearSignTextViewMechanic"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="10dp"
-                    android:text="@string/clear_signature"
-                    android:textColor="@color/SignatureColorDefault"
-                    android:textSize="14sp" />
             </LinearLayout>
 
         </LinearLayout>

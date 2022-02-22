@@ -41,7 +41,7 @@ public class AddDefectFragment extends Fragment {
 
     void initView(View view) {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(view.getContext(),
-                android.R.layout.simple_list_item_activated_1, defectsList);
+                R.layout.simple_defect_item, defectsList);
 
         ListView list = view.findViewById(R.id.listView);
         list.setAdapter(adapter);

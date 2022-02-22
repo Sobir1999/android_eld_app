@@ -11,7 +11,7 @@
     android:paddingTop="?attr/actionBarSize"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="280dp"
         android:layout_height="match_parent"
         android:layout_gravity="end">
@@ -52,14 +52,14 @@
                         android:id="@+id/idTimeDrive"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/_00h_00m"
+                        android:text="08h 00m"
                         android:textColor="?attr/customTextColor"
                         android:textSize="14sp"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/drive"
+                        android:text="@string/until_rest_break"
                         android:textColor="?attr/customTextHintColor"
                         android:textSize="12sp"/>
 
@@ -91,14 +91,14 @@
                             android:id="@+id/idTimeShift"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/_00h_00m"
+                            android:text="11h 00m"
                             android:textColor="?attr/customTextColor"
                             android:textSize="14sp"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/shift"
+                            android:text="@string/drive"
                             android:textSize="12sp"
                             android:textColor="?attr/customTextHintColor"/>
 
@@ -139,14 +139,14 @@
                             android:id="@+id/idTimeCycle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/_00h_00m"
+                            android:text="14h 00m"
                             android:textColor="?attr/customTextColor"
                             android:textSize="14sp"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/cycle"
+                            android:text="@string/shift"
                             android:textColor="?attr/customTextHintColor"
                             android:textSize="12sp"/>
 
@@ -178,14 +178,14 @@
                             android:id="@+id/idTimeUntilRestBreak"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/_00h_00m"
+                            android:text="70h 00m"
                             android:textColor="?attr/customTextColor"
                             android:textSize="14sp"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/until_rest_break"
+                            android:text="@string/cycle"
                             android:textColor="?attr/customTextHintColor"
                             android:textSize="12sp"/>
 
@@ -437,10 +437,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/idRecapRecyclerView"
+            android:nestedScrollingEnabled="false"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
     </LinearLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

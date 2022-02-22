@@ -65,7 +65,7 @@ public class CustomLiveRulerChart extends CustomRulerChart {
 
     @Override
     public void drawLineProgress(Canvas canvas, float CUSTOM_TABLE_WIDTH) {
-        float CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 3;
+        float CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 8;
         float startX = START_POINT_X;
         float startY = 0;
         float endX = 0;
@@ -153,7 +153,7 @@ public class CustomLiveRulerChart extends CustomRulerChart {
 
     @Override
     public void drawTextTime(Canvas canvas, float CUSTOM_TABLE_WIDTH) {
-        float CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 3;
+        float CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 8;
         canvas.drawText(
                 getTime(off),
                 START_POINT_X + CUSTOM_TABLE_WIDTH + 10.0f,

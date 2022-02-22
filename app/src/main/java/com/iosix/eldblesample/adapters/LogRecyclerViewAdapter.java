@@ -1,6 +1,7 @@
 package com.iosix.eldblesample.adapters;
 
 import android.content.Context;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +18,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
+import com.iosix.eldblesample.shared_prefs.DriverSharedPrefs;
 
+import java.util.Calendar;
 import java.util.List;
+import java.util.logging.LogRecord;
 
 public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerViewAdapter.LogViewHolder> {
 
@@ -29,10 +33,12 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
     private CardView dr_button;
     private ConstraintLayout idStatusContainer;
     private ConstraintLayout idLocationContainer;
+    private DriverSharedPrefs driverSharedPrefs;
 
     public LogRecyclerViewAdapter(Context context, List<LogEntity> logEntities){
         this.context = context;
         this.logEntities = logEntities;
+        driverSharedPrefs = new DriverSharedPrefs(context);
     }
 
     @NonNull
@@ -45,11 +51,40 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
     @Override
     public void onBindViewHolder(@NonNull LogRecyclerViewAdapter.LogViewHolder holder, int position) {
         holder.onBind(logEntities.get(position));
+        TextView textView = holder.itemView.findViewById(R.id.tv_timer_log);
+        int time = 0;
+        if (position < logEntities.size()-1){
+        time = logEntities.get(position+1).getSeconds()-logEntities.get(position).getSeconds();
+        }else {
+            time = getCurrentSeconds() - logEntities.get(position).getSeconds();
+        }
+        int hour = time/3600;
+        int minut = (time - hour*3600)/60;
+        if (hour<10){
+            if (minut < 10){
+                textView.setText(String.format("0%sh 0%sm",hour,minut));
+            }else {
+                textView.setText(String.format("0%sh %sm",hour,minut));
+            }
+        }else {
+            if (minut < 10){
+                textView.setText(String.format("%sh 0%sm",hour,minut));
+            }else {
+                textView.setText(String.format("%sh %sm",hour,minut));
+            }
+        }
     }
 
     @Override
     public int getItemCount() {
         return logEntities.size();
+    }
+    @SuppressWarnings("deprecation")
+    private int getCurrentSeconds() {
+        int hour = Calendar.getInstance().getTime().getHours();
+        int minute = Calendar.getInstance().getTime().getMinutes();
+        int second = Calendar.getInstance().getTime().getSeconds();
+        return hour * 3600 + minute * 60 + second;
     }
 
     class LogViewHolder extends RecyclerView.ViewHolder {
@@ -60,34 +95,21 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
             tv_time_log = itemView.findViewById(R.id.tv_time_log);
             tv_timer_log = itemView.findViewById(R.id.tv_timer_log);
             tv_location_log = itemView.findViewById(R.id.tv_location_log);
-            tv_driving_log = itemView.findViewById(R.id.tv_driving_log);
-            im_more_icon = itemView.findViewById(R.id.im_more_icon);
-            im_less_icon = itemView.findViewById(R.id.im_less_icon);
             dr_button = itemView.findViewById(R.id.dr_button);
             dr_text = itemView.findViewById(R.id.dr_text);
-            idStatusContainer = itemView.findViewById(R.id.idStatusContainer);
             idLocationContainer = itemView.findViewById(R.id.idLocationContainer);
         }
 
         void onBind(LogEntity logEntity){
 
-            im_more_icon.setOnClickListener(v -> {
-                idStatusContainer.setVisibility(View.VISIBLE);
-                idLocationContainer.setVisibility(View.VISIBLE);
-                im_more_icon.setVisibility(View.GONE);
-                im_less_icon.setVisibility(View.VISIBLE);
-            });
-
-            im_less_icon.setOnClickListener(v -> {
-                idStatusContainer.setVisibility(View.GONE);
-                idLocationContainer.setVisibility(View.GONE);
-                im_more_icon.setVisibility(View.VISIBLE);
-                im_less_icon.setVisibility(View.GONE);
-            });
-
             int t = logEntity.getSeconds();
             int hour = t/3600;
             int minut = (t - hour*3600)/60;
+            if (logEntity.getLocation() != null){
+                tv_location_log.setText(logEntity.getLocation());
+            }else {
+                tv_location_log.setText(driverSharedPrefs.getMainOffice());
+            }
             tv_log_id.setText(String.valueOf(logEntity.getId()));
 //            tv_timer_log.setText(String.format("%s:%s", hour, minut));
             switch (logEntity.getTo_status()){

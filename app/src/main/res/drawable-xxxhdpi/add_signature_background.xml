@@ -3,7 +3,7 @@
 
     <stroke
         android:width="2dp"
-        android:color="#aaa"
+        android:color="@color/customBgViewColor"
         android:dashGap="3dp"
         android:dashWidth="5dp" />
 

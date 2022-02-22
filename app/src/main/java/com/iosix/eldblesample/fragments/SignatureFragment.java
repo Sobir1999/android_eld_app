@@ -76,13 +76,14 @@ public class SignatureFragment extends Fragment {
 
     private SignaturePad signature,mechanicSignature;
     private LinearLayout mechanicLayout;
-    private TextView previousSignature, clearSignature,drawSignature,drawMecanicSignature;
+    private TextView previousSignature, clearSignature,drawSignature,drawMecanicSignature,previousMechanicSignature;
     private boolean hasSignature = false,hasMechanicSignature = false;
     private boolean isDefectsCorrected = false;
     private Context context;
     private Bitmap bitmap;
     private SignatureViewModel signatureViewModel;
     List<SignatureEntity> signatureEntities = new ArrayList<>();
+    List<MechanicSignatureEntity> mechanicSignatureEntities = new ArrayList<>();
     private RadioButton no_defect, correct_defect, corrected_defect;
     private ConstraintLayout mechanicCons;
     private TextView mechamnicTextView, mechanicText;
@@ -135,6 +136,7 @@ public class SignatureFragment extends Fragment {
         mechanicSignature = view.findViewById(R.id.idSignatureMechanic);
         drawMecanicSignature = view.findViewById(R.id.idTvDrawSignatureMechanic);
         mechanicLayout = view.findViewById(R.id.idMechanicLayout);
+        previousMechanicSignature = view.findViewById(R.id.idTVPreviousMechanicSignature);
 
         signaturePrefs = new SignaturePrefs(context);
 
@@ -149,7 +151,7 @@ public class SignatureFragment extends Fragment {
             if (signatureEntities.size() > 0){
                 bitmap = signatureEntities.get(signatureEntities.size() - 1).getSignatureBitmap();
                 previousSignature.setClickable(true);
-                previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
+//                previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
                 previousSignature.setOnClickListener(v -> {
                     signature.setSignatureBitmap(bitmap);
                 });
@@ -157,8 +159,20 @@ public class SignatureFragment extends Fragment {
                 Log.d("Signature missed","" + signatureEntities.get(signatureEntities.size() - 1).getSignatureBitmap());
             }else {
                 previousSignature.setClickable(false);
-                previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorDefault));
+//                previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorDefault));
 
+            }
+        });
+
+        signatureViewModel.getMgetAllMechanicSignatures().observe(getViewLifecycleOwner(),mechanicSignatureEntities1 -> {
+            if (mechanicSignatureEntities1.size() > 0){
+                bitmap = mechanicSignatureEntities1.get(mechanicSignatureEntities1.size()-1).getMechanicSignatureBitmap();
+                previousMechanicSignature.setClickable(true);
+                previousMechanicSignature.setOnClickListener(v ->{
+                    mechanicSignature.setSignatureBitmap(bitmap);
+                });
+            }else {
+                previousSignature.setClickable(false);
             }
         });
 

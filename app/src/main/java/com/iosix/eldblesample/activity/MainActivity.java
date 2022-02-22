@@ -16,6 +16,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -27,6 +28,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -103,7 +105,9 @@ import com.iosix.eldblesample.retrofit.ApiClient;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.DvirEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
+import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 import com.iosix.eldblesample.services.foreground.ForegroundService;
+import com.iosix.eldblesample.shared_prefs.DriverSharedPrefs;
 import com.iosix.eldblesample.shared_prefs.LastStatusData;
 import com.iosix.eldblesample.shared_prefs.SessionManager;
 import com.iosix.eldblesample.shared_prefs.UserData;
@@ -136,7 +140,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     private DrawerLayout drawerLayout;
     private Toolbar activity_main_toolbar;
     private CardView off, sb, dr, on;
-    private ConstraintLayout visiblityViewCons;
+    private LinearLayout visiblityViewCons;
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private Switch nightModeSwitch;
     private int current_status = EnumsConstants.STATUS_OFF;
@@ -144,12 +148,16 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     private String time = "" + Calendar.getInstance().getTime();
     private String today = time.split(" ")[1] + " " + time.split(" ")[2];
     private ArrayList<LogEntity> truckStatusEntities;
+    private ArrayList<LogEntity> logEntities;
     private APIInterface apiInterface;
     private TextView lastDaysCheck,idUsername,statusOff,statusSB,statusDR,statusON;
     private ImageView toDaySelect,imageOff,imageSB,imageDR,imageON;
     private ChangeDateTimeBroadcast changeDateTimeBroadcast;
     private CustomLiveRulerChart customRulerChart;
     private LastStatusData lastStatusData;
+    private ArrayList<VehiclesEntity> vehiclesEntities;
+    private ArrayList<User> users;
+    private DriverSharedPrefs driverSharedPrefs;
 
     private double latitude;
     private double longtitude;
@@ -192,6 +200,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         super.initView();
         UserData userData = new UserData(this);
         lastStatusData = new LastStatusData(this);
+        logEntities = new ArrayList<>();
 
         userViewModel = new UserViewModel(this.getApplication());
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
@@ -201,7 +210,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
         setContentView(R.layout.activity_main);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 
         optimizeViewModels();
 
@@ -239,6 +247,9 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
         mEldManager = EldManager.GetEldManager(this, "123456789A");
 
+        vehiclesEntities = new ArrayList<>();
+        driverSharedPrefs = new DriverSharedPrefs(this);
+
         if (getIntent().getIntExtra("JSON",0) == 1){
             getUSerInfo();
         }
@@ -253,14 +264,13 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
         setActivateDr();
 
-        setTodayAttr(time,today);
+//        setTodayAttr(time,today);
 
         startService();
 
         update();
 
-//        getAllDrivers();
-
+        getAllDrivers();
     }
 
     private void update() {
@@ -289,6 +299,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
     private void getUSerInfo(){
 
+
         userViewModel.deleteUser();
         apiInterface.getUser().enqueue(new Callback<User>() {
             @Override
@@ -296,9 +307,13 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                 if (response.isSuccessful()){
                     User user = response.body();
                     assert user != null;
-                    userViewModel.insertUser(new User(user.getName(),user.getLastName(),user.getPhone(),user.getDriverId(),
-                            user.getCoDriver(),user.getHomeTerminalAddress(),user.getTimeZone(),
-                            user.getTrailNumber(),user.getNotes(),user.getVehicleId()));
+                    driverSharedPrefs.saveLastUsername(user.getName());
+                    driverSharedPrefs.saveLastSurname(user.getLastName());
+                    driverSharedPrefs.saveLastImage(user.getImage());
+                    driverSharedPrefs.saveLastHomeTerAdd(user.getHomeTerminalAddress());
+                    driverSharedPrefs.saveLastHomeTerTimeZone(user.getTimeZone());
+                    driverSharedPrefs.saveLastMainOffice(user.getMainOffice());
+                    driverSharedPrefs.saveLastPhoneNumber(user.getPhone());
                 }
             }
 
@@ -318,8 +333,18 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                     Data users = response.body();
                     assert users != null;
                     Log.d("Adverse diving",users.getDriver().getUser().get(0).getLastName());
-                    for(int i = 0;i < users.getDriver().getUser().size();i++){
-                        userViewModel.insertUser(users.getDriver().getUser().get(i));
+                    if (MainActivity.this.users.size() == 0){
+                        for(int i = 0;i < users.getDriver().getUser().size();i++){
+                            userViewModel.insertUser(users.getDriver().getUser().get(i));
+                        }
+                    }else {
+                        for (int i = 0; i < users.getDriver().getUser().size(); i++) {
+                            for (int j = 0; j < MainActivity.this.users.size(); j++) {
+                                if (!users.getDriver().getUser().get(i).getPhone().equals(MainActivity.this.users.get(j).getPhone())){
+                                    MainActivity.this.users.add(users.getDriver().getUser().get(i));
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -332,8 +357,23 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         apiInterface.getAllVehicles().enqueue(new Callback<VehicleData>() {
             @Override
             public void onResponse(@NonNull Call<VehicleData> call, @NonNull Response<VehicleData> response) {
-//                VehicleData vehicleData = response.body();
-//                Log.d("Adverse diving2",String.valueOf(vehicleData.getVehicle().getVehicleList().get(0).getVehicle_id()));
+                VehicleData vehicleData = response.body();
+                assert vehicleData != null;
+                if (vehiclesEntities.size() != 0){
+                    for (int i = 0; i < vehicleData.getVehicle().getVehicleList().size(); i++) {
+                        for (int j = 0; j < vehiclesEntities.size(); j++) {
+                            Log.d("Adverse diving2",String.valueOf(vehicleData.getVehicle().getVehicleList().get(0).getVehicle_id()));
+                            if (!vehicleData.getVehicle().getVehicleList().get(i).getVehicle_id().equals(vehiclesEntities.get(j).getName())){
+                                daoViewModel.insertVehicle(new VehiclesEntity(vehicleData.getVehicle().getVehicleList().get(i).getVehicle_id()));
+                            }
+                        }
+                    }
+                }else {
+                    for (int i = 0; i < vehicleData.getVehicle().getVehicleList().size(); i++) {
+                        Log.d("Adverse diving2",String.valueOf(vehicleData.getVehicle().getVehicleList().get(0).getVehicle_id()));
+                        daoViewModel.insertVehicle(new VehiclesEntity(vehicleData.getVehicle().getVehicleList().get(i).getVehicle_id()));
+                    }
+                }
             }
 
             @Override
@@ -373,37 +413,37 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         });
 
 
-        lastDaysCheck = findViewById(R.id.idLastDaysCheckAll);
-        toDaySelect = findViewById(R.id.idTableRadioBtn);
-
-        lastDaysCheck.setOnClickListener(v -> {
-            if (lastAdapter.isSelected()) {
-                lastAdapter.setSelected(false);
-                daysArray.clear();
-                toDaySelect.setImageResource(R.drawable.state_unchacked);
-                lastDaysCheck.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_check_circle_outline_24, 0);
-            } else {
-                daoViewModel.getMgetAllDays().observe(this, dayEntities -> {
-                    for (int i = 0; i < dayEntities.size(); i++) {
-                        daysArray.add(dayEntities.get(i).getDay_name());
-                    }
-                });
-
-                lastAdapter.setSelected(true);
-                toDaySelect.setImageResource(R.drawable.state_checked);
-                lastDaysCheck.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.state_checked, 0);
-            }
-            lastAdapter.notifyDataSetChanged();
-
-            optionMenu.findItem(R.id.shareMenu).setVisible(!daysArray.isEmpty());
-        });
+//        lastDaysCheck = findViewById(R.id.idLastDaysCheckAll);
+//        toDaySelect = findViewById(R.id.idTableRadioBtn);
+//
+//        lastDaysCheck.setOnClickListener(v -> {
+//            if (lastAdapter.isSelected()) {
+//                lastAdapter.setSelected(false);
+//                daysArray.clear();
+//                toDaySelect.setImageResource(R.drawable.state_unchacked);
+//                lastDaysCheck.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_check_circle_outline_24, 0);
+//            } else {
+//                daoViewModel.getMgetAllDays().observe(this, dayEntities -> {
+//                    for (int i = 0; i < dayEntities.size(); i++) {
+//                        daysArray.add(dayEntities.get(i).getDay_name());
+//                    }
+//                });
+//
+//                lastAdapter.setSelected(true);
+//                toDaySelect.setImageResource(R.drawable.state_checked);
+//                lastDaysCheck.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.state_checked, 0);
+//            }
+//            lastAdapter.notifyDataSetChanged();
+//
+//            optionMenu.findItem(R.id.shareMenu).setVisible(!daysArray.isEmpty());
+//        });
     }
 
     public void setActivateDr() {
 
-        Button activateDr = findViewById(R.id.idDRWithExeption);
-
-        activateDr.setOnClickListener(v -> showAlertDialog());
+//        Button activateDr = findViewById(R.id.idDRWithExeption);
+//
+//        activateDr.setOnClickListener(v -> showAlertDialog());
     }
 
     private void showAlertDialog() {
@@ -423,25 +463,37 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     }
 
     private void clickLGDDButtons() {
-        TextView inspectionMode, addDvir,idPhoneNumber;
+        TextView inspectionMode, addDvir,idPhoneNumber,settings,hosRules;
         Button log, general, doc, dvir;
-        TextView recap = findViewById(R.id.idRecap);
         log = findViewById(R.id.idTableBtnLog);
         general = findViewById(R.id.idTableBtnGeneral);
         doc = findViewById(R.id.idTableBtnDocs);
         dvir = findViewById(R.id.idTableBtnDVIR);
         inspectionMode = findViewById(R.id.idSpinnerInspection);
-        addDvir = findViewById(R.id.idTableDvir);
+        settings = findViewById(R.id.idSettings);
+        hosRules = findViewById(R.id.idHOSRules);
+//        addDvir = findViewById(R.id.idTableDvir);
         TextView idLogout = findViewById(R.id.idLogout);
         idUsername = findViewById(R.id.idUsername);
-        idPhoneNumber = findViewById(R.id.idPhoneNumber);
+//        idPhoneNumber = findViewById(R.id.idPhoneNumber);
         CircleImageView idAvatar = findViewById(R.id.idAvatar);
 
-        userViewModel.getMgetUser().observe(this,user -> {
-            if (user != null){
-                idUsername.setText(String.format("%s %s", user.getName(), user.getLastName()));
-                idPhoneNumber.setText(user.getPhone());
-            }
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            idUsername.setText(String.format("%s %s", driverSharedPrefs.getFirstname(),driverSharedPrefs.getLastname()));
+//            idPhoneNumber.setText(driverSharedPrefs.getPhoneNumber());
+        },1000);
+
+        settings.setOnClickListener(view -> {
+            Intent intent = new Intent(this,SettingsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        });
+
+        hosRules.setOnClickListener(view -> {
+            Intent intent = new Intent(this,RulesActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         });
 
         idLogout.setOnClickListener(v -> {
@@ -470,13 +522,13 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
             if (dvirEntities.size() == 0){
 
-                addDvir.setText(R.string.no_dvir);
-                addDvir.setOnClickListener(v ->{
-                            Intent intent = new Intent(MainActivity.this, AddDvirActivity.class);
-                            intent.putExtra("currDay",today);
-                            startActivity(intent);
-                        }
-                );
+//                addDvir.setText(R.string.no_dvir);
+//                addDvir.setOnClickListener(v ->{
+//                            Intent intent = new Intent(MainActivity.this, AddDvirActivity.class);
+//                            intent.putExtra("currDay",today);
+//                            startActivity(intent);
+//                        }
+//                );
                 dvir.setOnClickListener(v -> {
                             Intent intent = new Intent(this, LGDDActivity.class);
                             intent.putExtra("position", 3);
@@ -492,17 +544,17 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
                         hasDvir = true;
 
-                        addDvir.setText(R.string.dvir);
-
+//                        addDvir.setText(R.string.dvir);
+//
                         String c = dvirEntities.get(i).getDay();
-
-                        addDvir.setOnClickListener(v ->{
-                            Intent intent = new Intent(this, LGDDActivity.class);
-                            intent.putExtra("position", 3);
-                            intent.putExtra("currDay",c);
-                            startActivity(intent);
-                                }
-                        );
+//
+//                        addDvir.setOnClickListener(v ->{
+//                            Intent intent = new Intent(this, LGDDActivity.class);
+//                            intent.putExtra("position", 3);
+//                            intent.putExtra("currDay",c);
+//                            startActivity(intent);
+//                                }
+//                        );
                         dvir.setOnClickListener(v -> {
                                     Intent intent = new Intent(this, LGDDActivity.class);
                                     intent.putExtra("position", 3);
@@ -512,13 +564,13 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                         );
                     }
                 }if (!hasDvir){
-                    addDvir.setText(R.string.no_dvir);
-                    addDvir.setOnClickListener(v ->{
-                                Intent intent = new Intent(MainActivity.this, AddDvirActivity.class);
-                                intent.putExtra("currDay",today);
-                                startActivity(intent);
-                            }
-                    );
+//                    addDvir.setText(R.string.no_dvir);
+//                    addDvir.setOnClickListener(v ->{
+//                                Intent intent = new Intent(MainActivity.this, AddDvirActivity.class);
+//                                intent.putExtra("currDay",today);
+//                                startActivity(intent);
+//                            }
+//                    );
                     dvir.setOnClickListener(v -> {
                                 Intent intent = new Intent(this, LGDDActivity.class);
                                 intent.putExtra("position", 3);
@@ -556,8 +608,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         );
 
 
-        recap.setOnClickListener(v -> loadLGDDFragment(RecapFragment.newInstance()));
-
+//        recap.setOnClickListener(v -> loadLGDDFragment(RecapFragment.newInstance()));
+//
         inspectionMode.setOnClickListener(v -> {
             loadLGDDFragment(InspectionModuleFragment.newInstance());
             drawerLayout.close();
@@ -578,6 +630,15 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
         apiInterface = ApiClient.getClient().create(APIInterface.class);
         truckStatusEntities = new ArrayList<>();
+        users = new ArrayList<>();
+
+        daoViewModel.getGetAllVehicles().observe(this,vehiclesEntities -> {
+            this.vehiclesEntities.addAll(vehiclesEntities);
+        });
+
+        userViewModel.getMgetDrivers().observe(this,drivers -> {
+            users.addAll(drivers);
+        });
 
         statusDaoViewModel = ViewModelProviders.of(this).get(StatusDaoViewModel.class);
         statusDaoViewModel.getmAllStatus().observe(this, truckStatusEntities -> {
@@ -585,6 +646,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                 if (truckStatusEntities.get(i).getTime().equalsIgnoreCase(today)) {
                     MainActivity.this.truckStatusEntities.add(truckStatusEntities.get(i));
                 }
+                logEntities.add(truckStatusEntities.get(i));
             }
 
             Log.d("SetTextI18n",String.valueOf(truckStatusEntities.size()));
@@ -678,10 +740,10 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     }
 
     private void onClickVisiblityCanAndSaveBtn() {
-        Button save = findViewById(R.id.idVisButtonSave);
-        Button cancel = findViewById(R.id.idVisButtonCancel);
-        TextView findLocation = findViewById(R.id.idLoactionIcon);
-        final EditText editLocation = findViewById(R.id.idLocationEdit);
+        Button save = findViewById(R.id.idSaveStatus);
+        Button cancel = findViewById(R.id.idCancelStatus);
+        TextView findLocation = findViewById(R.id.idCurrentLocation);
+        final EditText editLocation = findViewById(R.id.idTvCurrentLocation);
         final EditText note = findViewById(R.id.idNoteEdit);
 
         findLocation.setOnClickListener(v -> {
@@ -710,11 +772,11 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
         });
 
-        findViewById(R.id.idDocumentIcon).setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("application/*");
-            startActivityForResult(intent, 0);
-        });
+//        findViewById(R.id.idDocumentIcon).setOnClickListener(v -> {
+//            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+//            intent.setType("application/*");
+//            startActivityForResult(intent, 0);
+//        });
 
         cancel.setOnClickListener(v -> {
             visiblityViewCons.setVisibility(View.GONE);
@@ -758,10 +820,28 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                         break;
                     }
                 }
-                statusDaoViewModel.insertStatus(new LogEntity(last_status, current_status, editLocation.getText().toString(), note.getText().toString(), null, today, getCurrentSeconds()));
-                lastStatusData.saveLasStatus(current_status,getCurrentSeconds());
+                if (editLocation.getText().equals("")){
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+                    alertDialog.setTitle("No location created")
+                            .setMessage("Create current location!")
+                            .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
+                    AlertDialog alert = alertDialog.create();
+                    alert.show();
+                }
+                else if (note.getText().equals("")){
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+                    alertDialog.setTitle("No note created")
+                            .setMessage("Create note!")
+                            .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
+                    AlertDialog alert = alertDialog.create();
+                    alert.show();
+                }
+                else{
+                    statusDaoViewModel.insertStatus(new LogEntity(last_status, current_status, editLocation.getText().toString(), note.getText().toString(), null, today, getCurrentSeconds()));
+                        lastStatusData.saveLasStatus(current_status,getCurrentSeconds());
 //                saveLastStatusTime();
-                restartActivity();
+                    restartActivity();
+                }
             }else {
                 if(last_status == EnumsConstants.STATUS_OFF){
                     off.setClickable(false);
@@ -785,31 +865,31 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         TextView statusText = findViewById(R.id.idStatusText);
 //        TextView statusTime = findViewById(R.id.idStatusTime);
 
-        if (lastPos == EnumsConstants.STATUS_ON) {
-            cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusON));
-            statusText.setText(R.string.on);
-            statusText.setTextColor(ContextCompat.getColor(this, R.color.colorStatusONBold));
-            icon.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusONBold));
-            icon.setImageResource(R.drawable.ic_truck);
-        } else if (lastPos == EnumsConstants.STATUS_SB) {
-            cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSB));
-            statusText.setTextColor(ContextCompat.getColor(this, R.color.colorStatusSBBold));
-            icon.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusSBBold));
-            statusText.setText(R.string.sb);
-            icon.setImageResource(R.drawable.ic__1748117516352401124513);
-        } else if (lastPos == EnumsConstants.STATUS_DR) {
-            cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDR));
-            statusText.setTextColor(ContextCompat.getColor(this, R.color.colorStatusDRBold));
-            icon.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusDRBold));
-            statusText.setText(R.string.dr);
-            icon.setImageResource(R.drawable.ic_steering_wheel_svgrepo_com);
-        } else {
-            cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusOFF));
-            statusText.setTextColor(ContextCompat.getColor(this, R.color.colorStatusOFFBold));
-            icon.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusOFFBold));
-            statusText.setText(R.string.off);
-            icon.setImageResource(R.drawable.ic_baseline_power_settings_new_24);
-        }
+//        if (lastPos == EnumsConstants.STATUS_ON) {
+//            cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusON));
+//            statusText.setText(R.string.on);
+//            statusText.setTextColor(ContextCompat.getColor(this, R.color.colorStatusONBold));
+//            icon.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusONBold));
+//            icon.setImageResource(R.drawable.ic_truck);
+//        } else if (lastPos == EnumsConstants.STATUS_SB) {
+//            cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSB));
+//            statusText.setTextColor(ContextCompat.getColor(this, R.color.colorStatusSBBold));
+//            icon.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusSBBold));
+//            statusText.setText(R.string.sb);
+//            icon.setImageResource(R.drawable.ic__1748117516352401124513);
+//        } else if (lastPos == EnumsConstants.STATUS_DR) {
+//            cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDR));
+//            statusText.setTextColor(ContextCompat.getColor(this, R.color.colorStatusDRBold));
+//            icon.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusDRBold));
+//            statusText.setText(R.string.dr);
+//            icon.setImageResource(R.drawable.ic_steering_wheel_svgrepo_com);
+//        } else {
+//            cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusOFF));
+//            statusText.setTextColor(ContextCompat.getColor(this, R.color.colorStatusOFFBold));
+//            icon.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusOFFBold));
+//            statusText.setText(R.string.off);
+//            icon.setImageResource(R.drawable.ic_baseline_power_settings_new_24);
+//        }
     }
 
     private void onClickCustomBtn() {
@@ -920,7 +1000,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
     private void getDrawerTouchEvent() {
         nightModeSwitch = findViewById(R.id.idNightChoose);
-        TextView textView = findViewById(R.id.idSpinnerLanguage);
+//        TextView textView = findViewById(R.id.idSpinnerLanguage);
 
         checkNightModeActivated();
         nightModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -934,10 +1014,10 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             restartActivity();
         });
 
-        textView.setOnClickListener(v -> {
-            loadLGDDFragment(new LanguageFragment());
-            drawerLayout.closeDrawers();
-        });
+//        textView.setOnClickListener(v -> {
+//            loadLGDDFragment(new LanguageFragment());
+//            drawerLayout.closeDrawers();
+//        });
     }
 
     private void checkNightModeActivated() {
@@ -1471,557 +1551,558 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                                 }
                             });
 
-                } else if (RecordType != EldBroadcastTypes.ELD_DATA_RECORD) {
-                    if (RecordType == EldBroadcastTypes.ELD_CACHED_RECORD) {
-                        //Shows how to get to the specific record types created based on the broadcast info
-
-                        if (reqdelinprogress) {
-                            reccount++;
-                            Log.d("TESTING", "received " + reccount + " records");
-                            if (reccount == 10) {
-                                Log.d("TESTING", "delete " + startseq + "-" + (startseq + 9));
-                                mEldManager.DeleteRecord(startseq, startseq + 9);
-                                Log.d("TESTING", "request " + (startseq + 10));
-                                mEldManager.RequestRecord(startseq + 10);
-                            } else if (reccount == 11) {
-                                Log.d("TESTING", "success!");
-
-                                reqdelinprogress = false;
-                                reccount = 0;
-                            }
-                        }
-
-                        if (dataRec instanceof EldCachedPeriodicRecord) {
-
-                            ArrayList<Double> arrayList = new ArrayList<>();
-                            arrayList.add(((EldCachedPeriodicRecord) dataRec).getLatitude());
-                            arrayList.add(((EldCachedPeriodicRecord) dataRec).getLongitude());
-
-                            Call<CashedMotionRecord> call = apiInterface.sendMotion(new CashedMotionRecord(
-                                    ((EldCachedPeriodicRecord)dataRec).getRpm(),
-                                    ((EldCachedPeriodicRecord)dataRec).getSpeed(),
-                                    ((EldCachedPeriodicRecord)dataRec).getOdometer(),
-                                    ((EldCachedPeriodicRecord)dataRec).getEngineHours(),
-                                    new Point("Point",arrayList),
-                                    ((EldCachedPeriodicRecord)dataRec).getGpsSpeed(),
-                                    ((EldCachedPeriodicRecord)dataRec).getRecType().toString()
-                            ));
-                            call.enqueue(new Callback<CashedMotionRecord>() {
-                                @Override
-                                public void onResponse(@NonNull Call<CashedMotionRecord> call, @NonNull Response<CashedMotionRecord> response) {
-
-                                }
-
-                                @Override
-                                public void onFailure(@NonNull Call<CashedMotionRecord> call, @NonNull Throwable t) {
-
-                                }
-                            });
-
-
-                        } else if (dataRec instanceof EldCachedNewTimeRecord) {
-                            ((EldCachedNewTimeRecord) (dataRec)).getEngineHours();
-                            ((EldCachedNewTimeRecord) (dataRec)).getNewUnixTime();
-
-                            Call<NewTimeRecord> call = apiInterface.sendNewtime(new NewTimeRecord(
-                                    ((EldCachedNewTimeRecord)dataRec).getOldUnixTime(),
-                                    ((EldCachedNewTimeRecord)dataRec).getNewUnixTime(),
-                                    ((EldCachedNewTimeRecord)dataRec).getSeqNum()
-                            ));
-
-                            call.enqueue(new Callback<NewTimeRecord>() {
-                                @Override
-                                public void onResponse(@NonNull Call<NewTimeRecord> call, @NonNull Response<NewTimeRecord> response) {
-
-                                }
-
-                                @Override
-                                public void onFailure(@NonNull Call<NewTimeRecord> call, @NonNull Throwable t) {
-
-                                }
-                            });
-                        } else if (dataRec instanceof EldCachedNewVinRecord) {
-
-                            Call<CachedEngineRecord> call = apiInterface.sendEnginecache(new CachedEngineRecord(
-                                    ((EldCachedNewVinRecord)dataRec).getVin(),
-                                    ((EldCachedNewVinRecord)dataRec).getOdometer(),
-                                    ((EldCachedNewVinRecord)dataRec).getEngineHours(),
-                                    ((int) ((EldCachedNewVinRecord) dataRec).getUnixTime()),
-                                    ((EldCachedNewVinRecord)dataRec).getSeqNum(),
-                                    ((EldCachedNewVinRecord)dataRec).getRecType().toString()
-                            ));
-
-                            call.enqueue(new Callback<CachedEngineRecord>() {
-                                @Override
-                                public void onResponse(@NonNull Call<CachedEngineRecord> call, @NonNull Response<CachedEngineRecord> response) {
-
-                                }
-
-                                @Override
-                                public void onFailure(@NonNull Call<CachedEngineRecord> call, @NonNull Throwable t) {
-
-                                }
-                            });
-                        }
-
-                    } else if (RecordType == EldBroadcastTypes.ELD_DRIVER_BEHAVIOR_RECORD) {
-                        driverEnabled = true;
-
-                                int cruiseStatus = 0;
-
-                                switch (((EldDriverBehaviorRecord)dataRec).getCruiseStatus()){
-                                    case CRUISE_ACCELERATE: cruiseStatus = 1;
-                                        break;
-
-                                    case CRUISE_ACCELERATOR_OVERRIDE: cruiseStatus = 2;
-                                        break;
-
-                                    case CRUISE_DECELERATE: cruiseStatus = 3;
-                                        break;
-
-                                    case CRUISE_HOLD: cruiseStatus = 4;
-                                        break;
-
-                                    case CRUISE_INVALID: cruiseStatus = 5;
-                                        break;
-
-                                    case CRUISE_NA: cruiseStatus = 6;
-                                        break;
-
-                                    case CRUISE_OFF: cruiseStatus = 7;
-                                        break;
-
-                                    case CRUISE_RESUME: cruiseStatus = 8;
-                                        break;
-
-                                    case CRUISE_SET: cruiseStatus = 9;
-                                        break;
-
-                                }
-
-                                int seatBeltStatus = 0;
-
-                                switch (((EldDriverBehaviorRecord)dataRec).getSeatBeltStatus()){
-                                    case BELT_INVALID: seatBeltStatus = 1;
-                                        break;
-
-                                    case BELT_LOCKED: seatBeltStatus = 2;
-                                        break;
-
-                                    case BELT_NA: seatBeltStatus = 3;
-                                        break;
-
-                                    case BELT_UNKNOWN: seatBeltStatus = 4;
-                                        break;
-
-                                    case BELT_UNLOCKED: seatBeltStatus = 5;
-                                        break;
-                                }
-
-                                int absStatus = 0;
-
-                                switch (((EldDriverBehaviorRecord)dataRec).getAbsStatus()){
-                                    case ABS_ACTIVE: absStatus = 1;
-                                        break;
-
-                                    case ABS_INVALID: absStatus = 2;
-                                        break;
-
-                                    case ABS_NA: absStatus = 3;
-                                        break;
-
-                                    case ABS_PASSIVE: absStatus = 4;
-                                        break;
-
-                                    case ABS_RESERVED: absStatus = 5;
-                                        break;
-                                }
-
-                                int tractionStatus = 0;
-
-                                switch (((EldDriverBehaviorRecord)dataRec).getTractionStatus()){
-                                    case TRACTION_ERROR: tractionStatus = 1;
-                                        break;
-
-                                    case TRACTION_INVALID: tractionStatus = 2;
-                                        break;
-
-                                    case TRACTION_NA: tractionStatus = 3;
-                                        break;
-
-                                    case TRACTION_OFF: tractionStatus = 4;
-                                        break;
-
-                                    case TRACTION_ON: tractionStatus = 5;
-                                        break;
-                                }
-
-                                int stabilityStatus = 0;
-
-                                switch (((EldDriverBehaviorRecord)dataRec).getStabilityStatus()){
-                                    case STABILITY_ACTIVE: stabilityStatus = 1;
-                                        break;
-
-                                    case STABILITY_INVALID: stabilityStatus = 2;
-                                        break;
-
-                                    case STABILITY_NA: stabilityStatus = 3;
-                                        break;
-
-                                    case STABILITY_PASSIVE: stabilityStatus = 4;
-                                        break;
-
-                                    case STABILITY_RESERVED: stabilityStatus = 5;
-                                        break;
-                                }
-                                Call<DriverBehaviorRecord> sendData = apiInterface.sendDriverbehavior(new DriverBehaviorRecord(
-                                        ((EldDriverBehaviorRecord) dataRec).getCruiseSetSpeed_kph(),
-                                        cruiseStatus,
-                                        ((EldDriverBehaviorRecord) dataRec).getThrottlePosition_pct(),
-                                        ((EldDriverBehaviorRecord) dataRec).getAcceleratorPosition_pct(),
-                                        ((EldDriverBehaviorRecord) dataRec).getBrakePosition_pct(),
-                                        seatBeltStatus,
-                                        ((EldDriverBehaviorRecord) dataRec).getSteeringWheelAngle_deg(),
-                                        absStatus,
-                                        tractionStatus,
-                                        stabilityStatus,
-                                        ((EldDriverBehaviorRecord) dataRec).getBrakeSystemPressure_kpa()
-                                ));
-
-                                sendData.enqueue(new Callback<DriverBehaviorRecord>() {
-                                    @Override
-                                    public void onResponse(@NonNull Call<DriverBehaviorRecord> call, @NonNull Response<DriverBehaviorRecord> response) {
-
-                                    }
-
-                                    @Override
-                                    public void onFailure(@NonNull Call<DriverBehaviorRecord> call, @NonNull Throwable t) {
-                                        Toast.makeText(MainActivity.this,t.getMessage(),Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-
-                    } else if (RecordType == EldBroadcastTypes.ELD_ENGINE_PARAMETERS_RECORD) {
-                        engineEnabled = true;
-
-                        Call<EngineLiveRecord> sendData = apiInterface.sendEnginelive(new EngineLiveRecord(
-                                ((EldEngineRecord)dataRec).getOilPressure_kpa(),
-                                ((EldEngineRecord)dataRec).getTurboBoost_kpa(),
-                                ((EldEngineRecord)dataRec).getIntakePressure_kpa(),
-                                ((EldEngineRecord)dataRec).getFuelPressure_kpa(),
-                                ((EldEngineRecord)dataRec).getLoad_pct(),
-                                ((EldEngineRecord)dataRec).getMassAirFlow_galPerSec(),
-                                ((EldEngineRecord)dataRec).getTurboRpm(),
-                                ((EldEngineRecord)dataRec).getIntakeTemp_c(),
-                                ((EldEngineRecord)dataRec).getEngineCoolantTemp_c(),
-                                ((EldEngineRecord)dataRec).getEngineOilTemp_c(),
-                                ((EldEngineRecord)dataRec).getFuelTemp_c(),
-                                ((EldEngineRecord)dataRec).getChargeCoolerTemp_c(),
-                                ((EldEngineRecord)dataRec).getTorque_Nm(),
-                                ((EldEngineRecord)dataRec).getEngineOilLevel_pct(),
-                                ((EldEngineRecord)dataRec).getEngineCoolantLevel_pct(),
-                                ((EldEngineRecord)dataRec).getTripFuel_L(),
-                                ((EldEngineRecord)dataRec).getDrivingFuelEconomy_LPerKm()
-                        ));
-
-                        sendData.enqueue(new Callback<EngineLiveRecord>() {
-                            @Override
-                            public void onResponse(@NonNull Call<EngineLiveRecord> call, @NonNull Response<EngineLiveRecord> response) {
-
-                            }
-
-                            @Override
-                            public void onFailure(@NonNull Call<EngineLiveRecord> call, @NonNull Throwable t) {
-                                Toast.makeText(MainActivity.this,t.getMessage(),Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    } else if (RecordType == EldBroadcastTypes.ELD_EMISSIONS_PARAMETERS_RECORD) {
-                        emissionsEnabled = true;
-
-                        int dpfRegenStatus = 0;
-
-                        switch (((EldEmissionsRecord)dataRec).getDpfRegenStatus()){
-                            case DPFREGEN_ACTIVE: dpfRegenStatus = 1;
-                                break;
-
-                            case DPFREGEN_INVALID: dpfRegenStatus = 2;
-                                break;
-
-                            case DPFREGEN_NA: dpfRegenStatus = 3;
-                                break;
-
-                            case DPFREGEN_NOT_ACTIVE: dpfRegenStatus = 4;
-                                break;
-
-                            case DPFREGEN_PASSIVE: dpfRegenStatus = 5;
-                                break;
-                        }
-
-                        int scrInducementFaultStatus = 0;
-
-                        switch (((EldEmissionsRecord)dataRec).getScrInducementFaultStatus()){
-                            case SCRINDUCEMENT_INACTIVE: scrInducementFaultStatus = 1;
-                                break;
-
-                            case SCRINDUCEMENT_INVALID: scrInducementFaultStatus = 2;
-                                break;
-
-                            case SCRINDUCEMENT_LEVEL1: scrInducementFaultStatus = 3;
-                                break;
-
-                            case SCRINDUCEMENT_LEVEL2: scrInducementFaultStatus = 4;
-                                break;
-
-                            case SCRINDUCEMENT_LEVEL3: scrInducementFaultStatus = 5;
-                                break;
-
-                            case SCRINDUCEMENT_LEVEL4: scrInducementFaultStatus = 6;
-                                break;
-
-                            case SCRINDUCEMENT_LEVEL5: scrInducementFaultStatus = 7;
-                                break;
-
-                            case SCRINDUCEMENT_NA: scrInducementFaultStatus = 8;
-                                break;
-
-                            case SCRINDUCEMENT_TEMPORARY_OVERRIDE: scrInducementFaultStatus = 9;
-                                break;
-                        }
-
-                        Call<EmissionsRecord> sendData = apiInterface.sendEmission(new EmissionsRecord(
-                                ((EldEmissionsRecord) dataRec).getNOxInlet(),
-                                ((EldEmissionsRecord) dataRec).getNOxOutlet(),
-                                ((EldEmissionsRecord) dataRec).getAshLoad(),
-                                ((EldEmissionsRecord) dataRec).getDpfSootLoad(),
-                                dpfRegenStatus,
-                                ((EldEmissionsRecord) dataRec).getDpfDifferentialPressure(),
-                                ((EldEmissionsRecord) dataRec).getEgrValvePosition(),
-                                ((EldEmissionsRecord) dataRec).getAfterTreatmentFuelPressure(),
-                                ((EldEmissionsRecord) dataRec).getEngineExhaustTemperature(),
-                                ((EldEmissionsRecord) dataRec).getExhaustTemperature1(),
-                                ((EldEmissionsRecord) dataRec).getExhaustTemperature2(),
-                                ((EldEmissionsRecord) dataRec).getExhaustTemperature3(),
-                                ((EldEmissionsRecord) dataRec).getDefFluidLevel(),
-                                ((EldEmissionsRecord) dataRec).getDefTankTemperature(),
-                                scrInducementFaultStatus
-                        ));
-
-                        sendData.enqueue(new Callback<EmissionsRecord>() {
-                            @Override
-                            public void onResponse(@NonNull Call<EmissionsRecord> call, @NonNull Response<EmissionsRecord> response) {
-
-                            }
-
-                            @Override
-                            public void onFailure(@NonNull Call<EmissionsRecord> call, @NonNull Throwable t) {
-                                Toast.makeText(MainActivity.this,t.getMessage(),Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-                    } else if (RecordType == EldBroadcastTypes.ELD_TRANSMISSION_PARAMETERS_RECORD) {
-                        transmissionEnabled = true;
-
-                        int torqueConverterLockupState = 0;
-
-                        switch (((EldTransmissionRecord)dataRec).getTorqueConverterLockupStatus()){
-                            case TORQUECNV_LOCKUP_DISENGAGED: torqueConverterLockupState = 1;
-                                break;
-
-                            case TORQUECNV_LOCKUP_ENGAGED: torqueConverterLockupState = 2;
-                                break;
-
-                            case TORQUECNV_LOCKUP_ERROR: torqueConverterLockupState = 3;
-                                break;
-
-                            case TORQUECNV_LOCKUP_INVALID: torqueConverterLockupState = 4;
-                                break;
-
-                            case TORQUECNV_LOCKUP_NA: torqueConverterLockupState = 5;
-                                break;
-                        }
-                        Call<TransmissionRecord> call = apiInterface.sendTransmission(new TransmissionRecord(
-                                ((EldTransmissionRecord) dataRec).getOutputShaftRpm(),
-                                ((EldTransmissionRecord) dataRec).getGearStatus(),
-                                ((EldTransmissionRecord) dataRec).getRequestGearStatus(),
-                                ((EldTransmissionRecord) dataRec).getTransmissionOilTemp_c(),
-                                torqueConverterLockupState
-                        ));
-
-                        call.enqueue(new Callback<TransmissionRecord>() {
-                            @Override
-                            public void onResponse(@NonNull Call<TransmissionRecord> call, @NonNull Response<TransmissionRecord> response) {
-
-                            }
-
-                            @Override
-                            public void onFailure(@NonNull Call<TransmissionRecord> call, @NonNull Throwable t) {
-                                Toast.makeText(MainActivity.this,t.getMessage(),Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    } else if (RecordType == EldBroadcastTypes.ELD_FUEL_RECORD) {
-                        fuelEnabled = true;
-                        int highrpmState = 0;
-
-                        switch (((EldFuelRecord)dataRec).getStateHighRPM()){
-                            case BAD: highrpmState = 1;
-                                break;
-
-                            case GOOD: highrpmState = 2;
-                                break;
-
-                            case INVALID: highrpmState = 3;
-                                break;
-
-                            case NORMAL: highrpmState = 4;
-                                break;
-
-                            case TERRIBLE: highrpmState = 5;
-                                break;
-
-                            case WARNING: highrpmState = 6;
-                                break;
-                        }
-
-                        int unsteadyState = 0;
-
-                        switch (((EldFuelRecord)dataRec).getStateUnsteady()){
-                            case BAD: unsteadyState = 1;
-                                break;
-
-                            case GOOD: unsteadyState = 2;
-                                break;
-
-                            case INVALID: unsteadyState = 3;
-                                break;
-
-                            case NORMAL: unsteadyState = 4;
-                                break;
-
-                            case TERRIBLE: unsteadyState = 5;
-                                break;
-
-                            case WARNING: unsteadyState = 6;
-                                break;
-                        }
-
-                        int enginepowerState = 0;
-
-                        switch (((EldFuelRecord)dataRec).getStateEnginePower()){
-                            case BAD: enginepowerState = 1;
-                                break;
-
-                            case GOOD: enginepowerState = 2;
-                                break;
-
-                            case INVALID: enginepowerState = 3;
-                                break;
-
-                            case NORMAL: enginepowerState = 4;
-                                break;
-
-                            case TERRIBLE: enginepowerState = 5;
-                                break;
-
-                            case WARNING: enginepowerState = 6;
-                                break;
-                        }
-
-                        int accelState = 0;
-
-                        switch (((EldFuelRecord)dataRec).getStateAccel()){
-                            case BAD: accelState = 1;
-                                break;
-
-                            case GOOD: accelState = 2;
-                                break;
-
-                            case INVALID: accelState = 3;
-                                break;
-
-                            case NORMAL: accelState = 4;
-                                break;
-
-                            case TERRIBLE: accelState = 5;
-                                break;
-
-                            case WARNING: accelState = 6;
-                                break;
-                        }
-
-                        int eco = 0;
-
-                        switch (((EldFuelRecord)dataRec).getStateEco()){
-                            case BAD: eco = 1;
-                                break;
-
-                            case GOOD: eco = 2;
-                                break;
-
-                            case INVALID: eco = 3;
-                                break;
-
-                            case NORMAL: eco = 4;
-                                break;
-
-                            case TERRIBLE: eco = 5;
-                                break;
-
-                            case WARNING: eco = 6;
-                                break;
-                        }
-
-                        int anticipateState = 0;
-
-                        switch (((EldFuelRecord)dataRec).getStateAnticipate()){
-                            case BAD: anticipateState = 1;
-                                break;
-
-                            case GOOD: anticipateState = 2;
-                                break;
-
-                            case INVALID: anticipateState = 3;
-                                break;
-
-                            case NORMAL: anticipateState = 4;
-                                break;
-
-                            case TERRIBLE: anticipateState = 5;
-                                break;
-
-                            case WARNING: anticipateState = 6;
-                                break;
-                        }
-
-                        Call<FuelRecord> call = apiInterface.sendFuel(new FuelRecord(
-                                ((EldFuelRecord) dataRec).getFuelLevelPercent(),
-                                ((EldFuelRecord) dataRec).getFuelIntegratedLiters(),
-                                ((EldFuelRecord) dataRec).getTotalFuelConsumedLiters(),
-                                ((EldFuelRecord) dataRec).getFuelRateLitersPerHours(),
-                                ((EldFuelRecord) dataRec).getIdleFuelConsumedLiters(),
-                                ((EldFuelRecord) dataRec).getIdleTimeHours(),
-                                highrpmState,
-                                unsteadyState,
-                                enginepowerState,
-                                accelState,
-                                eco,
-                                anticipateState
-                        ));
-
-                        call.enqueue(new Callback<FuelRecord>() {
-                            @Override
-                            public void onResponse(@NonNull Call<FuelRecord> call, @NonNull Response<FuelRecord> response) {
-
-                            }
-
-                            @Override
-                            public void onFailure(@NonNull Call<FuelRecord> call, @NonNull Throwable t) {
-                                Toast.makeText(MainActivity.this,t.getMessage(),Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-                    } else if (RecordType == EldBroadcastTypes.ELD_DIAGNOSTIC_RECORD) {
-                        diagnosticEnabled = true;
-                    }
-                } else {
+//                } else if (RecordType != EldBroadcastTypes.ELD_DATA_RECORD) {
+//                    if (RecordType == EldBroadcastTypes.ELD_CACHED_RECORD) {
+//                        //Shows how to get to the specific record types created based on the broadcast info
+//
+//                        if (reqdelinprogress) {
+//                            reccount++;
+//                            Log.d("TESTING", "received " + reccount + " records");
+//                            if (reccount == 10) {
+//                                Log.d("TESTING", "delete " + startseq + "-" + (startseq + 9));
+//                                mEldManager.DeleteRecord(startseq, startseq + 9);
+//                                Log.d("TESTING", "request " + (startseq + 10));
+//                                mEldManager.RequestRecord(startseq + 10);
+//                            } else if (reccount == 11) {
+//                                Log.d("TESTING", "success!");
+//
+//                                reqdelinprogress = false;
+//                                reccount = 0;
+//                            }
+//                        }
+//
+//                        if (dataRec instanceof EldCachedPeriodicRecord) {
+//
+//                            ArrayList<Double> arrayList = new ArrayList<>();
+//                            arrayList.add(((EldCachedPeriodicRecord) dataRec).getLatitude());
+//                            arrayList.add(((EldCachedPeriodicRecord) dataRec).getLongitude());
+//
+//                            Call<CashedMotionRecord> call = apiInterface.sendMotion(new CashedMotionRecord(
+//                                    ((EldCachedPeriodicRecord)dataRec).getRpm(),
+//                                    ((EldCachedPeriodicRecord)dataRec).getSpeed(),
+//                                    ((EldCachedPeriodicRecord)dataRec).getOdometer(),
+//                                    ((EldCachedPeriodicRecord)dataRec).getEngineHours(),
+//                                    new Point("Point",arrayList),
+//                                    ((EldCachedPeriodicRecord)dataRec).getGpsSpeed(),
+//                                    ((EldCachedPeriodicRecord)dataRec).getRecType().toString()
+//                            ));
+//                            call.enqueue(new Callback<CashedMotionRecord>() {
+//                                @Override
+//                                public void onResponse(@NonNull Call<CashedMotionRecord> call, @NonNull Response<CashedMotionRecord> response) {
+//
+//                                }
+//
+//                                @Override
+//                                public void onFailure(@NonNull Call<CashedMotionRecord> call, @NonNull Throwable t) {
+//
+//                                }
+//                            });
+//
+//
+//                        } else if (dataRec instanceof EldCachedNewTimeRecord) {
+//                            ((EldCachedNewTimeRecord) (dataRec)).getEngineHours();
+//                            ((EldCachedNewTimeRecord) (dataRec)).getNewUnixTime();
+//
+//                            Call<NewTimeRecord> call = apiInterface.sendNewtime(new NewTimeRecord(
+//                                    ((EldCachedNewTimeRecord)dataRec).getOldUnixTime(),
+//                                    ((EldCachedNewTimeRecord)dataRec).getNewUnixTime(),
+//                                    ((EldCachedNewTimeRecord)dataRec).getSeqNum()
+//                            ));
+//
+//                            call.enqueue(new Callback<NewTimeRecord>() {
+//                                @Override
+//                                public void onResponse(@NonNull Call<NewTimeRecord> call, @NonNull Response<NewTimeRecord> response) {
+//
+//                                }
+//
+//                                @Override
+//                                public void onFailure(@NonNull Call<NewTimeRecord> call, @NonNull Throwable t) {
+//
+//                                }
+//                            });
+//                        } else if (dataRec instanceof EldCachedNewVinRecord) {
+//
+//                            Call<CachedEngineRecord> call = apiInterface.sendEnginecache(new CachedEngineRecord(
+//                                    ((EldCachedNewVinRecord)dataRec).getVin(),
+//                                    ((EldCachedNewVinRecord)dataRec).getOdometer(),
+//                                    ((EldCachedNewVinRecord)dataRec).getEngineHours(),
+//                                    ((int) ((EldCachedNewVinRecord) dataRec).getUnixTime()),
+//                                    ((EldCachedNewVinRecord)dataRec).getSeqNum(),
+//                                    ((EldCachedNewVinRecord)dataRec).getRecType().toString()
+//                            ));
+//
+//                            call.enqueue(new Callback<CachedEngineRecord>() {
+//                                @Override
+//                                public void onResponse(@NonNull Call<CachedEngineRecord> call, @NonNull Response<CachedEngineRecord> response) {
+//
+//                                }
+//
+//                                @Override
+//                                public void onFailure(@NonNull Call<CachedEngineRecord> call, @NonNull Throwable t) {
+//
+//                                }
+//                            });
+//                        }
+//
+//                    } else if (RecordType == EldBroadcastTypes.ELD_DRIVER_BEHAVIOR_RECORD) {
+//                        driverEnabled = true;
+//
+//                                int cruiseStatus = 0;
+//
+//                                switch (((EldDriverBehaviorRecord)dataRec).getCruiseStatus()){
+//                                    case CRUISE_ACCELERATE: cruiseStatus = 1;
+//                                        break;
+//
+//                                    case CRUISE_ACCELERATOR_OVERRIDE: cruiseStatus = 2;
+//                                        break;
+//
+//                                    case CRUISE_DECELERATE: cruiseStatus = 3;
+//                                        break;
+//
+//                                    case CRUISE_HOLD: cruiseStatus = 4;
+//                                        break;
+//
+//                                    case CRUISE_INVALID: cruiseStatus = 5;
+//                                        break;
+//
+//                                    case CRUISE_NA: cruiseStatus = 6;
+//                                        break;
+//
+//                                    case CRUISE_OFF: cruiseStatus = 7;
+//                                        break;
+//
+//                                    case CRUISE_RESUME: cruiseStatus = 8;
+//                                        break;
+//
+//                                    case CRUISE_SET: cruiseStatus = 9;
+//                                        break;
+//
+//                                }
+//
+//                                int seatBeltStatus = 0;
+//
+//                                switch (((EldDriverBehaviorRecord)dataRec).getSeatBeltStatus()){
+//                                    case BELT_INVALID: seatBeltStatus = 1;
+//                                        break;
+//
+//                                    case BELT_LOCKED: seatBeltStatus = 2;
+//                                        break;
+//
+//                                    case BELT_NA: seatBeltStatus = 3;
+//                                        break;
+//
+//                                    case BELT_UNKNOWN: seatBeltStatus = 4;
+//                                        break;
+//
+//                                    case BELT_UNLOCKED: seatBeltStatus = 5;
+//                                        break;
+//                                }
+//
+//                                int absStatus = 0;
+//
+//                                switch (((EldDriverBehaviorRecord)dataRec).getAbsStatus()){
+//                                    case ABS_ACTIVE: absStatus = 1;
+//                                        break;
+//
+//                                    case ABS_INVALID: absStatus = 2;
+//                                        break;
+//
+//                                    case ABS_NA: absStatus = 3;
+//                                        break;
+//
+//                                    case ABS_PASSIVE: absStatus = 4;
+//                                        break;
+//
+//                                    case ABS_RESERVED: absStatus = 5;
+//                                        break;
+//                                }
+//
+//                                int tractionStatus = 0;
+//
+//                                switch (((EldDriverBehaviorRecord)dataRec).getTractionStatus()){
+//                                    case TRACTION_ERROR: tractionStatus = 1;
+//                                        break;
+//
+//                                    case TRACTION_INVALID: tractionStatus = 2;
+//                                        break;
+//
+//                                    case TRACTION_NA: tractionStatus = 3;
+//                                        break;
+//
+//                                    case TRACTION_OFF: tractionStatus = 4;
+//                                        break;
+//
+//                                    case TRACTION_ON: tractionStatus = 5;
+//                                        break;
+//                                }
+//
+//                                int stabilityStatus = 0;
+//
+//                                switch (((EldDriverBehaviorRecord)dataRec).getStabilityStatus()){
+//                                    case STABILITY_ACTIVE: stabilityStatus = 1;
+//                                        break;
+//
+//                                    case STABILITY_INVALID: stabilityStatus = 2;
+//                                        break;
+//
+//                                    case STABILITY_NA: stabilityStatus = 3;
+//                                        break;
+//
+//                                    case STABILITY_PASSIVE: stabilityStatus = 4;
+//                                        break;
+//
+//                                    case STABILITY_RESERVED: stabilityStatus = 5;
+//                                        break;
+//                                }
+//                                Call<DriverBehaviorRecord> sendData = apiInterface.sendDriverbehavior(new DriverBehaviorRecord(
+//                                        ((EldDriverBehaviorRecord) dataRec).getCruiseSetSpeed_kph(),
+//                                        cruiseStatus,
+//                                        ((EldDriverBehaviorRecord) dataRec).getThrottlePosition_pct(),
+//                                        ((EldDriverBehaviorRecord) dataRec).getAcceleratorPosition_pct(),
+//                                        ((EldDriverBehaviorRecord) dataRec).getBrakePosition_pct(),
+//                                        seatBeltStatus,
+//                                        ((EldDriverBehaviorRecord) dataRec).getSteeringWheelAngle_deg(),
+//                                        absStatus,
+//                                        tractionStatus,
+//                                        stabilityStatus,
+//                                        ((EldDriverBehaviorRecord) dataRec).getBrakeSystemPressure_kpa()
+//                                ));
+//
+//                                sendData.enqueue(new Callback<DriverBehaviorRecord>() {
+//                                    @Override
+//                                    public void onResponse(@NonNull Call<DriverBehaviorRecord> call, @NonNull Response<DriverBehaviorRecord> response) {
+//
+//                                    }
+//
+//                                    @Override
+//                                    public void onFailure(@NonNull Call<DriverBehaviorRecord> call, @NonNull Throwable t) {
+//                                        Toast.makeText(MainActivity.this,t.getMessage(),Toast.LENGTH_SHORT).show();
+//                                    }
+//                                });
+//
+//                    } else if (RecordType == EldBroadcastTypes.ELD_ENGINE_PARAMETERS_RECORD) {
+//                        engineEnabled = true;
+//
+//                        Call<EngineLiveRecord> sendData = apiInterface.sendEnginelive(new EngineLiveRecord(
+//                                ((EldEngineRecord)dataRec).getOilPressure_kpa(),
+//                                ((EldEngineRecord)dataRec).getTurboBoost_kpa(),
+//                                ((EldEngineRecord)dataRec).getIntakePressure_kpa(),
+//                                ((EldEngineRecord)dataRec).getFuelPressure_kpa(),
+//                                ((EldEngineRecord)dataRec).getLoad_pct(),
+//                                ((EldEngineRecord)dataRec).getMassAirFlow_galPerSec(),
+//                                ((EldEngineRecord)dataRec).getTurboRpm(),
+//                                ((EldEngineRecord)dataRec).getIntakeTemp_c(),
+//                                ((EldEngineRecord)dataRec).getEngineCoolantTemp_c(),
+//                                ((EldEngineRecord)dataRec).getEngineOilTemp_c(),
+//                                ((EldEngineRecord)dataRec).getFuelTemp_c(),
+//                                ((EldEngineRecord)dataRec).getChargeCoolerTemp_c(),
+//                                ((EldEngineRecord)dataRec).getTorque_Nm(),
+//                                ((EldEngineRecord)dataRec).getEngineOilLevel_pct(),
+//                                ((EldEngineRecord)dataRec).getEngineCoolantLevel_pct(),
+//                                ((EldEngineRecord)dataRec).getTripFuel_L(),
+//                                ((EldEngineRecord)dataRec).getDrivingFuelEconomy_LPerKm()
+//                        ));
+//
+//                        sendData.enqueue(new Callback<EngineLiveRecord>() {
+//                            @Override
+//                            public void onResponse(@NonNull Call<EngineLiveRecord> call, @NonNull Response<EngineLiveRecord> response) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onFailure(@NonNull Call<EngineLiveRecord> call, @NonNull Throwable t) {
+//                                Toast.makeText(MainActivity.this,t.getMessage(),Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//                    } else if (RecordType == EldBroadcastTypes.ELD_EMISSIONS_PARAMETERS_RECORD) {
+//                        emissionsEnabled = true;
+//
+//                        int dpfRegenStatus = 0;
+//
+//                        switch (((EldEmissionsRecord)dataRec).getDpfRegenStatus()){
+//                            case DPFREGEN_ACTIVE: dpfRegenStatus = 1;
+//                                break;
+//
+//                            case DPFREGEN_INVALID: dpfRegenStatus = 2;
+//                                break;
+//
+//                            case DPFREGEN_NA: dpfRegenStatus = 3;
+//                                break;
+//
+//                            case DPFREGEN_NOT_ACTIVE: dpfRegenStatus = 4;
+//                                break;
+//
+//                            case DPFREGEN_PASSIVE: dpfRegenStatus = 5;
+//                                break;
+//                        }
+//
+//                        int scrInducementFaultStatus = 0;
+//
+//                        switch (((EldEmissionsRecord)dataRec).getScrInducementFaultStatus()){
+//                            case SCRINDUCEMENT_INACTIVE: scrInducementFaultStatus = 1;
+//                                break;
+//
+//                            case SCRINDUCEMENT_INVALID: scrInducementFaultStatus = 2;
+//                                break;
+//
+//                            case SCRINDUCEMENT_LEVEL1: scrInducementFaultStatus = 3;
+//                                break;
+//
+//                            case SCRINDUCEMENT_LEVEL2: scrInducementFaultStatus = 4;
+//                                break;
+//
+//                            case SCRINDUCEMENT_LEVEL3: scrInducementFaultStatus = 5;
+//                                break;
+//
+//                            case SCRINDUCEMENT_LEVEL4: scrInducementFaultStatus = 6;
+//                                break;
+//
+//                            case SCRINDUCEMENT_LEVEL5: scrInducementFaultStatus = 7;
+//                                break;
+//
+//                            case SCRINDUCEMENT_NA: scrInducementFaultStatus = 8;
+//                                break;
+//
+//                            case SCRINDUCEMENT_TEMPORARY_OVERRIDE: scrInducementFaultStatus = 9;
+//                                break;
+//                        }
+//
+//                        Call<EmissionsRecord> sendData = apiInterface.sendEmission(new EmissionsRecord(
+//                                ((EldEmissionsRecord) dataRec).getNOxInlet(),
+//                                ((EldEmissionsRecord) dataRec).getNOxOutlet(),
+//                                ((EldEmissionsRecord) dataRec).getAshLoad(),
+//                                ((EldEmissionsRecord) dataRec).getDpfSootLoad(),
+//                                dpfRegenStatus,
+//                                ((EldEmissionsRecord) dataRec).getDpfDifferentialPressure(),
+//                                ((EldEmissionsRecord) dataRec).getEgrValvePosition(),
+//                                ((EldEmissionsRecord) dataRec).getAfterTreatmentFuelPressure(),
+//                                ((EldEmissionsRecord) dataRec).getEngineExhaustTemperature(),
+//                                ((EldEmissionsRecord) dataRec).getExhaustTemperature1(),
+//                                ((EldEmissionsRecord) dataRec).getExhaustTemperature2(),
+//                                ((EldEmissionsRecord) dataRec).getExhaustTemperature3(),
+//                                ((EldEmissionsRecord) dataRec).getDefFluidLevel(),
+//                                ((EldEmissionsRecord) dataRec).getDefTankTemperature(),
+//                                scrInducementFaultStatus
+//                        ));
+//
+//                        sendData.enqueue(new Callback<EmissionsRecord>() {
+//                            @Override
+//                            public void onResponse(@NonNull Call<EmissionsRecord> call, @NonNull Response<EmissionsRecord> response) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onFailure(@NonNull Call<EmissionsRecord> call, @NonNull Throwable t) {
+//                                Toast.makeText(MainActivity.this,t.getMessage(),Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//
+//                    } else if (RecordType == EldBroadcastTypes.ELD_TRANSMISSION_PARAMETERS_RECORD) {
+//                        transmissionEnabled = true;
+//
+//                        int torqueConverterLockupState = 0;
+//
+//                        switch (((EldTransmissionRecord)dataRec).getTorqueConverterLockupStatus()){
+//                            case TORQUECNV_LOCKUP_DISENGAGED: torqueConverterLockupState = 1;
+//                                break;
+//
+//                            case TORQUECNV_LOCKUP_ENGAGED: torqueConverterLockupState = 2;
+//                                break;
+//
+//                            case TORQUECNV_LOCKUP_ERROR: torqueConverterLockupState = 3;
+//                                break;
+//
+//                            case TORQUECNV_LOCKUP_INVALID: torqueConverterLockupState = 4;
+//                                break;
+//
+//                            case TORQUECNV_LOCKUP_NA: torqueConverterLockupState = 5;
+//                                break;
+//                        }
+//                        Call<TransmissionRecord> call = apiInterface.sendTransmission(new TransmissionRecord(
+//                                ((EldTransmissionRecord) dataRec).getOutputShaftRpm(),
+//                                ((EldTransmissionRecord) dataRec).getGearStatus(),
+//                                ((EldTransmissionRecord) dataRec).getRequestGearStatus(),
+//                                ((EldTransmissionRecord) dataRec).getTransmissionOilTemp_c(),
+//                                torqueConverterLockupState
+//                        ));
+//
+//                        call.enqueue(new Callback<TransmissionRecord>() {
+//                            @Override
+//                            public void onResponse(@NonNull Call<TransmissionRecord> call, @NonNull Response<TransmissionRecord> response) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onFailure(@NonNull Call<TransmissionRecord> call, @NonNull Throwable t) {
+//                                Toast.makeText(MainActivity.this,t.getMessage(),Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//                    }
+//                    else if (RecordType == EldBroadcastTypes.ELD_FUEL_RECORD) {
+//                        fuelEnabled = true;
+//                        int highrpmState = 0;
+//
+//                        switch (((EldFuelRecord)dataRec).getStateHighRPM()){
+//                            case BAD: highrpmState = 1;
+//                                break;
+//
+//                            case GOOD: highrpmState = 2;
+//                                break;
+//
+//                            case INVALID: highrpmState = 3;
+//                                break;
+//
+//                            case NORMAL: highrpmState = 4;
+//                                break;
+//
+//                            case TERRIBLE: highrpmState = 5;
+//                                break;
+//
+//                            case WARNING: highrpmState = 6;
+//                                break;
+//                        }
+//
+//                        int unsteadyState = 0;
+//
+//                        switch (((EldFuelRecord)dataRec).getStateUnsteady()){
+//                            case BAD: unsteadyState = 1;
+//                                break;
+//
+//                            case GOOD: unsteadyState = 2;
+//                                break;
+//
+//                            case INVALID: unsteadyState = 3;
+//                                break;
+//
+//                            case NORMAL: unsteadyState = 4;
+//                                break;
+//
+//                            case TERRIBLE: unsteadyState = 5;
+//                                break;
+//
+//                            case WARNING: unsteadyState = 6;
+//                                break;
+//                        }
+//
+//                        int enginepowerState = 0;
+//
+//                        switch (((EldFuelRecord)dataRec).getStateEnginePower()){
+//                            case BAD: enginepowerState = 1;
+//                                break;
+//
+//                            case GOOD: enginepowerState = 2;
+//                                break;
+//
+//                            case INVALID: enginepowerState = 3;
+//                                break;
+//
+//                            case NORMAL: enginepowerState = 4;
+//                                break;
+//
+//                            case TERRIBLE: enginepowerState = 5;
+//                                break;
+//
+//                            case WARNING: enginepowerState = 6;
+//                                break;
+//                        }
+//
+//                        int accelState = 0;
+//
+//                        switch (((EldFuelRecord)dataRec).getStateAccel()){
+//                            case BAD: accelState = 1;
+//                                break;
+//
+//                            case GOOD: accelState = 2;
+//                                break;
+//
+//                            case INVALID: accelState = 3;
+//                                break;
+//
+//                            case NORMAL: accelState = 4;
+//                                break;
+//
+//                            case TERRIBLE: accelState = 5;
+//                                break;
+//
+//                            case WARNING: accelState = 6;
+//                                break;
+//                        }
+//
+//                        int eco = 0;
+//
+//                        switch (((EldFuelRecord)dataRec).getStateEco()){
+//                            case BAD: eco = 1;
+//                                break;
+//
+//                            case GOOD: eco = 2;
+//                                break;
+//
+//                            case INVALID: eco = 3;
+//                                break;
+//
+//                            case NORMAL: eco = 4;
+//                                break;
+//
+//                            case TERRIBLE: eco = 5;
+//                                break;
+//
+//                            case WARNING: eco = 6;
+//                                break;
+//                        }
+//
+//                        int anticipateState = 0;
+//
+//                        switch (((EldFuelRecord)dataRec).getStateAnticipate()){
+//                            case BAD: anticipateState = 1;
+//                                break;
+//
+//                            case GOOD: anticipateState = 2;
+//                                break;
+//
+//                            case INVALID: anticipateState = 3;
+//                                break;
+//
+//                            case NORMAL: anticipateState = 4;
+//                                break;
+//
+//                            case TERRIBLE: anticipateState = 5;
+//                                break;
+//
+//                            case WARNING: anticipateState = 6;
+//                                break;
+//                        }
+//
+//                        Call<FuelRecord> call = apiInterface.sendFuel(new FuelRecord(
+//                                ((EldFuelRecord) dataRec).getFuelLevelPercent(),
+//                                ((EldFuelRecord) dataRec).getFuelIntegratedLiters(),
+//                                ((EldFuelRecord) dataRec).getTotalFuelConsumedLiters(),
+//                                ((EldFuelRecord) dataRec).getFuelRateLitersPerHours(),
+//                                ((EldFuelRecord) dataRec).getIdleFuelConsumedLiters(),
+//                                ((EldFuelRecord) dataRec).getIdleTimeHours(),
+//                                highrpmState,
+//                                unsteadyState,
+//                                enginepowerState,
+//                                accelState,
+//                                eco,
+//                                anticipateState
+//                        ));
+//
+//                        call.enqueue(new Callback<FuelRecord>() {
+//                            @Override
+//                            public void onResponse(@NonNull Call<FuelRecord> call, @NonNull Response<FuelRecord> response) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onFailure(@NonNull Call<FuelRecord> call, @NonNull Throwable t) {
+//                                Toast.makeText(MainActivity.this,t.getMessage(),Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//
+//                    } else if (RecordType == EldBroadcastTypes.ELD_DIAGNOSTIC_RECORD) {
+//                        diagnosticEnabled = true;
+//                    }
+                } if (dataRec instanceof EldDataRecord){
                     latitude = ((EldDataRecord) dataRec).getLatitude();
                     longtitude = ((EldDataRecord) dataRec).getLongitude();
                     Toast.makeText(MainActivity.this,((EldDataRecord) dataRec).getFirmwareVersion(),Toast.LENGTH_SHORT).show();
@@ -2073,6 +2154,166 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
                     } catch (Exception ignored) {
                     }
+                }if (dataRec instanceof EldFuelRecord){
+                    subscribedRecords.add(EldBroadcastTypes.ELD_FUEL_RECORD);
+                    fuelEnabled = true;
+                    int highrpmState = 0;
+                    switch (((EldFuelRecord)dataRec).getStateHighRPM()){
+                        case BAD: highrpmState = 1;
+                            break;
+
+                        case GOOD: highrpmState = 2;
+                            break;
+
+                        case INVALID: highrpmState = 3;
+                            break;
+
+                        case NORMAL: highrpmState = 4;
+                            break;
+
+                        case TERRIBLE: highrpmState = 5;
+                            break;
+
+                        case WARNING: highrpmState = 6;
+                            break;
+                    }
+
+                    int unsteadyState = 0;
+
+                    switch (((EldFuelRecord)dataRec).getStateUnsteady()){
+                        case BAD: unsteadyState = 1;
+                            break;
+
+                        case GOOD: unsteadyState = 2;
+                            break;
+
+                        case INVALID: unsteadyState = 3;
+                            break;
+
+                        case NORMAL: unsteadyState = 4;
+                            break;
+
+                        case TERRIBLE: unsteadyState = 5;
+                            break;
+
+                        case WARNING: unsteadyState = 6;
+                            break;
+                    }
+
+                    int enginepowerState = 0;
+
+                    switch (((EldFuelRecord)dataRec).getStateEnginePower()){
+                        case BAD: enginepowerState = 1;
+                            break;
+
+                        case GOOD: enginepowerState = 2;
+                            break;
+
+                        case INVALID: enginepowerState = 3;
+                            break;
+
+                        case NORMAL: enginepowerState = 4;
+                            break;
+
+                        case TERRIBLE: enginepowerState = 5;
+                            break;
+
+                        case WARNING: enginepowerState = 6;
+                            break;
+                    }
+
+                    int accelState = 0;
+
+                    switch (((EldFuelRecord)dataRec).getStateAccel()){
+                        case BAD: accelState = 1;
+                            break;
+
+                        case GOOD: accelState = 2;
+                            break;
+
+                        case INVALID: accelState = 3;
+                            break;
+
+                        case NORMAL: accelState = 4;
+                            break;
+
+                        case TERRIBLE: accelState = 5;
+                            break;
+
+                        case WARNING: accelState = 6;
+                            break;
+                    }
+
+                    int eco = 0;
+
+                    switch (((EldFuelRecord)dataRec).getStateEco()){
+                        case BAD: eco = 1;
+                            break;
+
+                        case GOOD: eco = 2;
+                            break;
+
+                        case INVALID: eco = 3;
+                            break;
+
+                        case NORMAL: eco = 4;
+                            break;
+
+                        case TERRIBLE: eco = 5;
+                            break;
+
+                        case WARNING: eco = 6;
+                            break;
+                    }
+
+                    int anticipateState = 0;
+
+                    switch (((EldFuelRecord)dataRec).getStateAnticipate()){
+                        case BAD: anticipateState = 1;
+                            break;
+
+                        case GOOD: anticipateState = 2;
+                            break;
+
+                        case INVALID: anticipateState = 3;
+                            break;
+
+                        case NORMAL: anticipateState = 4;
+                            break;
+
+                        case TERRIBLE: anticipateState = 5;
+                            break;
+
+                        case WARNING: anticipateState = 6;
+                            break;
+                    }
+
+                    Call<FuelRecord> call = apiInterface.sendFuel(new FuelRecord(
+                            ((EldFuelRecord) dataRec).getFuelLevelPercent(),
+                            ((EldFuelRecord) dataRec).getFuelIntegratedLiters(),
+                            ((EldFuelRecord) dataRec).getTotalFuelConsumedLiters(),
+                            ((EldFuelRecord) dataRec).getFuelRateLitersPerHours(),
+                            ((EldFuelRecord) dataRec).getIdleFuelConsumedLiters(),
+                            ((EldFuelRecord) dataRec).getIdleTimeHours(),
+                            highrpmState,
+                            unsteadyState,
+                            enginepowerState,
+                            accelState,
+                            eco,
+                            anticipateState
+                    ));
+
+                    call.enqueue(new Callback<FuelRecord>() {
+                        @Override
+                        public void onResponse(@NonNull Call<FuelRecord> call, @NonNull Response<FuelRecord> response) {
+
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call<FuelRecord> call, @NonNull Throwable t) {
+                            Toast.makeText(MainActivity.this,t.getMessage(),Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             });
 
@@ -2177,7 +2418,14 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                 setTodayAttr(time, today);
                 optimizeViewModels();
                 customRulerChart.setArrayList(truckStatusEntities);
-                lastStatusData.saveLasStatus(lastStatusData.getLastStatus(),0);
+                if (logEntities.size() == 0) {
+                    statusDaoViewModel.insertStatus(new LogEntity(lastStatusData.getLastStatus(), lastStatusData.getLastStatus(), null, null, null, today, 0));
+                }else {
+                    statusDaoViewModel.insertStatus(new LogEntity(lastStatusData.getLastStatus(),
+                            lastStatusData.getLastStatus(),
+                            logEntities.get(logEntities.size()-1).getLocation(),
+                            logEntities.get(logEntities.size()-1).getNote(), null, today, 0));
+                }
                 update();
             }
         };

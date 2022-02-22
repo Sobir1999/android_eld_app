@@ -3,6 +3,78 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable-xxxhdpi/add_signature_background.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/add_defect_text_background.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/add_unit.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/alerd_dialog_item_clicked.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/background_dr_with_exception_btn.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/background_main_view.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/background_table_section_button.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/button_bg.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/button_bg_login.xml" value="0.15989583333333332" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/defect_settings.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/general_button.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic__1748117516352401124513.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic__b74e24a497d9fa32d2c7d4acf314b81.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic__others.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic__signature.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_abstract_user_flat_1.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_attachment.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_access_time_24.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_arrow_back_ios_24.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_arrow_forward_ios_24.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_calendar_today_24.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_edit_24.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_keyboard_arrow_up_24.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_location_on_24.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_logout_24.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_nightlight_24.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_power_settings_new_24.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_star_outline_24.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_carrier.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_check_document_file_icon_icon_1320196654394535651_0.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_icons8_info.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_icons8_info__1_.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_icons8_opened_folder.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_icons8_plus__.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_icons8_settings.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_repair.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_rules.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_steering_wheel_svgrepo_com.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_trailer_svgrepo_com.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_truck.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_truck_blue.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_vector.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/inspection.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/inspection_background.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/item_vis_button_background.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/keyboard_bottom_arrow.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/state_unchacked.xml" value="0.290625" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_add_defect.xml" value="0.2667572463768116" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_add_dvir2.xml" value="0.264" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_lgdd.xml" value="0.27447916666666666" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_login.xml" value="0.14375" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_main.xml" value="0.2341485507246377" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_rules.xml" value="0.223731884057971" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_settings.xml" value="0.14375" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/add_unit_trailer_dialog_view.xml" value="0.26313405797101447" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/custom_dialog.xml" value="0.26313405797101447" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/custom_drawer_layout.xml" value="0.2341485507246377" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/fragment_add_defect.xml" value="0.2667572463768116" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/fragment_d_v_i_r.xml" value="0.2740036231884058" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/fragment_docs.xml" value="0.27447916666666666" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/fragment_general.xml" value="0.24320652173913043" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/fragment_language.xml" value="0.2667572463768116" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/fragment_signature.xml" value="0.23324275362318841" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/last_days_recycler_view.xml" value="0.27447916666666666" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/log_items.xml" value="0.18659420289855072" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/main_activity_view.xml" value="0.2341485507246377" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/recap_fragment.xml" value="0.2341485507246377" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/recap_items.xml" value="0.2341485507246377" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/simple_defect_item.xml" value="0.2667572463768116" />
+        <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/trailer_item_recycler.xml" value="0.25181159420289856" />
+        <entry key="..\:/Users/musta/AppData/Local/Android/Sdk/platforms/android-30/data/res/layout/simple_list_item_activated_1.xml" value="0.2667572463768116" />
+        <entry key="..\:/Users/musta/AppData/Local/Android/Sdk/platforms/android-30/data/res/layout/simple_selectable_list_item.xml" value="0.1334853090172239" />
         <entry key="..\:/idrok/android_eld_app/app/src/main/res/drawable/ic_attachment.xml" value="0.20989583333333334" />
         <entry key="..\:/idrok/android_eld_app/app/src/main/res/drawable/ic_music.xml" value="0.20989583333333334" />
         <entry key="..\:/idrok/android_eld_app/app/src/main/res/layout/activity_login.xml" value="0.19895833333333332" />
@@ -59,7 +131,7 @@
       </value>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

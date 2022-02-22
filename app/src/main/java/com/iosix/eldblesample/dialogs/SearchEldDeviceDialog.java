@@ -40,10 +40,10 @@ public class SearchEldDeviceDialog extends Dialog {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageModel s) {
         resultText.append(s.getStatusView());
-        if (resultText.getText() != "" && resultText.getText() != "Bluetooth enabled - now scanning for ELD\n"){
-            final Handler handler = new Handler();
-            handler.postDelayed(this::dismiss,5000);
-        }
+//        if (resultText.getText() != "" && resultText.getText() != "Bluetooth enabled - now scanning for ELD\n"){
+//            final Handler handler = new Handler();
+//            handler.postDelayed(this::dismiss,5000);
+//        }
     }
 
     public void setResultText(TextView resultText) {

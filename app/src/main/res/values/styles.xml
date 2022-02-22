@@ -26,7 +26,7 @@
     </style>
 
     <style name="MyRadioButton" parent="Theme.AppCompat.Light">
-        <item name="colorControlNormal">@color/black</item>
+        <item name="colorControlNormal">@color/customTextHintColor</item>
         <item name="colorControlActivated">@color/colorPrimary</item>
     </style>
 
@@ -38,6 +38,12 @@
         <item name="colorControlNormal">@color/customBgViewColor</item>
         <item name="colorControlActivated">@color/colorActionText</item>
         <item name="colorControlHighlight">@color/colorActionText</item>
+    </style>
+    
+    <style name="textfontstyle" parent="TextAppearance.AppCompat.Small">
+        <item name="fontFamily">@font/montserrat</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
 </resources>

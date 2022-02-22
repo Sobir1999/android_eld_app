@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/customBgViewColor"
+    tools:context=".activity.RulesActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/idAppbar"
+        style="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints">
+
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                tools:ignore="MissingConstraints">
+
+                <ImageView
+                    android:id="@+id/idImageBack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/content_description"
+                    android:src="@drawable/fragment_back"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/idTextFrag"
+                    style="@style/TextAppearance.AppCompat.Large"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hos_rules"
+                    android:textColor="#fff"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/montserrat"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/idAppbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="50dp"
+            android:layout_marginVertical="8dp"
+            android:background="@drawable/background_main_view">
+
+            <TextView
+                android:id="@+id/idBasicRules"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:text="@string/basic_rules"
+                android:textColor="@color/colorPrimary"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/montserrat"
+                android:drawablePadding="8dp"
+                app:drawableRightCompat="@drawable/ic_rules"
+                app:drawableTint="@color/colorPrimary"
+                android:layout_marginTop="12dp"/>
+
+            <TextView
+                android:id="@+id/idLogbook"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/idBasicRules"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:text="@string/logbook"
+                android:textStyle="bold"
+                android:textSize="17sp"
+                android:fontFamily="@font/montserrat"
+                android:textAllCaps="true"
+                android:textColor="?attr/customTextHintColor"
+                android:layout_marginTop="6dp"/>
+
+            <TextView
+                android:id="@+id/idOnduty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/idLogbook"
+                app:layout_constraintStart_toStartOf="parent"
+                android:text="@string/on_duty"
+                android:textColor="@color/colorPrimary"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                android:textSize="17sp"
+                android:fontFamily="@font/montserrat"
+                android:layout_marginTop="12dp"
+                android:layout_marginStart="20dp"/>
+
+            <TextView
+                android:id="@+id/idAboutOnDuty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/idOnduty"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:text="@string/time_is_all_time_from_when_a_driver_begins_to_work_including_time_for_fueling_ptis_scale_repairs_drop_and_hook_dot_inspection_loading_unloading_and_others"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="16dp"
+                android:textSize="16sp"
+                android:fontFamily="@font/montserrat"
+                android:textColor="?attr/customTextColor"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/idSleepingBerth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/idAboutOnDuty"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="16dp"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary"
+                android:textSize="17sp"
+                android:text="@string/sleeper_berth"
+                android:textAllCaps="true"
+                android:fontFamily="@font/montserrat"/>
+
+            <TextView
+                android:id="@+id/idAboutSleepingBerth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/idSleepingBerth"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/time_is_any_amount_of_time_spent_inside_of_the_sleeper_berth_e_g_resting_or_sleeping"
+                android:textSize="16sp"
+                android:textColor="?attr/customTextColor"
+                android:fontFamily="@font/montserrat"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/idDriving"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/idAboutSleepingBerth"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="16dp"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary"
+                android:textSize="17sp"
+                android:text="@string/driving"
+                android:textAllCaps="true"
+                android:fontFamily="@font/montserrat"/>
+
+            <TextView
+                android:id="@+id/idAboutDriving"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/idDriving"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/time_is_all_time_spent_at_the_driving_controls_of_a_cmv"
+                android:textSize="16sp"
+                android:textColor="?attr/customTextColor"
+                android:fontFamily="@font/montserrat"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/idOffDuty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/idAboutDriving"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="16dp"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary"
+                android:textSize="17sp"
+                android:text="@string/off_duty"
+                android:textAllCaps="true"
+                android:fontFamily="@font/montserrat"/>
+
+            <TextView
+                android:id="@+id/idAboutOffDuty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/idOffDuty"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/time_is_any_time_not_spent_on_duty_driving_or_in_the_sleeper_berth_when_you_are_not_in_the_truck"
+                android:textSize="16sp"
+                android:textColor="?attr/customTextColor"
+                android:fontFamily="@font/montserrat"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

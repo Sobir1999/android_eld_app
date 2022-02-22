@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.View;
@@ -13,6 +14,7 @@ import androidx.annotation.Nullable;
 //import com.iosix.eldblesample.ExampleModel;
 //import com.iosix.eldblesample.models.ExampleTimeModel;
 
+import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.enums.TableConstants;
 import com.iosix.eldblesample.shared_prefs.UserData;
 
@@ -54,9 +56,9 @@ public abstract class CustomRulerChart extends View {
 
         CUSTOM_WIDTH = context.getResources().getDisplayMetrics().widthPixels;
 
-        CUSTOM_TABLE_WIDTH = CUSTOM_WIDTH - 2.5f * START_POINT_X;
+        CUSTOM_TABLE_WIDTH = CUSTOM_WIDTH - 3f * START_POINT_X;
 
-        CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 3;
+        CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 8;
         CUSTOM_TABLE_ROW_WIDTH = CUSTOM_TABLE_WIDTH / 24;
     }
 
@@ -109,12 +111,12 @@ public abstract class CustomRulerChart extends View {
 
     private void onDrawTable(Canvas canvas) {
         if (!userData.getMode()){
-            table_paint.setColor(Color.BLACK);
+            table_paint.setColor(getResources().getColor(R.color.customTextHintColor));
         }else {
             table_paint.setColor(Color.WHITE);
         }
         table_paint.setStyle(Paint.Style.STROKE);
-        table_paint.setStrokeWidth(1f);
+        table_paint.setStrokeWidth(2f);
 
         canvas.drawRect(
                 START_POINT_X,
@@ -237,17 +239,15 @@ public abstract class CustomRulerChart extends View {
 
     private void onDrawText(Canvas canvas) {
 
-        float time_size = 16f;
+        float time_size = 20f;
         table_time_paint.setTextSize(time_size);
 
-        if (!userData.getMode()){
-            table_time_paint.setColor(Color.BLACK);
-            table_time_paint_tex.setColor(Color.BLACK);
-        }else {
-            table_time_paint.setColor(Color.WHITE);
-            table_time_paint_tex.setColor(Color.WHITE);
-        }
-        table_time_paint_tex.setTextSize(1.5f * time_size);
+        table_time_paint.setColor(getResources().getColor(R.color.colorPrimary));
+        table_time_paint_tex.setColor(getResources().getColor(R.color.colorPrimary));
+        table_time_paint.setTypeface(Typeface.DEFAULT_BOLD);
+        table_time_paint_tex.setTypeface(Typeface.DEFAULT_BOLD);
+
+        table_time_paint_tex.setTextSize(time_size);
 
         table_text_paint.setColor(Color.BLACK);
         table_text_paint.setTextSize(26f);
@@ -258,21 +258,21 @@ public abstract class CustomRulerChart extends View {
                 canvas.drawText(
                         "M",
                         START_POINT_X - time_size / 2 + CUSTOM_TABLE_ROW_WIDTH * i,
-                        START_POINT_Y - 5f,
+                        START_POINT_Y - 10f,
                         table_time_paint_tex
                 );
             } else if (i == 12) {
                 canvas.drawText(
                         "N",
                         START_POINT_X - time_size / 2 + CUSTOM_TABLE_ROW_WIDTH * i,
-                        START_POINT_Y - 5f,
+                        START_POINT_Y - 10f,
                         table_time_paint_tex
                 );
             } else {
                 canvas.drawText(
                         "" + i % 12,
                         START_POINT_X - time_size / 2 + CUSTOM_TABLE_ROW_WIDTH * i,
-                        START_POINT_Y - 5f,
+                        START_POINT_Y - 10f,
                         table_time_paint
                 );
             }

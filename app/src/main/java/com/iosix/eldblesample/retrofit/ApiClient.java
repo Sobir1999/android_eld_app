@@ -35,11 +35,14 @@ public class ApiClient {
                     .build();
         }
 
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .client(okHttpClient)
-                    .build();
+        retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(okHttpClient)
+                .build();
+
+        APIInterface apiInterface = retrofit.create(APIInterface.class);
+        myServiceHolder.set(apiInterface);
 
         return retrofit;
     }

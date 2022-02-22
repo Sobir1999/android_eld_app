@@ -7,15 +7,30 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.iosix.eldblesample.R;
+import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
+import com.iosix.eldblesample.viewModel.DayDaoViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RecapListAdapter extends RecyclerView.Adapter<RecapListAdapter.ViewHolder> {
 
-    Context ctx;
-    public RecapListAdapter(Context context){
+    private Context ctx;
+    private List<DayEntity> dayEntities;
+
+    public RecapListAdapter(Context context, DayDaoViewModel daoViewModel){
         ctx = context;
+        dayEntities = new ArrayList<>();
+
+        daoViewModel.getMgetAllDays().observe((LifecycleOwner) ctx, dayEntities1 -> {
+            for (int i = dayEntities1.size()-1; i > 7; i--) {
+                dayEntities.add(dayEntities1.get(i));
+            }
+        });
     }
 
     @NonNull
@@ -27,7 +42,7 @@ public class RecapListAdapter extends RecyclerView.Adapter<RecapListAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
+        holder.onBind(dayEntities.get(position));
     }
 
     @Override
@@ -45,6 +60,11 @@ public class RecapListAdapter extends RecyclerView.Adapter<RecapListAdapter.View
             day = itemView.findViewById(R.id.idRecapDay);
             time = itemView.findViewById(R.id.idRecapTime);
 
+        }
+
+        void onBind(DayEntity dayEntity){
+            week.setText(dayEntity.getDay_name());
+            day.setText(dayEntity.getDay());
         }
     }
 }

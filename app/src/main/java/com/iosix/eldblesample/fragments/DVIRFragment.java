@@ -44,7 +44,7 @@ import java.util.zip.Inflater;
 
 public class DVIRFragment extends Fragment {
     private boolean hasDefects = false;
-    private TextView textView;
+    private TextView idDvirExText;
     private ImageView imageView;
     private Button createButton;
     private LinearLayout container1;
@@ -78,7 +78,7 @@ public class DVIRFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_d_v_i_r, container, false);
         container1 = v.findViewById(R.id.idDVIRContainer1);
-        textView = v.findViewById(R.id.idDvirExText);
+        idDvirExText = v.findViewById(R.id.idDvirExText);
         createButton = v.findViewById(R.id.create_new_dvir_button);
         dvir_recyclerview = v.findViewById(R.id.idDvirRecyclerView);
 
@@ -166,7 +166,7 @@ public class DVIRFragment extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSMSHandler(ExampleSMSModel sendModels){
-        textView.setText(sendModels.getS());
+//        textView.setText(sendModels.getS());
     }
 
     @Override

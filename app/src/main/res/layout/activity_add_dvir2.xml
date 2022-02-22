@@ -25,7 +25,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
+                android:layout_marginHorizontal="50dp"
                 tools:ignore="MissingConstraints">
 
                 <ImageView
@@ -46,6 +46,8 @@
                     android:text="@string/create_edit_dvir"
                     android:textColor="#fff"
                     android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/montserrat"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -57,6 +59,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/next"
+                    android:fontFamily="@font/montserrat"
+                    android:textSize="15sp"
                     android:textColor="#fff"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -68,6 +72,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/idAppbar"
         tools:ignore="MissingConstraints">
@@ -76,39 +81,54 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="10dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/background_main_view"
+            android:layout_marginHorizontal="50dp"
             tools:ignore="MissingConstraints">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="@dimen/card_view_corner_radius"
-                app:cardBackgroundColor="?attr/customBgColor">
+                android:layout_height="wrap_content">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/idAddDvirUnitText"
-                        style="@style/TextAppearance.AppCompat.Medium"
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:padding="10dp">
+
+                    <TextView
+                        style="@style/TextAppearance.AppCompat.Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:drawablePadding="10dp"
-                        android:gravity="center_vertical"
-                        android:padding="10dp"
                         android:text="@string/unit"
-                        android:textColor="?attr/customTextColor"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentBottom="true"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="17sp"
+                        android:fontFamily="@font/montserrat"
                         android:textStyle="bold"
-                        app:drawableEndCompat="@drawable/add_unit"
                         app:drawableStartCompat="@drawable/ic_truck_blue" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="10dp"
-                        android:background="?attr/customBgViewColor" />
+                        <TextView
+                            android:id="@+id/idAddDvirUnitText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="New"
+                            android:textSize="16sp"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_alignParentEnd="true"
+                            android:fontFamily="@font/montserrat"
+                            android:textColor="@color/colorPrimary"
+                            app:drawableLeftCompat="@drawable/ic_icons8_plus__" />
+
+                    </RelativeLayout>
 
                     <TextView
                         android:id="@+id/idAddDvirUnitNumberText"
@@ -117,46 +137,97 @@
                         android:layout_height="wrap_content"
                         android:drawablePadding="10dp"
                         android:gravity="center_vertical"
-                        android:padding="10dp"
-                        android:text="2412"
+                        android:text="Select Unit"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:paddingBottom="5dp"
+                        android:fontFamily="@font/montserrat"
+                        android:paddingHorizontal="20dp"
+                        android:textColorHint="?attr/customTextHintColor"
+                        android:textColor="?attr/customTextHintColor"
+                        app:drawableEndCompat="@drawable/ic_baseline_keyboard_arrow_up_24" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginHorizontal="20dp"
+                        android:background="?attr/customBgViewColor"/>
+
+                    <TextView
+                        android:id="@+id/idAddDvirUnitNumber"
+                        style="@style/TextAppearance.AppCompat"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="10dp"
+                        android:gravity="center_vertical"
+                        android:text="Select Unit"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:paddingVertical="5dp"
+                        android:fontFamily="@font/montserrat"
+                        android:paddingHorizontal="20dp"
+                        android:textColorHint="?attr/customTextHintColor"
                         android:textColor="?attr/customTextHintColor"
                         app:drawableEndCompat="@drawable/keyboard_bottom_arrow" />
 
 
                 </LinearLayout>
+
             </androidx.cardview.widget.CardView>
 
-            <androidx.cardview.widget.CardView
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:background="?attr/customBgViewColor"/>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                app:cardCornerRadius="@dimen/card_view_corner_radius"
-                app:cardBackgroundColor="?attr/customBgColor">
+                android:layout_marginTop="8dp"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/idAddDvirTrailerText"
-                        style="@style/TextAppearance.AppCompat.Medium"
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:drawablePadding="10dp"
-                        android:gravity="center_vertical"
-                        android:padding="10dp"
-                        android:text="@string/trailers"
-                        android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        app:drawableEndCompat="@drawable/add_unit"
-                        app:drawableStartCompat="@drawable/ic_trailer_svgrepo_com" />
+                        android:paddingHorizontal="10dp">
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="10dp"
-                        android:background="?attr/customBgViewColor" />
+                        <TextView
+                            style="@style/TextAppearance.AppCompat.Medium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawablePadding="10dp"
+                            android:fontFamily="@font/montserrat"
+                            android:gravity="center_vertical"
+                            android:text="@string/trailers"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentBottom="true"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="17sp"
+                            android:textStyle="bold"
+                            app:drawableStartCompat="@drawable/ic_trailer_svgrepo_com" />
+
+                        <TextView
+                            android:id="@+id/idAddDvirTrailerText"
+                            style="@style/TextAppearance.AppCompat.Medium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/montserrat"
+                            android:gravity="center_vertical"
+                            android:text="New"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_alignParentEnd="true"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="16sp"
+                            app:drawableStartCompat="@drawable/ic_icons8_plus__" />
+
+                    </RelativeLayout>
 
                     <TextView
                         android:id="@+id/idAddDvirTrailerNumberText"
@@ -164,23 +235,26 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:drawablePadding="10dp"
+                        android:layout_marginHorizontal="20dp"
                         android:gravity="center_vertical"
-                        android:padding="10dp"
                         android:text="Select trailers"
+                        android:textSize="15sp"
+                        android:fontFamily="@font/montserrat"
+                        android:textStyle="bold"
                         android:textColor="?attr/customTextHintColor"
-                        app:drawableEndCompat="@drawable/keyboard_bottom_arrow" />
+                        app:drawableEndCompat="@drawable/ic_baseline_keyboard_arrow_up_24" />
 
                     <View
                         android:layout_width="wrap_content"
-                        android:layout_height="2dp"
-                        android:layout_marginVertical="5dp"
+                        android:layout_height="1dp"
+                        android:layout_marginHorizontal="20dp"
                         android:background="?attr/customBgViewColor" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/idTrailersRecyclerView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="10dp" />
+                        android:layout_marginHorizontal="20dp" />
 
                     <LinearLayout
                         android:id="@+id/addDefect"
@@ -192,12 +266,15 @@
                             style="@style/TextAppearance.AppCompat.Medium"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin="15dp"
+                            android:layout_marginHorizontal="20dp"
                             android:drawablePadding="10dp"
-                            android:textSize="14sp"
+                            android:layout_marginTop="8dp"
+                            android:textSize="17sp"
+                            android:textStyle="bold"
                             android:gravity="center_vertical"
                             android:text="@string/no_defect_detected"
-                            android:textColor="?attr/customTextColor"
+                            android:textColor="@color/colorPrimary"
+                            android:fontFamily="@font/montserrat"
                             app:drawableStartCompat="@drawable/defect_settings"
                             />
 
@@ -208,9 +285,11 @@
                             android:layout_margin="10dp"
                             android:background="@drawable/add_defect_text_background"
                             android:gravity="center"
-                            android:textSize="14sp"
+                            android:layout_marginHorizontal="20dp"
+                            android:textSize="15sp"
+                            android:fontFamily="@font/montserrat"
                             android:text="@string/click_here_to_add_defects"
-                            android:textColor="@color/colorActionText" />
+                            android:textColor="#D28FFD" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -272,27 +351,29 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="16dp">
+                        android:layout_marginHorizontal="20dp"
+                        android:layout_marginTop="8dp">
 
                         <TextView
                             style="@style/TextAppearance.AppCompat.Small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/time"
-                            android:textColor="?attr/customTextColor"
+                            android:textColor="?attr/customTextHintColor"
                             android:textSize="16sp" />
 
                         <TextView
                             android:id="@+id/idDefectTimeText"
+                            style="@style/TextAppearance.AppCompat.Small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/nobile"
                             android:hint="Create time"
-                            android:textColorHint="@color/colorActionText"
-                            android:textSize="14sp"
                             android:textAlignment="viewEnd"
-                            android:textStyle="bold"
                             android:textColor="?attr/customTextColor"
-                            style="@style/TextAppearance.AppCompat.Small"
+                            android:textColorHint="@color/colorPrimary"
+                            android:textSize="17sp"
+                            android:textStyle="bold"
                             app:drawableEndCompat="@drawable/keyboard_bottom_arrow"
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -306,7 +387,8 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="16dp">
+                        android:layout_marginTop="8dp"
+                        android:layout_marginHorizontal="20dp">
 
                         <TextView
                             android:id="@+id/idLocationT"
@@ -314,7 +396,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Location"
-                            android:textColor="?attr/customTextColor"
+                            android:textColor="?attr/customTextHintColor"
                             android:textSize="16sp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintLeft_toLeftOf="parent"
@@ -328,11 +410,12 @@
                             android:background="@android:color/transparent"
                             android:hint="Your Location"
                             android:inputType="text"
-                            android:textSize="14sp"
+                            android:textSize="17sp"
                             android:textAlignment="viewEnd"
                             android:textStyle="bold"
-                            android:textColor="@color/colorActionText"
-                            android:textColorHint="@color/colorActionText"
+                            android:fontFamily="@font/nobile"
+                            android:textColor="@color/colorPrimary"
+                            android:textColorHint="@color/colorPrimary"
                             android:backgroundTint="?attr/customTextHintColor"
                             app:drawableEndCompat="@drawable/ic_baseline_location_on_24"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -348,7 +431,7 @@
                         android:layout_marginBottom="10dp"
                         android:background="?attr/customBgViewColor" />
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

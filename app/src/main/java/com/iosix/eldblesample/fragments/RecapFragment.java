@@ -10,16 +10,20 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.adapters.RecapListAdapter;
 import com.iosix.eldblesample.interfaces.LinearLayoutTouchListener;
+import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 
 public class RecapFragment extends Fragment {
 
     RecyclerView recyclerView;
     RecapListAdapter adapter;
+    private DayDaoViewModel daoViewModel;
 
     public static RecapFragment newInstance() {
         RecapFragment fragment = new RecapFragment();
@@ -36,10 +40,16 @@ public class RecapFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.recap_fragment,container,false);
+        daoViewModel = new DayDaoViewModel(requireActivity().getApplication());
+        daoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
         LinearLayout linearLayout = view.findViewById(R.id.idRecapLinear);
-        recyclerView = view.findViewById(R.id.idRecapRecyclerView);
-        adapter = new RecapListAdapter(getContext());
-        recyclerView.setAdapter(adapter);
+
+        daoViewModel.getMgetAllDays().observe((LifecycleOwner) requireContext(), dayEntities -> {
+            recyclerView = view.findViewById(R.id.idRecapRecyclerView);
+            adapter = new RecapListAdapter(getContext(),daoViewModel);
+            recyclerView.setAdapter(adapter);
+        });
+
 
         linearLayout.setOnTouchListener(new LinearLayoutTouchListener(this.getContext()) {
             @SuppressWarnings("deprecation")

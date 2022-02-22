@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 15,
-    "identityHash": "9cb89c1225d6577de31fc2b64e6525a1",
+    "identityHash": "9312819f9ed0d871c75fddaaa3dff617",
     "entities": [
       {
         "tableName": "log_table",
@@ -511,7 +511,7 @@
       },
       {
         "tableName": "user_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `last_name` TEXT, `phone` TEXT, `driver_license_number` TEXT, `co_driver` TEXT, `home_terminal_address` TEXT, `home_terminal_time_zone` TEXT, `trail_number` TEXT, `notes_driver` TEXT, `vehicle_id` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `last_name` TEXT, `phone` TEXT, `driver_license_number` TEXT, `co_driver` TEXT, `home_terminal_address` TEXT, `home_terminal_time_zone` TEXT, `trail_number` TEXT, `notes_driver` TEXT, `vehicle_id` TEXT, `image` TEXT, `main_office` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -578,6 +578,18 @@
             "columnName": "vehicle_id",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "image",
+            "columnName": "image",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "mainOffice",
+            "columnName": "main_office",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -592,7 +604,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"9cb89c1225d6577de31fc2b64e6525a1\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"9312819f9ed0d871c75fddaaa3dff617\")"
     ]
   }
 }

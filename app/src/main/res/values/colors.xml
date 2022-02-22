@@ -10,11 +10,11 @@
 
     <color name="colorStatusOFF">#E9E9E9</color>
     <color name="colorStatusOFFBold">#8C8C8C</color>
-    <color name="colorStatusSB">#FAFFFACD</color>
-    <color name="colorStatusSBBold">#DD8C12</color>
+    <color name="colorStatusSB">#FFEFDF</color>
+    <color name="colorStatusSBBold">#FDAC32</color>
     <color name="colorStatusDR">#C2ECA2</color>
     <color name="colorStatusDRBold">#63A83D</color>
-    <color name="colorStatusON">#AEECAAF8</color>
+    <color name="colorStatusON">#E4C1FA</color>
     <color name="textSelected">#E4C1FA</color>
     <color name="colorStatusONBold">#851DC6</color>
 
@@ -27,9 +27,9 @@
 
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
-    <color name="customBgViewColor">#FCF1F1F1</color>
+    <color name="customBgViewColor">#F0F4F9</color>
     <color name="customBgViewColorNightmode">#FC202020</color>
-    <color name="customTextHintColor">#919191</color>
+    <color name="customTextHintColor">#828282</color>
 
     <color name="SignatureColorDefault">#9953BFED</color>
     <color name="SignatureColorWhenClicked">#08ACF6</color>

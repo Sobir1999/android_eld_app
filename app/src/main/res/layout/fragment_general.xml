@@ -13,14 +13,15 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="10dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="?attr/customBgColor">
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/background_main_view">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingVertical="15dp">
+            android:paddingTop="15dp">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -28,18 +29,19 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:src="@drawable/info"
+                android:src="@drawable/ic_icons8_info__1_"
                 android:layout_marginStart="15dp"
                 android:id="@+id/imageView_info"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="5dp"
                 android:text="@string/main_info"
                 android:textStyle="bold"
-                android:textColor="?attr/customTextColor"
-                android:textSize="16sp"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
+                android:fontFamily="@font/montserrat"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/imageView_info"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -56,6 +58,7 @@
             android:id="@+id/idDriverNameCons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:orientation="vertical">
 
             <LinearLayout
@@ -69,13 +72,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
-                android:fontFamily="sans-serif"
+                android:fontFamily="@font/montserrat"
                 android:text="@string/driver_name"
-                android:textSize="14sp"
-                android:textColor="?attr/customTextColor"
                 android:textStyle="bold"
+                android:textSize="15sp"
+                android:textColor="?attr/customTextHintColor"
                  />
 
             <TextView
@@ -83,13 +84,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="15dp"
-                android:layout_marginTop="15dp"
-                android:fontFamily="sans-serif"
+                android:fontFamily="@font/montserrat"
                 android:text="@string/murad_baratov"
-                android:textSize="14sp"
-                android:visibility="visible"
-                android:textColor="#03A9F4"
                 android:textStyle="bold"
+                android:textSize="15sp"
+                android:visibility="visible"
+                android:textColor="@color/colorPrimary"
                 android:gravity="end" />
 
             </LinearLayout>
@@ -107,7 +107,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginTop="12dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -119,12 +120,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
-                android:fontFamily="sans-serif"
+                android:fontFamily="@font/montserrat"
                 android:text="@string/distance"
-                android:textSize="14sp"
-                android:textColor="?attr/customTextColor"
+                android:textSize="15sp"
+                android:textColor="?attr/customTextHintColor"
                 android:textStyle="bold" />
 
             <TextView
@@ -132,13 +131,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
-                android:fontFamily="sans-serif"
+                android:fontFamily="@font/montserrat"
                 android:text="@string/_0_0"
-                android:textSize="14sp"
-                android:textColor="#03A9F4"
                 android:textStyle="bold"
+                android:textSize="15sp"
+                android:textColor="@color/colorPrimary"
                 android:gravity="end"/>
 
             </LinearLayout>
@@ -156,7 +153,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginTop="12dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -167,27 +165,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
-                android:fontFamily="sans-serif"
+                android:fontFamily="@font/montserrat"
                 android:text="@string/shipping_docs"
-                android:textSize="14sp"
-                android:textColor="?attr/customTextColor"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textSize="15sp"
+                android:textColor="?attr/customTextHintColor" />
 
             <TextView
-                android:id="@+id/tv_shipping_docs"
+                android:id="@+id/idAddShippingDocs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="end"
                 android:layout_marginEnd="15dp"
-                android:layout_marginBottom="15dp"
-                android:layout_marginTop="15dp"
-                android:fontFamily="sans-serif"
-                android:text="@string/Plus"
-                android:textSize="17sp"
-                android:textColor="#03A9F4"
-                android:textStyle="bold"
-                android:gravity="end"/>
+                app:drawableRightCompat="@drawable/ic_icons8_plus__" />
 
             </LinearLayout>
 
@@ -233,7 +223,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginTop="12dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -245,27 +236,22 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:fontFamily="sans-serif"
+                    android:fontFamily="@font/montserrat"
                     android:text="@string/vehicles"
-                    android:textSize="14sp"
-                    android:textColor="?attr/customTextColor"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="?attr/customTextHintColor" />
 
                 <TextView
                     android:id="@+id/tv_veicles"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:layout_marginTop="15dp"
-                    android:fontFamily="sans-serif"
-                    android:text="@string/Plus"
                     android:textSize="17sp"
                     android:textColor="#03A9F4"
                     android:textStyle="bold"
-                    android:gravity="end"/>
+                    android:gravity="end"
+                    app:drawableRightCompat="@drawable/ic_icons8_plus__" />
 
             </LinearLayout>
 
@@ -288,8 +274,7 @@
                     android:gravity="center_vertical"
                     android:padding="10dp"
                     android:textColor="?attr/customTextColor"
-                    android:textColorHint="?attr/customTextHintColor"
-                    app:drawableEndCompat="@drawable/keyboard_bottom_arrow" />
+                    android:textColorHint="?attr/customTextHintColor"/>
 
                 <ImageView
                     android:layout_width="0dp"
@@ -315,7 +300,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginTop="12dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -327,27 +313,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:fontFamily="sans-serif"
+                    android:fontFamily="@font/montserrat"
                     android:text="@string/trailers"
-                    android:textSize="14sp"
-                    android:textColor="?attr/customTextColor"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="?attr/customTextHintColor" />
 
                 <TextView
                     android:id="@+id/tv_trailers"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:layout_marginTop="15dp"
-                    android:fontFamily="sans-serif"
-                    android:text="@string/Plus"
                     android:textSize="17sp"
-                    android:textColor="#03A9F4"
                     android:textStyle="bold"
-                    android:gravity="end"/>
+                    android:gravity="end"
+                    app:drawableRightCompat="@drawable/ic_icons8_plus__" />
 
             </LinearLayout>
 
@@ -391,6 +371,13 @@
                 android:layout_marginStart="15dp"
                 />
 
+            <View
+                android:background="?attr/customBgViewColor"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="12dp"
+                tools:ignore="MissingConstraints" />
+
         </LinearLayout>
 
         <View
@@ -401,7 +388,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp">
 
             <ImageView
                 android:layout_width="20dp"
@@ -409,7 +397,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:src="@drawable/carrier"
+                android:src="@drawable/ic_carrier"
                 android:layout_marginStart="15dp"
                 android:id="@+id/imageView_carrier" />
 
@@ -419,8 +407,9 @@
                 android:layout_marginStart="10dp"
                 android:text="@string/carrier"
                 android:textStyle="bold"
-                android:textColor="?attr/customTextColor"
-                android:textSize="16sp"
+                android:fontFamily="@font/montserrat"
+                android:textColor="@color/colorPrimary"
+                android:textSize="17sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/imageView_carrier"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -438,7 +427,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginTop="12dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -450,26 +440,22 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:fontFamily="sans-serif"
+                    android:fontFamily="@font/montserrat"
                     android:text="@string/carrier"
-                    android:textSize="14sp"
-                    android:textColor="?attr/customTextColor"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="?attr/customTextHintColor" />
 
                 <TextView
                     android:id="@+id/tv_carrier"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="15dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:fontFamily="sans-serif"
+                    android:fontFamily="@font/montserrat"
                     android:text="@string/suncoast_transportation_ilc"
-                    android:textSize="14sp"
-                    android:textColor="#03A9F4"
+                    android:textSize="15sp"
                     android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
                     android:gravity="end"/>
 
 
@@ -487,18 +473,19 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="55dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:id="@+id/idMainOffice">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:fontFamily="sans-serif"
-                android:text="Main office"
-                android:textSize="14sp"
-                android:textColor="?attr/customTextColor"
+                android:fontFamily="@font/montserrat"
+                android:text="@string/main_office"
+                android:textSize="15sp"
                 android:textStyle="bold"
+                android:textColor="?attr/customTextHintColor"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -508,11 +495,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="15dp"
-                android:fontFamily="sans-serif"
+                android:fontFamily="@font/montserrat"
                 android:text="@string/_500_houston_texas_77091"
-                android:textSize="14sp"
-                android:textColor="#03A9F4"
+                android:textSize="15sp"
                 android:textStyle="bold"
+                android:textColor="@color/colorPrimary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -529,17 +516,18 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="55dp">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:fontFamily="sans-serif"
+                android:fontFamily="@font/montserrat"
                 android:text="@string/home_terminal_address"
-                android:textSize="14sp"
-                android:textColor="?attr/customTextColor"
+                android:textSize="15sp"
                 android:textStyle="bold"
+                android:textColor="?attr/customTextHintColor"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -549,11 +537,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="15dp"
-                android:fontFamily="sans-serif"
+                android:fontFamily="@font/montserrat"
                 android:text="@string/_500_houston_texas"
-                android:textSize="14sp"
-                android:textColor="#03A9F4"
+                android:textSize="15sp"
                 android:textStyle="bold"
+                android:textColor="@color/colorPrimary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -568,7 +556,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp">
 
             <ImageView
                 android:layout_width="20dp"
@@ -576,7 +565,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:src="@drawable/folder"
+                android:src="@drawable/ic_icons8_opened_folder"
                 android:layout_marginStart="15dp"
                 android:id="@+id/imageView_folder" />
 
@@ -586,8 +575,8 @@
                 android:layout_marginStart="10dp"
                 android:text="@string/others"
                 android:textStyle="bold"
-                android:textColor="?attr/customTextColor"
-                android:textSize="16sp"
+                android:textColor="@color/colorPrimary"
+                android:textSize="17sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/imageView_folder"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -602,17 +591,19 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="55dp">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:id="@+id/tv_co_driver_container">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:fontFamily="sans-serif"
+                android:fontFamily="@font/montserrat"
                 android:text="@string/co_drivers"
-                android:textSize="14sp"
-                android:textColor="?attr/customTextColor"
+                android:textSize="15sp"
                 android:textStyle="bold"
+                android:textColor="?attr/customTextHintColor"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -622,21 +613,30 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="15dp"
-                android:fontFamily="sans-serif"
-                android:text="@string/Plus"
-                android:textSize="17sp"
-                android:textColor="#03A9F4"
+                android:fontFamily="@font/montserrat"
+                android:textSize="15sp"
                 android:textStyle="bold"
+                android:textColor="@color/colorPrimary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:drawableRightCompat="@drawable/ic_icons8_plus__" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:background="?attr/customBgViewColor"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            tools:ignore="MissingConstraints" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginTop="12dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -648,26 +648,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:fontFamily="sans-serif"
+                    android:fontFamily="@font/montserrat"
                     android:text="@string/from"
-                    android:textSize="14sp"
-                    android:textColor="?attr/customTextColor"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="?attr/customTextHintColor"
+                     />
 
                 <TextView
                     android:id="@+id/tv_from_destination"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="15dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:fontFamily="sans-serif"
+                    android:fontFamily="@font/montserrat"
                     android:text="@string/enter_information"
-                    android:textSize="14sp"
-                    android:textColor="#03A9F4"
                     android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="@color/colorPrimary"
                     android:gravity="end"/>
 
             </LinearLayout>
@@ -683,6 +680,7 @@
                     android:id="@+id/idfromEdit"
                     android:hint="@string/enter_information"
                     android:textSize="14sp"
+                    android:paddingBottom="8dp"
                     android:textColor="?attr/customTextColor"
                     android:textColorHint="?attr/customTextHintColor"
                     android:backgroundTint="?attr/customTextHintColor"
@@ -704,7 +702,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginTop="12dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -716,26 +715,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:fontFamily="sans-serif"
+                    android:fontFamily="@font/montserrat"
                     android:text="@string/to"
-                    android:textSize="14sp"
-                    android:textColor="?attr/customTextColor"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="?attr/customTextHintColor"
+                     />
 
                 <TextView
                     android:id="@+id/tv_to_destination"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="15dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:fontFamily="sans-serif"
+                    android:fontFamily="@font/montserrat"
                     android:text="@string/enter_information"
-                    android:textSize="14sp"
-                    android:textColor="#03A9F4"
+                    android:textSize="15sp"
                     android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
                     android:gravity="end"/>
 
             </LinearLayout>
@@ -751,6 +747,7 @@
                     android:id="@+id/idtoEdit"
                     android:hint="@string/enter_information"
                     android:textSize="14sp"
+                    android:paddingBottom="8dp"
                     android:textColor="?attr/customTextColor"
                     android:textColorHint="?attr/customTextHintColor"
                     android:backgroundTint="?attr/customTextHintColor"
@@ -771,7 +768,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginTop="12dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -783,26 +781,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:fontFamily="sans-serif"
+                    android:fontFamily="@font/montserrat"
                     android:text="@string/notes"
-                    android:textSize="14sp"
-                    android:textColor="?attr/customTextColor"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="?attr/customTextHintColor"
+                    />
 
                 <TextView
                     android:id="@+id/tv_notes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="15dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:fontFamily="sans-serif"
+                    android:fontFamily="@font/montserrat"
                     android:text="@string/loads"
-                    android:textSize="14sp"
-                    android:textColor="#03A9F4"
                     android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="@color/colorPrimary"
                     android:gravity="end"/>
 
             </LinearLayout>
@@ -818,6 +813,7 @@
                     android:id="@+id/idNotesEdit"
                     android:hint="@string/enter_notes"
                     android:textSize="14sp"
+                    android:paddingBottom="8dp"
                     android:textColor="?attr/customTextColor"
                     android:textColorHint="?attr/customTextHintColor"
                     android:backgroundTint="?attr/customTextHintColor"
@@ -837,17 +833,19 @@
             tools:ignore="MissingConstraints" />
 
         <Button
-            android:layout_width="120dp"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:id="@+id/idSaveGeneral"
             android:text="@string/save"
+            android:fontFamily="@font/montserrat"
             android:gravity="center"
             android:textSize="14sp"
+            android:textStyle="bold"
             android:layout_gravity="center"
             android:layout_marginTop="40dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/general_button"
-            android:textColor="@color/white"/>
+            android:textColor="@color/colorPrimary"/>
 
         <View
             android:background="@color/colorBackgroundMainView"

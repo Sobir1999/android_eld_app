@@ -34,22 +34,37 @@
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
+        android:configChanges="orientation"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:configChanges="orientation"
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true"
         tools:ignore="ExtraText">
-        <activity android:name=".activity.AddDvirActivity" />
+        <activity
+            android:name=".activity.RulesActivity"
+            android:exported="false"
+            android:configChanges="orientation"
+            android:screenOrientation="sensorLandscape"/>
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:configChanges="orientation"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape" />
+        <activity
+            android:name=".activity.AddDvirActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.LGDDActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="orientation"
+            android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.SignatureActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="orientation"
+            android:screenOrientation="sensorLandscape" />
 
         <service
             android:name=".services.MyIntentService"
@@ -62,11 +77,16 @@
 
         <activity
             android:name=".activity.LoginActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="orientation"
+            android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.AddDefectActivity"
-            android:configChanges="uiMode" />
-        <activity android:name=".activity.SplashActivity">
+            android:configChanges="orientation"
+            android:screenOrientation="sensorLandscape" />
+        <activity
+            android:name=".activity.SplashActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="sensorLandscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -75,20 +95,18 @@
         </activity>
         <activity
             android:name=".activity.MainActivity"
-            android:configChanges="uiMode" />
+            android:configChanges="orientation"
+            android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.BleConnect"
-            android:label="@string/app_name" />
-
-<!--        <receiver-->
-<!--            android:name=".broadcasts.ChangeDateTimeBroadcast"-->
-<!--            android:enabled="true"-->
-<!--            android:exported="true">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.DATE_CHANGED" />-->
-<!--            </intent-filter>-->
-<!--        </receiver>-->
-
+            android:label="@string/app_name" /> <!-- <receiver -->
+        <!-- android:name=".broadcasts.ChangeDateTimeBroadcast" -->
+        <!-- android:enabled="true" -->
+        <!-- android:exported="true"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.DATE_CHANGED" /> -->
+        <!-- </intent-filter> -->
+        <!-- </receiver> -->
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

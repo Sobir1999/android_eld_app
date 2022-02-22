@@ -43,6 +43,7 @@ public interface APIInterface {
     @POST("api/token/")
     Call<ResponseBody> createUser(@Body Student student);
 
+    @FormUrlEncoded
     @POST("api/token/refresh/")
     Call<ResponseBody> refreshToken(
             @Field("refresh") String refreshToken

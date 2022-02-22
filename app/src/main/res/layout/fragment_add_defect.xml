@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="?attr/customBgColor"
+    android:background="?attr/customBgViewColor"
     android:fitsSystemWindows="true"
     android:clickable="true"
     android:focusable="true"
@@ -10,6 +10,9 @@
 
     <ListView
         android:id="@+id/listView"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginVertical="8dp"
+        android:background="@drawable/background_main_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:choiceMode="multipleChoice"

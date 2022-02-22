@@ -1,6 +1,8 @@
 package com.iosix.eldblesample.retrofit;
 
 import android.content.Context;
+import android.net.Proxy;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -16,7 +18,7 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okhttp3.Route;
 
-public class TokenAuthenticator implements Authenticator{
+public class TokenAuthenticator implements Authenticator {
 
     private Context context;
     private final TokenServiceHolder tokenServiceHolder;
@@ -37,13 +39,12 @@ public class TokenAuthenticator implements Authenticator{
         APIInterface service = tokenServiceHolder.get();
 
         assert service != null;
+        Log.d("hhhhhhh",sessionManager.fetchToken());
         if (sessionManager.fetchToken() != null) {
             retrofit2.Response<ResponseBody> bodyResponse = service.refreshToken(sessionManager.fetchToken()).execute();
             Gson gson = new Gson();
             assert bodyResponse.body() != null;
             LoginResponse loginResponse = gson.fromJson(bodyResponse.body().string(), LoginResponse.class);
-            sessionManager.clearAccessToken();
-            sessionManager.clearToken();
             sessionManager.saveAccessToken(loginResponse.getAccessToken());
             sessionManager.saveToken(loginResponse.getrefreshToken());
             return response.request().newBuilder()

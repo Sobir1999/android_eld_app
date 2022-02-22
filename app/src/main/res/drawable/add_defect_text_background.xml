@@ -6,6 +6,5 @@
         android:color="?attr/customBgViewColor"
         android:dashGap="15dp"
         android:dashWidth="15dp" />
-
-    <size android:height="120dp" />
+    <size android:height="60dp" />
 </shape>

@@ -19,34 +19,35 @@
             android:gravity="center"
             android:visibility="visible"
             android:orientation="vertical"
-            android:background="?attr/customBgColor"
-            android:layout_margin="10dp">
+            android:background="@drawable/background_main_view"
+            android:layout_marginHorizontal="50dp"
+            android:layout_marginVertical="12dp">
 
             <ImageView
-                android:layout_width="70dp"
-                android:layout_height="70dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/document_upload"/>
+                android:src="@drawable/ic_check_document_file_icon_icon_1320196654394535651_0"/>
 
             <TextView
                 android:id="@+id/idDvirExText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/montserrat"
                 android:text="@string/create_new_dvir"
                 android:layout_gravity="center"
                 android:textColor="?attr/customTextColor"
-                android:textSize="17sp"
-                android:textStyle="bold"/>
+                android:textSize="17sp"/>
 
             <Button
                 android:id="@+id/create_new_dvir_button"
-                android:layout_width="140dp"
-                android:layout_height="45dp"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="8dp"
                 android:text="@string/create"
-                android:textColor="#03A9F4"
+                android:textColor="@color/colorPrimary"
                 android:background="@drawable/button_bg"
                 />
 

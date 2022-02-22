@@ -13,110 +13,58 @@
         android:clickable="true"
         android:focusable="true"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:paddingVertical="10dp"
+        android:paddingHorizontal="40dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/customBgColor"
+            android:background="@drawable/background_main_view"
             android:paddingHorizontal="8dp"
-            android:paddingVertical="16dp">
+            android:paddingVertical="8dp">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/idCardStatus"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/colorStatusOFF"
-                app:cardCornerRadius="8dp"
-                tools:ignore="MissingConstraints">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="16dp">
+<!--            <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--                android:id="@+id/idChangeStatus"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginVertical="16dp"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/idCardStatus"-->
+<!--                tools:ignore="MissingConstraints">-->
 
-                    <ImageView
-                        android:id="@+id/idStatusImage"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginHorizontal="10dp"
-                        android:src="@drawable/ic_baseline_power_settings_new_24"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+<!--                <TextView-->
+<!--                    android:textColor="?attr/customTextColor"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="@string/change_status"-->
+<!--                    android:textSize="14sp"-->
+<!--                    android:textStyle="bold"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintLeft_toLeftOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent" />-->
 
-                    <TextView
-                        android:id="@+id/idStatusText"
-                        style="@style/TextAppearance.AppCompat.Button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:text="@string/off"
-                        android:textStyle="bold"
-                        android:textSize="17sp"
-                        android:textColor="?attr/customTextHintColor"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toRightOf="@id/idStatusImage"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/idStatusTime"
-                        style="@style/TextAppearance.AppCompat.Headline"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="00:00:00"
-                        android:textSize="18sp"
-                        android:textColor="@color/black"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/idChangeStatus"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="16dp"
-                app:layout_constraintTop_toBottomOf="@id/idCardStatus"
-                tools:ignore="MissingConstraints">
-
-                <TextView
-                    android:textColor="?attr/customTextColor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/change_status"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <Button
-                    android:id="@+id/idDRWithExeption"
-                    android:layout_width="wrap_content"
-                    android:layout_height="45dp"
-                    android:background="@drawable/background_dr_with_exception_btn"
-                    android:paddingHorizontal="24dp"
-                    android:text="@string/dr_with_exeption"
-                    android:textSize="14sp"
-                    android:textAllCaps="false"
-                    android:textStyle="bold"
-                    android:textColor="@color/colorActionText"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+<!--                <Button-->
+<!--                    android:id="@+id/idDRWithExeption"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="45dp"-->
+<!--                    android:background="@drawable/background_dr_with_exception_btn"-->
+<!--                    android:paddingHorizontal="24dp"-->
+<!--                    android:text="@string/dr_with_exeption"-->
+<!--                    android:textSize="14sp"-->
+<!--                    android:textAllCaps="false"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:textColor="@color/colorActionText"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintRight_toRightOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent" />-->
+<!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/idStatusButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:nestedScrollingEnabled="true"
-                app:layout_constraintTop_toBottomOf="@id/idChangeStatus"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="MissingConstraints">
 
                 <LinearLayout
@@ -124,7 +72,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintDimensionRatio="1:1"
-                    android:padding="3dp"
+                    android:padding="5dp"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
                     app:layout_constraintLeft_toLeftOf="parent"
@@ -135,7 +83,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:cardBackgroundColor="@color/colorStatusOFF"
-                        app:cardCornerRadius="8dp">
+                        app:cardCornerRadius="16dp">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -144,12 +92,6 @@
                             android:gravity="center"
                             android:orientation="vertical">
 
-                            <ImageView
-                                android:id="@+id/imageOff"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/ic_baseline_power_settings_new_24" />
-
                             <TextView
                                 android:id="@+id/statusOff"
                                 android:layout_width="wrap_content"
@@ -157,6 +99,13 @@
                                 android:text="@string/off"
                                 android:textColor="@color/colorStatusOFFBold"
                                 android:textStyle="bold" />
+
+                            <ImageView
+                                android:id="@+id/imageOff"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_baseline_power_settings_new_24" />
+
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
 
@@ -174,7 +123,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintDimensionRatio="1:1"
-                    android:padding="3dp"
+                    android:padding="5dp"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
                     app:layout_constraintLeft_toRightOf="@id/idIncludeOff"
@@ -185,7 +134,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:cardBackgroundColor="@color/colorStatusSB"
-                        app:cardCornerRadius="8dp">
+                        app:cardCornerRadius="16dp">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -194,12 +143,6 @@
                             android:gravity="center"
                             android:orientation="vertical">
 
-                            <ImageView
-                                android:id="@+id/imageSB"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/ic__1748117516352401124513" />
-
                             <TextView
                                 android:id="@+id/statusSB"
                                 android:layout_width="wrap_content"
@@ -207,6 +150,13 @@
                                 android:text="@string/sb"
                                 android:textColor="@color/colorStatusSBBold"
                                 android:textStyle="bold" />
+
+                            <ImageView
+                                android:id="@+id/imageSB"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic__1748117516352401124513" />
+
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
 
@@ -225,7 +175,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintDimensionRatio="1:1"
-                    android:padding="3dp"
+                    android:padding="5dp"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
                     app:layout_constraintLeft_toRightOf="@id/idIncludeSb"
@@ -236,7 +186,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:cardBackgroundColor="@color/colorStatusDR"
-                        app:cardCornerRadius="8dp">
+                        app:cardCornerRadius="16dp">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -245,12 +195,6 @@
                             android:gravity="center"
                             android:orientation="vertical">
 
-                            <ImageView
-                                android:id="@+id/imageDR"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/ic_steering_wheel_svgrepo_com" />
-
                             <TextView
                                 android:id="@+id/statusDR"
                                 android:layout_width="wrap_content"
@@ -258,6 +202,13 @@
                                 android:text="@string/dr"
                                 android:textColor="@color/colorStatusDRBold"
                                 android:textStyle="bold" />
+
+                            <ImageView
+                                android:id="@+id/imageDR"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_steering_wheel_svgrepo_com" />
+
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
 
@@ -276,18 +227,17 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintDimensionRatio="1:1"
-                    android:padding="3dp"
+                    android:padding="5dp"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
-                    app:layout_constraintLeft_toRightOf="@id/idIncludeDr"
-                    app:layout_constraintRight_toRightOf="parent">
+                    app:layout_constraintLeft_toRightOf="@id/idIncludeDr">
 
                     <androidx.cardview.widget.CardView
                         android:id="@+id/cardON"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:cardBackgroundColor="@color/colorStatusON"
-                        app:cardCornerRadius="8dp">
+                        app:cardCornerRadius="16dp">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -296,12 +246,6 @@
                             android:gravity="center"
                             android:orientation="vertical">
 
-                            <ImageView
-                                android:id="@+id/imageON"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/ic_truck" />
-
                             <TextView
                                 android:id="@+id/statusON"
                                 android:layout_width="wrap_content"
@@ -309,6 +253,13 @@
                                 android:text="@string/on"
                                 android:textColor="@color/colorStatusONBold"
                                 android:textStyle="bold" />
+
+                            <ImageView
+                                android:id="@+id/imageON"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_truck" />
+
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
 
@@ -320,303 +271,415 @@
                         android:text="@string/on_duty"
                         android:textColor="?attr/customTextHintColor"/>
                 </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:padding="5dp"
+                    app:layout_constraintDimensionRatio="4:1"
+                    app:layout_constraintLeft_toRightOf="@id/idIncludeOn"
+                    app:layout_constraintRight_toRightOf="parent">
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/idCardStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:cardBackgroundColor="@color/colorStatusON"
+                        app:cardCornerRadius="16dp"
+                        tools:ignore="MissingConstraints">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="16dp"
+                            android:paddingVertical="5dp">
+
+                            <TextView
+                                android:id="@+id/tvCurrentStatus"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/montserrat"
+                                android:text="@string/current_status"
+                                android:textColor="@color/colorPrimary"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <ImageView
+                                android:id="@+id/idStatusImage"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                app:tint="@color/colorStatusONBold"
+                                android:src="@drawable/ic_baseline_power_settings_new_24"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/tvCurrentStatus" />
+
+                            <TextView
+                                android:id="@+id/idStatusText"
+                                style="@style/TextAppearance.AppCompat.Button"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:text="@string/off"
+                                android:textStyle="bold"
+                                android:textSize="17sp"
+                                android:textColor="@color/colorStatusONBold"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintLeft_toRightOf="@id/idStatusImage"
+                                app:layout_constraintTop_toBottomOf="@id/tvCurrentStatus" />
+
+                            <TextView
+                                android:id="@+id/idStatusTime"
+                                style="@style/TextAppearance.AppCompat.Headline"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="00:00:00"
+                                android:textSize="24sp"
+                                android:textColor="@color/black"
+                                android:textStyle="bold"
+                                android:layout_marginEnd="8dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:id="@+id/idVisibilityViewCons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:orientation="horizontal"
                 android:visibility="gone"
-                android:background="?attr/customBgColor"
                 app:layout_constraintTop_toBottomOf="@+id/idStatusButton"
-                tools:ignore="MissingConstraints">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/isVisLocationCons"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingVertical="10dp">
-
-                    <TextView
-                        android:id="@+id/locationText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/location"
-                        android:textStyle="bold"
-                        android:textColor="?attr/customTextColor"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/idLoactionIcon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/your_location"
-                        android:textStyle="bold"
-                        android:textColor="@color/colorActionText"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:drawableRightCompat="@drawable/ic_baseline_location_on_24" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <EditText
-                    android:id="@+id/idLocationEdit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/your_location"
-                    android:textAllCaps="true"
-                    android:paddingBottom="16dp"
-                    style="@style/MyEditTextTheme"
-                    android:textColorHint="?attr/customTextHintColor"
-                    android:textColor="?attr/customTextColor"
-                    android:inputType="textCapSentences"
-                    app:layout_constraintTop_toBottomOf="@id/isVisLocationCons" />
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/isVisNotesCons"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingVertical="10dp"
-                    app:layout_constraintTop_toBottomOf="@id/idLocationEdit">
-
-                    <TextView
-                        android:id="@+id/noteText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/notes"
-                        android:textStyle="bold"
-                        android:textColor="?attr/customTextColor"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/idNoteIcon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/add_notes"
-                        android:textStyle="bold"
-                        android:textColor="@color/colorActionText"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <EditText
-                    android:id="@+id/idNoteEdit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableEnd="@drawable/note_add_icon"
-                    android:hint="@string/enter_notes"
-                    android:paddingBottom="16dp"
-                    style="@style/MyEditTextTheme"
-                    android:textColorHint="?attr/customTextHintColor"
-                    android:textColor="?attr/customTextColor"
-                    android:inputType="textCapSentences"
-                    app:layout_constraintTop_toBottomOf="@id/isVisNotesCons" />
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/isVisDocumentCons"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingVertical="10dp"
-                    app:layout_constraintTop_toBottomOf="@id/idNoteEdit">
-
-                    <TextView
-                        android:id="@+id/documentText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/document"
-                        android:textStyle="bold"
-                        android:textColor="?attr/customTextColor"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/idDocumentIcon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/attach"
-                        android:textStyle="bold"
-                        android:textColor="@color/colorActionText"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:drawableRightCompat="@drawable/ic_baseline_attach_file_24" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <View
-                    android:id="@+id/idVisibilityView"
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:layout_marginVertical="10dp"
-                    android:background="@color/colorBackgroundMainView"
-                    app:layout_constraintTop_toBottomOf="@id/isVisDocumentCons" />
+                app:layout_constraintStart_toStartOf="parent">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="10dp"
-                    android:orientation="horizontal"
-                    app:layout_constraintTop_toBottomOf="@id/idVisibilityView">
+                    android:layout_weight="2"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/location"
+                                android:textColor="?attr/customTextColor"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:fontFamily="@font/montserrat"/>
+
+                            <EditText
+                                android:id="@+id/idTvCurrentLocation"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:hint="Current Location"
+                                android:textColorHint="?attr/customTextColor"
+                                android:background="@null"
+                                android:textSize="15sp"
+                                android:inputType="textNoSuggestions"
+                                android:fontFamily="@font/montserrat"
+                                android:textColor="?attr/customTextColor"/>
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/idCurrentLocation"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="end"
+                            android:text="@string/your_location"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="15sp"
+                            android:fontFamily="@font/montserrat"
+                            android:drawablePadding="10dp"
+                            app:drawableRightCompat="@drawable/ic_baseline_location_on_24" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="?attr/customBgViewColor"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/notes"
+                                android:textColor="?attr/customTextColor"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:fontFamily="@font/montserrat"/>
+
+                            <EditText
+                                android:id="@+id/idNoteEdit"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/enter_notes"
+                                android:textColorHint="?attr/customTextColor"
+                                android:background="@null"
+                                android:textSize="15sp"
+                                android:fontFamily="@font/montserrat"
+                                android:textColor="?attr/customTextColor"
+                                android:inputType="textNoSuggestions" />
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="end"
+                            android:text="@string/add_notes"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="15sp"
+                            android:layout_marginEnd="30dp"
+                            android:fontFamily="@font/montserrat"
+                            android:drawablePadding="10dp"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="?attr/customBgViewColor"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="12dp">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/document"
+                                android:textColor="?attr/customTextColor"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                android:fontFamily="@font/montserrat"/>
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/idDocument"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="end"
+                            android:text="@string/attach"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="15sp"
+                            android:fontFamily="@font/montserrat"
+                            android:drawablePadding="10dp"
+                            app:drawableRightCompat="@drawable/ic_attachment" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="?attr/customBgViewColor"/>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginVertical="20dp">
 
                     <Button
-                        android:id="@+id/idVisButtonCancel"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/item_vis_button_background"
-                        android:text="@string/cancel"
-                        android:textColor="@color/colorActionText" />
-
-                    <Button
-                        android:id="@+id/idVisButtonSave"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:layout_weight="1"
                         android:background="@drawable/item_vis_button_background"
                         android:text="@string/save"
-                        android:textColor="@color/colorActionText" />
+                        android:textAllCaps="false"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorPrimary"
+                        android:id="@+id/idSaveStatus"/>
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/item_vis_button_background"
+                        android:text="@string/cancel"
+                        android:textSize="16sp"
+                        android:textAllCaps="false"
+                        android:textColor="@color/colorPrimary"
+                        android:id="@+id/idCancelStatus"
+                        android:layout_marginTop="20dp"/>
+
                 </LinearLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="10dp"
-            android:background="?attr/customBgColor"
+            android:background="@drawable/background_main_view"
             android:clickable="true"
             android:focusable="true"
             android:orientation="vertical">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                tools:ignore="MissingConstraints">
+<!--            <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:padding="10dp"-->
+<!--                tools:ignore="MissingConstraints">-->
 
-                <TextView
-                    style="@style/TextAppearance.AppCompat.Body2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/today"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="?attr/customTextColor"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="MissingConstraints" />
+<!--                <TextView-->
+<!--                    style="@style/TextAppearance.AppCompat.Body2"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="@string/today"-->
+<!--                    android:textSize="14sp"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:textColor="?attr/customTextColor"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintLeft_toLeftOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent"-->
+<!--                    tools:ignore="MissingConstraints" />-->
 
-                <TextView
-                    android:id="@+id/idRecap"
-                    style="@style/TextAppearance.AppCompat.Subhead"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawablePadding="5dp"
-                    android:text="@string/recap"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/colorActionText"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="MissingConstraints"
-                    app:drawableRightCompat="@drawable/ic_baseline_restore_24" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+<!--                <TextView-->
+<!--                    android:id="@+id/idRecap"-->
+<!--                    style="@style/TextAppearance.AppCompat.Subhead"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:drawablePadding="5dp"-->
+<!--                    android:text="@string/recap"-->
+<!--                    android:textSize="15sp"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:textColor="@color/colorActionText"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintRight_toRightOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent"-->
+<!--                    tools:ignore="MissingConstraints"-->
+<!--                    app:drawableRightCompat="@drawable/ic_baseline_restore_24" />-->
+<!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="?attr/customBgViewColor"
-                tools:ignore="MissingConstraints" />
+<!--            <View-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="1dp"-->
+<!--                android:background="?attr/customBgViewColor"-->
+<!--                tools:ignore="MissingConstraints" />-->
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="15dp"
-                tools:ignore="MissingConstraints">
+<!--            <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:padding="15dp"-->
+<!--                tools:ignore="MissingConstraints">-->
 
-                <TextView
-                    android:id="@+id/idTableDay"
-                    style="@style/TextAppearance.AppCompat.Subhead"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawablePadding="5dp"
-                    android:text="Sat"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="?attr/customTextColor"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="MissingConstraints"
-                    app:drawableLeftCompat="@drawable/ic_baseline_edit_24" />
+<!--                <TextView-->
+<!--                    android:id="@+id/idTableDay"-->
+<!--                    style="@style/TextAppearance.AppCompat.Subhead"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:drawablePadding="5dp"-->
+<!--                    android:text="Sat"-->
+<!--                    android:textSize="14sp"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:textColor="?attr/customTextColor"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent"-->
+<!--                    tools:ignore="MissingConstraints"-->
+<!--                    app:drawableLeftCompat="@drawable/ic_baseline_edit_24" />-->
 
-                <TextView
-                    android:id="@+id/idTableMonth"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:text="Apr 11"
-                    android:textColor="?attr/customTextHintColor"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toRightOf="@id/idTableDay"
-                    app:layout_constraintRight_toLeftOf="@id/idTableView"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="MissingConstraints" />
+<!--                <TextView-->
+<!--                    android:id="@+id/idTableMonth"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginLeft="10dp"-->
+<!--                    android:text="Apr 11"-->
+<!--                    android:textColor="?attr/customTextHintColor"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintLeft_toRightOf="@id/idTableDay"-->
+<!--                    app:layout_constraintRight_toLeftOf="@id/idTableView"-->
+<!--                    app:layout_constraintTop_toTopOf="parent"-->
+<!--                    tools:ignore="MissingConstraints" />-->
 
-                <View
-                    android:id="@+id/idTableView"
-                    android:layout_width="2dp"
-                    android:layout_height="30dp"
-                    android:background="?attr/customBgViewColor"
-                    app:layout_constraintLeft_toRightOf="@id/idTableMonth"
-                    app:layout_constraintRight_toLeftOf="@id/idTableTime"
-                    tools:ignore="MissingConstraints" />
+<!--                <View-->
+<!--                    android:id="@+id/idTableView"-->
+<!--                    android:layout_width="2dp"-->
+<!--                    android:layout_height="30dp"-->
+<!--                    android:background="?attr/customBgViewColor"-->
+<!--                    app:layout_constraintLeft_toRightOf="@id/idTableMonth"-->
+<!--                    app:layout_constraintRight_toLeftOf="@id/idTableTime"-->
+<!--                    tools:ignore="MissingConstraints" />-->
 
-                <TextView
-                    android:id="@+id/idTableTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:text="00h 00m"
-                    android:textColor="?attr/customTextHintColor"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toRightOf="@id/idTableView"
-                    app:layout_constraintRight_toLeftOf="@id/idTableDvir"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="MissingConstraints" />
+<!--                <TextView-->
+<!--                    android:id="@+id/idTableTime"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginRight="10dp"-->
+<!--                    android:text="00h 00m"-->
+<!--                    android:textColor="?attr/customTextHintColor"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintLeft_toRightOf="@id/idTableView"-->
+<!--                    app:layout_constraintRight_toLeftOf="@id/idTableDvir"-->
+<!--                    app:layout_constraintTop_toTopOf="parent"-->
+<!--                    tools:ignore="MissingConstraints" />-->
 
-                <TextView
-                    android:id="@+id/idTableDvir"
-                    style="@style/TextAppearance.AppCompat.Subhead"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawablePadding="5dp"
-                    android:text="@string/no_dvir"
-                    android:textSize="14sp"
-                    android:textColor="?attr/customTextColor"
-                    app:drawableLeftCompat="@drawable/ic__b74e24a497d9fa32d2c7d4acf314b81"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toRightOf="@id/idTableTime"
-                    app:layout_constraintRight_toLeftOf="@id/idTableRadioBtn"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="MissingConstraints" />
+<!--                <TextView-->
+<!--                    android:id="@+id/idTableDvir"-->
+<!--                    style="@style/TextAppearance.AppCompat.Subhead"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:drawablePadding="5dp"-->
+<!--                    android:text="@string/no_dvir"-->
+<!--                    android:textSize="14sp"-->
+<!--                    android:textColor="?attr/customTextColor"-->
+<!--                    app:drawableLeftCompat="@drawable/ic__b74e24a497d9fa32d2c7d4acf314b81"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintLeft_toRightOf="@id/idTableTime"-->
+<!--                    app:layout_constraintRight_toLeftOf="@id/idTableRadioBtn"-->
+<!--                    app:layout_constraintTop_toTopOf="parent"-->
+<!--                    tools:ignore="MissingConstraints" />-->
 
-                <ImageView
-                    android:id="@+id/idTableRadioBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/state_unchacked"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="MissingConstraints" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+<!--                <ImageView-->
+<!--                    android:id="@+id/idTableRadioBtn"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:src="@drawable/state_unchacked"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintRight_toRightOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent"-->
+<!--                    tools:ignore="MissingConstraints" />-->
+<!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
 
             <View
                 android:layout_width="match_parent"
@@ -641,6 +704,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingVertical="10dp"
+                android:paddingHorizontal="20dp"
                 tools:ignore="MissingConstraints">
 
                 <Button
@@ -650,8 +714,9 @@
                     android:layout_margin="5dp"
                     android:background="@drawable/background_table_section_button"
                     android:text="Log"
+                    android:textSize="16sp"
                     android:textAllCaps="false"
-                    android:textColor="@color/colorActionText"
+                    android:textColor="@color/colorPrimary"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toLeftOf="@id/idTableBtnGeneral"
                     tools:ignore="MissingConstraints" />
@@ -663,8 +728,9 @@
                     android:layout_margin="5dp"
                     android:background="@drawable/background_table_section_button"
                     android:text="General"
+                    android:textSize="16sp"
                     android:textAllCaps="false"
-                    android:textColor="@color/colorActionText"
+                    android:textColor="@color/colorPrimary"
                     app:layout_constraintLeft_toRightOf="@id/idTableBtnLog"
                     app:layout_constraintRight_toLeftOf="@id/idTableBtnDocs"
                     tools:ignore="MissingConstraints" />
@@ -675,9 +741,9 @@
                     android:layout_height="32dp"
                     android:background="@drawable/background_table_section_button"
                     android:text="Signature"
+                    android:textSize="16sp"
                     android:textAllCaps="false"
-                    android:textSize="14sp"
-                    android:textColor="@color/colorActionText"
+                    android:textColor="@color/colorPrimary"
                     app:layout_constraintLeft_toRightOf="@id/idTableBtnGeneral"
                     app:layout_constraintRight_toLeftOf="@id/idTableBtnDVIR"
                     tools:ignore="MissingConstraints" />
@@ -689,8 +755,9 @@
                     android:layout_margin="5dp"
                     android:background="@drawable/background_table_section_button"
                     android:text="DVIR"
+                    android:textSize="16sp"
                     android:textAllCaps="false"
-                    android:textColor="@color/colorActionText"
+                    android:textColor="@color/colorPrimary"
                     app:layout_constraintLeft_toRightOf="@id/idTableBtnDocs"
                     app:layout_constraintRight_toRightOf="parent"
                     tools:ignore="MissingConstraints" />
@@ -701,7 +768,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/customBgColor"
+            android:background="@drawable/background_main_view"
             android:clickable="true"
             android:focusable="true"
             android:orientation="vertical">
@@ -719,30 +786,20 @@
                     android:drawablePadding="5dp"
                     android:text="Last 14 days"
                     android:textStyle="bold"
-                    android:textSize="15sp"
-                    android:textColor="?attr/customTextColor"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorPrimary"
                     app:drawableLeftCompat="@drawable/ic_baseline_calendar_today_24"
-                    tools:ignore="MissingConstraints" />
-
-                <TextView
-                    android:id="@+id/idLastDaysCheckAll"
-                    style="@style/TextAppearance.AppCompat.Widget.PopupMenu.Small"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawablePadding="5dp"
-                    android:text="@string/check_all"
-                    android:textSize="14sp"
-                    android:textColor="?attr/customTextHintColor"
-                    app:drawableRightCompat="@drawable/ic_baseline_check_circle_outline_24"
+                    app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    tools:ignore="MissingConstraints" />
+                    app:layout_constraintTop_toTopOf="parent"/>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View
                 android:id="@+id/idTopView"
                 android:background="?attr/customBgViewColor"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="2dp"
                 tools:ignore="MissingConstraints" />
 
             <androidx.recyclerview.widget.RecyclerView

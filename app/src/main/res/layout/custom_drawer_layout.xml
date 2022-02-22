@@ -17,7 +17,7 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_gravity="start"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="50dp"
         android:layout_marginVertical="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
@@ -25,6 +25,7 @@
         <de.hdodenhof.circleimageview.CircleImageView
             android:src="@drawable/avatar"
             android:layout_width="60dp"
+            android:layout_gravity="center"
             android:layout_height="60dp"
             android:id="@+id/idAvatar"/>
 
@@ -34,20 +35,20 @@
             android:layout_marginTop="20dp"
             android:textSize="17sp"
             android:textStyle="bold"
-            android:textColor="?attr/customTextColor"
+            android:textColor="@color/colorPrimary"
             android:textAlignment="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <TextView
-            android:text="11111111111"
-            android:textColor="?attr/customTextHintColor"
-            android:id="@+id/idPhoneNumber"
-            android:layout_marginBottom="20dp"
-            android:textSize="15sp"
-            android:textAlignment="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+<!--        <TextView-->
+<!--            android:text="11111111111"-->
+<!--            android:textColor="?attr/customTextHintColor"-->
+<!--            android:id="@+id/idPhoneNumber"-->
+<!--            android:layout_marginBottom="20dp"-->
+<!--            android:textSize="15sp"-->
+<!--            android:textAlignment="center"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content" />-->
     </LinearLayout>
 
     <View
@@ -57,7 +58,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp">
 
         <ImageView
             android:id="@+id/idNightIc"
@@ -66,19 +68,19 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toLeftOf="@id/idNightText"
             android:src="@drawable/ic_baseline_nightlight_24"
-            android:layout_margin="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:ignore="MissingConstraints" />
 
         <TextView
             android:id="@+id/idNightText"
-            android:text="Night Mode"
+            android:text="@string/night_mode"
             android:textColor="?attr/customTextColor"
             app:layout_constraintLeft_toRightOf="@id/idNightIc"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginLeft="16dp"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/montserrat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:ignore="MissingConstraints" />
@@ -99,39 +101,44 @@
         android:layout_width="match_parent"
         android:layout_height="1dp" />
 
+<!--    <LinearLayout-->
+<!--        android:gravity="center_vertical"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content">-->
+
+<!--        <ImageView-->
+<!--            android:layout_margin="16dp"-->
+<!--            android:src="@drawable/ic_baseline_language_24"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/idSpinnerLanguage"-->
+<!--            android:text="@string/languages"-->
+<!--            android:textColor="?attr/customTextColor"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content" />-->
+<!--    </LinearLayout>-->
+
     <LinearLayout
         android:gravity="center_vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="50dp">
 
         <ImageView
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_baseline_language_24"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/idSpinnerLanguage"
-            android:text="@string/languages"
-            android:textColor="?attr/customTextColor"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:gravity="center_vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_repair"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:background="@drawable/inspection_background"
+            android:src="@drawable/ic_baseline_star_outline_24"
+            android:padding="3dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp" />
 
         <TextView
             android:id="@+id/idSpinnerInspection"
             android:text="@string/inspection_mode"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/montserrat"
             android:textColor="?attr/customTextColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -140,21 +147,70 @@
     <LinearLayout
         android:gravity="center_vertical"
         android:layout_width="match_parent"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="16dp"
         android:layout_height="wrap_content">
 
         <ImageView
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_baseline_logout_24"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:src="@drawable/ic_icons8_settings"
+            android:layout_width="24dp"
+            android:layout_height="24dp"/>
 
         <TextView
-            android:id="@+id/idLogout"
-            android:text="@string/log_out"
+            android:id="@+id/idSettings"
+            android:text="@string/settings"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/montserrat"
             android:textColor="?attr/customTextColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
+
+        <LinearLayout
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="16dp"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:src="@drawable/ic_rules"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                app:tint="?attr/customTextHintColor" />
+
+            <TextView
+                android:id="@+id/idHOSRules"
+                android:text="@string/hos_rules"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/montserrat"
+                android:textColor="?attr/customTextColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="16dp"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:src="@drawable/ic_baseline_logout_24"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/idLogout"
+                android:text="@string/log_out"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/montserrat"
+                android:textColor="?attr/customTextColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
 
     </LinearLayout>
 </ScrollView>

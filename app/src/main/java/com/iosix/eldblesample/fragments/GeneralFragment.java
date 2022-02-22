@@ -10,9 +10,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,16 +20,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.iosix.eldblesample.R;
-import com.iosix.eldblesample.adapters.GeneralFragmentPagerAdapter;
 import com.iosix.eldblesample.adapters.TrailerRecyclerAdapter;
-import com.iosix.eldblesample.dialogs.HomeTerminalDialog;
-import com.iosix.eldblesample.dialogs.MainOfficeAddressDialog;
 import com.iosix.eldblesample.models.ExampleSMSModel;
-import com.iosix.eldblesample.roomDatabase.entities.GeneralEntity;
 import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
+import com.iosix.eldblesample.shared_prefs.DriverSharedPrefs;
+import com.iosix.eldblesample.shared_prefs.GeneralSharedPrefs;
 import com.iosix.eldblesample.shared_prefs.SessionManager;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.GeneralViewModel;
@@ -42,11 +37,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 public class GeneralFragment extends Fragment {
-//    private ViewPager pager;
-//    private GeneralFragmentPagerAdapter adapter;
 
     private TrailerRecyclerAdapter adapter;
     private ArrayList<TrailersEntity> selectedTrailers;
@@ -54,6 +46,8 @@ public class GeneralFragment extends Fragment {
     private UserViewModel userViewModel;
     private GeneralViewModel generalViewModel;
     private SessionManager sessionManager;
+    private GeneralSharedPrefs generalSharedPrefs;
+    private DriverSharedPrefs driverSharedPrefs;
 
 
     private Context context;
@@ -61,10 +55,10 @@ public class GeneralFragment extends Fragment {
     private RecyclerView idTrailersRecyclerView;
     private ImageView idShippingClear,idTrailersClear,idVehiclesClear;
     private TextView driverFullName,tvDistance,tvShippingdocs,tvTrailers,idVehiclesEdit,
-            tv_carrier,tv_terminal_address,tv_from_destination,tv_to_destination,tv_main_office,tv_notes;
+            tv_carrier,tv_terminal_address,tv_from_destination,tv_to_destination,tv_main_office,tv_notes,tv_co_drivers;
     private EditText driverName,driverSurname,distanceEdit,ShippingDocsEdit,idTrailersEdit,
             idCarrierEdit,idfromEdit,idtoEdit,idNotesEdit;
-    private ConstraintLayout idMainOffice;
+    private ConstraintLayout idMainOffice,coDriverContainer;
     private LinearLayout driverInfo,distanceContainer,idDistanceLayout,
             shippingDocsLayout,trailersLayout,idTrailersLayout,vehiclesLayout,idVehiclesLayout,
             layout_carrier,idCarrierLayout,from_container,idfromLayout,to_container,idtoLayout,notes_container,idNotesLayout;
@@ -91,12 +85,14 @@ public class GeneralFragment extends Fragment {
         generalViewModel = ViewModelProviders.of(this).get(GeneralViewModel.class);
 
         sessionManager = new SessionManager(requireContext());
+        generalSharedPrefs = new GeneralSharedPrefs(requireContext());
+        driverSharedPrefs = new DriverSharedPrefs(requireContext());
 
         driverFullName = view.findViewById(R.id.tv_driver_name);
         driverInfo = view.findViewById(R.id.idDriverNameCons);
         distanceContainer = view.findViewById(R.id.distance_container);
         tvDistance = view.findViewById(R.id.tv_distance);
-        tvShippingdocs = view.findViewById(R.id.tv_shipping_docs);
+        tvShippingdocs = view.findViewById(R.id.idAddShippingDocs);
         ShippingDocsEdit = view.findViewById(R.id.idShippingDocsEdit);
         shippingDocsLayout = view.findViewById(R.id.shipping_docs_layout);
         idShippingClear = view.findViewById(R.id.idShippingClear);
@@ -128,14 +124,12 @@ public class GeneralFragment extends Fragment {
         tv_notes = view.findViewById(R.id.tv_notes);
         idSaveGeneral = view.findViewById(R.id.idSaveGeneral);
         tv_main_office = view.findViewById(R.id.tv_main_office);
+        tv_co_drivers = view.findViewById(R.id.tv_co_drivers);
+        coDriverContainer = view.findViewById(R.id.tv_co_driver_container);
 
-        userViewModel.getMgetUser().observe(getViewLifecycleOwner(),user -> {
-            if (user != null){
-                s = user.getName() + " " + user.getLastName();
-                driverFullName.setText(s);
-                tv_terminal_address.setText(user.getHomeTerminalAddress());
-            }
-        });
+        driverFullName.setText(String.format("%s %s",driverSharedPrefs.getFirstname(),driverSharedPrefs.getLastname()));
+        tv_main_office.setText(driverSharedPrefs.getMainOffice());
+        tv_terminal_address.setText(driverSharedPrefs.getHomeTerAdd());
 
         getGeneralInfo();
 
@@ -206,7 +200,6 @@ public class GeneralFragment extends Fragment {
                     idTrailersEdit.setHint(strName);
                     idTrailersLayout.setVisibility(View.VISIBLE);
                 }else  {
-
                         AlertDialog.Builder builderSingle = new AlertDialog.Builder(getContext());
                         builderSingle.setTitle("Select Trailers");
 
@@ -281,47 +274,85 @@ public class GeneralFragment extends Fragment {
 
             alertDialog.setAdapter(arrayAdapter, (dialog, which) -> {
                 String strName = arrayAdapter.getItem(which);
-                idVehiclesEdit.setText(strName);
+                generalSharedPrefs.saveLasVehicle(strName);
                 idVehiclesLayout.setVisibility(View.VISIBLE);
+                idVehiclesEdit.setText(generalSharedPrefs.getLastVehicle());
             });
             alertDialog.show();
         });
+
         idVehiclesClear.setOnClickListener(v -> {
             idVehiclesLayout.setVisibility(View.GONE);
+            generalSharedPrefs.saveLasVehicle("");
         });
+
+        idVehiclesEdit.setText(generalSharedPrefs.getLastVehicle());
+        if (!idVehiclesEdit.getText().equals("")){
+            idVehiclesLayout.setVisibility(View.VISIBLE);
+        }
+
+        coDriverContainer.setOnClickListener(view -> {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+            alertDialog.setTitle("Select Co-Driver");
+
+            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_selectable_list_item);
+            userViewModel.getMgetDrivers().observe((LifecycleOwner) requireContext(), drivers -> {
+                for (int i = 0; i < drivers.size(); i++) {
+                    arrayAdapter.add(String.format("%s %s",drivers.get(i).getName(),drivers.get(i).getLastName()));
+                }
+                arrayAdapter.add("None");
+            });
+            alertDialog.setNegativeButton("cancel", (dialog, which) -> dialog.dismiss());
+
+            alertDialog.setAdapter(arrayAdapter, (dialog, which) -> {
+                String strName = arrayAdapter.getItem(which);
+                generalSharedPrefs.saveCoDriver(strName);
+                tv_co_drivers.setText(generalSharedPrefs.getCoDriver());
+            });
+            alertDialog.show();
+        });
+
+        tv_co_drivers.setText(generalSharedPrefs.getCoDriver());
 
         from_container.setOnClickListener(v -> {
             if (idfromLayout.getVisibility() != View.GONE){
                 idfromLayout.setVisibility(View.GONE);
                 if (idfromEdit.getText() != null){
-                    tv_from_destination.setText(idfromEdit.getText().toString());
+                    generalSharedPrefs.saveLasFromDes(idfromEdit.getText().toString());
+                    tv_from_destination.setText(generalSharedPrefs.getLastFromDes());
                 }
             }else {
                 idfromLayout.setVisibility(View.VISIBLE);
             }
         });
 
+        tv_from_destination.setText(generalSharedPrefs.getLastFromDes());
+
         to_container.setOnClickListener(v -> {
             if (idtoLayout.getVisibility() != View.GONE){
                 idtoLayout.setVisibility(View.GONE);
                 if(idtoEdit.getText() != null){
-                    tv_to_destination.setText(idtoEdit.getText().toString());
+                    generalSharedPrefs.saveLasToDes(idtoEdit.getText().toString());
+                    tv_to_destination.setText(generalSharedPrefs.getLastToDes());
                 }
             }else {
                 idtoLayout.setVisibility(View.VISIBLE);
             }
         });
+        tv_to_destination.setText(generalSharedPrefs.getLastToDes());
 
         notes_container.setOnClickListener(v -> {
             if (idNotesLayout.getVisibility() != View.GONE){
                 idNotesLayout.setVisibility(View.GONE);
                 if(idNotesEdit.getText() != null){
-                    tv_notes.setText(idNotesEdit.getText().toString());
+                    generalSharedPrefs.saveLasNote(idNotesEdit.getText().toString());
+                    tv_notes.setText(generalSharedPrefs.getLastNotes());
                 }
             }else {
                 idNotesLayout.setVisibility(View.VISIBLE);
             }
         });
+        tv_notes.setText(generalSharedPrefs.getLastNotes());
     }
 
     @Override
