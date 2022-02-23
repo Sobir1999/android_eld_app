@@ -68,7 +68,7 @@
     <string name="tap_begin_inspection_and_hand_your_deviceto_the_officer">Tap begin inspection and hand your deviceto the officer</string>
     <string name="begin_inspection">Begin Inspection</string>
     <string name="send_logs_for_previous_7_days_today">Send logs for previous 7 days + today</string>
-    <string name="send_eld_output_file_to_dot">Send ELD output file to DOT</string>
+    <string name="send_eld_output_file_to_dot">Send ELD output file</string>
     <string name="next">Next</string>
     <string name="click_here_to_add_defects">Click here add to Defect</string>
     <string name="time">Time</string>
@@ -159,4 +159,8 @@
     <string name="time_is_any_amount_of_time_spent_inside_of_the_sleeper_berth_e_g_resting_or_sleeping">Time is any amount of time spent inside of the sleeper berth (e.g., resting or sleeping ;)</string>
     <string name="time_is_all_time_spent_at_the_driving_controls_of_a_cmv">Time is all time spent at the driving controls of a CMV.</string>
     <string name="time_is_any_time_not_spent_on_duty_driving_or_in_the_sleeper_berth_when_you_are_not_in_the_truck">Time is any time not spent on-duty, driving, or in the sleeper berth when you are not in the truck.</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="review_logs_for_previous_7_days_today">Review logs for previous 7 days + today</string>
 </resources>

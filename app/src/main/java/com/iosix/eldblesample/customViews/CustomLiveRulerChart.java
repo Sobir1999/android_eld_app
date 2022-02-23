@@ -66,7 +66,7 @@ public class CustomLiveRulerChart extends CustomRulerChart {
     @Override
     public void drawLineProgress(Canvas canvas, float CUSTOM_TABLE_WIDTH) {
         float CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 8;
-        float startX = START_POINT_X;
+        float startX = START_POINT_X + CUSTOM_TABLE_WIDTH / 26f;
         float startY = 0;
         float endX = 0;
         float endY = 0;
@@ -89,7 +89,7 @@ public class CustomLiveRulerChart extends CustomRulerChart {
             startY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * arrayList.get(i).getFrom_status()) / 4;
             endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * arrayList.get(i).getTo_status()) / 4;
 //            endX = START_POINT_X + (arrayList.get(i).getSeconds() * 8) / CUSTOM_TABLE_WIDTH;
-            endX = START_POINT_X + (arrayList.get(i).getSeconds() / (3600*24f))*CUSTOM_TABLE_WIDTH;
+            endX = startX + (arrayList.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/26);
             canvas.drawLine(startX, startY, endX, startY, paintArray.get(arrayList.get(i).getFrom_status()));
             canvas.drawLine(endX, startY, endX, endY, paintArray.get(arrayList.get(i).getFrom_status()));
             startX = endX;
@@ -110,7 +110,7 @@ public class CustomLiveRulerChart extends CustomRulerChart {
         }
 
         if (!arrayList.isEmpty()) {
-            canvas.drawLine(endX, endY, START_POINT_X + ((currentDate / (3600*24f)) * CUSTOM_TABLE_WIDTH), endY, paintArray.get(arrayList.get(arrayList.size() - 1).getTo_status()));
+            canvas.drawLine(endX, endY, startX + ((currentDate / (3600*24f)) * CUSTOM_TABLE_WIDTH*24/26), endY, paintArray.get(arrayList.get(arrayList.size() - 1).getTo_status()));
 
             if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_OFF) {
                 off += (currentDate - start);
@@ -127,7 +127,7 @@ public class CustomLiveRulerChart extends CustomRulerChart {
         } else {
             Log.d("MyPref", (String.valueOf(last_status)));
             endY = TableConstants.START_POINT_Y + CUSTOM_TABLE_HEIGHT/8 + (CUSTOM_TABLE_HEIGHT*last_status)/4;
-            canvas.drawLine(TableConstants.START_POINT_X, endY, START_POINT_X + ((currentDate / (3600*24f)) * CUSTOM_TABLE_WIDTH), endY, paintArray.get(last_status));
+            canvas.drawLine(startX, endY, startX + ((currentDate / (3600*24f)) * CUSTOM_TABLE_WIDTH*24/26), endY, paintArray.get(last_status));
 
             if (last_status == EnumsConstants.STATUS_OFF) {
                 off = currentDate;
@@ -156,26 +156,26 @@ public class CustomLiveRulerChart extends CustomRulerChart {
         float CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 8;
         canvas.drawText(
                 getTime(off),
-                START_POINT_X + CUSTOM_TABLE_WIDTH + 10.0f,
-                START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8,
+                START_POINT_X + 25*CUSTOM_TABLE_WIDTH/26+2f,
+                START_POINT_Y + 5*CUSTOM_TABLE_HEIGHT / 32,
                 TableConstants.getOFFPaint()
         );
         canvas.drawText(
                 getTime(sb),
-                START_POINT_X + CUSTOM_TABLE_WIDTH + 10.0f,
-                START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 8,
+                START_POINT_X + 25*CUSTOM_TABLE_WIDTH/26 +2f,
+                START_POINT_Y + 13 * CUSTOM_TABLE_HEIGHT / 32,
                 TableConstants.getSBPaint()
         );
         canvas.drawText(
                 getTime(dr),
-                START_POINT_X + CUSTOM_TABLE_WIDTH + 10.0f,
-                START_POINT_Y + 5 * CUSTOM_TABLE_HEIGHT / 8,
+                START_POINT_X + 25*CUSTOM_TABLE_WIDTH/26 +2f,
+                START_POINT_Y + 21 * CUSTOM_TABLE_HEIGHT / 32,
                 TableConstants.getDRPaint()
         );
         canvas.drawText(
                 getTime(on),
-                START_POINT_X + CUSTOM_TABLE_WIDTH + 10.0f,
-                START_POINT_Y + 7 * CUSTOM_TABLE_HEIGHT / 8,
+                START_POINT_X + 25*CUSTOM_TABLE_WIDTH/26 +2f,
+                START_POINT_Y + 29 * CUSTOM_TABLE_HEIGHT / 32,
                 TableConstants.getONPaint()
         );
 

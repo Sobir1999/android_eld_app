@@ -485,7 +485,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         },1000);
 
         settings.setOnClickListener(view -> {
-            Intent intent = new Intent(this,SettingsActivity.class);
+            Intent intent = new Intent(this,SettingActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         });

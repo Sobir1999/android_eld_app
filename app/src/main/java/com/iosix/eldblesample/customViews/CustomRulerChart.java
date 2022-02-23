@@ -56,10 +56,10 @@ public abstract class CustomRulerChart extends View {
 
         CUSTOM_WIDTH = context.getResources().getDisplayMetrics().widthPixels;
 
-        CUSTOM_TABLE_WIDTH = CUSTOM_WIDTH - 3f * START_POINT_X;
+        CUSTOM_TABLE_WIDTH = CUSTOM_WIDTH - 2f * START_POINT_X - 100f*context.getResources().getDisplayMetrics().density;
 
         CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 8;
-        CUSTOM_TABLE_ROW_WIDTH = CUSTOM_TABLE_WIDTH / 24;
+        CUSTOM_TABLE_ROW_WIDTH = CUSTOM_TABLE_WIDTH / 26;
     }
 
     @Override
@@ -126,7 +126,7 @@ public abstract class CustomRulerChart extends View {
                 table_paint
         );
 
-        for (int i = 1; i <= 23; i++) {
+        for (int i = 1; i <= 26; i++) {
             canvas.drawLine(
                     START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i,
                     START_POINT_Y,
@@ -146,7 +146,7 @@ public abstract class CustomRulerChart extends View {
             );
         }
 
-        for (int i = 0; i <= 23; i++) {
+        for (int i = 1; i <= 24; i++) {
             canvas.drawLine(
                     START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
                     START_POINT_Y,
@@ -253,24 +253,62 @@ public abstract class CustomRulerChart extends View {
         table_text_paint.setTextSize(26f);
         table_text_paint.setStrokeWidth(3f);
 
-        for (int i = 0; i <= 24; i++) {
-            if (i == 0 || i == 24) {
+        for (int i = 0; i <= 26; i++) {
+            if (i == 1 || i == 25) {
                 canvas.drawText(
                         "M",
                         START_POINT_X - time_size / 2 + CUSTOM_TABLE_ROW_WIDTH * i,
                         START_POINT_Y - 10f,
                         table_time_paint_tex
                 );
-            } else if (i == 12) {
+            } else if (i == 13) {
                 canvas.drawText(
                         "N",
                         START_POINT_X - time_size / 2 + CUSTOM_TABLE_ROW_WIDTH * i,
                         START_POINT_Y - 10f,
                         table_time_paint_tex
                 );
-            } else {
+            }else if (i == 0){
                 canvas.drawText(
-                        "" + i % 12,
+                        "OFF",
+                        START_POINT_X +CUSTOM_TABLE_ROW_WIDTH/4,
+                        START_POINT_Y + 5*CUSTOM_TABLE_HEIGHT / 32,
+                        TableConstants.getOFFPaint()
+                );
+
+                canvas.drawText(
+                        "SB",
+                        START_POINT_X +CUSTOM_TABLE_ROW_WIDTH/4,
+                        START_POINT_Y + 13 * CUSTOM_TABLE_HEIGHT / 32,
+                        TableConstants.getSBPaint()
+                );
+
+                canvas.drawText(
+                        "DR",
+                        START_POINT_X +CUSTOM_TABLE_ROW_WIDTH/4,
+                        START_POINT_Y + 21 * CUSTOM_TABLE_HEIGHT / 32,
+                        TableConstants.getDRPaint()
+                );
+
+                canvas.drawText(
+                        "ON",
+                        START_POINT_X +CUSTOM_TABLE_ROW_WIDTH/4,
+                        START_POINT_Y + 29 * CUSTOM_TABLE_HEIGHT / 32,
+                        TableConstants.getONPaint()
+                );
+            }else if (i == 26){
+
+            }
+            else if (i<13){
+                canvas.drawText(
+                        "" + ((i % 13)-1),
+                        START_POINT_X - time_size / 2 + CUSTOM_TABLE_ROW_WIDTH * i,
+                        START_POINT_Y - 10f,
+                        table_time_paint
+                );
+            }else {
+                canvas.drawText(
+                        "" + i % 13,
                         START_POINT_X - time_size / 2 + CUSTOM_TABLE_ROW_WIDTH * i,
                         START_POINT_Y - 10f,
                         table_time_paint
@@ -278,33 +316,33 @@ public abstract class CustomRulerChart extends View {
             }
         }
 
-        canvas.drawText(
-                "OFF",
-                START_POINT_X / 2 - 20.0f,
-                START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8,
-                TableConstants.getOFFPaint()
-        );
-
-        canvas.drawText(
-                "SB",
-                START_POINT_X / 2 - 20.0f,
-                START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 8,
-                TableConstants.getSBPaint()
-        );
-
-        canvas.drawText(
-                "DR",
-                START_POINT_X / 2 - 20.0f,
-                START_POINT_Y + 5 * CUSTOM_TABLE_HEIGHT / 8,
-                TableConstants.getDRPaint()
-        );
-
-        canvas.drawText(
-                "ON",
-                START_POINT_X / 2 - 20.0f,
-                START_POINT_Y + 7 * CUSTOM_TABLE_HEIGHT / 8,
-                TableConstants.getONPaint()
-        );
+//        canvas.drawText(
+//                "OFF",
+//                START_POINT_X / 2 - 20.0f,
+//                START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8,
+//                TableConstants.getOFFPaint()
+//        );
+//
+//        canvas.drawText(
+//                "SB",
+//                START_POINT_X / 2 - 20.0f,
+//                START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 8,
+//                TableConstants.getSBPaint()
+//        );
+//
+//        canvas.drawText(
+//                "DR",
+//                START_POINT_X / 2 - 20.0f,
+//                START_POINT_Y + 5 * CUSTOM_TABLE_HEIGHT / 8,
+//                TableConstants.getDRPaint()
+//        );
+//
+//        canvas.drawText(
+//                "ON",
+//                START_POINT_X / 2 - 20.0f,
+//                START_POINT_Y + 7 * CUSTOM_TABLE_HEIGHT / 8,
+//                TableConstants.getONPaint()
+//        );
 
     }
 

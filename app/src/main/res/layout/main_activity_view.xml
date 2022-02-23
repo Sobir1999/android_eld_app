@@ -14,7 +14,7 @@
         android:focusable="true"
         android:orientation="vertical"
         android:paddingVertical="10dp"
-        android:paddingHorizontal="40dp">
+        android:paddingHorizontal="50dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

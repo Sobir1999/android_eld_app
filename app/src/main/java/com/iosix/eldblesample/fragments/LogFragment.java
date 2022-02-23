@@ -106,11 +106,11 @@ public class LogFragment extends Fragment {
                 }
             });
             if(c.equals(today)){
-                idCustomChart.setVisibility(View.GONE);
+                idCustomChart.setVisibility(View.INVISIBLE);
                 idCustomChartLive.setVisibility(View.VISIBLE);
                 idCustomChartLive.setArrayList(truckStatusEntities);
             }else {
-                idCustomChartLive.setVisibility(View.GONE);
+                idCustomChartLive.setVisibility(View.INVISIBLE);
                 idCustomChart.setVisibility(View.VISIBLE);
                 idCustomChart.setArrayList(truckStatusEntities);
             }

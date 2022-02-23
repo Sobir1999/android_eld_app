@@ -22,7 +22,8 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
+                android:paddingVertical="5dp"
+                android:layout_marginHorizontal="50dp"
                 tools:ignore="MissingConstraints">
 
                 <ImageView
@@ -63,8 +64,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="15dp"
-        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="50dp"
         android:padding="15dp"
         android:background="@drawable/language_layout_bg">
 
@@ -80,16 +81,18 @@
             android:layoutDirection="rtl"
             android:textAlignment="textStart"
             android:layout_gravity="start"
+            android:textStyle="bold"
+            android:fontFamily="@font/montserrat"
             android:theme="@style/MyRadioButton"
-            android:textColor="?attr/customTextColor"
+            android:textColor="?attr/customTextHintColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="0.5dp"
+            android:layout_height="0.8dp"
             android:layout_marginBottom="5dp"
-            android:background="?attr/customTextHintColor"/>
+            android:background="?attr/customBgViewColor"/>
 
         <RadioButton
             android:id="@+id/idRadioFrench"
@@ -98,16 +101,18 @@
             android:layoutDirection="rtl"
             android:textAlignment="textStart"
             android:layout_gravity="start"
+            android:textStyle="bold"
+            android:fontFamily="@font/montserrat"
             android:theme="@style/MyRadioButton"
-            android:textColor="?attr/customTextColor"
+            android:textColor="?attr/customTextHintColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="0.5dp"
+            android:layout_height="0.8dp"
             android:layout_marginBottom="5dp"
-            android:background="?attr/customTextHintColor"/>
+            android:background="?attr/customBgViewColor"/>
 
         <RadioButton
             android:id="@+id/idRadioSpain"
@@ -116,16 +121,18 @@
             android:layoutDirection="rtl"
             android:textAlignment="textStart"
             android:layout_gravity="start"
+            android:textStyle="bold"
+            android:fontFamily="@font/montserrat"
             android:theme="@style/MyRadioButton"
-            android:textColor="?attr/customTextColor"
+            android:textColor="?attr/customTextHintColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="0.5dp"
+            android:layout_height="0.8dp"
             android:layout_marginBottom="5dp"
-            android:background="?attr/customTextHintColor"/>
+            android:background="?attr/customBgViewColor"/>
 
         <RadioButton
             android:id="@+id/idRadioRussian"
@@ -134,16 +141,18 @@
             android:layoutDirection="rtl"
             android:textAlignment="textStart"
             android:layout_gravity="start"
+            android:textStyle="bold"
+            android:fontFamily="@font/montserrat"
             android:theme="@style/MyRadioButton"
-            android:textColor="?attr/customTextColor"
+            android:textColor="?attr/customTextHintColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="0.5dp"
+            android:layout_height="0.8dp"
             android:layout_marginBottom="5dp"
-            android:background="?attr/customTextHintColor"/>
+            android:background="?attr/customBgViewColor"/>
 
         <RadioButton
             android:id="@+id/idRadioUzbek"
@@ -152,16 +161,18 @@
             android:layoutDirection="rtl"
             android:textAlignment="textStart"
             android:layout_gravity="start"
+            android:textStyle="bold"
+            android:fontFamily="@font/montserrat"
             android:theme="@style/MyRadioButton"
-            android:textColor="?attr/customTextColor"
+            android:textColor="?attr/customTextHintColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="0.5dp"
+            android:layout_height="0.8dp"
             android:layout_marginBottom="5dp"
-            android:background="?attr/customTextHintColor"/>
+            android:background="?attr/customBgViewColor"/>
     </RadioGroup>
 
     </LinearLayout>

@@ -37,19 +37,27 @@
         android:configChanges="orientation"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label=""
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true"
         tools:ignore="ExtraText">
-        <activity
-            android:name=".activity.RulesActivity"
-            android:exported="false"
+
+        <activity android:name=".activity.LanguageActivity"
             android:configChanges="orientation"
             android:screenOrientation="sensorLandscape"/>
+
         <activity
-            android:name=".activity.SettingsActivity"
+            android:name=".activity.SettingActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="sensorLandscape" />
+        <activity
+            android:name=".activity.AccountActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="sensorLandscape" />
+        <activity
+            android:name=".activity.RulesActivity"
             android:configChanges="orientation"
             android:exported="false"
             android:screenOrientation="sensorLandscape" />
