@@ -26,12 +26,48 @@ public class DvirViewModel extends AndroidViewModel {
     }
 
     private MutableLiveData<String> currentName;
+    private MutableLiveData<Boolean> isConnectedtoEld;
+    private MutableLiveData<Boolean> isUploadImage;
+    private MutableLiveData<Boolean> truckSpeed;
+    private MutableLiveData<Integer> selectedTrailerCount;
 
     public MutableLiveData<String> getCurrentName() {
         if (currentName == null) {
             currentName = new MutableLiveData<String>();
         }
         return currentName;
+    }
+
+    public MutableLiveData<Integer> getSelectedTrailerCount() {
+        if (selectedTrailerCount == null) {
+            selectedTrailerCount = new MutableLiveData<Integer>();
+            selectedTrailerCount.postValue(0);
+        }
+        return selectedTrailerCount;
+    }
+
+    public MutableLiveData<Boolean> getTruckSpeed() {
+        if (truckSpeed == null) {
+            truckSpeed = new MutableLiveData<>();
+            truckSpeed.postValue(false);
+        }
+        return truckSpeed;
+    }
+
+    public MutableLiveData<Boolean> getIsConnectedtoEld(){
+        if (isConnectedtoEld == null){
+            isConnectedtoEld = new MutableLiveData<Boolean>();
+            isConnectedtoEld.postValue(false);
+        }
+        return isConnectedtoEld;
+    }
+
+    public MutableLiveData<Boolean> getIsUploadImage(){
+        if (isUploadImage == null){
+            isUploadImage = new MutableLiveData<Boolean>();
+            isUploadImage.postValue(false);
+        }
+        return isUploadImage;
     }
 
     public LiveData<List<DvirEntity>> getMgetDvirs() {

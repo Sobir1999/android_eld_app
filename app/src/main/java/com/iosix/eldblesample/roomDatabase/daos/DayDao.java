@@ -49,4 +49,5 @@ public interface DayDao {
 
     @Query("Select * From trailers")
     LiveData<List<TrailersEntity>> getAllTrailers();
+
 }

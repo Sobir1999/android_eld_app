@@ -5,72 +5,74 @@ import android.graphics.Bitmap;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+
+import com.google.gson.annotations.SerializedName;
+import com.iosix.eldblesample.roomDatabase.converter.TrailerConverter;
+import com.iosix.eldblesample.roomDatabase.converter.TrailerConverterString;
+
+import java.util.ArrayList;
 
 @Entity (tableName = "general")
 public class GeneralEntity {
+
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private int id;
-    @ColumnInfo(name = "driver_name")
-    private String driver_name;
+    @SerializedName("distance")
     @ColumnInfo(name = "distance")
     private String distance;
-    @ColumnInfo(name = "vehicle")
+    @SerializedName("shipping_doc")
+    @ColumnInfo(name = "shipping_docs")
+    private String shippingDocs;
+    @SerializedName("vehicles")
+    @ColumnInfo(name = "vehicles")
     private String vehicle;
-    @ColumnInfo(name = "trailer1")
-    private String trailer1;
-    @ColumnInfo(name = "trailer2")
-    private String trailer2;
-    @ColumnInfo(name = "co_driver_name")
+    @TypeConverters(TrailerConverterString.class)
+    @SerializedName("trailers")
+    @ColumnInfo(name = "trailers")
+    private ArrayList<String> trailers;
+    @SerializedName("carrier")
+    @ColumnInfo(name = "carrier")
+    private String carrier;
+    @SerializedName("main_ofice")
+    @ColumnInfo(name = "main_office")
+    private String mainOffice;
+    @SerializedName("home_terminal_address")
+    @ColumnInfo(name = "home_terminal_address")
+    private String homrTerminalAddress;
+    @SerializedName("co_driver")
+    @ColumnInfo(name = "co_driver")
     private String co_driver_name;
-    @ColumnInfo(name = "from_info")
+    @SerializedName("from_address")
+    @ColumnInfo(name = "from_address")
     private String from_info;
-    @ColumnInfo(name = "to_info")
+    @SerializedName("to_address")
+    @ColumnInfo(name = "to_address")
     private String to_info;
-    @ColumnInfo(name = "note")
+    @SerializedName("notes")
+    @ColumnInfo(name = "notes")
     private String note;
-    @ColumnInfo(name = "signature")
-    private Bitmap signature;
-    @ColumnInfo (name = "day")
+    @SerializedName("day")
+    @ColumnInfo(name = "day")
     private String day;
+//    @ColumnInfo(name = "signature")
+//    private Bitmap signature;
 
-    public GeneralEntity(String driver_name, String distance, String vehicle, String trailer1, String trailer2, String co_driver_name, String from_info, String to_info, String note, Bitmap signature, String day) {
-//        this.id = id;
-        this.driver_name = driver_name;
+
+    public GeneralEntity(String distance, String shippingDocs, String vehicle, ArrayList<String> trailers, String carrier, String mainOffice, String homrTerminalAddress, String co_driver_name, String from_info, String to_info, String note, String day) {
         this.distance = distance;
+        this.shippingDocs = shippingDocs;
         this.vehicle = vehicle;
-        this.trailer1 = trailer1;
-        this.trailer2 = trailer2;
+        this.trailers = trailers;
+        this.carrier = carrier;
+        this.mainOffice = mainOffice;
+        this.homrTerminalAddress = homrTerminalAddress;
         this.co_driver_name = co_driver_name;
         this.from_info = from_info;
         this.to_info = to_info;
         this.note = note;
-        this.signature = signature;
         this.day = day;
-    }
-
-    public String getVehicle() {
-        return vehicle;
-    }
-
-    public void setVehicle(String vehicle) {
-        this.vehicle = vehicle;
-    }
-
-    public String getTrailer1() {
-        return trailer1;
-    }
-
-    public void setTrailer1(String trailer1) {
-        this.trailer1 = trailer1;
-    }
-
-    public String getTrailer2() {
-        return trailer2;
-    }
-
-    public void setTrailer2(String trailer2) {
-        this.trailer2 = trailer2;
     }
 
     public int getId() {
@@ -81,20 +83,60 @@ public class GeneralEntity {
         this.id = id;
     }
 
-    public String getDriver_name() {
-        return driver_name;
-    }
-
-    public void setDriver_name(String driver_name) {
-        this.driver_name = driver_name;
-    }
-
     public String getDistance() {
         return distance;
     }
 
     public void setDistance(String distance) {
         this.distance = distance;
+    }
+
+    public String getShippingDocs() {
+        return shippingDocs;
+    }
+
+    public void setShippingDocs(String shippingDocs) {
+        this.shippingDocs = shippingDocs;
+    }
+
+    public String getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(String vehicle) {
+        this.vehicle = vehicle;
+    }
+
+    public ArrayList<String> getTrailers() {
+        return trailers;
+    }
+
+    public void setTrailers(ArrayList<String> trailers) {
+        this.trailers = trailers;
+    }
+
+    public String getCarrier() {
+        return carrier;
+    }
+
+    public void setCarrier(String carrier) {
+        this.carrier = carrier;
+    }
+
+    public String getMainOffice() {
+        return mainOffice;
+    }
+
+    public void setMainOffice(String mainOffice) {
+        this.mainOffice = mainOffice;
+    }
+
+    public String getHomrTerminalAddress() {
+        return homrTerminalAddress;
+    }
+
+    public void setHomrTerminalAddress(String homrTerminalAddress) {
+        this.homrTerminalAddress = homrTerminalAddress;
     }
 
     public String getCo_driver_name() {
@@ -127,14 +169,6 @@ public class GeneralEntity {
 
     public void setNote(String note) {
         this.note = note;
-    }
-
-    public Bitmap getSignature() {
-        return signature;
-    }
-
-    public void setSignature(Bitmap signature) {
-        this.signature = signature;
     }
 
     public String getDay() {

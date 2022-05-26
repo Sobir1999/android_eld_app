@@ -1,23 +1,30 @@
 package com.iosix.eldblesample.activity;
 
+import static com.iosix.eldblesample.MyApplication.userData;
+import static com.iosix.eldblesample.enums.Day.getCurrentSeconds;
+import static java.lang.Thread.sleep;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,11 +43,11 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
@@ -52,6 +59,9 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.iosix.eldblelib.EldBleConnectionStateChangeCallback;
 import com.iosix.eldblelib.EldBleDataCallback;
 import com.iosix.eldblelib.EldBleError;
@@ -59,81 +69,73 @@ import com.iosix.eldblelib.EldBleScanCallback;
 import com.iosix.eldblelib.EldBroadcast;
 import com.iosix.eldblelib.EldBroadcastTypes;
 import com.iosix.eldblelib.EldBufferRecord;
-import com.iosix.eldblelib.EldCachedNewTimeRecord;
-import com.iosix.eldblelib.EldCachedNewVinRecord;
-import com.iosix.eldblelib.EldCachedPeriodicRecord;
 import com.iosix.eldblelib.EldDataRecord;
-import com.iosix.eldblelib.EldDriverBehaviorRecord;
-import com.iosix.eldblelib.EldEmissionsRecord;
-import com.iosix.eldblelib.EldEngineRecord;
+import com.iosix.eldblelib.EldDtcCallback;
 import com.iosix.eldblelib.EldEngineStates;
 import com.iosix.eldblelib.EldFirmwareUpdateCallback;
 import com.iosix.eldblelib.EldFuelRecord;
 import com.iosix.eldblelib.EldManager;
 import com.iosix.eldblelib.EldParameterTypes;
 import com.iosix.eldblelib.EldScanObject;
-import com.iosix.eldblelib.EldTransmissionRecord;
+import com.iosix.eldblesample.BuildConfig;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.adapters.RecyclerViewLastAdapter;
 import com.iosix.eldblesample.base.BaseActivity;
 import com.iosix.eldblesample.broadcasts.ChangeDateTimeBroadcast;
+import com.iosix.eldblesample.broadcasts.NetworkConnectionLiveData;
 import com.iosix.eldblesample.customViews.CustomLiveRulerChart;
 import com.iosix.eldblesample.dialogs.ConnectToEldDialog;
 import com.iosix.eldblesample.dialogs.SearchEldDeviceDialog;
 import com.iosix.eldblesample.enums.Day;
 import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.fragments.InspectionModuleFragment;
-import com.iosix.eldblesample.fragments.LanguageFragment;
-import com.iosix.eldblesample.fragments.RecapFragment;
+import com.iosix.eldblesample.models.ApkVersion;
 import com.iosix.eldblesample.models.Data;
 import com.iosix.eldblesample.models.MessageModel;
+import com.iosix.eldblesample.models.Status;
 import com.iosix.eldblesample.models.User;
 import com.iosix.eldblesample.models.VehicleData;
 import com.iosix.eldblesample.models.eld_records.BufferRecord;
-import com.iosix.eldblesample.models.eld_records.CachedEngineRecord;
-import com.iosix.eldblesample.models.eld_records.CashedMotionRecord;
-import com.iosix.eldblesample.models.eld_records.DriverBehaviorRecord;
-import com.iosix.eldblesample.models.eld_records.EmissionsRecord;
-import com.iosix.eldblesample.models.eld_records.EngineLiveRecord;
+import com.iosix.eldblesample.models.eld_records.Eld;
 import com.iosix.eldblesample.models.eld_records.FuelRecord;
 import com.iosix.eldblesample.models.eld_records.LiveDataRecord;
-import com.iosix.eldblesample.models.eld_records.NewTimeRecord;
 import com.iosix.eldblesample.models.eld_records.Point;
-import com.iosix.eldblesample.models.eld_records.TransmissionRecord;
 import com.iosix.eldblesample.retrofit.APIInterface;
 import com.iosix.eldblesample.retrofit.ApiClient;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.DvirEntity;
+import com.iosix.eldblesample.roomDatabase.entities.LiveDataEntitiy;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 import com.iosix.eldblesample.services.foreground.ForegroundService;
 import com.iosix.eldblesample.shared_prefs.DriverSharedPrefs;
 import com.iosix.eldblesample.shared_prefs.LastStatusData;
 import com.iosix.eldblesample.shared_prefs.SessionManager;
-import com.iosix.eldblesample.shared_prefs.UserData;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
 import com.iosix.eldblesample.viewModel.UserViewModel;
+import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static com.iosix.eldblesample.MyApplication.userData;
 
 public class MainActivity extends BaseActivity implements TimePickerDialog.OnTimeSetListener {
 
@@ -146,18 +148,27 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     private int current_status = EnumsConstants.STATUS_OFF;
     private int last_status;
     private String time = "" + Calendar.getInstance().getTime();
-    private String today = time.split(" ")[1] + " " + time.split(" ")[2];
+    public String today = time.split(" ")[1] + " " + time.split(" ")[2];
     private ArrayList<LogEntity> truckStatusEntities;
     private ArrayList<LogEntity> logEntities;
     private APIInterface apiInterface;
-    private TextView lastDaysCheck,idUsername,statusOff,statusSB,statusDR,statusON;
-    private ImageView toDaySelect,imageOff,imageSB,imageDR,imageON;
+    private TextView idUsername;
+    private TextView statusOff;
+    private TextView statusSB;
+    private TextView statusDR;
+    private TextView statusON;
+    private ImageView imageOff;
+    private ImageView imageSB;
+    private ImageView imageDR;
+    private ImageView imageON;
     private ChangeDateTimeBroadcast changeDateTimeBroadcast;
     private CustomLiveRulerChart customRulerChart;
     private LastStatusData lastStatusData;
     private ArrayList<VehiclesEntity> vehiclesEntities;
     private ArrayList<User> users;
     private DriverSharedPrefs driverSharedPrefs;
+    private NetworkConnectionLiveData networkConnectionLiveData;
+
 
     private double latitude;
     private double longtitude;
@@ -180,6 +191,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     private DayDaoViewModel daoViewModel;
     private DvirViewModel dvirViewModel;
     private UserViewModel userViewModel;
+    private EldJsonViewModel eldJsonViewModel;
     private Menu optionMenu;
     private final ArrayList<String> daysArray = new ArrayList<>();
     private RecyclerViewLastAdapter lastAdapter;
@@ -192,19 +204,24 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-//        outState.clear();
+        outState.clear();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void initView() {
         super.initView();
-        UserData userData = new UserData(this);
-        lastStatusData = new LastStatusData(this);
+        lastStatusData = LastStatusData.getInstance(getApplicationContext());
         logEntities = new ArrayList<>();
 
         userViewModel = new UserViewModel(this.getApplication());
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
 
+        eldJsonViewModel = new EldJsonViewModel(getApplication());
+        eldJsonViewModel = ViewModelProviders.of(this).get(EldJsonViewModel.class);
+
+        networkConnectionLiveData = new NetworkConnectionLiveData(getApplicationContext());
         setLocale(userData.getLang());
 
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
@@ -218,27 +235,20 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         customRulerChart = findViewById(R.id.idCustomLiveChart);
         customRulerChart.setArrayList(truckStatusEntities);
 
-//        setBluetoothDataEnabled(this);
+        daoViewModel.getMgetAllDays().observe(this, dayEntities -> {
 
-        //Last Days Recycler Adapter
-
-        daoViewModel.getMgetAllDays().observe(this,dayEntities -> {
-
-            lastAdapter = new RecyclerViewLastAdapter(this, daoViewModel, statusDaoViewModel,dvirViewModel);
+            lastAdapter = new RecyclerViewLastAdapter(this, daoViewModel, statusDaoViewModel, dvirViewModel);
             last_recycler_view.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true));
             last_recycler_view.setAdapter(lastAdapter);
             lastAdapter.notifyDataSetChanged();
 
-            Log.d("123456789A",String.valueOf(dayEntities.size()));
-
             lastAdapterClicked();
         });
-
-
 
         // Set the toolbar
         activity_main_toolbar = findViewById(R.id.activity_main_toolbar);
         setSupportActionBar(activity_main_toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         //Required to allow bluetooth scanning
@@ -248,10 +258,11 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         mEldManager = EldManager.GetEldManager(this, "123456789A");
 
         vehiclesEntities = new ArrayList<>();
-        driverSharedPrefs = new DriverSharedPrefs(this);
+        driverSharedPrefs = DriverSharedPrefs.getInstance(getApplicationContext());
 
-        if (getIntent().getIntExtra("JSON",0) == 1){
+        if (getIntent().getIntExtra("JSON", 0) == 1) {
             getUSerInfo();
+            sendApkVersion();
         }
 
         onClickCustomBtn();
@@ -262,18 +273,29 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
         clickLGDDButtons();
 
-        setActivateDr();
-
-//        setTodayAttr(time,today);
-
         startService();
 
         update();
 
         getAllDrivers();
+        sendLocalData();
+    }
+
+    private void sendApkVersion() {
+        apiInterface.sendApkVersion(new ApkVersion(BuildConfig.VERSION_NAME, Build.VERSION.RELEASE)).enqueue(new Callback<ApkVersion>() {
+            @Override
+            public void onResponse(Call<ApkVersion> call, Response<ApkVersion> response) {
+            }
+
+            @Override
+            public void onFailure(Call<ApkVersion> call, Throwable t) {
+
+            }
+        });
     }
 
     private void update() {
+
         new Thread() {
             @SuppressLint("DefaultLocale")
             @SuppressWarnings("BusyWait")
@@ -281,6 +303,19 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                 while (true) {
                     runOnUiThread(() -> {
                         TextView statusTime = findViewById(R.id.idStatusTime);
+                        TextView status = findViewById(R.id.idStatusText);
+                        if (lastStatusData.getLastStatus() == EnumsConstants.STATUS_OFF) {
+                            status.setText(R.string.off);
+                        }
+                        if (lastStatusData.getLastStatus() == EnumsConstants.STATUS_SB) {
+                            status.setText(R.string.sb);
+                        }
+                        if (lastStatusData.getLastStatus() == EnumsConstants.STATUS_DR) {
+                            status.setText(R.string.dr);
+                        }
+                        if (lastStatusData.getLastStatus() == EnumsConstants.STATUS_ON) {
+                            status.setText(R.string.on);
+                        }
                         int last = lastStatusData.getLasStatSecond();
                         int current = getCurrentSeconds();
                         int hour = (current - last) / 3600;
@@ -288,7 +323,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                         statusTime.setText(String.format("%02dh %02dm", hour, min));
                     });
                     try {
-                        Thread.sleep(10000);
+                        sleep(5000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -297,14 +332,94 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         }.start();
     }
 
-    private void getUSerInfo(){
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void sendLocalData() {
+        networkConnectionLiveData.observe(this, isConnected -> {
+            if (isConnected) {
+                userViewModel.getMgetLocalDatas().observe(this, liveDataRecords -> {
+                    ArrayList<Boolean> engine_state = new ArrayList<>();
+                    ArrayList<String> vin = new ArrayList<>();
+                    ArrayList<Double> speed = new ArrayList<>();
+                    ArrayList<Double> odometer = new ArrayList<>();
+                    ArrayList<Double> trip_distance = new ArrayList<>();
+                    ArrayList<Double> engine_hours = new ArrayList<>();
+                    ArrayList<Double> trip_hours = new ArrayList<>();
+                    ArrayList<Double> battery_voltage = new ArrayList<>();
+                    ArrayList<String> date = new ArrayList<>();
+                    ArrayList<Point> point = new ArrayList<>();
+                    ArrayList<Integer> gps_speed = new ArrayList<>();
+                    ArrayList<Integer> course = new ArrayList<>();
+                    ArrayList<Integer> number_of_satellites = new ArrayList<>();
+                    ArrayList<Integer> altitude = new ArrayList<>();
+                    ArrayList<Double> dop = new ArrayList<>();
+                    ArrayList<Integer> sequence_number = new ArrayList<>();
+                    ArrayList<String> firmware_version = new ArrayList<>();
+
+                    for (int i = 0; i < liveDataRecords.size(); i++) {
+                        engine_state.add(liveDataRecords.get(i).getEngine_state());
+                        vin.add(liveDataRecords.get(i).getVin());
+                        speed.add(liveDataRecords.get(i).getSpeed());
+                        odometer.add(liveDataRecords.get(i).getOdometer());
+                        trip_distance.add(liveDataRecords.get(i).getTrip_distance());
+                        engine_hours.add(liveDataRecords.get(i).getEngine_hours());
+                        trip_hours.add(liveDataRecords.get(i).getTrip_hours());
+                        battery_voltage.add(liveDataRecords.get(i).getBattery_voltage());
+                        point.add(liveDataRecords.get(i).getPoint());
+                        date.add(liveDataRecords.get(i).getDate());
+                        gps_speed.add(liveDataRecords.get(i).getGps_speed());
+                        course.add(liveDataRecords.get(i).getCourse());
+                        number_of_satellites.add(liveDataRecords.get(i).getNumber_of_satellites());
+                        altitude.add(liveDataRecords.get(i).getAltitude());
+                        dop.add(liveDataRecords.get(i).getDop());
+                        sequence_number.add(liveDataRecords.get(i).getSequence_number());
+                        firmware_version.add(liveDataRecords.get(i).getFirmware_version());
+                    }
+
+                    if (engine_state.size() > 0) {
+                        apiInterface.sendLocalData(new LiveDataEntitiy(
+                                engine_state,
+                                vin,
+                                speed,
+                                odometer,
+                                trip_distance,
+                                engine_hours,
+                                trip_hours,
+                                battery_voltage,
+                                date,
+                                point,
+                                gps_speed,
+                                course,
+                                number_of_satellites,
+                                altitude,
+                                dop,
+                                sequence_number,
+                                firmware_version
+                        )).enqueue(new Callback<LiveDataEntitiy>() {
+                            @Override
+                            public void onResponse(Call<LiveDataEntitiy> call, Response<LiveDataEntitiy> response) {
+                                if (response.isSuccessful()) {
+                                    userViewModel.deleteLocalData();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<LiveDataEntitiy> call, Throwable t) {
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    private void getUSerInfo() {
 
 
         userViewModel.deleteUser();
         apiInterface.getUser().enqueue(new Callback<User>() {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     User user = response.body();
                     assert user != null;
                     driverSharedPrefs.saveLastUsername(user.getName());
@@ -314,6 +429,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                     driverSharedPrefs.saveLastHomeTerTimeZone(user.getTimeZone());
                     driverSharedPrefs.saveLastMainOffice(user.getMainOffice());
                     driverSharedPrefs.saveLastPhoneNumber(user.getPhone());
+                    driverSharedPrefs.saveCompany(user.getCompany());
                 }
             }
 
@@ -324,23 +440,22 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
     }
 
-    private void getAllDrivers(){
+    private void getAllDrivers() {
         userViewModel.deleteUser();
         apiInterface.getAllDrivers().enqueue(new Callback<Data>() {
             @Override
             public void onResponse(@NonNull Call<Data> call, @NonNull Response<Data> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     Data users = response.body();
                     assert users != null;
-                    Log.d("Adverse diving",users.getDriver().getUser().get(0).getLastName());
-                    if (MainActivity.this.users.size() == 0){
-                        for(int i = 0;i < users.getDriver().getUser().size();i++){
+                    if (MainActivity.this.users.size() == 0) {
+                        for (int i = 0; i < users.getDriver().getUser().size(); i++) {
                             userViewModel.insertUser(users.getDriver().getUser().get(i));
                         }
-                    }else {
+                    } else {
                         for (int i = 0; i < users.getDriver().getUser().size(); i++) {
                             for (int j = 0; j < MainActivity.this.users.size(); j++) {
-                                if (!users.getDriver().getUser().get(i).getPhone().equals(MainActivity.this.users.get(j).getPhone())){
+                                if (!users.getDriver().getUser().get(i).getPhone().equals(MainActivity.this.users.get(j).getPhone())) {
                                     MainActivity.this.users.add(users.getDriver().getUser().get(i));
                                 }
                             }
@@ -351,34 +466,38 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
             @Override
             public void onFailure(@NonNull Call<Data> call, @NonNull Throwable t) {
-                Log.d("Adverse diving",String.valueOf(t.getMessage()));
             }
         });
         apiInterface.getAllVehicles().enqueue(new Callback<VehicleData>() {
             @Override
             public void onResponse(@NonNull Call<VehicleData> call, @NonNull Response<VehicleData> response) {
-                VehicleData vehicleData = response.body();
-                assert vehicleData != null;
-                if (vehiclesEntities.size() != 0){
-                    for (int i = 0; i < vehicleData.getVehicle().getVehicleList().size(); i++) {
-                        for (int j = 0; j < vehiclesEntities.size(); j++) {
-                            Log.d("Adverse diving2",String.valueOf(vehicleData.getVehicle().getVehicleList().get(0).getVehicle_id()));
-                            if (!vehicleData.getVehicle().getVehicleList().get(i).getVehicle_id().equals(vehiclesEntities.get(j).getName())){
+                if (response.isSuccessful()) {
+                    VehicleData vehicleData = response.body();
+                    assert vehicleData != null;
+                    if (vehiclesEntities.size() != 0) {
+                        int count = 0;
+                        for (int i = 0; i < vehicleData.getVehicle().getVehicleList().size(); i++) {
+                            for (int j = 0; j < vehiclesEntities.size(); j++) {
+                                if (vehicleData.getVehicle().getVehicleList().get(i).getVehicle_id().equals(vehiclesEntities.get(j).getName())) {
+                                    count++;
+                                }
+                            }
+                            if (count == 0) {
                                 daoViewModel.insertVehicle(new VehiclesEntity(vehicleData.getVehicle().getVehicleList().get(i).getVehicle_id()));
+                            } else {
+                                count = 0;
                             }
                         }
-                    }
-                }else {
-                    for (int i = 0; i < vehicleData.getVehicle().getVehicleList().size(); i++) {
-                        Log.d("Adverse diving2",String.valueOf(vehicleData.getVehicle().getVehicleList().get(0).getVehicle_id()));
-                        daoViewModel.insertVehicle(new VehiclesEntity(vehicleData.getVehicle().getVehicleList().get(i).getVehicle_id()));
+                    } else {
+                        for (int i = 0; i < vehicleData.getVehicle().getVehicleList().size(); i++) {
+                            daoViewModel.insertVehicle(new VehiclesEntity(vehicleData.getVehicle().getVehicleList().get(i).getVehicle_id()));
+                        }
                     }
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<VehicleData> call, @NonNull Throwable t) {
-                Log.d("Adverse diving2",String.valueOf(t.getMessage()));
             }
         });
     }
@@ -397,73 +516,25 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             }
 
             @Override
-            public void onclickDvir(String s,ArrayList<DvirEntity> dvirEntities) {
+            public void onclickDvir(String s, ArrayList<DvirEntity> dvirEntities) {
 
-                if (dvirEntities.size() != 0){
+                if (dvirEntities.size() != 0) {
                     Intent intent = new Intent(MainActivity.this, LGDDActivity.class);
                     intent.putExtra("position", 3);
-                    intent.putExtra("currDay",s);
+                    intent.putExtra("currDay", s);
                     startActivity(intent);
-                }else {
+                } else {
                     Intent intent = new Intent(MainActivity.this, AddDvirActivity.class);
-                    intent.putExtra("currDay",s);
+                    intent.putExtra("currDay", s);
                     startActivity(intent);
                 }
             }
         });
 
-
-//        lastDaysCheck = findViewById(R.id.idLastDaysCheckAll);
-//        toDaySelect = findViewById(R.id.idTableRadioBtn);
-//
-//        lastDaysCheck.setOnClickListener(v -> {
-//            if (lastAdapter.isSelected()) {
-//                lastAdapter.setSelected(false);
-//                daysArray.clear();
-//                toDaySelect.setImageResource(R.drawable.state_unchacked);
-//                lastDaysCheck.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_check_circle_outline_24, 0);
-//            } else {
-//                daoViewModel.getMgetAllDays().observe(this, dayEntities -> {
-//                    for (int i = 0; i < dayEntities.size(); i++) {
-//                        daysArray.add(dayEntities.get(i).getDay_name());
-//                    }
-//                });
-//
-//                lastAdapter.setSelected(true);
-//                toDaySelect.setImageResource(R.drawable.state_checked);
-//                lastDaysCheck.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.state_checked, 0);
-//            }
-//            lastAdapter.notifyDataSetChanged();
-//
-//            optionMenu.findItem(R.id.shareMenu).setVisible(!daysArray.isEmpty());
-//        });
-    }
-
-    public void setActivateDr() {
-
-//        Button activateDr = findViewById(R.id.idDRWithExeption);
-//
-//        activateDr.setOnClickListener(v -> showAlertDialog());
-    }
-
-    private void showAlertDialog() {
-        String[] items = {"Adverse driving", "16-Hour Exception"};
-
-//        final boolean[] checked = new boolean[items.length];
-//        for (int i = 0; i < items.length; i++) {
-//            checked[i] = false;
-//        }
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-        alertDialog.setTitle("Activate DR with exception")
-                .setSingleChoiceItems(items, 2, (dialog, which) -> Log.d("ECEPT", "onClick: " + which))
-                .setPositiveButton("Ok", (dialog, which) -> Toast.makeText(MainActivity.this, "ok", Toast.LENGTH_SHORT).show()).setNegativeButton("Cancel", (dialog, which) -> Toast.makeText(MainActivity.this, "cancel", Toast.LENGTH_SHORT).show());
-        AlertDialog alert = alertDialog.create();
-        alert.show();
-
     }
 
     private void clickLGDDButtons() {
-        TextView inspectionMode, addDvir,idPhoneNumber,settings,hosRules;
+        TextView inspectionMode, settings, hosRules;
         Button log, general, doc, dvir;
         log = findViewById(R.id.idTableBtnLog);
         general = findViewById(R.id.idTableBtnGeneral);
@@ -472,138 +543,138 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         inspectionMode = findViewById(R.id.idSpinnerInspection);
         settings = findViewById(R.id.idSettings);
         hosRules = findViewById(R.id.idHOSRules);
-//        addDvir = findViewById(R.id.idTableDvir);
         TextView idLogout = findViewById(R.id.idLogout);
         idUsername = findViewById(R.id.idUsername);
-//        idPhoneNumber = findViewById(R.id.idPhoneNumber);
         CircleImageView idAvatar = findViewById(R.id.idAvatar);
 
         Handler handler = new Handler();
-        handler.postDelayed(() -> {
-            idUsername.setText(String.format("%s %s", driverSharedPrefs.getFirstname(),driverSharedPrefs.getLastname()));
-//            idPhoneNumber.setText(driverSharedPrefs.getPhoneNumber());
-        },1000);
+        handler.postDelayed(() -> idUsername.setText(String.format("%s %s", driverSharedPrefs.getFirstname(), driverSharedPrefs.getLastname())), 1000);
 
         settings.setOnClickListener(view -> {
-            Intent intent = new Intent(this,SettingActivity.class);
+            Intent intent = new Intent(this, SettingActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         });
 
         hosRules.setOnClickListener(view -> {
-            Intent intent = new Intent(this,RulesActivity.class);
+            Intent intent = new Intent(this, RulesActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         });
 
         idLogout.setOnClickListener(v -> {
-            SessionManager sessionManager = new SessionManager(this);
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-            alertDialog.setTitle("Do you want to Log out")
-                    .setPositiveButton("Yes", (dialog, which) ->{
-                        sessionManager.clearAccessToken();
-                        sessionManager.clearToken();
-                        Intent intent = new Intent(MainActivity.this, SplashActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        finish();
-                    })
-                    .setNegativeButton("No",((dialog, which) -> dialog.cancel()));
-            AlertDialog alert = alertDialog.create();
-            alert.show();
+            SessionManager sessionManager = SessionManager.getInstance(getApplicationContext());
+
+            Dialog dialog = new Dialog(this);
+            dialog.setContentView(R.layout.custom_delete_dvir_dialog);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            TextView header = dialog.findViewById(R.id.idDvirHeader);
+            TextView title = dialog.findViewById(R.id.idDvirTitle);
+            header.setText(R.string.log_out);
+            title.setText(R.string.do_you_log_out);
+
+            dialog.findViewById(R.id.idDvirYes).setOnClickListener(view -> {
+                sessionManager.clearAccessToken();
+                sessionManager.clearToken();
+                Intent intent = new Intent(MainActivity.this, SplashActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+                dialog.dismiss();
+            });
+
+            dialog.findViewById(R.id.idDvirNo).setOnClickListener(view -> dialog.dismiss());
+
+            dialog.show();
         });
 
         dvirViewModel = new DvirViewModel(this.getApplication());
         dvirViewModel = ViewModelProviders.of(this).get(DvirViewModel.class);
-        dvirViewModel.getMgetDvirs().observe(this,dvirEntities -> {
+        dvirViewModel.getMgetDvirs().observe(this, dvirEntities -> {
 
             boolean hasDvir = false;
 
-            if (dvirEntities.size() == 0){
+            if (dvirEntities.size() == 0) {
 
-//                addDvir.setText(R.string.no_dvir);
-//                addDvir.setOnClickListener(v ->{
-//                            Intent intent = new Intent(MainActivity.this, AddDvirActivity.class);
-//                            intent.putExtra("currDay",today);
-//                            startActivity(intent);
-//                        }
-//                );
                 dvir.setOnClickListener(v -> {
-                            Intent intent = new Intent(this, LGDDActivity.class);
-                            intent.putExtra("position", 3);
-                            intent.putExtra("currDay", today);
-                            startActivity(intent);
+                    Intent intent = new Intent(this, LGDDActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("position", 3);
+                    intent.putExtra("currDay", today);
+                    dvirViewModel.getCurrentName().postValue(today);
+                    startActivity(intent);
+                    finish();
                         }
                 );
 
-            }else {
+            } else {
 
                 for (int i = 0; i < dvirEntities.size(); i++) {
-                    if (dvirEntities.get(i).getDay().equals(today)){
+                    if (dvirEntities.get(i).getDay().equals(today)) {
 
                         hasDvir = true;
 
-//                        addDvir.setText(R.string.dvir);
-//
                         String c = dvirEntities.get(i).getDay();
-//
-//                        addDvir.setOnClickListener(v ->{
-//                            Intent intent = new Intent(this, LGDDActivity.class);
-//                            intent.putExtra("position", 3);
-//                            intent.putExtra("currDay",c);
-//                            startActivity(intent);
-//                                }
-//                        );
+
                         dvir.setOnClickListener(v -> {
-                                    Intent intent = new Intent(this, LGDDActivity.class);
-                                    intent.putExtra("position", 3);
-                                    intent.putExtra("currDay",c);
-                                    startActivity(intent);
+                            Intent intent = new Intent(this, LGDDActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.putExtra("position", 3);
+                            intent.putExtra("currDay", c);
+                            dvirViewModel.getCurrentName().postValue(c);
+                            startActivity(intent);
+                            finish();
                                 }
                         );
                     }
-                }if (!hasDvir){
-//                    addDvir.setText(R.string.no_dvir);
-//                    addDvir.setOnClickListener(v ->{
-//                                Intent intent = new Intent(MainActivity.this, AddDvirActivity.class);
-//                                intent.putExtra("currDay",today);
-//                                startActivity(intent);
-//                            }
-//                    );
+                }
+                if (!hasDvir) {
                     dvir.setOnClickListener(v -> {
-                                Intent intent = new Intent(this, LGDDActivity.class);
-                                intent.putExtra("position", 3);
-                                intent.putExtra("currDay",today);
-                                startActivity(intent);
+                        Intent intent = new Intent(this, LGDDActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra("position", 3);
+                        intent.putExtra("currDay", today);
+                        dvirViewModel.getCurrentName().postValue(today);
+                        startActivity(intent);
+                        finish();
                             }
                     );
                 }
             }
         });
 
-        log.setOnClickListener(v ->{
-                Intent intent = new Intent(this, LGDDActivity.class);
-                intent.putExtra("position", 0);
-                intent.putExtra("currDay",today);
-                startActivity(intent);
-            }
+        log.setOnClickListener(v -> {
+            Intent intent = new Intent(this, LGDDActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("position", 0);
+            intent.putExtra("currDay", today);
+            dvirViewModel.getCurrentName().postValue(today);
+            startActivity(intent);
+            finish();
+                }
         );
 
 
         general.setOnClickListener(v -> {
-                    Intent intent = new Intent(this, LGDDActivity.class);
-                    intent.putExtra("position", 1);
-                    intent.putExtra("currDay",today);
-                    startActivity(intent);
+            Intent intent = new Intent(this, LGDDActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("position", 1);
+            intent.putExtra("currDay", today);
+            dvirViewModel.getCurrentName().postValue(today);
+            startActivity(intent);
+            finish();
                 }
         );
 
-        doc.setOnClickListener(v ->{
-                    Intent intent = new Intent(this, LGDDActivity.class);
-                    intent.putExtra("position", 2);
-//                intent.putExtra("currDay",null);
-                    startActivity(intent);
+        doc.setOnClickListener(v -> {
+            Intent intent = new Intent(this, LGDDActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("currDay", today);
+            intent.putExtra("position", 2);
+            dvirViewModel.getCurrentName().postValue(today);
+            startActivity(intent);
+            finish();
                 }
         );
 
@@ -627,36 +698,28 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     private void optimizeViewModels() {
         statusDaoViewModel = new StatusDaoViewModel(this.getApplication());
         daoViewModel = new DayDaoViewModel(this.getApplication());
+        dvirViewModel = new DvirViewModel(this.getApplication());
+        dvirViewModel = ViewModelProviders.of(this).get(DvirViewModel.class);
 
         apiInterface = ApiClient.getClient().create(APIInterface.class);
         truckStatusEntities = new ArrayList<>();
         users = new ArrayList<>();
 
-        daoViewModel.getGetAllVehicles().observe(this,vehiclesEntities -> {
-            this.vehiclesEntities.addAll(vehiclesEntities);
-        });
+        last_status = lastStatusData.getLastStatus();
 
-        userViewModel.getMgetDrivers().observe(this,drivers -> {
-            users.addAll(drivers);
-        });
+        daoViewModel.getGetAllVehicles().observe(this, vehiclesEntities -> this.vehiclesEntities.addAll(vehiclesEntities));
+
+        userViewModel.getMgetDrivers().observe(this, drivers -> users.addAll(drivers));
 
         statusDaoViewModel = ViewModelProviders.of(this).get(StatusDaoViewModel.class);
-        statusDaoViewModel.getmAllStatus().observe(this, truckStatusEntities -> {
+        daoViewModel.getmAllStatus().observe(this, truckStatusEntities -> {
+
             for (int i = 0; i < truckStatusEntities.size(); i++) {
                 if (truckStatusEntities.get(i).getTime().equalsIgnoreCase(today)) {
                     MainActivity.this.truckStatusEntities.add(truckStatusEntities.get(i));
                 }
                 logEntities.add(truckStatusEntities.get(i));
             }
-
-            Log.d("SetTextI18n",String.valueOf(truckStatusEntities.size()));
-
-            if (truckStatusEntities.size() != 0) {
-                last_status = truckStatusEntities.get(truckStatusEntities.size() - 1).getTo_status();
-            } else {
-                last_status = EnumsConstants.STATUS_OFF;
-            }
-            setTopLastPos(last_status);
         });
 
         daoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
@@ -666,20 +729,11 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     }
 
     @SuppressLint("SetTextI18n")
-    private void setTodayAttr(String time,String today) {
+    private void setTodayAttr(String time, String today) {
         TextView day = findViewById(R.id.idTableDay);
         TextView month = findViewById(R.id.idTableMonth);
-//        TextView lastDays = findViewById(R.id.idLas14DayText);
         day.setText(time.split(" ")[0]);
         month.setText(today);
-    }
-
-    @SuppressWarnings("deprecation")
-    private int getCurrentSeconds() {
-        int hour = Calendar.getInstance().getTime().getHours();
-        int minute = Calendar.getInstance().getTime().getMinutes();
-        int second = Calendar.getInstance().getTime().getSeconds();
-        return hour * 3600 + minute * 60 + second;
     }
 
     public void setLocale(String lang) {
@@ -701,44 +755,13 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         editor.apply();
     }
 
-//    private String loadLocal() {
-//        SharedPreferences pref = getApplicationContext()
-//                .getSharedPreferences("userData", Context.MODE_PRIVATE);
-//        return pref.getString("lan", "en");
-//    }
-
-//    public void saveLastPosition(int last_P) {
-//        SharedPreferences pref = getApplicationContext()
-//                .getSharedPreferences("userData", Context.MODE_PRIVATE);
-//        SharedPreferences.Editor editor = pref.edit();
-//        editor.putInt("last_P", last_P);
-//        editor.apply();
-//    }
-
-//    private int getLastP() {
-//        SharedPreferences pref = getApplicationContext()
-//                .getSharedPreferences("userData", Context.MODE_PRIVATE);
-//        return pref.getInt("last_P", 0);
-//    }
-
-    public void saveLastStatusTime() {
-        SharedPreferences pref = getApplicationContext()
-                .getSharedPreferences("MyPref", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("last_S_T", (int) SystemClock.uptimeMillis() / 1000);
-        editor.apply();
-    }
-
-    private int getLastStatusSec() {
-        SharedPreferences pref = getApplicationContext()
-                .getSharedPreferences("MyPref", Context.MODE_PRIVATE);
-        return pref.getInt("last_S_T", 0);
-    }
-
     public void restartActivity() {
-        recreate();
+        finish();
+        getIntent().setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(getIntent());
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void onClickVisiblityCanAndSaveBtn() {
         Button save = findViewById(R.id.idSaveStatus);
         Button cancel = findViewById(R.id.idCancelStatus);
@@ -769,14 +792,41 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             } else {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
             }
+            dvirViewModel.getIsConnectedtoEld().observe(this, isConnected -> {
+                if (!isConnected) {
+                    FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
+                    fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            Log.d("Adverse Diving","Eld is not Connected");
+                            if (location != null){
+                                Log.d("Adverse Diving",location.getLatitude()+location.getLongitude()+" " + location.toString());
+                                Log.d("Adverse Diving","Eld is not Connected");
+                            }
+                        }
+                    });
+                }
+            });
+//            else {
+//                AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+//                alertDialog.setTitle("Location not found")
+//                        .setMessage("Check Eld connection!")
+//                        .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
+//                AlertDialog alert = alertDialog.create();
+//                alert.show();
+//            }
 
-        });
-
-//        findViewById(R.id.idDocumentIcon).setOnClickListener(v -> {
-//            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-//            intent.setType("application/*");
-//            startActivityForResult(intent, 0);
-//        });
+    });
 
         cancel.setOnClickListener(v -> {
             visiblityViewCons.setVisibility(View.GONE);
@@ -812,36 +862,100 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                 reqdelinprogress = true;
                 reccount = 0;
 
-                for (int i = startseq; i < startseq + 10; i++) {
-                    EldBleError err = mEldManager.RequestRecord(i);
-                    Log.d("TESTING", "request " + i + " : " + err);
-                    if (err == EldBleError.RECORD_OUT_OF_RANGE) {
-                        Log.d("TESTING", "Not enough records on device");
-                        break;
+//                if (editLocation.getText().toString().equals("")){
+//                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+//                    alertDialog.setTitle("No location created")
+//                            .setMessage("Create current location!")
+//                            .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
+//                    AlertDialog alert = alertDialog.create();
+//                    alert.show();
+//                }
+//                else
+//                    if (note.getText().toString().equals("")){
+//                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+//                    alertDialog.setTitle("No note created")
+//                            .setMessage("Create note!")
+//                            .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
+//                    AlertDialog alert = alertDialog.create();
+//                    alert.show();
+//                }
+//                else{
+//                    Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
+//                    try {
+//                        List<Address> geoResults = geocoder.getFromLocationName(editLocation.getText().toString(), 1);
+//                        geoResults.size();
+//                        Address addr = geoResults.get(0);
+//                        latitude = addr.getLatitude();
+//                        longtitude = addr.getLongitude();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+
+                    ArrayList<Double> arrayList = new ArrayList<>();
+                    arrayList.add(latitude);
+                    arrayList.add(longtitude);
+                    if (current_status == EnumsConstants.STATUS_OFF){
+                        Call<Status> call = apiInterface.postStatus(new Status("OFF",new Point("Point",arrayList)
+                                ,note.getText().toString(),new Date().toInstant().toString()));
+
+                        call.enqueue(new Callback<Status>() {
+                            @Override
+                            public void onResponse(Call<Status> call, Response<Status> response) {
+                                if (response.isSuccessful()){
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Status> call, Throwable t) {
+
+                            }
+                        });
+                    }else if (current_status == EnumsConstants.STATUS_SB){
+                        Call<Status> call = apiInterface.postStatus(new Status("SB",new Point("Point",arrayList)
+                                ,note.getText().toString(),new Date().toInstant().toString()));
+                        call.enqueue(new Callback<Status>() {
+                            @Override
+                            public void onResponse(Call<Status> call, Response<Status> response) {
+                            }
+
+                            @Override
+                            public void onFailure(Call<Status> call, Throwable t) {
+
+                            }
+                        });
+                    }else if (current_status == EnumsConstants.STATUS_DR){
+                            Call<Status> call = apiInterface.postStatus(new Status("D",new Point("Point",arrayList)
+                                    ,note.getText().toString(),new Date().toInstant().toString()));
+                            call.enqueue(new Callback<Status>() {
+                                @Override
+                                public void onResponse(Call<Status> call, Response<Status> response) {
+                                }
+
+                                @Override
+                                public void onFailure(Call<Status> call, Throwable t) {
+
+                                }
+                            });
+
+                    }else if (current_status == EnumsConstants.STATUS_ON){
+                        Call<Status> call = apiInterface.postStatus(new Status("ON",new Point("Point",arrayList)
+                                ,note.getText().toString(),new Date().toInstant().toString()));
+                        call.enqueue(new Callback<Status>() {
+                            @Override
+                            public void onResponse(Call<Status> call, Response<Status> response) {
+                                if (response.isSuccessful()){
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Status> call, Throwable t) {
+                            }
+                        });
                     }
-                }
-                if (editLocation.getText().equals("")){
-                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-                    alertDialog.setTitle("No location created")
-                            .setMessage("Create current location!")
-                            .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
-                    AlertDialog alert = alertDialog.create();
-                    alert.show();
-                }
-                else if (note.getText().equals("")){
-                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-                    alertDialog.setTitle("No note created")
-                            .setMessage("Create note!")
-                            .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
-                    AlertDialog alert = alertDialog.create();
-                    alert.show();
-                }
-                else{
-                    statusDaoViewModel.insertStatus(new LogEntity(last_status, current_status, editLocation.getText().toString(), note.getText().toString(), null, today, getCurrentSeconds()));
-                        lastStatusData.saveLasStatus(current_status,getCurrentSeconds());
-//                saveLastStatusTime();
-                    restartActivity();
-                }
+                statusDaoViewModel.insertStatus(new LogEntity(last_status, current_status, editLocation.getText().toString(), note.getText().toString(), null, today, getCurrentSeconds()));
+                lastStatusData.saveLasStatus(current_status,getCurrentSeconds());
+                restartActivity();
+//                }
             }else {
                 if(last_status == EnumsConstants.STATUS_OFF){
                     off.setClickable(false);
@@ -857,39 +971,92 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                 }
             }
         });
-    }
 
-    private void setTopLastPos(int lastPos) {
-        CardView cardView = findViewById(R.id.idCardStatus);
-        ImageView icon = findViewById(R.id.idStatusImage);
-        TextView statusText = findViewById(R.id.idStatusText);
-//        TextView statusTime = findViewById(R.id.idStatusTime);
+        dvirViewModel.getIsConnectedtoEld().observe(this,isConnected ->{
+            if (isConnected){
+                dvirViewModel.getTruckSpeed().observe(MainActivity.this,speed ->{
+                    ArrayList<Double> arrayList = new ArrayList<>();
+                    arrayList.add(latitude);
+                    arrayList.add(longtitude);
+                    if (speed){
+                    }else {
+                        if (last_status == EnumsConstants.STATUS_DR) {
+                            final int[] count = {60};
+                            Dialog dialog = new Dialog(this);
+                            dialog.setContentView(R.layout.custom_confirmation_layout);
+                            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            TextView textView = dialog.findViewById(R.id.idConfirmationTitle);
+                            Button stay = dialog.findViewById(R.id.idDialogStayDriving);
+                            Button go = dialog.findViewById(R.id.idDialogChangeStatus);
+                            Timer t = new Timer();
+                            t.scheduleAtFixedRate(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    count[0]--;
+                                    runOnUiThread(()->{
+                                        if (count[0] > 0){
+                                            textView.setText(count[0] + " sec");
+                                        }else {
+                                            current_status = EnumsConstants.STATUS_ON;
+                                            Call<Status> call = apiInterface.postStatus(new Status("ON",new Point("Point",arrayList)
+                                                    ,note.getText().toString(),new Date().toInstant().toString()));
 
-//        if (lastPos == EnumsConstants.STATUS_ON) {
-//            cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusON));
-//            statusText.setText(R.string.on);
-//            statusText.setTextColor(ContextCompat.getColor(this, R.color.colorStatusONBold));
-//            icon.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusONBold));
-//            icon.setImageResource(R.drawable.ic_truck);
-//        } else if (lastPos == EnumsConstants.STATUS_SB) {
-//            cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusSB));
-//            statusText.setTextColor(ContextCompat.getColor(this, R.color.colorStatusSBBold));
-//            icon.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusSBBold));
-//            statusText.setText(R.string.sb);
-//            icon.setImageResource(R.drawable.ic__1748117516352401124513);
-//        } else if (lastPos == EnumsConstants.STATUS_DR) {
-//            cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusDR));
-//            statusText.setTextColor(ContextCompat.getColor(this, R.color.colorStatusDRBold));
-//            icon.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusDRBold));
-//            statusText.setText(R.string.dr);
-//            icon.setImageResource(R.drawable.ic_steering_wheel_svgrepo_com);
-//        } else {
-//            cardView.setCardBackgroundColor(ContextCompat.getColor(this, R.color.colorStatusOFF));
-//            statusText.setTextColor(ContextCompat.getColor(this, R.color.colorStatusOFFBold));
-//            icon.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusOFFBold));
-//            statusText.setText(R.string.off);
-//            icon.setImageResource(R.drawable.ic_baseline_power_settings_new_24);
-//        }
+                                            call.enqueue(new Callback<Status>() {
+                                                @Override
+                                                public void onResponse(Call<Status> call, Response<Status> response) {
+                                                    if (response.isSuccessful()){
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onFailure(Call<Status> call, Throwable t) {
+
+                                                }
+                                            });
+                                            statusDaoViewModel.insertStatus(new LogEntity(last_status, current_status, editLocation.getText().toString(), note.getText().toString(), null, today, getCurrentSeconds()));
+                                            lastStatusData.saveLasStatus(current_status,getCurrentSeconds());
+                                            restartActivity();
+                                            t.cancel();
+                                            dialog.dismiss();
+                                        }
+                                    });
+                                }
+                            },1000,1000);
+
+                            stay.setOnClickListener(view -> {
+                                dialog.dismiss();
+                                t.cancel();
+                            });
+
+                            go.setOnClickListener(view -> {
+                                dialog.dismiss();
+                                t.cancel();
+                                current_status = EnumsConstants.STATUS_OFF;
+                                Call<Status> call = apiInterface.postStatus(new Status("OFF",new Point("Point",arrayList)
+                                        ,note.getText().toString(),new Date().toInstant().toString()));
+
+                                call.enqueue(new Callback<Status>() {
+                                    @Override
+                                    public void onResponse(Call<Status> call, Response<Status> response) {
+                                        if (response.isSuccessful()){
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<Status> call, Throwable t) {
+
+                                    }
+                                });
+                                statusDaoViewModel.insertStatus(new LogEntity(last_status, current_status, editLocation.getText().toString(), note.getText().toString(), null, today, getCurrentSeconds()));
+                                lastStatusData.saveLasStatus(current_status,getCurrentSeconds());
+                                restartActivity();
+                            });
+                            dialog.show();
+                        }
+                    }
+                });
+            }
+        });
     }
 
     private void onClickCustomBtn() {
@@ -1014,10 +1181,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             restartActivity();
         });
 
-//        textView.setOnClickListener(v -> {
-//            loadLGDDFragment(new LanguageFragment());
-//            drawerLayout.closeDrawers();
-//        });
     }
 
     private void checkNightModeActivated() {
@@ -1080,32 +1243,42 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     //ELD functions
     private void connectToEld() {
 
-        final ConnectToEldDialog dialog = new ConnectToEldDialog(this);
-        dialog.setCancelable(false);
-        dialog.show();
-
         final SearchEldDeviceDialog searchEldDeviceDialog = new SearchEldDeviceDialog(MainActivity.this);
+        searchEldDeviceDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
+        dvirViewModel.getIsConnectedtoEld().observe(this,isConnectedToEld -> {
+            final ConnectToEldDialog dialog = new ConnectToEldDialog(this,isConnectedToEld);
+            dialog.setCancelable(false);
 
-        dialog.setAlerrtDialogItemClickInterface(() -> {
-            dialog.cancel();
-
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
-            if (mEldManager.ScanForElds(bleScanCallback) == EldBleError.BLUETOOTH_NOT_ENABLED){
-                mEldManager.EnableBluetooth(REQUEST_BT_ENABLE);
+            if (isConnectedToEld){
+                dialog.setAlerrtDialogItemClickInterface(() ->{
+                    dialog.cancel();
+                    mEldManager.DisconnectEld();
+                    searchEldDeviceDialog.show();
+                });
+                searchEldDeviceDialog.dismiss();
+            }else {
+                dialog.setAlerrtDialogItemClickInterface(() -> {
+                    dialog.cancel();
+                    ScanForEld();
+                    searchEldDeviceDialog.show();
+                });
+                searchEldDeviceDialog.dismiss();
             }
-            searchEldDeviceDialog.show();
+
+            dialog.show();
         });
+
     }
 
-//    private final EldDtcCallback dtcCallback = new EldDtcCallback() {
-//        @Override
-//        public void onDtcDetected(final String status, final String jsonString) {
-//            runOnUiThread(() -> {
-//                EventBus.getDefault().postSticky(new MessageModel(status, "EldDtcCallback"));
-//            });
-//        }
-//    };
+    private final EldDtcCallback dtcCallback = new EldDtcCallback() {
+        @Override
+        public void onDtcDetected(final String status, final String jsonString) {
+            runOnUiThread(() -> {
+                EventBus.getDefault().postSticky(new MessageModel(status, "EldDtcCallback"));
+            });
+        }
+    };
 
     private final EldFirmwareUpdateCallback fwUpdateCallback = new EldFirmwareUpdateCallback() {
         @Override
@@ -1131,14 +1304,12 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 //                        mStatusView.append("Request Debug Failed\n");
                     EventBus.getDefault().postSticky(new MessageModel("Request Debug Failed\n", ""));
 //                        EventBus.getDefault().postSticky(new MessageModel("Request Debug Failed4", "4"));
-                    Log.d("TEST", "onDtcDetected: 4");
                 });
             } else {
                 runOnUiThread(() -> {
 //                        mStatusView.append("Request Debug Succeeded\n");
                     EventBus.getDefault().postSticky(new MessageModel("Request Debug Succeeded\n", ""));
 //                        EventBus.getDefault().postSticky(new MessageModel("Request Debug Succeeded5", "5"));
-                    Log.d("TEST", "onDtcDetected: 5");
 
                 });
             }
@@ -1168,7 +1339,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                                 if (updateSelection == 0) {
                                     if (downloadInput.getText().toString().equals("")) {
                                         mEldManager.StartUpdate(fwUpdateCallback, null);
-                                    } else if (downloadInput.getText().toString().toUpperCase().equals("FLASHERROR")) {
+                                    } else if (downloadInput.getText().toString().equalsIgnoreCase("FLASHERROR")) {
                                         mEldManager.SendSpecialString("FLASHERROR");
                                     } else {
                                         mEldManager.StartUpdate(fwUpdateCallback, downloadInput.getText().toString());
@@ -1381,9 +1552,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
             for (int i = startseq; i < startseq + 10; i++) {
                 EldBleError err = mEldManager.RequestRecord(i);
-                Log.d("TESTING", "request " + i + " : " + err);
                 if (err == EldBleError.RECORD_OUT_OF_RANGE) {
-                    Log.d("TESTING", "Not enough records on device");
                     break;
                 }
             }
@@ -1516,20 +1685,31 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                 //todo mDataView.append("New State of connection" + Integer.toString(newState, 10) + "\n");
                 EventBus.getDefault().postSticky(new MessageModel("newState", "EldBleConnectionStateChangeCallback"));
 //                EventBus.getDefault().postSticky(new MessageModel("newState6", "EldBleConnectionStateChangeCallback6"));
-                Log.d("TEST", "onDtcDetected: 6");
             });
         }
     };
 
     private final EldBleDataCallback bleDataCallback = new EldBleDataCallback() {
+        @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         public void OnDataRecord(final EldBroadcast dataRec, final EldBroadcastTypes RecordType) {
+
+            subscribedRecords.add(EldBroadcastTypes.ELD_DATA_RECORD);
+            subscribedRecords.add(EldBroadcastTypes.ELD_BUFFER_RECORD);
+            subscribedRecords.add(EldBroadcastTypes.ELD_ENGINE_PARAMETERS_RECORD);
+            subscribedRecords.add(EldBroadcastTypes.ELD_FUEL_RECORD);
+ 
+            mEldManager.EnableFuelData();
+            mEldManager.UpdateSubscribedRecordTypes(subscribedRecords);
+
             runOnUiThread(() -> {
 
                 EventBus.getDefault().postSticky(new MessageModel("", dataRec.getBroadcastString().trim() + "\n"));
-                Log.d("TEST", "onDtcDetected: 7");
 
-                if (dataRec instanceof EldBufferRecord) {
+                networkConnectionLiveData.observe(MainActivity.this,isConnected ->{
+                    if (isConnected){
+                        Toast.makeText(MainActivity.this,"Connection state is" + isConnected + "\n" + dataRec.getBroadcastString(),Toast.LENGTH_LONG).show();
+                        if (dataRec instanceof EldBufferRecord) {
                             startseq = ((EldBufferRecord) dataRec).getStartSeqNo();
                             endseq = ((EldBufferRecord) dataRec).getEndSeqNo();
                             Call<BufferRecord> call = apiInterface.sendBuffer(new BufferRecord(
@@ -2102,221 +2282,269 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 //                    } else if (RecordType == EldBroadcastTypes.ELD_DIAGNOSTIC_RECORD) {
 //                        diagnosticEnabled = true;
 //                    }
-                } if (dataRec instanceof EldDataRecord){
-                    latitude = ((EldDataRecord) dataRec).getLatitude();
-                    longtitude = ((EldDataRecord) dataRec).getLongitude();
-                    Toast.makeText(MainActivity.this,((EldDataRecord) dataRec).getFirmwareVersion(),Toast.LENGTH_SHORT).show();
+                        }else if (dataRec instanceof EldDataRecord){
+                            latitude = ((EldDataRecord) dataRec).getLatitude();
+                            longtitude = ((EldDataRecord) dataRec).getLongitude();
 
-                    ArrayList<Double> arrayList = new ArrayList<>();
-                    arrayList.add(((EldDataRecord) dataRec).getLongitude());
-                    arrayList.add(((EldDataRecord) dataRec).getLatitude());
+                            ArrayList<Double> arrayList = new ArrayList<>();
+                            arrayList.add(((EldDataRecord) dataRec).getLongitude());
+                            arrayList.add(((EldDataRecord) dataRec).getLatitude());
 
-                    Boolean b = null;
-                    if(((EldDataRecord) dataRec).getEngineState() == EldEngineStates.ENGINE_OFF){
-                        b = false;
-                    }else if(((EldDataRecord) dataRec).getEngineState() == EldEngineStates.ENGINE_ON){
-                        b = true;
-                    }
-                    try {
-                        Call<LiveDataRecord> sendData = apiInterface.sendLive(new LiveDataRecord(
-                                b,
-                                ((EldDataRecord) dataRec).getVin(),
-                                ((EldDataRecord) dataRec).getSpeed(),
-                                ((EldDataRecord) dataRec).getOdometer(),
-                                ((EldDataRecord) dataRec).getTripDistance(),
-                                ((EldDataRecord) dataRec).getEngineHours(),
-                                ((EldDataRecord) dataRec).getTripHours(),
-                                ((EldDataRecord) dataRec).getVoltage(),
-                                (float) 2.22,
-                                new Point("Point",arrayList),
-                                ((EldDataRecord) dataRec).getGpsSpeed(),
-                                ((EldDataRecord) dataRec).getCourse(),
-                                ((EldDataRecord) dataRec).getNumSats(),
-                                ((EldDataRecord) dataRec).getMslAlt(),
-                                ((EldDataRecord) dataRec).getDop(),
-                                ((EldDataRecord) dataRec).getSequence(),
-                                ((EldDataRecord) dataRec).getFirmwareVersion()
+                            Boolean b = null;
+                            if(((EldDataRecord) dataRec).getEngineState() == EldEngineStates.ENGINE_OFF){
+                                b = false;
+                            }else if(((EldDataRecord) dataRec).getEngineState() == EldEngineStates.ENGINE_ON){
+                                b = true;
+                            }
+                            try {
+                                Call<LiveDataRecord> sendData = null;
+                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                                    sendData = apiInterface.sendLive(new LiveDataRecord(
+                                            b,
+                                            ((EldDataRecord) dataRec).getVin(),
+                                            ((EldDataRecord) dataRec).getSpeed(),
+                                            ((EldDataRecord) dataRec).getOdometer(),
+                                            ((EldDataRecord) dataRec).getTripDistance(),
+                                            ((EldDataRecord) dataRec).getEngineHours(),
+                                            ((EldDataRecord) dataRec).getTripHours(),
+                                            ((EldDataRecord) dataRec).getVoltage(),
+                                            ((EldDataRecord) dataRec).getGpsDateTime().toInstant().toString(),
+                                            new Point("Point",arrayList),
+                                            ((EldDataRecord) dataRec).getGpsSpeed(),
+                                            ((EldDataRecord) dataRec).getCourse(),
+                                            ((EldDataRecord) dataRec).getNumSats(),
+                                            ((EldDataRecord) dataRec).getMslAlt(),
+                                            ((EldDataRecord) dataRec).getDop(),
+                                            ((EldDataRecord) dataRec).getSequence(),
+                                            ((EldDataRecord) dataRec).getFirmwareVersion()
 
-                        ));
+                                    ));
+                                }
 
-                        sendData.enqueue(new Callback<LiveDataRecord>() {
-                            @Override
-                            public void onResponse(@NonNull Call<LiveDataRecord> call, @NonNull Response<LiveDataRecord> response) {
+                                sendData.enqueue(new Callback<LiveDataRecord>() {
+                                    @Override
+                                    public void onResponse(@NonNull Call<LiveDataRecord> call, @NonNull Response<LiveDataRecord> response) {
+                                        if (response.isSuccessful()){
+                                            Toast.makeText(MainActivity.this,"truck speed:" + ((EldDataRecord) dataRec).getSpeed(),Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
 
+                                    @Override
+                                    public void onFailure(@NonNull Call<LiveDataRecord> call, @NonNull Throwable t) {
+                                        Toast.makeText(MainActivity.this,t.getMessage(),Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+
+                            } catch (Exception ignored) {
+                            }
+                        }else
+                            if (RecordType == EldBroadcastTypes.ELD_FUEL_RECORD){
+                            fuelEnabled = true;
+                            int highrpmState = 0;
+                            switch (((EldFuelRecord)dataRec).getStateHighRPM()){
+                                case BAD: highrpmState = 1;
+                                    break;
+
+                                case GOOD: highrpmState = 2;
+                                    break;
+
+                                case INVALID: highrpmState = 3;
+                                    break;
+
+                                case NORMAL: highrpmState = 4;
+                                    break;
+
+                                case TERRIBLE: highrpmState = 5;
+                                    break;
+
+                                case WARNING: highrpmState = 6;
+                                    break;
                             }
 
-                            @Override
-                            public void onFailure(@NonNull Call<LiveDataRecord> call, @NonNull Throwable t) {
-                                Toast.makeText(MainActivity.this,t.getMessage(),Toast.LENGTH_SHORT).show();
+                            int unsteadyState = 0;
+
+                            switch (((EldFuelRecord)dataRec).getStateUnsteady()){
+                                case BAD: unsteadyState = 1;
+                                    break;
+
+                                case GOOD: unsteadyState = 2;
+                                    break;
+
+                                case INVALID: unsteadyState = 3;
+                                    break;
+
+                                case NORMAL: unsteadyState = 4;
+                                    break;
+
+                                case TERRIBLE: unsteadyState = 5;
+                                    break;
+
+                                case WARNING: unsteadyState = 6;
+                                    break;
                             }
-                        });
 
+                            int enginepowerState = 0;
 
-                    } catch (Exception ignored) {
-                    }
-                }if (dataRec instanceof EldFuelRecord){
-                    subscribedRecords.add(EldBroadcastTypes.ELD_FUEL_RECORD);
-                    fuelEnabled = true;
-                    int highrpmState = 0;
-                    switch (((EldFuelRecord)dataRec).getStateHighRPM()){
-                        case BAD: highrpmState = 1;
-                            break;
+                            switch (((EldFuelRecord)dataRec).getStateEnginePower()){
+                                case BAD: enginepowerState = 1;
+                                    break;
 
-                        case GOOD: highrpmState = 2;
-                            break;
+                                case GOOD: enginepowerState = 2;
+                                    break;
 
-                        case INVALID: highrpmState = 3;
-                            break;
+                                case INVALID: enginepowerState = 3;
+                                    break;
 
-                        case NORMAL: highrpmState = 4;
-                            break;
+                                case NORMAL: enginepowerState = 4;
+                                    break;
 
-                        case TERRIBLE: highrpmState = 5;
-                            break;
+                                case TERRIBLE: enginepowerState = 5;
+                                    break;
 
-                        case WARNING: highrpmState = 6;
-                            break;
-                    }
+                                case WARNING: enginepowerState = 6;
+                                    break;
+                            }
 
-                    int unsteadyState = 0;
+                            int accelState = 0;
 
-                    switch (((EldFuelRecord)dataRec).getStateUnsteady()){
-                        case BAD: unsteadyState = 1;
-                            break;
+                            switch (((EldFuelRecord)dataRec).getStateAccel()){
+                                case BAD: accelState = 1;
+                                    break;
 
-                        case GOOD: unsteadyState = 2;
-                            break;
+                                case GOOD: accelState = 2;
+                                    break;
 
-                        case INVALID: unsteadyState = 3;
-                            break;
+                                case INVALID: accelState = 3;
+                                    break;
 
-                        case NORMAL: unsteadyState = 4;
-                            break;
+                                case NORMAL: accelState = 4;
+                                    break;
 
-                        case TERRIBLE: unsteadyState = 5;
-                            break;
+                                case TERRIBLE: accelState = 5;
+                                    break;
 
-                        case WARNING: unsteadyState = 6;
-                            break;
-                    }
+                                case WARNING: accelState = 6;
+                                    break;
+                            }
 
-                    int enginepowerState = 0;
+                            int eco = 0;
 
-                    switch (((EldFuelRecord)dataRec).getStateEnginePower()){
-                        case BAD: enginepowerState = 1;
-                            break;
+                            switch (((EldFuelRecord)dataRec).getStateEco()){
+                                case BAD: eco = 1;
+                                    break;
 
-                        case GOOD: enginepowerState = 2;
-                            break;
+                                case GOOD: eco = 2;
+                                    break;
 
-                        case INVALID: enginepowerState = 3;
-                            break;
+                                case INVALID: eco = 3;
+                                    break;
 
-                        case NORMAL: enginepowerState = 4;
-                            break;
+                                case NORMAL: eco = 4;
+                                    break;
 
-                        case TERRIBLE: enginepowerState = 5;
-                            break;
+                                case TERRIBLE: eco = 5;
+                                    break;
 
-                        case WARNING: enginepowerState = 6;
-                            break;
-                    }
+                                case WARNING: eco = 6;
+                                    break;
+                            }
 
-                    int accelState = 0;
+                            int anticipateState = 0;
 
-                    switch (((EldFuelRecord)dataRec).getStateAccel()){
-                        case BAD: accelState = 1;
-                            break;
+                            switch (((EldFuelRecord)dataRec).getStateAnticipate()){
+                                case BAD: anticipateState = 1;
+                                    break;
 
-                        case GOOD: accelState = 2;
-                            break;
+                                case GOOD: anticipateState = 2;
+                                    break;
 
-                        case INVALID: accelState = 3;
-                            break;
+                                case INVALID: anticipateState = 3;
+                                    break;
 
-                        case NORMAL: accelState = 4;
-                            break;
+                                case NORMAL: anticipateState = 4;
+                                    break;
 
-                        case TERRIBLE: accelState = 5;
-                            break;
+                                case TERRIBLE: anticipateState = 5;
+                                    break;
 
-                        case WARNING: accelState = 6;
-                            break;
-                    }
+                                case WARNING: anticipateState = 6;
+                                    break;
+                            }
 
-                    int eco = 0;
+                            Call<FuelRecord> call = apiInterface.sendFuel(new FuelRecord(
+                                    ((EldFuelRecord) dataRec).getFuelLevelPercent(),
+                                    ((EldFuelRecord) dataRec).getFuelIntegratedLiters(),
+                                    ((EldFuelRecord) dataRec).getTotalFuelConsumedLiters(),
+                                    ((EldFuelRecord) dataRec).getFuelRateLitersPerHours(),
+                                    ((EldFuelRecord) dataRec).getIdleFuelConsumedLiters(),
+                                    ((EldFuelRecord) dataRec).getIdleTimeHours(),
+                                    highrpmState,
+                                    unsteadyState,
+                                    enginepowerState,
+                                    accelState,
+                                    eco,
+                                    anticipateState
+                            ));
 
-                    switch (((EldFuelRecord)dataRec).getStateEco()){
-                        case BAD: eco = 1;
-                            break;
+                            call.enqueue(new Callback<FuelRecord>() {
+                                @Override
+                                public void onResponse(@NonNull Call<FuelRecord> call, @NonNull Response<FuelRecord> response) {
+                                    Toast.makeText(MainActivity.this,"response is not successful for fuel record",Toast.LENGTH_LONG).show();
 
-                        case GOOD: eco = 2;
-                            break;
+                                }
 
-                        case INVALID: eco = 3;
-                            break;
-
-                        case NORMAL: eco = 4;
-                            break;
-
-                        case TERRIBLE: eco = 5;
-                            break;
-
-                        case WARNING: eco = 6;
-                            break;
-                    }
-
-                    int anticipateState = 0;
-
-                    switch (((EldFuelRecord)dataRec).getStateAnticipate()){
-                        case BAD: anticipateState = 1;
-                            break;
-
-                        case GOOD: anticipateState = 2;
-                            break;
-
-                        case INVALID: anticipateState = 3;
-                            break;
-
-                        case NORMAL: anticipateState = 4;
-                            break;
-
-                        case TERRIBLE: anticipateState = 5;
-                            break;
-
-                        case WARNING: anticipateState = 6;
-                            break;
-                    }
-
-                    Call<FuelRecord> call = apiInterface.sendFuel(new FuelRecord(
-                            ((EldFuelRecord) dataRec).getFuelLevelPercent(),
-                            ((EldFuelRecord) dataRec).getFuelIntegratedLiters(),
-                            ((EldFuelRecord) dataRec).getTotalFuelConsumedLiters(),
-                            ((EldFuelRecord) dataRec).getFuelRateLitersPerHours(),
-                            ((EldFuelRecord) dataRec).getIdleFuelConsumedLiters(),
-                            ((EldFuelRecord) dataRec).getIdleTimeHours(),
-                            highrpmState,
-                            unsteadyState,
-                            enginepowerState,
-                            accelState,
-                            eco,
-                            anticipateState
-                    ));
-
-                    call.enqueue(new Callback<FuelRecord>() {
-                        @Override
-                        public void onResponse(@NonNull Call<FuelRecord> call, @NonNull Response<FuelRecord> response) {
-
+                                @Override
+                                public void onFailure(@NonNull Call<FuelRecord> call, @NonNull Throwable t) {
+                                    Toast.makeText(MainActivity.this,t.getMessage(),Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
+                    }else {
+                        Toast.makeText(MainActivity.this,"Connection state is" + isConnected + "\n" + dataRec.getBroadcastString(),Toast.LENGTH_LONG).show();
+                        if (dataRec instanceof EldDataRecord) {
+                            latitude = ((EldDataRecord) dataRec).getLatitude();
+                            longtitude = ((EldDataRecord) dataRec).getLongitude();
 
-                        @Override
-                        public void onFailure(@NonNull Call<FuelRecord> call, @NonNull Throwable t) {
-                            Toast.makeText(MainActivity.this,t.getMessage(),Toast.LENGTH_SHORT).show();
+                            ArrayList<Double> arrayList = new ArrayList<>();
+                            arrayList.add(((EldDataRecord) dataRec).getLongitude());
+                            arrayList.add(((EldDataRecord) dataRec).getLatitude());
+
+                            Boolean b = null;
+                            if (((EldDataRecord) dataRec).getEngineState() == EldEngineStates.ENGINE_OFF) {
+                                b = false;
+                            } else if (((EldDataRecord) dataRec).getEngineState() == EldEngineStates.ENGINE_ON) {
+                                b = true;
+                            }
+
+                            userViewModel.insertLocalData(new LiveDataRecord(
+                                    b,
+                                    ((EldDataRecord) dataRec).getVin(),
+                                    ((EldDataRecord) dataRec).getSpeed(),
+                                    ((EldDataRecord) dataRec).getOdometer(),
+                                    ((EldDataRecord) dataRec).getTripDistance(),
+                                    ((EldDataRecord) dataRec).getEngineHours(),
+                                    ((EldDataRecord) dataRec).getTripHours(),
+                                    ((EldDataRecord) dataRec).getVoltage(),
+                                    ((EldDataRecord) dataRec).getGpsDateTime().toInstant().toString(),
+                                    new Point("Point",arrayList),
+                                    ((EldDataRecord) dataRec).getGpsSpeed(),
+                                    ((EldDataRecord) dataRec).getCourse(),
+                                    ((EldDataRecord) dataRec).getNumSats(),
+                                    ((EldDataRecord) dataRec).getMslAlt(),
+                                    ((EldDataRecord) dataRec).getDop(),
+                                    ((EldDataRecord) dataRec).getSequence(),
+                                    ((EldDataRecord) dataRec).getFirmwareVersion()
+                            ));
                         }
-                    });
-                }
+                    }
+                });
             });
-
+            try {
+                sleep(60000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     };
 
@@ -2330,15 +2558,32 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             final String strDevice;
             if (device != null) {
                 strDevice = device.getDeviceId();
+                apiInterface.sendEldNum(new Eld(strDevice,mEldManager.GetApiVersion())).enqueue(new Callback<Eld>() {
+                    @Override
+                    public void onResponse(Call<Eld> call, Response<Eld> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<Eld> call, Throwable t) {
+
+                    }
+                });
                 runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("ELD " + strDevice + " found, now connecting...\n", "")));
 
                 EldBleError res = mEldManager.ConnectToEld(bleDataCallback, subscribedRecords, bleConnectionStateChangeCallback);
 
                 if (res != EldBleError.SUCCESS) {
+                    dvirViewModel.getIsConnectedtoEld().postValue(false);
+
                     runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("Connection Failed\n", "")));
+                }else {
+                    dvirViewModel.getIsConnectedtoEld().postValue(true);
+                    runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("Conncected to Eld\n", "")));
                 }
 
             } else {
+                dvirViewModel.getIsConnectedtoEld().postValue(false);
                 runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("No ELD found\n", "")));
             }
         }
@@ -2353,14 +2598,30 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                 so = (EldScanObject) deviceList.get(0);
                 strDevice = so.getDeviceId();
                 MAC = strDevice;
+                apiInterface.sendEldNum(new Eld(MAC,mEldManager.GetApiVersion())).enqueue(new Callback<Eld>() {
+                    @Override
+                    public void onResponse(Call<Eld> call, Response<Eld> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<Eld> call, Throwable t) {
+
+                    }
+                });
                 runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("ELD " + strDevice + " found, now connecting...\n", "")));
 
                 EldBleError res = mEldManager.ConnectToEld(bleDataCallback, subscribedRecords, bleConnectionStateChangeCallback, strDevice);
                 if (res != EldBleError.SUCCESS) {
+                    dvirViewModel.getIsConnectedtoEld().postValue(false);
                     runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("Connection Failed\n", "")));
+                } else {
+                    dvirViewModel.getIsConnectedtoEld().postValue(true);
+                    runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("Conncected to Eld\n", "")));
                 }
 
             } else {
+                dvirViewModel.getIsConnectedtoEld().postValue(false);
                 runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("No ELD found\n", "")));
             }
         }
@@ -2405,9 +2666,11 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             public void onDayChanged() {
                 time = "" + Calendar.getInstance().getTime();
                 today = time.split(" ")[1] + " " + time.split(" ")[2];
-                Log.d("data", "data");
+
+                Log.d("Adverse Diving","Day is changed");
+                Toast.makeText(getApplicationContext(),"Day is Changed",Toast.LENGTH_SHORT).show();
                 daoViewModel.deleteAllDays();
-                for (int i = 14; i >= 0; i--) {
+                for (int i = 7; i >= 0; i--) {
                     String time = Day.getCalculatedDate(-i);
                     try {
                         daoViewModel.insertDay(new DayEntity(Day.getDayTime1(time), Day.getDayName2(time)));
@@ -2415,18 +2678,26 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                         e.printStackTrace();
                     }
                 }
+                if (truckStatusEntities.size() == 0){
+                    if (logEntities.size() != 0){
+                        try {
+                            daoViewModel.insertStatus(new LogEntity(logEntities.get(logEntities.size()-1).getTo_status(),logEntities.get(logEntities.size()-1).getTo_status(),
+                                    logEntities.get(logEntities.size()-1).getLocation(),logEntities.get(logEntities.size()-1).getNote(),null,today,0));
+                        } catch (ExecutionException | InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }else {
+                        try {
+                            daoViewModel.insertStatus(new LogEntity(EnumsConstants.STATUS_OFF,EnumsConstants.STATUS_OFF,
+                                    null,null,null,today,0));
+                        } catch (ExecutionException | InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
                 setTodayAttr(time, today);
                 optimizeViewModels();
-                customRulerChart.setArrayList(truckStatusEntities);
-                if (logEntities.size() == 0) {
-                    statusDaoViewModel.insertStatus(new LogEntity(lastStatusData.getLastStatus(), lastStatusData.getLastStatus(), null, null, null, today, 0));
-                }else {
-                    statusDaoViewModel.insertStatus(new LogEntity(lastStatusData.getLastStatus(),
-                            lastStatusData.getLastStatus(),
-                            logEntities.get(logEntities.size()-1).getLocation(),
-                            logEntities.get(logEntities.size()-1).getNote(), null, today, 0));
-                }
-                update();
+                restartActivity();
             }
         };
         this.registerReceiver(changeDateTimeBroadcast, ChangeDateTimeBroadcast.getIntentFilter());

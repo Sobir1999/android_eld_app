@@ -1,24 +1,19 @@
 package com.iosix.eldblesample.customViews;
 
+import static com.iosix.eldblesample.MyApplication.userData;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.View;
-
 import androidx.annotation.Nullable;
-
-//import com.iosix.eldblesample.ExampleModel;
-//import com.iosix.eldblesample.models.ExampleTimeModel;
-
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.enums.TableConstants;
-import com.iosix.eldblesample.shared_prefs.UserData;
 
-public abstract class CustomRulerChart extends View {
+public abstract class   CustomRulerChart extends View {
     private Paint table_paint = new Paint();
     private Paint table_time_paint = new Paint();
     private Paint table_time_paint_tex = new Paint();
@@ -34,7 +29,6 @@ public abstract class CustomRulerChart extends View {
     private float CUSTOM_TABLE_HEIGHT;
     private float CUSTOM_TABLE_ROW_WIDTH;
 
-    private UserData userData;
     public CustomRulerChart(Context context) {
         super(context);
         init(context);
@@ -51,8 +45,6 @@ public abstract class CustomRulerChart extends View {
     }
 
     private void init(Context context) {
-
-        userData = new UserData(getContext());
 
         CUSTOM_WIDTH = context.getResources().getDisplayMetrics().widthPixels;
 
@@ -111,7 +103,7 @@ public abstract class CustomRulerChart extends View {
 
     private void onDrawTable(Canvas canvas) {
         if (!userData.getMode()){
-            table_paint.setColor(getResources().getColor(R.color.customTextHintColor));
+            table_paint.setColor(getResources().getColor(R.color.customTableColor));
         }else {
             table_paint.setColor(Color.WHITE);
         }
@@ -315,34 +307,6 @@ public abstract class CustomRulerChart extends View {
                 );
             }
         }
-
-//        canvas.drawText(
-//                "OFF",
-//                START_POINT_X / 2 - 20.0f,
-//                START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8,
-//                TableConstants.getOFFPaint()
-//        );
-//
-//        canvas.drawText(
-//                "SB",
-//                START_POINT_X / 2 - 20.0f,
-//                START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 8,
-//                TableConstants.getSBPaint()
-//        );
-//
-//        canvas.drawText(
-//                "DR",
-//                START_POINT_X / 2 - 20.0f,
-//                START_POINT_Y + 5 * CUSTOM_TABLE_HEIGHT / 8,
-//                TableConstants.getDRPaint()
-//        );
-//
-//        canvas.drawText(
-//                "ON",
-//                START_POINT_X / 2 - 20.0f,
-//                START_POINT_Y + 7 * CUSTOM_TABLE_HEIGHT / 8,
-//                TableConstants.getONPaint()
-//        );
 
     }
 

@@ -2,6 +2,8 @@ package com.iosix.eldblesample.dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -17,11 +19,13 @@ import com.iosix.eldblesample.interfaces.AlertDialogItemClickInterface;
 public class ConnectToEldDialog extends Dialog {
     private LinearLayout vehicleInfo, sendLog;
     private ConstraintLayout undintifiedDriving, faultCode;
-    private TextView connect, cancel;
+    private TextView connect, cancel,idEldConnection,idIsConnected;
     private AlertDialogItemClickInterface alerrtDialogItemClickInterface;
+    private Boolean isConnectedToEld;
 
-    public ConnectToEldDialog(@NonNull Context context) {
+    public ConnectToEldDialog(@NonNull Context context,Boolean isConnectedToEld) {
         super(context);
+        this.isConnectedToEld = isConnectedToEld;
     }
 
     public void setAlerrtDialogItemClickInterface(AlertDialogItemClickInterface alerrtDialogItemClickInterface) {
@@ -31,29 +35,29 @@ public class ConnectToEldDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.eld_custom_dialog_item);
+        getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         vehicleInfo = findViewById(R.id.idVehicleInfo);
-        sendLog = findViewById(R.id.idSendDebugLog);
+        idEldConnection = findViewById(R.id.idEldConnection);
+        idIsConnected = findViewById(R.id.idIsConnected);
         undintifiedDriving = findViewById(R.id.idUndefinedDR);
-        faultCode = findViewById(R.id.idFaultCode);
         cancel = findViewById(R.id.idEldDialCancel);
         connect = findViewById(R.id.idEldDialConnect);
 
-        connect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (alerrtDialogItemClickInterface != null) {
-                    alerrtDialogItemClickInterface.onClick();
-                }
+        if (isConnectedToEld){
+            idIsConnected.setText(R.string.connected);
+            connect.setText(R.string.disconnect);
+        }else {
+            idIsConnected.setText(R.string.not_connected);
+            connect.setText(R.string.connect);
+        }
+
+        connect.setOnClickListener(v -> {
+            if (alerrtDialogItemClickInterface != null) {
+                alerrtDialogItemClickInterface.onClick();
             }
         });
 
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cancel();
-            }
-        });
+        cancel.setOnClickListener(v -> cancel());
     }
 }

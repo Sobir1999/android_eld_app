@@ -37,7 +37,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\User\Downloads\delete.svg" />
+                                                <entry key="imagePath" value="C:\Users\User\Downloads\lolll.png" />
                                                 <entry key="opacityPercent" value="80" />
                                                 <entry key="paddingPercent" value="5" />
                                               </map>
@@ -74,10 +74,10 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="C:\Users\User\Downloads\delete.svg" />
-                                      <entry key="outputName" value="delete" />
+                                      <entry key="imageAsset" value="C:\Users\User\Downloads\lolll.png" />
+                                      <entry key="outputName" value="ic_launcher" />
                                       <entry key="theme" value="CUSTOM" />
-                                      <entry key="themeColor" value="0466f8" />
+                                      <entry key="themeColor" value="ffffff" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -154,6 +154,19 @@
                                           </PersistentState>
                                         </value>
                                       </entry>
+                                      <entry key="image">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="color" value="000000" />
+                                                <entry key="imagePath" value="C:\Users\User\Downloads\lolll.png" />
+                                                <entry key="trimmed" value="true" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
                                       <entry key="text">
                                         <value>
                                           <PersistentState>
@@ -176,6 +189,13 @@
                                           </PersistentState>
                                         </value>
                                       </entry>
+                                    </map>
+                                  </option>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="iconShape" value="CIRCLE" />
+                                      <entry key="imageAsset" value="C:\Users\User\Downloads\lolll.png" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -304,7 +324,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputIconType" value="ACTIONBAR" />
+                            <entry key="outputIconType" value="LAUNCHER_LEGACY" />
                           </map>
                         </option>
                       </PersistentState>
@@ -323,27 +343,12 @@
                   <entry key="vectorAssetStep">
                     <value>
                       <PersistentState>
-                        <option name="children">
-                          <map>
-                            <entry key="clipartAsset">
-                              <value>
-                                <PersistentState>
-                                  <option name="values">
-                                    <map>
-                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/star_outline/baseline_star_outline_24.xml" />
-                                    </map>
-                                  </option>
-                                </PersistentState>
-                              </value>
-                            </entry>
-                          </map>
-                        </option>
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="817e7e" />
-                            <entry key="outputName" value="ic__others" />
-                            <entry key="sourceFile" value="C:\Users\musta\Downloads\388f36aa372e9c1e4c37a9d2d36c7992.svg" />
+                            <entry key="outputName" value="ic_lolll" />
+                            <entry key="sourceFile" value="C:\Users\User\Downloads\lolll.svg" />
                           </map>
                         </option>
                       </PersistentState>

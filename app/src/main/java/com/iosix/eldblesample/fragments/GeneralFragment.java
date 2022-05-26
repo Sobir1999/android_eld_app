@@ -1,74 +1,111 @@
 package com.iosix.eldblesample.fragments;
 
-import android.app.AlertDialog;
+import static android.content.Context.INPUT_METHOD_SERVICE;
+
+import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.iosix.eldblesample.R;
+import com.iosix.eldblesample.adapters.DriversListAdapter;
+import com.iosix.eldblesample.adapters.TrailerListAdapter;
 import com.iosix.eldblesample.adapters.TrailerRecyclerAdapter;
+import com.iosix.eldblesample.adapters.VehiclesListAdapter;
 import com.iosix.eldblesample.models.ExampleSMSModel;
+import com.iosix.eldblesample.models.TrailNubmer;
+import com.iosix.eldblesample.models.User;
+import com.iosix.eldblesample.models.VehicleList;
+import com.iosix.eldblesample.retrofit.APIInterface;
+import com.iosix.eldblesample.retrofit.ApiClient;
+import com.iosix.eldblesample.roomDatabase.entities.GeneralEntity;
 import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
 import com.iosix.eldblesample.shared_prefs.DriverSharedPrefs;
-import com.iosix.eldblesample.shared_prefs.GeneralSharedPrefs;
 import com.iosix.eldblesample.shared_prefs.SessionManager;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
+import com.iosix.eldblesample.viewModel.DvirViewModel;
 import com.iosix.eldblesample.viewModel.GeneralViewModel;
 import com.iosix.eldblesample.viewModel.UserViewModel;
+import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class GeneralFragment extends Fragment {
 
-    private TrailerRecyclerAdapter adapter;
-    private ArrayList<TrailersEntity> selectedTrailers;
+    private ArrayList<TrailersEntity> selectedTrailers = new ArrayList<>();
+    private ArrayList<String> selectedTrailersNumber = new ArrayList<>();
     private DayDaoViewModel daoViewModel;
     private UserViewModel userViewModel;
     private GeneralViewModel generalViewModel;
     private SessionManager sessionManager;
-    private GeneralSharedPrefs generalSharedPrefs;
     private DriverSharedPrefs driverSharedPrefs;
+    private APIInterface apiInterface;
+    private EldJsonViewModel eldJsonViewModel;
+    private DvirViewModel dvirViewModel;
+    TrailerRecyclerAdapter adapter;
+    private String distance = "15";
+    private ArrayList<String> trailers = new ArrayList<>();
+    private String day;
 
 
     private Context context;
     private Button idSaveGeneral;
     private RecyclerView idTrailersRecyclerView;
     private ImageView idShippingClear,idTrailersClear,idVehiclesClear;
-    private TextView driverFullName,tvDistance,tvShippingdocs,tvTrailers,idVehiclesEdit,
+    private TextView driverFullName,tvDistance,tvShippingdocs,tvTrailers,shippingDocsEdit,idVehiclesEdit,
             tv_carrier,tv_terminal_address,tv_from_destination,tv_to_destination,tv_main_office,tv_notes,tv_co_drivers;
-    private EditText driverName,driverSurname,distanceEdit,ShippingDocsEdit,idTrailersEdit,
+    private EditText driverName,driverSurname,distanceEdit,idTrailersEdit,
             idCarrierEdit,idfromEdit,idtoEdit,idNotesEdit;
     private ConstraintLayout idMainOffice,coDriverContainer;
     private LinearLayout driverInfo,distanceContainer,idDistanceLayout,
-            shippingDocsLayout,trailersLayout,idTrailersLayout,vehiclesLayout,idVehiclesLayout,
+            trailersLayout,idTrailersLayout,vehiclesLayout,
             layout_carrier,idCarrierLayout,from_container,idfromLayout,to_container,idtoLayout,notes_container,idNotesLayout;
-
-    private String s;
+    private ConstraintLayout shippingDocsLayout,idVehiclesLayout;
 
     public static GeneralFragment newInstance(String c) {
         GeneralFragment fragment = new GeneralFragment();
         Bundle args = new Bundle();
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null){
+            day = getArguments().getString("currDay");
+        }
+        eldJsonViewModel = new EldJsonViewModel(requireActivity().getApplication());
+        eldJsonViewModel = ViewModelProviders.of(requireActivity()).get(EldJsonViewModel.class);
     }
 
     @Override
@@ -85,15 +122,17 @@ public class GeneralFragment extends Fragment {
         generalViewModel = ViewModelProviders.of(this).get(GeneralViewModel.class);
 
         sessionManager = new SessionManager(requireContext());
-        generalSharedPrefs = new GeneralSharedPrefs(requireContext());
-        driverSharedPrefs = new DriverSharedPrefs(requireContext());
+        driverSharedPrefs = DriverSharedPrefs.getInstance(requireContext().getApplicationContext());
+
+        dvirViewModel = new DvirViewModel(getActivity().getApplication());
+        dvirViewModel = ViewModelProviders.of(getActivity()).get(DvirViewModel.class);
 
         driverFullName = view.findViewById(R.id.tv_driver_name);
         driverInfo = view.findViewById(R.id.idDriverNameCons);
         distanceContainer = view.findViewById(R.id.distance_container);
         tvDistance = view.findViewById(R.id.tv_distance);
         tvShippingdocs = view.findViewById(R.id.idAddShippingDocs);
-        ShippingDocsEdit = view.findViewById(R.id.idShippingDocsEdit);
+        shippingDocsEdit = view.findViewById(R.id.idShippingDocsEdit);
         shippingDocsLayout = view.findViewById(R.id.shipping_docs_layout);
         idShippingClear = view.findViewById(R.id.idShippingClear);
         trailersLayout = view.findViewById(R.id.trailers_layout);
@@ -131,228 +170,336 @@ public class GeneralFragment extends Fragment {
         tv_main_office.setText(driverSharedPrefs.getMainOffice());
         tv_terminal_address.setText(driverSharedPrefs.getHomeTerAdd());
 
-        getGeneralInfo();
+        apiInterface = ApiClient.getClient().create(APIInterface.class);
 
-//        idSaveGeneral.setOnClickListener(v -> {
-//            try {
-//                generalViewModel.insertGeneral(
-//                        new GeneralEntity(driverFullName.getText().toString(),tvDistance.getText().toString(),
-//                                null,null,null,null,tv_from_destination.getText().toString(),
-//                                tv_to_destination.getText().toString(),null,sessionManager.fetchSignature(),null));
-//            } catch (ExecutionException e) {
-//                e.printStackTrace();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        });
+        getGeneralInfo();
+        getDriverInfo();
+
+        dvirViewModel.getCurrentName().observe(getViewLifecycleOwner(),c -> {
+            day = c;
+        });
+
+        idSaveGeneral.setOnClickListener(v -> {
+            apiInterface.sendGeneralInfo(new GeneralEntity(distance,shippingDocsEdit.getText().toString(),
+                    idVehiclesEdit.getText().toString(), selectedTrailersNumber,driverSharedPrefs.getCompany(),
+                    driverSharedPrefs.getMainOffice(),"driverSharedPrefs.getHomeTerAdd()",
+                    tv_co_drivers.getText().toString(),tv_from_destination.getText().toString(),
+                    tv_to_destination.getText().toString(),tv_notes.getText().toString(),day)).enqueue(new Callback<GeneralEntity>() {
+                @Override
+                public void onResponse(Call<GeneralEntity> call, Response<GeneralEntity> response) {
+                    if (response.isSuccessful()){
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<GeneralEntity> call, Throwable t) {
+                }
+            });
+
+            try {
+                generalViewModel.insertGeneral(new GeneralEntity(distance,shippingDocsEdit.getText().toString(),
+                        idVehiclesEdit.getText().toString(), selectedTrailersNumber,driverSharedPrefs.getCompany(),
+                        driverSharedPrefs.getMainOffice(),"driverSharedPrefs.getHomeTerAdd()",
+                        tv_co_drivers.getText().toString(),tv_from_destination.getText().toString(),
+                        tv_to_destination.getText().toString(),tv_notes.getText().toString(),day));
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
         return view;
+    }
+
+    private void getDriverInfo(){
+        apiInterface.getVehicle().enqueue(new Callback<VehicleList>() {
+            @Override
+            public void onResponse(Call<VehicleList> call, Response<VehicleList> response) {
+                if (response.isSuccessful()){
+                    if (response.body() != null) {
+                        VehicleList vehicle = response.body();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VehicleList> call, Throwable t) {
+            }
+        });
+
+        apiInterface.getCoDriver().enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()){
+                    if (response.body().getName() != null){
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+            }
+        });
     }
 
     private void getGeneralInfo(){
 
-        selectedTrailers = new ArrayList<>();
         daoViewModel = ViewModelProviders.of(requireActivity()).get(DayDaoViewModel.class);
 
         tvShippingdocs.setOnClickListener(v2 -> {
 
+            Dialog shippingDialog = new Dialog(context);
+            shippingDialog.setContentView(R.layout.custom_general_layout);
+            shippingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            EditText shippingDocs = shippingDialog.findViewById(R.id.idGeneralDialogEdit);
+            TextView cancel = shippingDialog.findViewById(R.id.idGeneralDialogCancel);
+            TextView send = shippingDialog.findViewById(R.id.idGeneralDialogSend);
 
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-            alertDialog.setTitle("Please select from the following options");
-            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_selectable_list_item);
-            arrayAdapter.add("Select BOL");
-            arrayAdapter.add("Enter BOL/DOC Number Manually");
-            alertDialog.setNegativeButton("cancel", (dialog, which) -> dialog.dismiss());
-
-            alertDialog.setAdapter(arrayAdapter, (dialog, which) -> {
-                String strName = arrayAdapter.getItem(which);
-                if (which == 1){
-                    ShippingDocsEdit.setHint(strName);
+            send.setOnClickListener(view -> {
+                if (!shippingDocs.toString().equals("")){
+                    shippingDocsEdit.setText(shippingDocs.getText());
                     shippingDocsLayout.setVisibility(View.VISIBLE);
+                    shippingDialog.dismiss();
                 }else {
-                    AlertDialog.Builder alertDialog1 = new AlertDialog.Builder(context);
-                    alertDialog1.setTitle("Warning!")
-                            .setMessage("You don't have shipping documents for selection")
-                            .setPositiveButton("OK", (dialog1, which1) -> alertDialog.setCancelable(true));
-                    AlertDialog alert = alertDialog1.create();
-                    alert.show();
+                    Toast.makeText(context,"Please create shipping docs!",Toast.LENGTH_SHORT).show();
                 }
             });
-            alertDialog.show();
 
-            idShippingClear.setOnClickListener(v3 -> {
-                shippingDocsLayout.setVisibility(View.GONE);
+            cancel.setOnClickListener(view -> {
+                shippingDialog.dismiss();
             });
+            shippingDialog.show();
+
+        });
+
+        idShippingClear.setOnClickListener(v -> {
+            shippingDocsLayout.setVisibility(View.GONE);
         });
 
         trailersLayout.setOnClickListener(v4 -> {
 
+            Dialog trailerBaseDialog = new Dialog(context);
+            trailerBaseDialog.setContentView(R.layout.trailer_base_dialog);
+            trailerBaseDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-            alertDialog.setTitle("Please select from the following options");
-            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_selectable_list_item);
-            arrayAdapter.add("Select Trailers");
-            arrayAdapter.add("Enter Trailer Manually");
-            alertDialog.setNegativeButton("cancel", (dialog, which) -> dialog.dismiss());
+            TextView selectTrailer = trailerBaseDialog.findViewById(R.id.idSelectTrailer);
+            TextView addTrailer = trailerBaseDialog.findViewById(R.id.idAddTrailer);
+            TextView cancelTrailerDialog = trailerBaseDialog.findViewById(R.id.idDialogCancel);
 
-            alertDialog.setAdapter(arrayAdapter, (dialog, which) -> {
-                String strName = arrayAdapter.getItem(which);
-                if (which == 1){
-                    idTrailersEdit.setHint(strName);
-                    idTrailersLayout.setVisibility(View.VISIBLE);
-                }else  {
-                        AlertDialog.Builder builderSingle = new AlertDialog.Builder(getContext());
-                        builderSingle.setTitle("Select Trailers");
+            addTrailer.setOnClickListener(view -> {
+                trailerBaseDialog.dismiss();
+                Dialog trailerDialog = new Dialog(context);
+                trailerDialog.setContentView(R.layout.custom_general_layout);
+                trailerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-                        final ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<>(getContext(), android.R.layout.simple_selectable_list_item);
-                        daoViewModel.getGetAllTrailers().observe((LifecycleOwner) requireContext(), trailersEntities -> {
-                            for (int i = 0; i < trailersEntities.size(); i++) {
-                                arrayAdapter2.add(trailersEntities.get(i).getNumber());
+                TextView cancel = trailerDialog.findViewById(R.id.idGeneralDialogCancel);
+                TextView send = trailerDialog.findViewById(R.id.idGeneralDialogSend);
+                TextView header = trailerDialog.findViewById(R.id.idGeneralHeaderTv);
+                TextView title = trailerDialog.findViewById(R.id.idGeneralTitleTv);
+                EditText trailer = trailerDialog.findViewById(R.id.idGeneralDialogEdit);
+
+                header.setText(R.string.new_trailer);
+                title.setText(R.string.please_enter_new_trailer);
+                cancel.setOnClickListener(view1 -> {
+                    trailerDialog.dismiss();
+                });
+
+                send.setOnClickListener(view1 -> {
+                    if (!trailer.getText().toString().equals("")){
+                        trailerDialog.dismiss();
+                        apiInterface.sendTrailer(new TrailNubmer(trailer.getText().toString())).enqueue(new Callback<TrailersEntity>() {
+                            @Override
+                            public void onResponse(Call<TrailersEntity> call, Response<TrailersEntity> response) {
+                                if (response.isSuccessful()){
+                                    try {
+                                        daoViewModel.insertTrailer(new TrailersEntity(response.body().getTrailer_id(),response.body().getNumber()));
+                                    } catch (ExecutionException | InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<TrailersEntity> call, Throwable t) {
                             }
                         });
-
-                        builderSingle.setNegativeButton("cancel", (dialog2, which2) -> dialog2.dismiss());
-
-                        builderSingle.setAdapter(arrayAdapter2, (dialog2, which2) -> {
-                            String strName2 = arrayAdapter2.getItem(which2);
-                            selectedTrailers.add(new TrailersEntity(strName2));
-                            idTrailersRecyclerView.setVisibility(View.VISIBLE);
-                            adapter.notifyDataSetChanged();
-
-                        });
-                        builderSingle.show();
-                }
-            });
-            alertDialog.show();
-
-            idTrailersRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-            adapter = new TrailerRecyclerAdapter(selectedTrailers);
-            idTrailersRecyclerView.setAdapter(adapter);
-            adapter.setUpdateListener((position) -> {
-                AlertDialog.Builder builderSingle = new AlertDialog.Builder(getContext());
-                builderSingle.setTitle("Select Trailers");
-
-                final ArrayAdapter<String> arrayAdapter3 = new ArrayAdapter<>(getContext(), android.R.layout.simple_selectable_list_item);
-                daoViewModel.getGetAllTrailers().observe((LifecycleOwner) requireContext(), trailersEntities -> {
-                    for (int i = 0; i < trailersEntities.size(); i++) {
-                        arrayAdapter3.add(trailersEntities.get(i).getNumber());
+                    }else {
+                        Toast.makeText(context,"Please,create trailer number!",Toast.LENGTH_SHORT).show();
                     }
                 });
+                trailerDialog.show();
 
-                builderSingle.setNegativeButton("cancel", (dialog, which) -> dialog.dismiss());
+            });
 
-                builderSingle.setAdapter(arrayAdapter3, (dialog, which) -> {
-                    String strName = arrayAdapter3.getItem(which);
-                    selectedTrailers.get(position).setNumber(strName);
-                    adapter.notifyDataSetChanged();
+            cancelTrailerDialog.setOnClickListener(view -> {
+                trailerBaseDialog.dismiss();
+            });
+
+            selectTrailer.setOnClickListener(view -> {
+                trailerBaseDialog.dismiss();
+                Dialog selectTrailerDialog = new Dialog(context);
+                selectTrailerDialog.setContentView(R.layout.custom_list_dialog);
+                selectTrailerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                TextView cancelSelectTrailerDialog = selectTrailerDialog.findViewById(R.id.idDialogCancel);
+                RecyclerView recyclerView = selectTrailerDialog.findViewById(R.id.idRecyclerViewUnit);
+
+                daoViewModel.getGetAllTrailers().observe(getViewLifecycleOwner(),trailersEntities -> {
+                    TrailerListAdapter trailerListAdapter = new TrailerListAdapter(context,trailersEntities);
+                    recyclerView.setAdapter(trailerListAdapter);
+
+                    trailerListAdapter.setUpdateListener(position ->{
+                        selectTrailerDialog.dismiss();
+                        int n = 0;
+                        for (int i = 0; i < selectedTrailers.size(); i++) {
+                            if (trailersEntities.get(position).equals(selectedTrailers.get(i))){
+                                n++;
+                            }
+                        }
+                        if (n == 0){
+                            selectedTrailers.add(trailersEntities.get(position));
+                            selectedTrailersNumber.add(trailersEntities.get(position).getTrailer_id());
+                            dvirViewModel.getSelectedTrailerCount().postValue(selectedTrailers.size());
+
+                        }
+                    });
                 });
-                builderSingle.show();
 
-                adapter.notifyDataSetChanged();
+                cancelSelectTrailerDialog.setOnClickListener(view1 -> {
+                    selectTrailerDialog.dismiss();
+                });
+
+                selectTrailerDialog.show();
             });
+            trailerBaseDialog.show();
+        });
 
-            adapter.setDeleteListener((position) -> {
-                selectedTrailers.remove(position);
-                adapter.notifyDataSetChanged();
-            });
-
-            idTrailersClear.setOnClickListener(v -> {
-                idTrailersLayout.setVisibility(View.GONE);
+        dvirViewModel.getSelectedTrailerCount().observe(getViewLifecycleOwner(),count ->{
+            idTrailersRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            adapter = new TrailerRecyclerAdapter(selectedTrailers);
+            idTrailersRecyclerView.setAdapter(adapter);
+            adapter.setDeleteListener(s->{
+                selectedTrailers.remove(s);
+                dvirViewModel.getSelectedTrailerCount().postValue(selectedTrailers.size());
             });
         });
 
+
+        idTrailersClear.setOnClickListener(view -> {
+            idTrailersLayout.setVisibility(View.GONE);
+        });
+
         vehiclesLayout.setOnClickListener(v -> {
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-            alertDialog.setTitle("Select unit");
 
-            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_selectable_list_item);
-            daoViewModel.getGetAllVehicles().observe((LifecycleOwner) requireContext(), vehiclesEntities -> {
-                for (int i = 0; i < vehiclesEntities.size(); i++) {
-                    arrayAdapter.add(vehiclesEntities.get(i).getName());
-                }
-            });
-            alertDialog.setNegativeButton("cancel", (dialog, which) -> dialog.dismiss());
+            Dialog vehiclesDialog = new Dialog(context);
+            vehiclesDialog.setContentView(R.layout.custom_vehicles_dialog);
+            vehiclesDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-            alertDialog.setAdapter(arrayAdapter, (dialog, which) -> {
-                String strName = arrayAdapter.getItem(which);
-                generalSharedPrefs.saveLasVehicle(strName);
-                idVehiclesLayout.setVisibility(View.VISIBLE);
-                idVehiclesEdit.setText(generalSharedPrefs.getLastVehicle());
+            TextView cancel = vehiclesDialog.findViewById(R.id.idVehicleCancel);
+            TextView header = vehiclesDialog.findViewById(R.id.idVehicleHeaderTv);
+            RecyclerView recyclerView = vehiclesDialog.findViewById(R.id.idVehicleRecyclerview);
+
+            header.setText(R.string.select_unit);
+            daoViewModel.getGetAllVehicles().observe(getViewLifecycleOwner(),vehicleEntities->{
+                VehiclesListAdapter adapter = new VehiclesListAdapter(context,vehicleEntities);
+                recyclerView.setAdapter(adapter);
+
+                adapter.setListener(s -> {
+                    vehiclesDialog.dismiss();
+                    idVehiclesLayout.setVisibility(View.VISIBLE);
+                    idVehiclesEdit.setText(s);
+                });
             });
-            alertDialog.show();
+
+            cancel.setOnClickListener(view -> vehiclesDialog.dismiss());
+
+            vehiclesDialog.show();
+
         });
 
         idVehiclesClear.setOnClickListener(v -> {
             idVehiclesLayout.setVisibility(View.GONE);
-            generalSharedPrefs.saveLasVehicle("");
         });
 
-        idVehiclesEdit.setText(generalSharedPrefs.getLastVehicle());
-        if (!idVehiclesEdit.getText().equals("")){
-            idVehiclesLayout.setVisibility(View.VISIBLE);
-        }
+//            tv_co_drivers.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,0,0);
+
 
         coDriverContainer.setOnClickListener(view -> {
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-            alertDialog.setTitle("Select Co-Driver");
 
-            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_selectable_list_item);
-            userViewModel.getMgetDrivers().observe((LifecycleOwner) requireContext(), drivers -> {
-                for (int i = 0; i < drivers.size(); i++) {
-                    arrayAdapter.add(String.format("%s %s",drivers.get(i).getName(),drivers.get(i).getLastName()));
-                }
-                arrayAdapter.add("None");
-            });
-            alertDialog.setNegativeButton("cancel", (dialog, which) -> dialog.dismiss());
+            Dialog driversDialog = new Dialog(context);
+            driversDialog.setContentView(R.layout.custom_vehicles_dialog);
+            driversDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-            alertDialog.setAdapter(arrayAdapter, (dialog, which) -> {
-                String strName = arrayAdapter.getItem(which);
-                generalSharedPrefs.saveCoDriver(strName);
-                tv_co_drivers.setText(generalSharedPrefs.getCoDriver());
+            TextView cancel = driversDialog.findViewById(R.id.idVehicleCancel);
+            TextView header = driversDialog.findViewById(R.id.idVehicleHeaderTv);
+            RecyclerView recyclerView = driversDialog.findViewById(R.id.idVehicleRecyclerview);
+
+            header.setText(R.string.select_co_driver);
+
+            userViewModel.getMgetDrivers().observe(getViewLifecycleOwner(),driverEntities->{
+                DriversListAdapter adapter = new DriversListAdapter(context,driverEntities);
+                recyclerView.setAdapter(adapter);
+
+                adapter.setListener(s -> {
+                    driversDialog.dismiss();
+                    tv_co_drivers.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,0,0);
+                    tv_co_drivers.setText(s);
+                });
             });
-            alertDialog.show();
+
+            cancel.setOnClickListener(v -> driversDialog.dismiss());
+
+            driversDialog.show();
+
         });
 
-        tv_co_drivers.setText(generalSharedPrefs.getCoDriver());
 
         from_container.setOnClickListener(v -> {
-            if (idfromLayout.getVisibility() != View.GONE){
-                idfromLayout.setVisibility(View.GONE);
-                if (idfromEdit.getText() != null){
-                    generalSharedPrefs.saveLasFromDes(idfromEdit.getText().toString());
-                    tv_from_destination.setText(generalSharedPrefs.getLastFromDes());
-                }
-            }else {
-                idfromLayout.setVisibility(View.VISIBLE);
-            }
+            idfromLayout.setVisibility(View.VISIBLE);
         });
 
-        tv_from_destination.setText(generalSharedPrefs.getLastFromDes());
+        if(idfromEdit.getText() != null){
+            idfromEdit.setOnEditorActionListener((textView, i, keyEvent) -> {
+                boolean handled = false;
+                if (i == EditorInfo.IME_ACTION_DONE){
+                    tv_from_destination.setText(idfromEdit.getText().toString());
+                    idfromLayout.setVisibility(View.GONE);
+                    handled = true;
+                }
+                return handled;
+            });
+        }
 
         to_container.setOnClickListener(v -> {
-            if (idtoLayout.getVisibility() != View.GONE){
-                idtoLayout.setVisibility(View.GONE);
-                if(idtoEdit.getText() != null){
-                    generalSharedPrefs.saveLasToDes(idtoEdit.getText().toString());
-                    tv_to_destination.setText(generalSharedPrefs.getLastToDes());
-                }
-            }else {
-                idtoLayout.setVisibility(View.VISIBLE);
-            }
+            idtoLayout.setVisibility(View.VISIBLE);
         });
-        tv_to_destination.setText(generalSharedPrefs.getLastToDes());
+
+        if(idtoEdit.getText() != null){
+            idtoEdit.setOnEditorActionListener((textView, i, keyEvent) -> {
+                boolean handled = false;
+                if (i == EditorInfo.IME_ACTION_DONE){
+                    tv_to_destination.setText(idtoEdit.getText().toString());
+                    idtoLayout.setVisibility(View.GONE);
+                    handled = true;
+                }
+                return handled;
+            });
+        }
 
         notes_container.setOnClickListener(v -> {
-            if (idNotesLayout.getVisibility() != View.GONE){
-                idNotesLayout.setVisibility(View.GONE);
-                if(idNotesEdit.getText() != null){
-                    generalSharedPrefs.saveLasNote(idNotesEdit.getText().toString());
-                    tv_notes.setText(generalSharedPrefs.getLastNotes());
-                }
-            }else {
-                idNotesLayout.setVisibility(View.VISIBLE);
-            }
+            idNotesLayout.setVisibility(View.VISIBLE);
         });
-        tv_notes.setText(generalSharedPrefs.getLastNotes());
+
+        if(idNotesEdit.getText() != null){
+            idNotesEdit.setOnEditorActionListener((textView, i, keyEvent) -> {
+                boolean handled = false;
+                if (i == EditorInfo.IME_ACTION_DONE){
+                    tv_notes.setText(idNotesEdit.getText().toString());
+                    idNotesLayout.setVisibility(View.GONE);
+                    handled = true;
+                }
+                return handled;
+            });
+        }
     }
 
     @Override
@@ -370,5 +517,10 @@ public class GeneralFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSMSHandler(ExampleSMSModel sendModels){
 
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
     }
 }

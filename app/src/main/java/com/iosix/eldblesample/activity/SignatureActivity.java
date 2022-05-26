@@ -26,9 +26,14 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.base.BaseActivity;
 import com.iosix.eldblesample.fragments.SignatureFragment;
+import com.iosix.eldblesample.models.SendDvir;
+import com.iosix.eldblesample.retrofit.APIInterface;
+import com.iosix.eldblesample.retrofit.ApiClient;
 import com.iosix.eldblesample.roomDatabase.entities.DvirEntity;
 import com.iosix.eldblesample.roomDatabase.entities.MechanicSignatureEntity;
 import com.iosix.eldblesample.roomDatabase.entities.SignatureEntity;
+import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
+import com.iosix.eldblesample.shared_prefs.SessionManager;
 import com.iosix.eldblesample.shared_prefs.SignaturePrefs;
 import com.iosix.eldblesample.shared_prefs.UserData;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
@@ -36,6 +41,7 @@ import com.iosix.eldblesample.viewModel.SignatureViewModel;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,13 +49,20 @@ import java.util.concurrent.ExecutionException;
 
 import static android.os.Build.VERSION.SDK_INT;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class SignatureActivity extends BaseActivity {
 
     private ArrayList<String> mParams;
+    private ArrayList<String> selectedTrailers;
     private String day;
     private DvirViewModel dvirViewModel;
     private SignatureViewModel signatureViewModel;
     private SignaturePrefs signaturePrefs;
+    private APIInterface apiInterface;
+    private SessionManager sessionManager;
 
     @Override
     protected int getLayoutId() {
@@ -65,18 +78,18 @@ public class SignatureActivity extends BaseActivity {
     @Override
     public void initView() {
         super.initView();
-//        getWindow().setStatusBarColor(ActivityCompat.getColor(this,R.color.colorPrimaryDark));
         ImageView img = findViewById(R.id.idImageBack);
         TextView save = findViewById(R.id.idAddDvirSave);
         ViewPager2 viewPager = findViewById(R.id.viewpager);
 
         boolean mParam1 = getIntent().getBooleanExtra("isTruckSelected", false);
         mParams = getIntent().getStringArrayListExtra("arrayList");
+        selectedTrailers = getIntent().getStringArrayListExtra("selectedTrailers");
         day = getIntent().getStringExtra("day");
         signaturePrefs = new SignaturePrefs(this);
+        sessionManager = new SessionManager(this);
 
-        Log.d("day","day:" + mParams.get(7));
-        Log.d("day","day: " + day);
+        apiInterface = ApiClient.getClient().create(APIInterface.class);
 
         verifyStoragePermissions(this);
 
@@ -140,16 +153,38 @@ public class SignatureActivity extends BaseActivity {
                         saveTempBitmap(signaturePrefs.fetchSignature());
                         saveTempBitmap(signaturePrefs.fetchMechanicSignature());
                         String currDay;
-                        currDay = mParams.get(7);
+                        currDay = mParams.get(6);
                         try {
                             dvirViewModel.insertDvir(new DvirEntity(
-                                    mParams.get(0),mParams.get(1),mParams.get(2),mParams.get(3),true,
-                                    mParams.get(4),mParams.get(5),mParams.get(6), day
+                                    mParams.get(0),getString(selectedTrailers),mParams.get(1),mParams.get(2),true,
+                                    mParams.get(3),mParams.get(4),mParams.get(5), day
                             ));
                             Intent intent = new Intent(SignatureActivity.this, LGDDActivity.class);
                             intent.putExtra("position", 3);
                             intent.putExtra("currDay",currDay);
                             startActivity(intent);
+
+                            sessionManager.saveSignature(signaturePrefs.fetchSignature());
+
+                            apiInterface.sendDvir(new SendDvir(null,null,null,mParams.get(3),
+                                    mParams.get(4),mParams.get(5))).enqueue(new Callback<SendDvir>() {
+                                @Override
+                                public void onResponse(Call<SendDvir> call, Response<SendDvir> response) {
+                                    try {
+                                        Log.d("Adverse Diving",response.errorBody().string());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    if (response.isSuccessful()){
+                                        Log.d("Adverse Diving","Response is Successfull");
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<SendDvir> call, Throwable t) {
+                                    Log.d("Adverse Diving",t.getMessage());
+                                }
+                            });
 
                         } catch (ExecutionException | InterruptedException e) {
                             e.printStackTrace();
@@ -173,28 +208,70 @@ public class SignatureActivity extends BaseActivity {
                     }
                     saveTempBitmap(signaturePrefs.fetchSignature());
                     String currDay;
-                    currDay = mParams.get(7);
+                    currDay = mParams.get(6);
                     try {
-                        if (!mParams.get(2).equals("No unit selected") || !mParams.get(3).equals("No trailer selected")){
+                        if (!mParams.get(1).equals("No unit selected") || !mParams.get(2).equals("No trailer selected")){
                             dvirViewModel.insertDvir(new DvirEntity(
-                                    mParams.get(0),mParams.get(1),mParams.get(2),mParams.get(3),false,
-                                    mParams.get(4),mParams.get(5),mParams.get(6), day
+                                    mParams.get(0),getString(selectedTrailers),mParams.get(1),mParams.get(2),false,
+                                    mParams.get(3),mParams.get(4),mParams.get(5), day
                             ));
                             Intent intent = new Intent(this, LGDDActivity.class);
                             intent.putExtra("position", 3);
                             intent.putExtra("currDay",currDay);
                             startActivity(intent);
-//                            loadFragment(LGDDFragment.newInstance(3,daoViewModel,currDay));
+                            sessionManager.saveSignature(signaturePrefs.fetchSignature());
+
+                            apiInterface.sendDvir(new SendDvir(null,null,null,mParams.get(3),
+                                    mParams.get(4),mParams.get(5))).enqueue(new Callback<SendDvir>() {
+                                @Override
+                                public void onResponse(Call<SendDvir> call, Response<SendDvir> response) {
+                                    try {
+                                        Log.d("Adverse Diving",response.errorBody().string());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    if (response.isSuccessful()){
+                                        Log.d("Adverse Diving","Response is Successfull");
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<SendDvir> call, Throwable t) {
+                                    Log.d("Adverse Diving",t.getMessage());
+                                }
+                            });
                         }else {
                             dvirViewModel.insertDvir(new DvirEntity(
-                                    mParams.get(0),mParams.get(1),mParams.get(2),mParams.get(3),true,
-                                    mParams.get(4),mParams.get(5),mParams.get(6), day
+                                    mParams.get(0),getString(selectedTrailers),mParams.get(1),mParams.get(2),true,
+                                    mParams.get(3),mParams.get(4),mParams.get(5), day
                             ));
                             Intent intent = new Intent(this, LGDDActivity.class);
                             intent.putExtra("position", 3);
                             intent.putExtra("currDay",currDay);
                             startActivity(intent);
-//                            loadFragment(LGDDFragment.newInstance(3,daoViewModel,currDay));
+
+                            sessionManager.saveSignature(signaturePrefs.fetchSignature());
+
+
+                            apiInterface.sendDvir(new SendDvir(null,null,null,mParams.get(3),
+                                    mParams.get(4),mParams.get(5))).enqueue(new Callback<SendDvir>() {
+                                @Override
+                                public void onResponse(Call<SendDvir> call, Response<SendDvir> response) {
+                                    try {
+                                        Log.d("Adverse Diving",response.errorBody().string());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    if (response.isSuccessful()){
+                                        Log.d("Adverse Diving","Response is Successfull");
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<SendDvir> call, Throwable t) {
+                                    Log.d("Adverse Diving",t.getMessage());
+                                }
+                            });
 
                         }
                     } catch (ExecutionException | InterruptedException e) {
@@ -256,7 +333,6 @@ public class SignatureActivity extends BaseActivity {
 
     public static void verifyStoragePermissions(Activity activity) {
         if (SDK_INT >= Build.VERSION_CODES.R) {
-            Log.d("myz", ""+SDK_INT);
             if (!Environment.isExternalStorageManager()) {
                 ActivityCompat.requestPermissions(activity,
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -267,6 +343,16 @@ public class SignatureActivity extends BaseActivity {
                 ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             }
         }
+    }
+
+    private String getString(ArrayList<String> arrayList){
+        if (arrayList.size() > 0){
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < arrayList.size(); i++) {
+                stringBuilder.append(arrayList.get(i)).append(",");
+            }
+            return stringBuilder.toString();
+        }else return "";
     }
 }
 

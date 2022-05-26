@@ -7,7 +7,9 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import com.iosix.eldblesample.models.User;
+import com.iosix.eldblesample.models.eld_records.LiveDataRecord;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
+import com.iosix.eldblesample.roomDatabase.entities.LiveDataEntitiy;
 
 import java.util.List;
 
@@ -25,4 +27,13 @@ public interface UserDao {
 
     @Query("Delete From user_table")
     void deleteUser();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertLocalData(LiveDataRecord liveDataRecord);
+
+    @Query("Select * From local_data_table")
+    LiveData<List<LiveDataRecord>> getLocalDatas();
+
+    @Query("Delete From local_data_table")
+    void deletLocalDatas();
 }

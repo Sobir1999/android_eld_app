@@ -3,17 +3,27 @@ package com.iosix.eldblesample.shared_prefs;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.Calendar;
+
 public class LastStatusData {
 
-    public static SharedPreferences userPref;
-    public static SharedPreferences.Editor editor;
-    public Context _context;
+    private SharedPreferences userPref;
+    private SharedPreferences.Editor editor;
+    public Context appContext;
+    public static LastStatusData instance;
 
     public static final String PREF_NAME = "userData";
 
-    public LastStatusData(Context context) {
-        this._context = context;
-        userPref = _context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+    public static synchronized LastStatusData getInstance(Context applicationContext){
+        if (instance == null){
+            instance = new LastStatusData(applicationContext);
+        }
+        return instance;
+    }
+
+    public LastStatusData(Context applicationContext) {
+        this.appContext = applicationContext;
+        userPref = appContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
 
     public void saveLasStatus(int status, int second){
@@ -23,11 +33,22 @@ public class LastStatusData {
         editor.apply();
     }
 
+    public void saveLastDate(String date){
+        editor = userPref.edit();
+        editor.putString("date",date);
+    }
+
+
     public int getLastStatus() {
         return userPref.getInt("status", 0);
+    }
+
+    public String getLastDate(){
+        return userPref.getString("date","");
     }
 
     public int getLasStatSecond() {
         return userPref.getInt("second", 0);
     }
+
 }

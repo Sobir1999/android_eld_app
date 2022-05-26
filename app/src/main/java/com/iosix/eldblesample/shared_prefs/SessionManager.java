@@ -12,15 +12,23 @@ import java.io.ByteArrayOutputStream;
 
 public class SessionManager {
 
-    Context context;
-    private static SharedPreferences sharedPreferences;
-    public static SharedPreferences.Editor editor;
+    Context appContext;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
+    public static SessionManager instance;
     public static final String USER_ACCESS_TOKEN = "user_access_token";
     public static final String USER_TOKEN = "user_token";
 
-    public SessionManager(Context context){
-        this.context = context;
-        sharedPreferences = context.getSharedPreferences(context.getString(R.string.app_name),Context.MODE_PRIVATE);
+    public static synchronized SessionManager getInstance(Context applicationContext){
+        if (instance == null){
+            instance = new SessionManager(applicationContext);
+        }
+        return instance;
+    }
+
+    public SessionManager(Context applicationContext){
+        appContext = applicationContext;
+        sharedPreferences = appContext.getSharedPreferences(appContext.getString(R.string.app_name),Context.MODE_PRIVATE);
     }
 
     public void saveAccessToken(String token){
@@ -33,6 +41,26 @@ public class SessionManager {
         editor = sharedPreferences.edit();
         editor.putString(USER_TOKEN,token);
         editor.apply();
+    }
+
+    public void saveEmail(String email){
+        editor = sharedPreferences.edit();
+        editor.putString("Email",email);
+        editor.apply();
+    }
+
+    public void savePassword(String password){
+        editor = sharedPreferences.edit();
+        editor.putString("Password",password);
+        editor.apply();
+    }
+
+    public String getemail(){
+        return sharedPreferences.getString("Email","");
+    }
+
+    public String getPassword(){
+        return sharedPreferences.getString("Password","");
     }
 
     public void saveSignature(Bitmap signature){

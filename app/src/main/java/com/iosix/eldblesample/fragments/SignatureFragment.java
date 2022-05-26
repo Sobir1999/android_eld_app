@@ -1,67 +1,33 @@
 package com.iosix.eldblesample.fragments;
 
-import android.Manifest;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.DiffUtil;
-
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
-import com.google.android.material.appbar.AppBarLayout;
 import com.iosix.eldblesample.R;
-import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
-import com.iosix.eldblesample.roomDatabase.entities.DvirEntity;
 import com.iosix.eldblesample.roomDatabase.entities.MechanicSignatureEntity;
 import com.iosix.eldblesample.roomDatabase.entities.SignatureEntity;
+import com.iosix.eldblesample.shared_prefs.SessionManager;
 import com.iosix.eldblesample.shared_prefs.SignaturePrefs;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
 import com.iosix.eldblesample.viewModel.SignatureViewModel;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-
-import static android.os.Build.VERSION.SDK_INT;
 
 
 public class SignatureFragment extends Fragment {
@@ -70,7 +36,6 @@ public class SignatureFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     private boolean mParam1;
-    private ArrayList<String> mParams;
     private DayDaoViewModel daoViewModel;
     private DvirViewModel dvirViewModel;
 
@@ -78,10 +43,8 @@ public class SignatureFragment extends Fragment {
     private LinearLayout mechanicLayout;
     private TextView previousSignature, clearSignature,drawSignature,drawMecanicSignature,previousMechanicSignature;
     private boolean hasSignature = false,hasMechanicSignature = false;
-    private boolean isDefectsCorrected = false;
     private Context context;
     private Bitmap bitmap;
-    private SignatureViewModel signatureViewModel;
     List<SignatureEntity> signatureEntities = new ArrayList<>();
     List<MechanicSignatureEntity> mechanicSignatureEntities = new ArrayList<>();
     private RadioButton no_defect, correct_defect, corrected_defect;
@@ -89,6 +52,7 @@ public class SignatureFragment extends Fragment {
     private TextView mechamnicTextView, mechanicText;
     private String day;
     private SignaturePrefs signaturePrefs;
+    private SessionManager sessionManager;
 
     public SignatureFragment() {
         // Required empty public constructor
@@ -110,7 +74,7 @@ public class SignatureFragment extends Fragment {
 
         if (getArguments() != null) {
             mParam1 = getArguments().getBoolean(ARG_PARAM1);
-            mParams = getArguments().getStringArrayList(ARG_PARAM2);
+            ArrayList<String> mParams = getArguments().getStringArrayList(ARG_PARAM2);
             day = getArguments().getString("PARAM");
         }
     }
@@ -139,50 +103,22 @@ public class SignatureFragment extends Fragment {
         previousMechanicSignature = view.findViewById(R.id.idTVPreviousMechanicSignature);
 
         signaturePrefs = new SignaturePrefs(context);
+        sessionManager = new SessionManager(context);
 
-        signaturePrefs.clearDefect();
-        signaturePrefs.clearSignature();
-        signaturePrefs.clearMechanicSignature();
-
-        signatureViewModel = new SignatureViewModel(requireActivity().getApplication());
+        SignatureViewModel signatureViewModel = new SignatureViewModel(requireActivity().getApplication());
         signatureViewModel = ViewModelProviders.of((FragmentActivity) requireContext()).get(SignatureViewModel.class);
         signatureViewModel.getMgetAllSignatures().observe(getViewLifecycleOwner(), signatureEntities -> {
-//            this.signatureEntities = signatureEntities;
-            if (signatureEntities.size() > 0){
-                bitmap = signatureEntities.get(signatureEntities.size() - 1).getSignatureBitmap();
-                previousSignature.setClickable(true);
-//                previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
-                previousSignature.setOnClickListener(v -> {
-                    signature.setSignatureBitmap(bitmap);
-                });
-                Log.d("Signature missed","" + signatureEntities.size());
-                Log.d("Signature missed","" + signatureEntities.get(signatureEntities.size() - 1).getSignatureBitmap());
-            }else {
-                previousSignature.setClickable(false);
-//                previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorDefault));
-
-            }
         });
 
-        signatureViewModel.getMgetAllMechanicSignatures().observe(getViewLifecycleOwner(),mechanicSignatureEntities1 -> {
+        signatureViewModel.getMgetAllMechanicSignatures().observe(getViewLifecycleOwner(), mechanicSignatureEntities1 -> {
             if (mechanicSignatureEntities1.size() > 0){
                 bitmap = mechanicSignatureEntities1.get(mechanicSignatureEntities1.size()-1).getMechanicSignatureBitmap();
                 previousMechanicSignature.setClickable(true);
-                previousMechanicSignature.setOnClickListener(v ->{
-                    mechanicSignature.setSignatureBitmap(bitmap);
-                });
+                previousMechanicSignature.setOnClickListener(v -> mechanicSignature.setSignatureBitmap(bitmap));
             }else {
-                previousSignature.setClickable(false);
+                previousMechanicSignature.setClickable(false);
             }
         });
-
-//        if (signatureEntities.size() > 0) {
-//            bitmap = signatureEntities.get(signatureEntities.size() - 1).getSignatureBitmap();
-//            Log.d("Signature missed", String.valueOf(signatureEntities.size()));
-//
-//        } else {
-//            bitmap = null;
-//        }
 
         selectRadio();
 
@@ -197,7 +133,6 @@ public class SignatureFragment extends Fragment {
         signature.setOnSignedListener(new SignaturePad.OnSignedListener() {
             @Override
             public void onStartSigning() {
-                clearSignature.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
                 clearSignature.setClickable(true);
                 drawSignature.setVisibility(View.GONE);
 
@@ -205,7 +140,6 @@ public class SignatureFragment extends Fragment {
 
             @Override
             public void onSigned() {
-                clearSignature.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
                 clearSignature.setClickable(true);
                 signaturePrefs.saveSignature(signature.getSignatureBitmap());
                 drawSignature.setVisibility(View.GONE);
@@ -213,9 +147,7 @@ public class SignatureFragment extends Fragment {
 
             @Override
             public void onClear() {
-                clearSignature.setTextColor(getResources().getColor(R.color.SignatureColorDefault));
                 clearSignature.setClickable(false);
-                signaturePrefs.clearSignature();
                 drawSignature.setVisibility(View.VISIBLE);
             }
         });
@@ -223,29 +155,21 @@ public class SignatureFragment extends Fragment {
         clearSignature.setOnClickListener(v -> signature.clear()
         );
 
-//        if (bitmap != null){
-//            previousSignature.setClickable(true);
-//            previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
-//            previousSignature.setOnClickListener(v -> {
-//                    signature.setSignatureBitmap(bitmap);
-//            });
-//        }else {
-//            previousSignature.setClickable(false);
-//            previousSignature.setTextColor(getResources().getColor(R.color.SignatureColorDefault));
-//
-//        }
 
+        previousSignature.setOnClickListener(view -> {
+            if (sessionManager.fetchSignature() != null){
+                signature.setSignatureBitmap(sessionManager.fetchSignature());
+            }
+        });
         mechanicSignature.setOnSignedListener(new SignaturePad.OnSignedListener() {
             @Override
             public void onStartSigning() {
-                mechamnicTextView.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
                 mechamnicTextView.setClickable(true);
                 drawMecanicSignature.setVisibility(View.GONE);
             }
 
             @Override
             public void onSigned() {
-                mechamnicTextView.setTextColor(getResources().getColor(R.color.SignatureColorWhenClicked));
                 mechamnicTextView.setClickable(true);
                 drawMecanicSignature.setVisibility(View.GONE);
                 hasMechanicSignature = true;
@@ -254,7 +178,6 @@ public class SignatureFragment extends Fragment {
 
             @Override
             public void onClear() {
-                mechamnicTextView.setTextColor(getResources().getColor(R.color.SignatureColorDefault));
                 mechamnicTextView.setClickable(false);
                 drawMecanicSignature.setVisibility(View.VISIBLE);
                 hasMechanicSignature = false;
@@ -276,11 +199,9 @@ public class SignatureFragment extends Fragment {
                 signaturePrefs.saveDefect(isChecked);
                 if (isChecked) {
                     mechanicLayout.setVisibility(View.VISIBLE);
-                    isDefectsCorrected = true;
 
                 } else {
                     mechanicLayout.setVisibility(View.INVISIBLE);
-                    isDefectsCorrected = false;
                 }
             });
         } else {

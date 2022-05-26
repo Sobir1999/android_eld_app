@@ -55,11 +55,4 @@ public class UserData {
         return userPref.getBoolean("isDark",false);
     }
 
-    public void saveUserData(String name, String surname){
-        editor = userPref.edit();
-        editor.putString("name", name);
-        editor.putString("surname", surname);
-        editor.apply();
-    }
-
 }

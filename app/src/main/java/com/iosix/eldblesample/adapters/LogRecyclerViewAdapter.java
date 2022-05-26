@@ -1,5 +1,7 @@
 package com.iosix.eldblesample.adapters;
 
+import static com.iosix.eldblesample.enums.Day.getCurrentSeconds;
+
 import android.content.Context;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -34,11 +36,17 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
     private ConstraintLayout idStatusContainer;
     private ConstraintLayout idLocationContainer;
     private DriverSharedPrefs driverSharedPrefs;
+    private int last_status;
+    private String day;
+    String time = "" + Calendar.getInstance().getTime();
+    String today = time.split(" ")[1] + " " + time.split(" ")[2];
 
-    public LogRecyclerViewAdapter(Context context, List<LogEntity> logEntities){
+    public LogRecyclerViewAdapter(Context context, List<LogEntity> logEntities,int last_status,String day){
         this.context = context;
         this.logEntities = logEntities;
-        driverSharedPrefs = new DriverSharedPrefs(context);
+        this.last_status = last_status;
+        this.day = day;
+        driverSharedPrefs = DriverSharedPrefs.getInstance(context);
     }
 
     @NonNull
@@ -50,13 +58,94 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
 
     @Override
     public void onBindViewHolder(@NonNull LogRecyclerViewAdapter.LogViewHolder holder, int position) {
-        holder.onBind(logEntities.get(position));
+        tv_log_id = holder.itemView.findViewById(R.id.tv_log_id);
         TextView textView = holder.itemView.findViewById(R.id.tv_timer_log);
+        tv_log_id.setText(String.valueOf(position+1));
+
         int time = 0;
-        if (position < logEntities.size()-1){
-        time = logEntities.get(position+1).getSeconds()-logEntities.get(position).getSeconds();
+        if (day.equals(today)){
+            if (position < logEntities.size() - 1){
+                time = logEntities.get(position + 1).getSeconds()-logEntities.get(position).getSeconds();
+
+                holder.onBind(logEntities.get(position));
+            }else {
+                switch (last_status){
+                    case EnumsConstants.STATUS_OFF :
+                        dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusOFF));
+                        dr_text.setText(R.string.off);
+                        dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusOFFBold));
+                        break;
+
+                    case EnumsConstants.STATUS_SB :
+                        dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusSB));
+                        dr_text.setText(R.string.sb);
+                        dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusSBBold));
+                        break;
+
+                    case EnumsConstants.STATUS_DR :
+                        dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusDR));
+                        dr_text.setText(R.string.dr);
+                        dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusDRBold));
+                        break;
+
+                    case EnumsConstants.STATUS_ON :
+                        dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusON));
+                        dr_text.setText(R.string.on);
+                        dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusONBold));
+                        break;
+                }
+                if (logEntities.size() == 0){
+                    time = getCurrentSeconds();
+                }else {
+                    time = getCurrentSeconds() - logEntities.get(position).getSeconds();
+                }
+            }
         }else {
-            time = getCurrentSeconds() - logEntities.get(position).getSeconds();
+            if (logEntities.size() == 0){
+                last_status = EnumsConstants.STATUS_OFF;
+                dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusOFF));
+                dr_text.setText(R.string.off);
+                dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusOFFBold));
+                time = 86400;
+
+            }else {
+                if (position < logEntities.size() - 1){
+                    time = logEntities.get(position + 1).getSeconds()-logEntities.get(position).getSeconds();
+
+                    holder.onBind(logEntities.get(position + 1));
+                }else {
+                    switch (last_status){
+                        case EnumsConstants.STATUS_OFF :
+                            dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusOFF));
+                            dr_text.setText(R.string.off);
+                            dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusOFFBold));
+                            break;
+
+                        case EnumsConstants.STATUS_SB :
+                            dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusSB));
+                            dr_text.setText(R.string.sb);
+                            dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusSBBold));
+                            break;
+
+                        case EnumsConstants.STATUS_DR :
+                            dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusDR));
+                            dr_text.setText(R.string.dr);
+                            dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusDRBold));
+                            break;
+
+                        case EnumsConstants.STATUS_ON :
+                            dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusON));
+                            dr_text.setText(R.string.on);
+                            dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusONBold));
+                            break;
+                    }
+                    if (logEntities.size() == 1){
+                        time = 86400;
+                    }else {
+                        time = 86400 - logEntities.get(position).getSeconds();
+                    }
+                }
+            }
         }
         int hour = time/3600;
         int minut = (time - hour*3600)/60;
@@ -77,42 +166,36 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
 
     @Override
     public int getItemCount() {
+        if (logEntities.size() == 0){
+            return logEntities.size() + 1;
+        }else
         return logEntities.size();
-    }
-    @SuppressWarnings("deprecation")
-    private int getCurrentSeconds() {
-        int hour = Calendar.getInstance().getTime().getHours();
-        int minute = Calendar.getInstance().getTime().getMinutes();
-        int second = Calendar.getInstance().getTime().getSeconds();
-        return hour * 3600 + minute * 60 + second;
     }
 
     class LogViewHolder extends RecyclerView.ViewHolder {
 
         public LogViewHolder(@NonNull View itemView){
             super(itemView);
-            tv_log_id = itemView.findViewById(R.id.tv_log_id);
             tv_time_log = itemView.findViewById(R.id.tv_time_log);
             tv_timer_log = itemView.findViewById(R.id.tv_timer_log);
             tv_location_log = itemView.findViewById(R.id.tv_location_log);
             dr_button = itemView.findViewById(R.id.dr_button);
             dr_text = itemView.findViewById(R.id.dr_text);
             idLocationContainer = itemView.findViewById(R.id.idLocationContainer);
+            im_more_icon = itemView.findViewById(R.id.idLogBottomArrow);
         }
 
         void onBind(LogEntity logEntity){
-
-            int t = logEntity.getSeconds();
-            int hour = t/3600;
-            int minut = (t - hour*3600)/60;
             if (logEntity.getLocation() != null){
                 tv_location_log.setText(logEntity.getLocation());
             }else {
                 tv_location_log.setText(driverSharedPrefs.getMainOffice());
             }
-            tv_log_id.setText(String.valueOf(logEntity.getId()));
+//            im_more_icon.setOnClickListener(view -> {
+//                idLocationContainer.setVisibility(View.VISIBLE);
+//            });
 //            tv_timer_log.setText(String.format("%s:%s", hour, minut));
-            switch (logEntity.getTo_status()){
+            switch (logEntity.getFrom_status()){
                 case EnumsConstants.STATUS_OFF :
                     dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusOFF));
                     dr_text.setText("OFF");

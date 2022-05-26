@@ -28,7 +28,10 @@ public class TrailerRecyclerAdapter extends RecyclerView.Adapter<TrailerRecycler
     }
 
     public TrailerRecyclerAdapter(ArrayList<TrailersEntity> trailers) {
+        this.trailers = new ArrayList<>();
+        if (trailers.size() != 0){
         this.trailers = trailers;
+        }
     }
 
     @NonNull
@@ -41,6 +44,12 @@ public class TrailerRecyclerAdapter extends RecyclerView.Adapter<TrailerRecycler
     @Override
     public void onBindViewHolder(@NonNull TrailerHolder holder, int position) {
         holder.onBind(trailers.get(position));
+
+        holder.imageView.setOnClickListener(v -> {
+            if (deleteListener != null) {
+                deleteListener.onClick(trailers.get(position));
+            }
+        });
     }
 
     @Override
@@ -66,11 +75,8 @@ public class TrailerRecyclerAdapter extends RecyclerView.Adapter<TrailerRecycler
                     updateListener.onClick(getAbsoluteAdapterPosition());
                 }
             });
-
             imageView.setOnClickListener(v -> {
-                if (deleteListener != null) {
-                    deleteListener.onClick(getAbsoluteAdapterPosition());
-                }
+                deleteListener.onClick(s);
             });
         }
     }
@@ -80,6 +86,6 @@ public class TrailerRecyclerAdapter extends RecyclerView.Adapter<TrailerRecycler
     }
 
     public interface onTrailerDeleteListener {
-        void onClick(int position);
+        void onClick(TrailersEntity trailersEntity);
     }
 }

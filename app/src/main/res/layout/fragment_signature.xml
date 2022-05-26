@@ -83,6 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 android:layout_marginRight="50dp"
                 android:background="@drawable/background_main_view"
                 android:orientation="vertical"
@@ -189,6 +190,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0"
                         app:penColor="@color/black" />
 
                     <TextView
@@ -246,9 +248,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
                 android:layout_marginRight="50dp"
+                android:layout_marginBottom="8dp"
                 android:background="?attr/customBgColor"
                 android:orientation="vertical"
-                android:visibility="gone"
+                android:visibility="invisible"
                 tools:ignore="MissingConstraints">
 
                 <TextView

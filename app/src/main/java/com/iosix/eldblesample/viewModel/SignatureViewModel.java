@@ -25,6 +25,7 @@ public class SignatureViewModel extends AndroidViewModel {
         super(application);
         repository = new SignatureRepository(application);
         mgetAllSignatures = repository.getGetAllSignatures();
+        mgetAllMechanicSignatures = repository.getGetAllMechanicSignatures();
     }
 
     public LiveData<List<SignatureEntity>> getMgetAllSignatures() {

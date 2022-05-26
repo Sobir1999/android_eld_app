@@ -16,10 +16,8 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-
-    <uses-permission-sdk-23 android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -37,41 +35,52 @@
         android:configChanges="orientation"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
-        android:label=""
+        android:label="FastLogZ"
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true"
         tools:ignore="ExtraText">
-
-        <activity android:name=".activity.LanguageActivity"
+        <activity
+            android:name=".activity.RecapActivity"
             android:configChanges="orientation"
+            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="sensorLandscape"/>
-
+        <activity
+            android:name=".activity.LanguageActivity"
+            android:configChanges="orientation"
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.SettingActivity"
             android:configChanges="orientation"
+            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.AccountActivity"
             android:configChanges="orientation"
+            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.RulesActivity"
             android:configChanges="orientation"
             android:exported="false"
+            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.AddDvirActivity"
             android:configChanges="orientation"
+            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.LGDDActivity"
             android:configChanges="orientation"
+            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.SignatureActivity"
             android:configChanges="orientation"
+            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="sensorLandscape" />
 
         <service
@@ -86,10 +95,12 @@
         <activity
             android:name=".activity.LoginActivity"
             android:configChanges="orientation"
+            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.AddDefectActivity"
             android:configChanges="orientation"
+            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.SplashActivity"

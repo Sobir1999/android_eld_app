@@ -59,6 +59,7 @@ public class CustomStableRulerChart extends CustomRulerChart {
     public void drawLineProgress(Canvas canvas, float CUSTOM_TABLE_WIDTH) {
         float CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 8;
         float startX = START_POINT_X+CUSTOM_TABLE_WIDTH / 26;
+        float startPointX = START_POINT_X+CUSTOM_TABLE_WIDTH / 26;
         float startY = 0;
         float endX = 0;
         float endY = 0;
@@ -69,7 +70,7 @@ public class CustomStableRulerChart extends CustomRulerChart {
         for (int i = 0; i < arrayList.size(); i++) {
             startY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * arrayList.get(i).getFrom_status()) / 4;
             endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * arrayList.get(i).getTo_status()) / 4;
-            endX = startX + (arrayList.get(i).getSeconds() /(3600*24f)) * CUSTOM_TABLE_WIDTH*24/26;
+            endX = startPointX + (arrayList.get(i).getSeconds() /(3600*24f)) * CUSTOM_TABLE_WIDTH*24/26;
             canvas.drawLine(startX, startY, endX, startY, paintArray.get(arrayList.get(i).getFrom_status()));
             canvas.drawLine(endX, startY, endX, endY, paintArray.get(arrayList.get(i).getFrom_status()));
             startX = endX;
@@ -90,7 +91,7 @@ public class CustomStableRulerChart extends CustomRulerChart {
         }
 
         if (!arrayList.isEmpty()) {
-            canvas.drawLine(endX, endY, startX + CUSTOM_TABLE_WIDTH*24/26, endY, paintArray.get(arrayList.get(arrayList.size() - 1).getTo_status()));
+            canvas.drawLine(endX, endY, startPointX + CUSTOM_TABLE_WIDTH*24/26, endY, paintArray.get(arrayList.get(arrayList.size() - 1).getTo_status()));
 
             if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_OFF) {
                 off += (86400 - start);
@@ -106,7 +107,7 @@ public class CustomStableRulerChart extends CustomRulerChart {
             }
         } else {
             endY = TableConstants.START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * last_status) / 4;
-            canvas.drawLine(startX, endY, startX + CUSTOM_TABLE_WIDTH*24/26, endY, paintArray.get(last_status));
+            canvas.drawLine(startX, endY, startPointX + CUSTOM_TABLE_WIDTH*24/26, endY, paintArray.get(last_status));
 
             if (last_status == EnumsConstants.STATUS_OFF) {
                 off = 86400;

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
+import android.net.Uri;
 
 import androidx.core.content.ContextCompat;
 
@@ -56,4 +57,5 @@ public class Utils {
     public static int getColors(int id) {
         return ContextCompat.getColor(MyApplication.context, id);
     }
+
 }

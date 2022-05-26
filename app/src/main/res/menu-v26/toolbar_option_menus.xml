@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/shareMenu"
+        android:visible="false"
+        android:icon="@drawable/ic_baseline_share_24"
+        app:showAsAction="ifRoom"
+        android:title="">
+    </item>
+    <item
+        android:id="@+id/connectMenu"
+        android:icon="@drawable/ic_lolll"
+        app:showAsAction="ifRoom"
+        android:title="">
+    </item>
+</menu>

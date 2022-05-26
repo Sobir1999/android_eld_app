@@ -407,9 +407,7 @@ public class BleConnect extends BaseActivity {
 
             for (int i = startseq; i < startseq + 10; i++) {
                 EldBleError err = mEldManager.RequestRecord(i);
-                Log.d("TESTING", "request " + i + " : " + err);
                 if (err == EldBleError.RECORD_OUT_OF_RANGE) {
-                    Log.d("TESTING", "Not enough records on device");
                     break;
                 }
             }
@@ -575,14 +573,10 @@ public class BleConnect extends BaseActivity {
 
                         if (reqdelinprogress) {
                             reccount++;
-                            Log.d("TESTING", "received " + reccount + " records");
                             if (reccount == 10) {
-                                Log.d("TESTING", "delete " + startseq + "-" + (startseq + 9));
                                 mEldManager.DeleteRecord(startseq, startseq + 9);
-                                Log.d("TESTING", "request " + (startseq + 10));
                                 mEldManager.RequestRecord(startseq + 10);
                             } else if (reccount == 11) {
-                                Log.d("TESTING", "success!");
 
                                 reqdelinprogress = false;
                                 reccount = 0;

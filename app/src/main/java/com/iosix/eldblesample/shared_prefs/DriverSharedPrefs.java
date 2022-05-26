@@ -5,14 +5,23 @@ import android.content.SharedPreferences;
 
 public class DriverSharedPrefs {
 
-    public static SharedPreferences userPref;
-    public static SharedPreferences.Editor editor;
-    public Context _context;
+    private SharedPreferences userPref;
+    private SharedPreferences.Editor editor;
+    private static DriverSharedPrefs instance;
+    public Context appContext;
 
     public static final String DRIVER_PREF_NAME = "driverdata";
 
-    public DriverSharedPrefs(Context _context){
-        userPref = _context.getSharedPreferences(DRIVER_PREF_NAME,Context.MODE_PRIVATE);
+    public static synchronized DriverSharedPrefs getInstance(Context applicationContext){
+        if (instance == null){
+            instance = new DriverSharedPrefs(applicationContext);
+        }
+        return instance;
+    }
+
+    public DriverSharedPrefs(Context applicationContext){
+        appContext = applicationContext;
+        userPref = appContext.getSharedPreferences(DRIVER_PREF_NAME,Context.MODE_PRIVATE);
     }
 
     public void saveLastUsername(String firstName){
@@ -57,6 +66,12 @@ public class DriverSharedPrefs {
         editor.apply();
     }
 
+    public void saveCompany(String companyName){
+        editor = userPref.edit();
+        editor.putString("company",companyName);
+        editor.apply();
+    }
+
     public String getFirstname(){
         return userPref.getString("firstName","");
     }
@@ -83,5 +98,9 @@ public class DriverSharedPrefs {
 
     public String getImage(){
         return userPref.getString("image","");
+    }
+
+    public String getCompany(){
+        return userPref.getString("company","");
     }
 }

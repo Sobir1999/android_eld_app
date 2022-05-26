@@ -4,12 +4,12 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 public class TableConstants {
-    public static float START_POINT_X = 12.0f;
+    public static float START_POINT_X = 25.0f;
     public static float START_POINT_Y = 50.0f;
     private static Paint paint;
     
     private static float textWidth = 3.5f;
-    private static float textSize = 23f;
+    private static float textSize = 17f;
 
     public static Paint getOFFPaint() {
         paint = new Paint();

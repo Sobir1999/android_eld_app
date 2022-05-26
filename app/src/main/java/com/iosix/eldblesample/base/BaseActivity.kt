@@ -4,25 +4,18 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ActivityInfo
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import com.iosix.eldblesample.R
-import com.iosix.eldblesample.roomDatabase.daos.UserDao
-import com.iosix.eldblesample.shared_prefs.LastStopSharedPrefs
 import com.iosix.eldblesample.shared_prefs.UserData
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
-import java.util.*
 
 @Suppress("DEPRECATION")
 abstract class BaseActivity : AppCompatActivity() {
@@ -33,18 +26,17 @@ abstract class BaseActivity : AppCompatActivity() {
         private set
     private var bundle: Bundle? = null
     private var userData: UserData? = null
-    var lastStopSharedPrefs: LastStopSharedPrefs? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         userData = UserData(applicationContext)
-        lastStopSharedPrefs = LastStopSharedPrefs(applicationContext)
         if(userData!!.mode){
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }else{
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         appContext = applicationContext
         setContentView(layoutId)
         bundle = savedInstanceState
@@ -53,8 +45,9 @@ abstract class BaseActivity : AppCompatActivity() {
         statusBar()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        super.onSaveInstanceState(outState, outPersistentState)
+        outState.clear()
     }
 
     /**
@@ -167,18 +160,5 @@ abstract class BaseActivity : AppCompatActivity() {
     companion object {
         lateinit var appContext: Context
     }
-
-    override fun onStop() {
-        super.onStop()
-        val timeDate = "" + Calendar.getInstance().time
-        val today = timeDate.split(" ").toTypedArray()[1] + " " + timeDate.split(" ").toTypedArray()[2]
-        val hour = Calendar.getInstance().time.hours
-        val minute = Calendar.getInstance().time.minutes
-        val second = Calendar.getInstance().time.seconds
-        val time = hour * 3600 + minute * 60 + second
-        lastStopSharedPrefs?.saveLastStopTime(time)
-        lastStopSharedPrefs?.saveLastStopDate(today)
-        lastStopSharedPrefs?.lastStopDate?.let { Log.d("hhhh", it) }
-        }
 }
 

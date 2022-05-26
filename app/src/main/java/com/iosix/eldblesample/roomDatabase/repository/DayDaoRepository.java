@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import androidx.lifecycle.LiveData;
 
 import com.iosix.eldblesample.roomDatabase.daos.DayDao;
-import com.iosix.eldblesample.roomDatabase.daos.StatusTruckDao;
 import com.iosix.eldblesample.roomDatabase.database.StatusTruckRoomDatabase;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
@@ -45,6 +44,10 @@ public class DayDaoRepository {
         return getAllVehicles;
     }
 
+    public LiveData<List<LogEntity>> getmAllStatus() {
+        return mAllStatus;
+    }
+
     public Long insertDay(DayEntity dayEntity) throws ExecutionException, InterruptedException {
         return new insertDayAsync(dayDao).execute(dayEntity).get();
     }
@@ -56,12 +59,9 @@ public class DayDaoRepository {
         new deleteAllDaysAsync(dayDao).execute();
     }
 
-    public LiveData<List<LogEntity>> getmAllStatus() {
-        return mAllStatus;
-    }
 
-    public void insertStatus(LogEntity entity) {
-        new DayDaoRepository.insertStatusAsync(dayDao).execute(entity);
+    public void insertStatus(LogEntity entity) throws ExecutionException, InterruptedException {
+        new insertStatusAsync(dayDao).execute(entity).get();
     }
 
     public void insertVehicle(VehiclesEntity entity) {

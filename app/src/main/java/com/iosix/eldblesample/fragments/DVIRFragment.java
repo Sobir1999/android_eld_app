@@ -1,9 +1,11 @@
 package com.iosix.eldblesample.fragments;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
@@ -26,6 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.activity.AddDvirActivity;
 import com.iosix.eldblesample.activity.MainActivity;
@@ -47,7 +50,9 @@ public class DVIRFragment extends Fragment {
     private TextView idDvirExText;
     private ImageView imageView;
     private Button createButton;
+    private FloatingActionButton idFABAddDvir;
     private LinearLayout container1;
+    private ConstraintLayout idDVIRContainer;
     private DvirViewModel dvirViewModel;
     private String currDay;
     private DvirlistAdapter adapter;
@@ -78,9 +83,12 @@ public class DVIRFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_d_v_i_r, container, false);
         container1 = v.findViewById(R.id.idDVIRContainer1);
+        idDVIRContainer = v.findViewById(R.id.idDVIRContainer);
         idDvirExText = v.findViewById(R.id.idDvirExText);
         createButton = v.findViewById(R.id.create_new_dvir_button);
         dvir_recyclerview = v.findViewById(R.id.idDvirRecyclerView);
+        idFABAddDvir = v.findViewById(R.id.idFABAddDvir);
+
 
         dvirViewModel = new DvirViewModel(requireActivity().getApplication());
         dvirViewModel = ViewModelProviders.of((FragmentActivity) requireContext()).get(DvirViewModel.class);
@@ -88,63 +96,83 @@ public class DVIRFragment extends Fragment {
         dvirEntities = new ArrayList<>();
 
         dvirViewModel.getMgetDvirs().observe(getViewLifecycleOwner(),dvirEntities1 -> {
-            for (DvirEntity dvirEntity: dvirEntities1) {
-                if (dvirEntity.getDay().equals(currDay)){
-                    dvirEntities.add(dvirEntity);
-                }
-                Log.d("AAA",String.valueOf(dvirEntities.size()));
-                if (dvirEntities.size() > 0){
-                    adapter = new DvirlistAdapter(getContext(),dvirViewModel,currDay);
-                    dvir_recyclerview.setVisibility(View.VISIBLE);
-                    container1.setVisibility(View.GONE);
-                    dvir_recyclerview.setAdapter(adapter);
-                    adapter.setListener(dvirEntity1 -> {
-                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(requireContext());
-                        alertDialog.setTitle("Delete DVIR?")
-                                .setNegativeButton("No", (dialog, which) ->
-                                        alertDialog.setCancelable(true))
-                                .setPositiveButton("Yes",((dialog, which) -> {
-                                    dvirViewModel.deleteDvir(dvirEntity1);
-                                    dvir_recyclerview.setVisibility(View.GONE);
-                                    container1.setVisibility(View.VISIBLE);
-                                }));
-                        AlertDialog alert = alertDialog.create();
-                        alert.show();
 
+            dvirEntities.addAll(dvirEntities1);
+            if (dvirEntities.size() > 0){
+                adapter = new DvirlistAdapter(getContext(),dvirEntities1,currDay);
+                dvir_recyclerview.setVisibility(View.VISIBLE);
+                container1.setVisibility(View.GONE);
+                idDVIRContainer.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                dvir_recyclerview.setAdapter(adapter);
+                adapter.setListener(dvirEntity1 -> {
+                    Dialog dialog = new Dialog(requireContext());
+                    dialog.setContentView(R.layout.custom_delete_dvir_dialog);
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                    dialog.findViewById(R.id.idDvirYes).setOnClickListener(view ->{
+                        dvirViewModel.deleteDvir(dvirEntity1);
+                        dvir_recyclerview.setVisibility(View.GONE);
+                        idDVIRContainer.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
+                        container1.setVisibility(View.VISIBLE);
+                        dialog.dismiss();
                     });
-                }else {
-                    dvir_recyclerview.setVisibility(View.GONE);
-                    container1.setVisibility(View.VISIBLE);
-                }
+
+                    dialog.findViewById(R.id.idDvirNo).setOnClickListener(view -> {
+                        dialog.dismiss();
+                    });
+
+                    dialog.show();
+
+                });
+            }else {
+                dvir_recyclerview.setVisibility(View.GONE);
+                container1.setVisibility(View.VISIBLE);
             }
         });
 
 
         dvirViewModel.getCurrentName().observe(getViewLifecycleOwner(), s -> {
-            adapter = new DvirlistAdapter(requireContext(),dvirViewModel,s);
-            currDay = s;
-            dvir_recyclerview.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
-            container1.setVisibility(View.GONE);
-            dvir_recyclerview.setVisibility(View.VISIBLE);
-            if (adapter.getItemCount() != 0) {
+            Log.d("Adverse Diving",s);
+
                 dvirViewModel.getMgetDvirs().observe(getViewLifecycleOwner(),dvirEntities1 -> {
+                    adapter = new DvirlistAdapter(requireContext(),dvirEntities1,s);
                     dvir_recyclerview.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
                     if (adapter.getItemCount() == 0){
                         container1.setVisibility(View.VISIBLE);
                         dvir_recyclerview.setVisibility(View.GONE);
+                        idDVIRContainer.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
+                    }else {
+                        container1.setVisibility(View.GONE);
+                        idDVIRContainer.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                        dvir_recyclerview.setVisibility(View.VISIBLE);
                     }
+                    adapter.setListener(dvirEntity1 -> {
+
+                        Dialog dialog = new Dialog(requireContext());
+                        dialog.setContentView(R.layout.custom_delete_dvir_dialog);
+                        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                        dialog.findViewById(R.id.idDvirYes).setOnClickListener(view ->{
+                            dvirViewModel.deleteDvir(dvirEntity1);
+                            dvir_recyclerview.setVisibility(View.GONE);
+                            container1.setVisibility(View.VISIBLE);
+                            dialog.dismiss();
+                        });
+
+                        dialog.findViewById(R.id.idDvirNo).setOnClickListener(view -> {
+                            dialog.dismiss();
+                        });
+
+                        dialog.show();
+
+                    });
                 });
-            }else {
-                container1.setVisibility(View.VISIBLE);
-                dvir_recyclerview.setVisibility(View.GONE);
-                createButton.setOnClickListener(button ->{
-                    Intent intent = new Intent(requireActivity(), AddDvirActivity.class);
-                    intent.putExtra("currDay",currDay);
-                    startActivity(intent);
-                });
-            }
+
+            idFABAddDvir.setOnClickListener(view ->{
+                Intent intent = new Intent(getContext(),AddDvirActivity.class);
+                intent.putExtra("currDay",s);
+                startActivity(intent);
+            });
         });
 
 
@@ -172,5 +200,10 @@ public class DVIRFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
     }
 }

@@ -24,4 +24,11 @@ public class Day {
         Date newDate = cal.getTime();
         return "" + newDate;
     }
+
+    public static int getCurrentSeconds() {
+        int hour = Calendar.getInstance().getTime().getHours();
+        int minute = Calendar.getInstance().getTime().getMinutes();
+        int second = Calendar.getInstance().getTime().getSeconds();
+        return hour * 3600 + minute * 60 + second;
+    }
 }

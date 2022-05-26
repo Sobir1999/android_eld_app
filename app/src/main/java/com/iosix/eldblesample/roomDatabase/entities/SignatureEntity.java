@@ -7,6 +7,8 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import com.google.gson.annotations.SerializedName;
+
 @Entity(tableName = "signature_table")
 public class SignatureEntity {
 
@@ -14,6 +16,7 @@ public class SignatureEntity {
     @ColumnInfo(name = "signature_id")
     private int id;
 
+    @SerializedName("sign")
     @ColumnInfo(name = "signature")
     Bitmap signatureBitmap;
 

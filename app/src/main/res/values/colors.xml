@@ -30,6 +30,8 @@
     <color name="customBgViewColor">#F0F4F9</color>
     <color name="customBgViewColorNightmode">#FC202020</color>
     <color name="customTextHintColor">#828282</color>
+    <color name="customTableColor">#CECCCC</color>
+    <color name="customViewColor">#C4C4C4</color>
 
     <color name="SignatureColorDefault">#9953BFED</color>
     <color name="SignatureColorWhenClicked">#08ACF6</color>

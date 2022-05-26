@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:clickable="true"
     android:focusable="true"
+    android:fitsSystemWindows="true"
     android:background="?attr/customBgViewColor"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -72,6 +73,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
+                android:imeOptions="flagNoExtractUi"
                 android:fontFamily="@font/montserrat"
                 android:text="@string/driver_name"
                 android:textStyle="bold"
@@ -175,40 +177,54 @@
                 android:id="@+id/idAddShippingDocs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimary"
+                android:textSize="15sp"
                 android:gravity="end"
                 android:layout_marginEnd="15dp"
                 app:drawableRightCompat="@drawable/ic_icons8_plus__" />
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:padding="5dp"
                 android:visibility="gone"
                 android:id="@+id/shipping_docs_layout"
-                android:orientation="horizontal">
+                android:layout_marginHorizontal="15dp"
+                android:background="?attr/customBgColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-                <EditText
+                <TextView
+                    android:id="@+id/idShippingDocsEdit"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="10"
-                    android:hint="Enter BOL/DOC Number Manually"
-                    android:textSize="14sp"
+                    android:text="@string/uzbek"
+                    android:gravity="center_vertical"
                     android:textColor="?attr/customTextColor"
-                    android:textColorHint="?attr/customTextHintColor"
-                    android:backgroundTint="?attr/customTextHintColor"
-                    android:id="@+id/idShippingDocsEdit"/>
+                    android:textSize="14sp"
+                    app:layout_constraintRight_toLeftOf="@id/idShippingClear"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:layout_height="wrap_content"
+                    tools:ignore="MissingConstraints" />
+
+                <View
+                    app:layout_constraintTop_toBottomOf="@id/idShippingClear"
+                    app:layout_constraintLeft_toLeftOf="@id/idShippingDocsEdit"
+                    app:layout_constraintRight_toRightOf="@id/idShippingDocsEdit"
+                    android:background="@color/design_default_color_primary_dark"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    tools:ignore="MissingConstraints" />
 
                 <ImageView
-                    android:layout_width="0dp"
+                    android:id="@+id/idShippingClear"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_width="wrap_content"
+                    android:src="@drawable/trailer_delete"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginTop="5dp"
-                    android:src="@drawable/ic_baseline_clear_24"
-                    android:id="@+id/idShippingClear"/>
-
-            </LinearLayout>
+                    tools:ignore="MissingConstraints" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
 
@@ -255,36 +271,46 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:orientation="horizontal"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:padding="5dp"
                 android:visibility="gone"
+                android:id="@+id/idVehiclesLayout"
+                android:layout_marginHorizontal="15dp"
                 android:background="?attr/customBgColor"
-                android:id="@+id/idVehiclesLayout">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/idVehiclesEdit"
-                    style="@style/TextAppearance.AppCompat"
                     android:layout_width="0dp"
-                    android:layout_weight="10"
-                    android:layout_height="wrap_content"
-                    android:drawablePadding="10dp"
+                    android:text="@string/uzbek"
                     android:gravity="center_vertical"
-                    android:padding="10dp"
                     android:textColor="?attr/customTextColor"
-                    android:textColorHint="?attr/customTextHintColor"/>
+                    android:textSize="14sp"
+                    app:layout_constraintRight_toLeftOf="@id/idVehiclesClear"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:layout_height="wrap_content"
+                    tools:ignore="MissingConstraints" />
+
+                <View
+                    app:layout_constraintTop_toBottomOf="@id/idVehiclesClear"
+                    app:layout_constraintLeft_toLeftOf="@id/idVehiclesEdit"
+                    app:layout_constraintRight_toRightOf="@id/idVehiclesEdit"
+                    android:background="@color/design_default_color_primary_dark"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    tools:ignore="MissingConstraints" />
 
                 <ImageView
-                    android:layout_width="0dp"
+                    android:id="@+id/idVehiclesClear"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_width="wrap_content"
+                    android:src="@drawable/trailer_delete"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginTop="5dp"
-                    android:src="@drawable/ic_baseline_clear_24"
-                    android:id="@+id/idVehiclesClear"/>
-
-            </LinearLayout>
+                    tools:ignore="MissingConstraints" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
 
@@ -344,7 +370,6 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="10"
-                    android:hint="Enter Trailer Manually"
                     android:textSize="14sp"
                     android:paddingBottom="10dp"
                     android:textColor="?attr/customTextColor"
@@ -366,9 +391,9 @@
                 android:id="@+id/idTrailersRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:background="?attr/customBgColor"
-                android:layout_marginStart="15dp"
+                android:layout_marginHorizontal="15dp"
                 />
 
             <View
@@ -680,7 +705,9 @@
                     android:id="@+id/idfromEdit"
                     android:hint="@string/enter_information"
                     android:textSize="14sp"
-                    android:paddingBottom="8dp"
+                    android:inputType="textAutoCorrect"
+                    android:imeOptions="flagNoExtractUi"
+                    android:paddingBottom="12dp"
                     android:textColor="?attr/customTextColor"
                     android:textColorHint="?attr/customTextHintColor"
                     android:backgroundTint="?attr/customTextHintColor"
@@ -747,7 +774,9 @@
                     android:id="@+id/idtoEdit"
                     android:hint="@string/enter_information"
                     android:textSize="14sp"
-                    android:paddingBottom="8dp"
+                    android:inputType="text"
+                    android:imeOptions="flagNoExtractUi"
+                    android:paddingBottom="12dp"
                     android:textColor="?attr/customTextColor"
                     android:textColorHint="?attr/customTextHintColor"
                     android:backgroundTint="?attr/customTextHintColor"
@@ -814,6 +843,8 @@
                     android:hint="@string/enter_notes"
                     android:textSize="14sp"
                     android:paddingBottom="8dp"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="text"
                     android:textColor="?attr/customTextColor"
                     android:textColorHint="?attr/customTextHintColor"
                     android:backgroundTint="?attr/customTextHintColor"

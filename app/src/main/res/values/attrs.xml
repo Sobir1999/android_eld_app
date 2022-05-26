@@ -12,6 +12,7 @@
         <attr name="screenHeight" format="integer"/>
     </declare-styleable>
 
+
     <attr name="customBgColor" format="reference" />
     <attr name="customTextColor" format="reference" />
     <attr name="customBgViewColor" format="reference"/>

@@ -9,9 +9,11 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.adapters.LogRecyclerViewAdapter;
@@ -21,6 +23,7 @@ import com.iosix.eldblesample.customViews.CustomStableRulerChart;
 import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.models.ExampleSMSModel;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
+import com.iosix.eldblesample.shared_prefs.LastStatusData;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
 
@@ -42,6 +45,7 @@ public class LogFragment extends Fragment {
     private String today = time.split(" ")[1] + " " + time.split(" ")[2];
     private RecyclerView recyclerView_log;
     private LogRecyclerViewAdapter logRecyclerViewAdapter;
+    private LastStatusData lastStatusData;
 
 
     public static LogFragment newInstance(String param1) {
@@ -68,6 +72,9 @@ public class LogFragment extends Fragment {
         idCustomChart = view.findViewById(R.id.idCustomChart);
         idCustomChartLive = view.findViewById(R.id.idCustomChartLive);
         recyclerView_log = view.findViewById(R.id.recyclerView_log_page);
+
+        lastStatusData = LastStatusData.getInstance(requireContext().getApplicationContext());
+        last_status = lastStatusData.getLastStatus();
 
         DvirViewModel dvirViewModel = new DvirViewModel(requireActivity().getApplication());
         dvirViewModel = ViewModelProviders.of((FragmentActivity) requireContext()).get(DvirViewModel.class);
@@ -97,13 +104,8 @@ public class LogFragment extends Fragment {
                     }
                 }
 
-                if (truckStatusEntities.size() != 0) {
-                    last_status = truckStatusEntities.get(truckStatusEntities.size() - 1).getTo_status();
-                    logRecyclerViewAdapter = new LogRecyclerViewAdapter(requireContext(),truckStatusEntities);
-                    recyclerView_log.setAdapter(logRecyclerViewAdapter);
-                } else {
-                    last_status = EnumsConstants.STATUS_OFF;
-                }
+                logRecyclerViewAdapter = new LogRecyclerViewAdapter(requireContext().getApplicationContext(),truckStatusEntities,last_status,c);
+                recyclerView_log.setAdapter(logRecyclerViewAdapter);
             });
             if(c.equals(today)){
                 idCustomChart.setVisibility(View.INVISIBLE);
@@ -144,8 +146,7 @@ public class LogFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView()
-    {
+    public void onDestroyView() {
         super.onDestroyView();
         _context.unregisterReceiver(changeDateTimeBroadcast);
     }

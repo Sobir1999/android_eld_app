@@ -1,12 +1,16 @@
 package com.iosix.eldblesample.activity;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -35,9 +39,9 @@ public class AddDefectActivity extends BaseActivity {
     @Override
     public void initView() {
         super.initView();
-//        getWindow().setStatusBarColor(ActivityCompat.getColor(this,R.color.colorPrimaryDark));
 
         boolean isTruckSelected = getIntent().getBooleanExtra("isTruckSelected", false);
+        boolean isUnitSelected = getIntent().getBooleanExtra("isUnitSelected", false);
 
         tabLayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.viewpager);
@@ -47,12 +51,11 @@ public class AddDefectActivity extends BaseActivity {
         save.setOnClickListener(v -> createDialog(v.getContext()));
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        DefectsFragmentAdapter adapter = new DefectsFragmentAdapter(fragmentManager, getLifecycle(), isTruckSelected);
+        DefectsFragmentAdapter adapter = new DefectsFragmentAdapter(fragmentManager, getLifecycle(), isTruckSelected,isUnitSelected);
         viewPager.setAdapter(adapter);
 
-        tabLayout.addTab(tabLayout.newTab().setText("Unit"));
+        if (isUnitSelected) tabLayout.addTab(tabLayout.newTab().setText("Unit"));
         if (isTruckSelected) tabLayout.addTab(tabLayout.newTab().setText("Trailer"));
-//        tabLayout.addTab(tabLayout.newTab().setText("Trailer"));
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -80,22 +83,28 @@ public class AddDefectActivity extends BaseActivity {
     }
 
     private void createDialog(Context context) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-        dialog.setTitle("Add a note to your defect");
 
-        View v = getLayoutInflater().inflate(R.layout.add_unit_trailer_dialog_view, null, false);
-        EditText editText = v.findViewById(R.id.idAddUnitTrailerEdit);
-        editText.setHint("Notes");
+        Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.custom_notes_dialog);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        dialog.setPositiveButton("OK", (dialog12, which) -> {
-            if (!editText.getText().toString().equalsIgnoreCase("")) {
-                back(editText.getText().toString());
+        TextView cancel = dialog.findViewById(R.id.idNotesDialogCancel);
+        TextView ok = dialog.findViewById(R.id.idNotesDialogSend);
+        EditText note = dialog.findViewById(R.id.idNotesDialogEdit);
+
+        cancel.setOnClickListener(v->{
+            dialog.dismiss();
+        });
+
+        ok.setOnClickListener(v->{
+            dialog.dismiss();
+            if (!note.getText().toString().equals("")){
+                back(note.getText().toString());
+            }else {
+                Toast.makeText(context,"Please add note to defects",Toast.LENGTH_SHORT).show();
             }
         });
 
-        dialog.setNegativeButton("Cancel", (dialog1, which) -> dialog1.cancel());
-
-        dialog.setView(v);
         dialog.show();
     }
 
@@ -121,17 +130,21 @@ public class AddDefectActivity extends BaseActivity {
 
 class DefectsFragmentAdapter extends FragmentStateAdapter {
     boolean isTruckSelected;
+    boolean isUnitSelected;
 
-    public DefectsFragmentAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, boolean isTruckSelected) {
+    public DefectsFragmentAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, boolean isTruckSelected,boolean isUnitSelected) {
         super(fragmentManager, lifecycle);
         this.isTruckSelected = isTruckSelected;
+        this.isUnitSelected = isUnitSelected;
     }
 
     @NonNull
     @Override
     public Fragment createFragment(int position) {
         if (position == 0) {
-            return new AddDefectFragment(1);
+            if (isUnitSelected){
+                return new AddDefectFragment(1);
+            }else return new AddDefectFragment(2);
         }
         return new AddDefectFragment(2);
 
@@ -139,6 +152,6 @@ class DefectsFragmentAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return isTruckSelected ? 2 : 1;
+        return isTruckSelected && isUnitSelected ? 2 : 1;
     }
 }

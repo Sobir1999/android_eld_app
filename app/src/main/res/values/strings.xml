@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">FastLogz</string>
     <string name="off">OFF</string>
+<!--    <string name="leak_canary_test_class_name" translatable="false">assertk.Assert</string>-->
 
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
     <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
@@ -106,7 +107,7 @@
     <string name="draw_your_signature">Signature</string>
     <string name="trailer_defects">Trailer Defects</string>
     <string name="mechanic_signature">Mechanic Signature</string>
-    <string name="vehicle" translatable="false">Vehicle:</string>
+    <string name="vehicle" translatable="false">Vehicle :</string>
     <string name="enter_city">Enter City</string>
     <string name="enter_state">Enter State/Province</string>
     <string name="select_state_province">Select State/Province</string>
@@ -125,7 +126,7 @@
     <string name="shift_restart">Shift Restart</string>
     <string name="cycle_restart">Cycle Restart</string>
     <string name="done">Done</string>
-    <string name="rest_break">Rest Break</string>
+    <string name="rest_break">Break</string>
     <string name="exclude_split_in_shift">Exclude Split in Shift</string>
     <string name="until_rest_break">Until Rest Break</string>
     <string name="cycle">Cycle</string>
@@ -149,7 +150,7 @@
     <string name="settings">Settings</string>
     <string name="hos_rules">HOS Rules</string>
     <string name="account">Account</string>
-    <string name="edit_profile">Edit profile</string>
+    <string name="edit_profile">Profile</string>
     <string name="carrier_connect">Carrier Connect</string>
     <string name="inspection_mode_lock">Inspection mode Lock</string>
     <string name="privacy">Privacy</string>
@@ -163,4 +164,29 @@
     <string name="last_name">Last Name</string>
     <string name="phone_number">Phone Number</string>
     <string name="review_logs_for_previous_7_days_today">Review logs for previous 7 days + today</string>
+    <string name="in_motion">In motion</string>
+    <string name="new_shipping_document">New shipping document:</string>
+    <string name="please_enter_new_shipping_document">Please,enter new shipping document:</string>
+    <string name="new_trailer">New Trailer</string>
+    <string name="please_enter_new_trailer">Please, enter new trailer</string>
+    <string name="select_unit">Select Unit</string>
+    <string name="add_trailer">Add Trailer</string>
+    <string name="create_trailer">Create Trailer</string>
+    <string name="last_8_days">Last 8 days</string>
+    <string name="select_co_driver">Select Co-driver</string>
+    <string name="connect">CONNECT</string>
+    <string name="delete_dvir">Delete Dvir</string>
+    <string name="do_you_want_to_delete_dvir">Do you want to delete Dvir?</string>
+    <string name="do_you_log_out">Do you want to Log out?</string>
+    <string name="select_trailer">Select Trailer</string>
+    <string name="disconnect">DISCONNECT</string>
+    <string name="ok">OK</string>
+    <string name="add_a_note_to_your_defect">Add a note to your defect</string>
+    <string name="add_note_here">Add note here</string>
+    <string name="whould_you_like_to_change_your_status">Whould you like to change your status?</string>
+    <string name="stay_on_driving">Stay on Driving</string>
+    <string name="go_off_duty">Go OFF DUTY</string>
+    <string name="trailer">Trailers :</string>
+    <string name="connected">Connected</string>
+    <string name="not_connected">Not Connected</string>
 </resources>

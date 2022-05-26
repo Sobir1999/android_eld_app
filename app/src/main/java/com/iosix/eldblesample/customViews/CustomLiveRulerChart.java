@@ -1,5 +1,7 @@
 package com.iosix.eldblesample.customViews;
 
+import static com.iosix.eldblesample.enums.Day.getCurrentSeconds;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -11,6 +13,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.iosix.eldblesample.enums.Day;
 import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.enums.TableConstants;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
@@ -22,7 +25,7 @@ import java.util.Calendar;
 public class CustomLiveRulerChart extends CustomRulerChart {
     private float START_POINT_X = TableConstants.START_POINT_X;
     private float START_POINT_Y = TableConstants.START_POINT_Y;
-    private int currentDate;
+//    private int currentDate;
     private int last_status;
     private int off = 0, sb = 0, dr = 0, on = 0;
     private LastStatusData lastStatusData;
@@ -52,9 +55,7 @@ public class CustomLiveRulerChart extends CustomRulerChart {
     }
 
     private void init(Context context) {
-        lastStatusData = new LastStatusData(context);
-//        SharedPreferences pref = context
-//                .getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+        lastStatusData = LastStatusData.getInstance(context.getApplicationContext());
         last_status = lastStatusData.getLastStatus();
     }
 
@@ -67,6 +68,7 @@ public class CustomLiveRulerChart extends CustomRulerChart {
     public void drawLineProgress(Canvas canvas, float CUSTOM_TABLE_WIDTH) {
         float CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 8;
         float startX = START_POINT_X + CUSTOM_TABLE_WIDTH / 26f;
+        float startPointxX = START_POINT_X + CUSTOM_TABLE_WIDTH / 26f;
         float startY = 0;
         float endX = 0;
         float endY = 0;
@@ -75,21 +77,21 @@ public class CustomLiveRulerChart extends CustomRulerChart {
 
         int start = 0;
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                int hour = Calendar.getInstance().getTime().getHours();
-                int minut = Calendar.getInstance().getTime().getMinutes();
-                int second = Calendar.getInstance().getTime().getSeconds();
-                currentDate = hour * 3600 + minut * 60 + second;
-            }
-        }, 500);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                int hour = Calendar.getInstance().getTime().getHours();
+//                int minut = Calendar.getInstance().getTime().getMinutes();
+//                int second = Calendar.getInstance().getTime().getSeconds();
+//                currentDate = hour * 3600 + minut * 60 + second;
+//            }
+//        }, 500);
+
 
         for (int i = 0; i < arrayList.size(); i++) {
             startY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * arrayList.get(i).getFrom_status()) / 4;
             endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * arrayList.get(i).getTo_status()) / 4;
-//            endX = START_POINT_X + (arrayList.get(i).getSeconds() * 8) / CUSTOM_TABLE_WIDTH;
-            endX = startX + (arrayList.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/26);
+            endX = startPointxX + (arrayList.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/26);
             canvas.drawLine(startX, startY, endX, startY, paintArray.get(arrayList.get(i).getFrom_status()));
             canvas.drawLine(endX, startY, endX, endY, paintArray.get(arrayList.get(i).getFrom_status()));
             startX = endX;
@@ -110,36 +112,36 @@ public class CustomLiveRulerChart extends CustomRulerChart {
         }
 
         if (!arrayList.isEmpty()) {
-            canvas.drawLine(endX, endY, startX + ((currentDate / (3600*24f)) * CUSTOM_TABLE_WIDTH*24/26), endY, paintArray.get(arrayList.get(arrayList.size() - 1).getTo_status()));
+
+            canvas.drawLine(endX, endY, startPointxX + ((getCurrentSeconds() / (3600*24f)) * CUSTOM_TABLE_WIDTH*24/26), endY, paintArray.get(arrayList.get(arrayList.size() - 1).getTo_status()));
 
             if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_OFF) {
-                off += (currentDate - start);
+                off += (getCurrentSeconds() - start);
             }
             else if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_SB) {
-                sb += (currentDate - start);
+                sb += (getCurrentSeconds() - start);
             }
             else if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_DR) {
-                dr += (currentDate - start);
+                dr += (getCurrentSeconds() - start);
             }
             else if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_ON) {
-                on += (currentDate - start);
+                on += (getCurrentSeconds() - start);
             }
         } else {
-            Log.d("MyPref", (String.valueOf(last_status)));
             endY = TableConstants.START_POINT_Y + CUSTOM_TABLE_HEIGHT/8 + (CUSTOM_TABLE_HEIGHT*last_status)/4;
-            canvas.drawLine(startX, endY, startX + ((currentDate / (3600*24f)) * CUSTOM_TABLE_WIDTH*24/26), endY, paintArray.get(last_status));
+            canvas.drawLine(startX, endY, startPointxX + ((getCurrentSeconds() / (3600*24f)) * CUSTOM_TABLE_WIDTH*24/26), endY, paintArray.get(last_status));
 
             if (last_status == EnumsConstants.STATUS_OFF) {
-                off = currentDate;
+                off = getCurrentSeconds();
             }
             if (last_status == EnumsConstants.STATUS_SB) {
-                sb = currentDate;
+                sb = getCurrentSeconds();
             }
             if (last_status == EnumsConstants.STATUS_DR) {
-                dr = currentDate;
+                dr = getCurrentSeconds();
             }
             if (last_status == EnumsConstants.STATUS_ON) {
-                on = currentDate;
+                on = getCurrentSeconds();
             }
         }
 

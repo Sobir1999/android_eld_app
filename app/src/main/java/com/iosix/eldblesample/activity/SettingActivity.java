@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.iosix.eldblesample.R;
@@ -17,6 +18,7 @@ import com.iosix.eldblesample.fragments.LanguageFragment;
 public class SettingActivity extends BaseActivity {
 
     private TextView account,language;
+    private ImageView imageView;
 
     @Override
     protected int getLayoutId() {
@@ -39,6 +41,9 @@ public class SettingActivity extends BaseActivity {
     void clickButtons(){
         account = findViewById(R.id.idEditProfile);
         language = findViewById(R.id.idLanguage);
+        imageView = findViewById(R.id.idImageBack);
+
+        imageView.setOnClickListener(view -> onBackPressed());
 
         account.setOnClickListener(view -> {
             Intent intent = new Intent(this,AccountActivity.class);

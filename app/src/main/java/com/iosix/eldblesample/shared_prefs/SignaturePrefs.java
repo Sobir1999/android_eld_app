@@ -14,11 +14,24 @@ public class SignaturePrefs {
 
     Context context;
     private static SharedPreferences sharedPreferences;
+    public static SharedPreferences.Editor editor;
+
 
     public SignaturePrefs(Context context){
         this.context = context;
         sharedPreferences = context.getSharedPreferences(context.getString(R.string.app_name),Context.MODE_PRIVATE);
     }
+
+    public void saveImageName(String name){
+        editor = sharedPreferences.edit();
+        editor.putString("image",name);
+        editor.apply();
+    }
+
+    public String fetchImageName(){
+        return sharedPreferences.getString("image", null);
+    }
+
 
     public void saveSignature(Bitmap signature){
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

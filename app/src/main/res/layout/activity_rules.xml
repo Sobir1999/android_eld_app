@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:background="?attr/customBgViewColor"
     tools:context=".activity.RulesActivity">
 
@@ -64,7 +65,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="50dp"
-            android:layout_marginVertical="8dp"
+            android:layout_marginTop="8dp"
             android:background="@drawable/background_main_view">
 
             <TextView
@@ -212,6 +213,7 @@
                 app:layout_constraintTop_toBottomOf="@id/idOffDuty"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/time_is_any_time_not_spent_on_duty_driving_or_in_the_sleeper_berth_when_you_are_not_in_the_truck"
@@ -219,7 +221,7 @@
                 android:textColor="?attr/customTextColor"
                 android:fontFamily="@font/montserrat"
                 android:textStyle="bold"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginBottom="80dp"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

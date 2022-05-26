@@ -7,11 +7,11 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
+import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
 import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 import com.iosix.eldblesample.roomDatabase.repository.DayDaoRepository;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -20,6 +20,8 @@ public class DayDaoViewModel extends AndroidViewModel {
     private final LiveData<List<DayEntity>> mgetAllDays;
     private final LiveData<List<VehiclesEntity>> getAllVehicles;
     private final LiveData<List<TrailersEntity>> getAllTrailers;
+    private LiveData<List<LogEntity>> mAllStatus;
+
 
     public DayDaoViewModel(@NonNull Application application) {
         super(application);
@@ -27,6 +29,7 @@ public class DayDaoViewModel extends AndroidViewModel {
         mgetAllDays = repository.getGetAllDays();
         getAllVehicles = repository.getGetAllVehicles();
         getAllTrailers = repository.getGetAllTrailers();
+        mAllStatus = repository.getmAllStatus();
     }
 
     public LiveData<List<TrailersEntity>> getGetAllTrailers() {
@@ -37,8 +40,8 @@ public class DayDaoViewModel extends AndroidViewModel {
         return mgetAllDays;
     }
 
-    public Long insertDay(DayEntity entity) throws ExecutionException, InterruptedException {
-        return repository.insertDay(entity);
+    public void insertDay(DayEntity entity) throws ExecutionException, InterruptedException {
+        repository.insertDay(entity);
     }
 
     public void deleteDay(DayEntity entity) {
@@ -54,7 +57,15 @@ public class DayDaoViewModel extends AndroidViewModel {
 
     public LiveData<List<VehiclesEntity>> getGetAllVehicles() {return getAllVehicles;}
 
-    public Long insertTrailer(TrailersEntity entity) throws ExecutionException, InterruptedException {
-        return repository.insertTrailer(entity);
+    public void insertTrailer(TrailersEntity entity) throws ExecutionException, InterruptedException {
+        repository.insertTrailer(entity);
+    }
+
+    public LiveData<List<LogEntity>> getmAllStatus() {
+        return mAllStatus;
+    }
+
+    public void insertStatus(LogEntity statusEntity) throws ExecutionException, InterruptedException {
+        repository.insertStatus(statusEntity);
     }
 }

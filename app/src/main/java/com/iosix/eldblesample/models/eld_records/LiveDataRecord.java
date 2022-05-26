@@ -1,64 +1,96 @@
 package com.iosix.eldblesample.models.eld_records;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 
+@Entity(tableName = "local_data_table")
 public class LiveDataRecord {
 
+
+
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    private int id;
+
     @SerializedName("engine_state")
+    @ColumnInfo(name = "engine_state")
     Boolean engine_state;
 
     @SerializedName("vin")
+    @ColumnInfo(name = "vin")
     private String vin;
 
     @SerializedName("speed")
+    @ColumnInfo(name = "speed")
     private double speed;
 
     @SerializedName("odometer")
+    @ColumnInfo(name = "odometer")
     private double odometer;
 
     @SerializedName("trip_distance")
+    @ColumnInfo(name = "trip_distance")
     private double trip_distance;
 
     @SerializedName("engine_hours")
+    @ColumnInfo(name = "engine_hours")
     private double engine_hours;
 
     @SerializedName("trip_hours")
+    @ColumnInfo(name = "trip_hours")
     private double trip_hours;
 
     @SerializedName("battery_voltage")
+    @ColumnInfo(name = "battery_voltage")
     private double battery_voltage;
 
-    @SerializedName("date")
-    private Float date;
+    @SerializedName("created_date")
+    @ColumnInfo(name = "moment")
+    private String date;
 
     @SerializedName("point")
+    @ColumnInfo(name = "point")
     private Point point;
 
     @SerializedName("gps_speed")
+    @ColumnInfo(name = "gps_speed")
     private int gps_speed;
 
     @SerializedName("course")
+    @ColumnInfo(name = "course")
     private int course;
 
     @SerializedName("number_of_satellites")
+    @ColumnInfo(name = "number_of_satellites")
     private int number_of_satellites;
 
     @SerializedName("altitude")
+    @ColumnInfo(name = "altitude")
     private int altitude;
 
     @SerializedName("dop")
+    @ColumnInfo(name = "dop")
     private double dop;
 
     @SerializedName("sequence_number")
+    @ColumnInfo(name = "sequence_number")
     private int sequence_number;
 
     @SerializedName("firmware_version")
+    @ColumnInfo(name = "firmware_version")
     private String firmware_version;
 
-    public LiveDataRecord(Boolean engine_state, String vin, double speed, double odometer, double trip_distance, double engine_hours, double trip_hours, double battery_voltage, Float date, Point point, int gps_speed, int course, int number_of_satellites, int altitude, double dop, int sequence_number, String firmware_version) {
+    public LiveDataRecord(Boolean engine_state, String vin, double speed, double odometer, double trip_distance, double engine_hours, double trip_hours, double battery_voltage, String date, Point point, int gps_speed, int course, int number_of_satellites, int altitude, double dop, int sequence_number, String firmware_version) {
         this.engine_state = engine_state;
         this.vin = vin;
         this.speed = speed;
@@ -76,6 +108,13 @@ public class LiveDataRecord {
         this.dop = dop;
         this.sequence_number = sequence_number;
         this.firmware_version = firmware_version;
+    }
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public Boolean getEngine_state() {
@@ -142,11 +181,12 @@ public class LiveDataRecord {
         this.battery_voltage = battery_voltage;
     }
 
-    public Float getDate() {
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Float date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

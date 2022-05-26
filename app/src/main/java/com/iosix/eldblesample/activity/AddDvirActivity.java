@@ -1,8 +1,11 @@
 package com.iosix.eldblesample.activity;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,37 +19,47 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.iosix.eldblesample.R;
+import com.iosix.eldblesample.adapters.TrailerListAdapter;
 import com.iosix.eldblesample.adapters.TrailerRecyclerAdapter;
+import com.iosix.eldblesample.adapters.UnitListAdapter;
 import com.iosix.eldblesample.base.BaseActivity;
-import com.iosix.eldblesample.dialogs.CustomDialogClass;
 import com.iosix.eldblesample.fragments.TimePickerFragment;
+import com.iosix.eldblesample.models.TrailNubmer;
+import com.iosix.eldblesample.retrofit.APIInterface;
+import com.iosix.eldblesample.retrofit.ApiClient;
 import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
-import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
-import com.iosix.eldblesample.shared_prefs.DvirSharedPref;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
+import com.iosix.eldblesample.viewModel.DvirViewModel;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.OnTimeSetListener {
 
-    private TextView addUnit, nextText;
+    private TextView idSelectedUnitText, nextText;
     private TextView units;
     private TextView addTrailer;
     private TextView trailers;
     private TextView unitDefects, trailerDefects, unitDefectsTitle, trailerDefectsTitle;
     private TextView addTime;
     private TextView notes;
-    private ImageView backView;
+    private ImageView backView,idSelectedUnitDelete;
     private EditText locationEditText;
     String time,location,mNotes;
     private LinearLayout defects, addDefect;
+    private ConstraintLayout idSelectedUnitLayout;
     private DayDaoViewModel daoViewModel;
     private final String selectedUnit = "No Unit Selected";
     private ArrayList<TrailersEntity> selectedTrailers;
@@ -54,7 +67,9 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
     private String unitDefectsString = "", trailerDefectsString = "";
     private ArrayList<String> arrayList;
     private String day;
-    private DvirSharedPref dvirSharedPref;
+    private APIInterface apiInterface;
+    private DvirViewModel dvirViewModel;
+    RecyclerView selectedTrailersRecyclerView;
 
     @Override
     protected int getLayoutId() {
@@ -71,8 +86,11 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
     public void initView() {
         super.initView();
 
-        addUnit = findViewById(R.id.idAddDvirUnitText);
+//        addUnit = findViewById(R.id.idAddDvirUnitText);
         units = findViewById(R.id.idAddDvirUnitNumberText);
+        idSelectedUnitText = findViewById(R.id.idSelectedUnitText);
+        idSelectedUnitDelete = findViewById(R.id.idSelectedUnitDelete);
+        idSelectedUnitLayout = findViewById(R.id.idSelectedUnitLayout);
         addTrailer = findViewById(R.id.idAddDvirTrailerText);
         trailers = findViewById(R.id.idAddDvirTrailerNumberText);
         unitDefects = findViewById(R.id.unitDefects);
@@ -86,52 +104,20 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
         backView = findViewById(R.id.idImageBack);
         nextText = findViewById(R.id.idAddDvirNext);
         locationEditText = findViewById(R.id.idDefectLocationEdit);
+        selectedTrailersRecyclerView = findViewById(R.id.idTrailersRecyclerView);
+
 
         day = getIntent().getStringExtra("currDay");
-        dvirSharedPref = new DvirSharedPref(this);
 
-        RecyclerView recyclerView = findViewById(R.id.idTrailersRecyclerView);
+        apiInterface = ApiClient.getClient().create(APIInterface.class);
+
+        dvirViewModel = new DvirViewModel(getApplication());
+        dvirViewModel = ViewModelProviders.of(this).get(DvirViewModel.class);
 
         daoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
-        daoViewModel.getGetAllVehicles().observe(this, vehiclesEntities -> units.setText(vehiclesEntities.isEmpty() ? selectedUnit : vehiclesEntities.get(0).getName()));
 
         buttonClicks(getWindow().getDecorView().findViewById(R.id.fragment_container_add_dvir));
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new TrailerRecyclerAdapter(selectedTrailers);
-        recyclerView.setAdapter(adapter);
-
-        adapterListener();
-    }
-
-    private void adapterListener() {
-        adapter.setUpdateListener((position) -> {
-            AlertDialog.Builder builderSingle = new AlertDialog.Builder(this);
-            builderSingle.setTitle("Select Trailers");
-
-            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_selectable_list_item);
-            daoViewModel.getGetAllTrailers().observe(this, trailersEntities -> {
-                for (int i = 0; i < trailersEntities.size(); i++) {
-                    arrayAdapter.add(trailersEntities.get(i).getNumber());
-                }
-            });
-
-            builderSingle.setNegativeButton("cancel", (dialog, which) -> dialog.dismiss());
-
-            builderSingle.setAdapter(arrayAdapter, (dialog, which) -> {
-                String strName = arrayAdapter.getItem(which);
-                selectedTrailers.get(position).setNumber(strName);
-                adapter.notifyDataSetChanged();
-            });
-            builderSingle.show();
-
-            adapter.notifyDataSetChanged();
-        });
-
-        adapter.setDeleteListener((position) -> {
-            selectedTrailers.remove(position);
-            adapter.notifyDataSetChanged();
-        });
     }
 
     @Override
@@ -174,25 +160,39 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
     private void buttonClicks(ViewGroup context) {
         selectedTrailers = new ArrayList<>();
 
-        addUnit.setOnClickListener(v -> createDialog(context,"Add Unit","Create unit",1));
+//        addUnit.setOnClickListener(v -> createDialog(context,"Add Unit","Create unit",1));
         units.setOnClickListener(v -> {
-            AlertDialog.Builder builderSingle = new AlertDialog.Builder(this);
-            builderSingle.setTitle("Select Unit");
 
-            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_selectable_list_item);
-            daoViewModel.getGetAllVehicles().observe(this, vehiclesEntities -> {
-                for (int i = 0; i < vehiclesEntities.size(); i++) {
-                    arrayAdapter.add(vehiclesEntities.get(i).getName());
-                }
+            Dialog dialog = new Dialog(this);
+            dialog.setContentView(R.layout.custom_list_dialog);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+            TextView unitText = dialog.findViewById(R.id.idHeaderTv);
+            RecyclerView recyclerView = dialog.findViewById(R.id.idRecyclerViewUnit);
+            TextView cancel = dialog.findViewById(R.id.idDialogCancel);
+
+            daoViewModel.getGetAllVehicles().observe(this,vehiclesEntities -> {
+                UnitListAdapter unitListAdapter = new UnitListAdapter(this,vehiclesEntities);
+                recyclerView.setAdapter(unitListAdapter);
+                unitListAdapter.setListener(s -> {
+                    idSelectedUnitLayout.setVisibility(View.VISIBLE);
+                    idSelectedUnitText.setText(s);
+                    dialog.dismiss();
+                });
             });
 
-            builderSingle.setNegativeButton("cancel", (dialog, which) -> dialog.dismiss());
-
-            builderSingle.setAdapter(arrayAdapter, (dialog, which) -> {
-                String strName = arrayAdapter.getItem(which);
-                units.setText(strName);
+            unitText.setText("Add Unit");
+            cancel.setOnClickListener(view -> {
+                dialog.dismiss();
             });
-            builderSingle.show();
+
+            dialog.show();
+
+        });
+
+        idSelectedUnitDelete.setOnClickListener(v->{
+            idSelectedUnitLayout.setVisibility(View.GONE);
+            idSelectedUnitText.setText("");
         });
 
         addTrailer.setOnClickListener(v -> createDialog(context, "Add Trailer", "Add Trailer", 2));
@@ -203,38 +203,54 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
         });
 
         trailers.setOnClickListener(v -> {
-            AlertDialog.Builder builderSingle = new AlertDialog.Builder(this);
-            builderSingle.setTitle("Select Trailers");
 
-            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_selectable_list_item);
-            daoViewModel.getGetAllTrailers().observe(this, trailersEntities -> {
-                for (int i = 0; i < trailersEntities.size(); i++) {
-                    arrayAdapter.add(trailersEntities.get(i).getNumber());
-                }
+            Dialog dialog = new Dialog(this);
+            dialog.setContentView(R.layout.custom_list_dialog);
+
+            TextView unitText = dialog.findViewById(R.id.idHeaderTv);
+            RecyclerView recyclerView = dialog.findViewById(R.id.idRecyclerViewUnit);
+            TextView cancel = dialog.findViewById(R.id.idDialogCancel);
+
+            daoViewModel.getGetAllTrailers().observe(this,trailersEntities -> {
+                TrailerListAdapter trailerListAdapter = new TrailerListAdapter(this,trailersEntities);
+                recyclerView.setAdapter(trailerListAdapter);
+                trailerListAdapter.setUpdateListener(position ->{
+                    dialog.dismiss();
+                    int n = 0;
+                    for (int i = 0; i < selectedTrailers.size(); i++) {
+                        if (trailersEntities.get(position).equals(selectedTrailers.get(i))){
+                            n++;
+                        }
+                    }
+                    if (n == 0){
+                        selectedTrailers.add(trailersEntities.get(position));
+                        dvirViewModel.getSelectedTrailerCount().postValue(selectedTrailers.size());
+                    }
+                });
             });
 
-            builderSingle.setNegativeButton("cancel", (dialog, which) -> dialog.dismiss());
-
-            builderSingle.setAdapter(arrayAdapter, (dialog, which) -> {
-                String strName = arrayAdapter.getItem(which);
-                selectedTrailers.add(new TrailersEntity(strName));
-                adapter.notifyDataSetChanged();
+            unitText.setText("Add Trailer");
+            cancel.setOnClickListener(view -> {
+                dialog.dismiss();
             });
-            builderSingle.show();
+
+            dialog.show();
+        });
+
+        dvirViewModel.getSelectedTrailerCount().observe(this,count ->{
+            selectedTrailersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            adapter = new TrailerRecyclerAdapter(selectedTrailers);
+            selectedTrailersRecyclerView.setAdapter(adapter);
+            adapter.setDeleteListener(s->{
+                selectedTrailers.remove(s);
+                dvirViewModel.getSelectedTrailerCount().postValue(selectedTrailers.size());
+            });
         });
 
         backView.setOnClickListener(v -> onBackPressed());
 
         nextText.setOnClickListener(v1 -> {
-            if (unitDefectsString.equals("")){
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-                alertDialog.setTitle("No defects selected")
-                        .setMessage("Select unit defects!")
-                        .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
-                AlertDialog alert = alertDialog.create();
-                alert.show();
-            }
-            else if(addTime.getText().toString().equals("")){
+            if(addTime.getText().toString().equals("")){
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
                 alertDialog.setTitle("Time missed")
                         .setMessage("Time not created!")
@@ -253,32 +269,24 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
                 location = locationEditText.getText().toString();
                 mNotes = notes.getText().toString();
 
-                String unitDefectsString1;
-                String trailerDefectsString1;
-                unitDefectsString1 = unitDefectsString;
-
-                if (trailerDefectsString.equals("")){
-                    trailerDefectsString1 = "No trailer selected";
-                }else {
-                    trailerDefectsString1 = trailerDefectsString;
-                }
-
                 arrayList = new ArrayList<>();
-                arrayList.add(units.getText().toString());
-                arrayList.add(trailers.getText().toString());
-                arrayList.add(unitDefectsString1);
-                arrayList.add(trailerDefectsString1);
+                arrayList.add(idSelectedUnitText.getText().toString());
+                arrayList.add(unitDefectsString);
+                arrayList.add(trailerDefectsString);
                 arrayList.add(time);
                 arrayList.add(location);
                 arrayList.add(mNotes);
                 arrayList.add(day);
 
-                Log.d("day","day:" + arrayList.get(7));
-                Log.d("day","day: " + day);
+                ArrayList<String> selectedTrailersNumber = new ArrayList<>();
+                for (int i = 0; i < selectedTrailers.size(); i++) {
+                    selectedTrailersNumber.add(selectedTrailers.get(i).getNumber());
+                }
 
                 Intent intent = new Intent(this, SignatureActivity.class);
                 intent.putExtra("isTruckSelected", !unitDefectsString.equalsIgnoreCase("") || !trailerDefectsString.equalsIgnoreCase(""));
                 intent.putExtra("arrayList",arrayList);
+                intent.putExtra("selectedTrailers",selectedTrailersNumber);
                 intent.putExtra("day",day);
                 startActivity(intent);
             }
@@ -286,80 +294,78 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
         });
 
         addDefect.setOnClickListener(v1 -> {
-            if (!units.getText().equals("")){
-            Intent intent = new Intent(this, AddDefectActivity.class);
-            intent.putExtra("isTruckSelected", !selectedTrailers.isEmpty());
-            startActivityForResult(intent, 100);
-            } else {
+            if (idSelectedUnitText.getText().equals("") && selectedTrailers.isEmpty()){
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
                 alertDialog.setTitle("Unit not created")
                         .setMessage("Select unit or create manually!")
                         .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
                 AlertDialog alert = alertDialog.create();
                 alert.show();
+            }else{
+                Intent intent = new Intent(this, AddDefectActivity.class);
+                intent.putExtra("isUnitSelected", !idSelectedUnitText.getText().equals(""));
+                intent.putExtra("isTruckSelected", !selectedTrailers.isEmpty());
+                startActivityForResult(intent, 100);
             }
         });
 
         defects.setOnClickListener(v1 -> {
+            if (idSelectedUnitText.getText().equals("") && selectedTrailers.isEmpty()){
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+                alertDialog.setTitle("Unit not created")
+                        .setMessage("Select unit or create manually!")
+                        .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
+                AlertDialog alert = alertDialog.create();
+                alert.show();
+            }else{
                 Intent intent = new Intent(this, AddDefectActivity.class);
+                intent.putExtra("isUnitSelected", !idSelectedUnitText.getText().equals(""));
                 intent.putExtra("isTruckSelected", !selectedTrailers.isEmpty());
                 startActivityForResult(intent, 100);
+            }
 
         });
     }
 
     private void createDialog(ViewGroup group, String title, String hint, int type) {
 
-        CustomDialogClass dialogClass = new CustomDialogClass(this,title,hint);
-        dialogClass.setAlerrtDialogItemClickInterface(() ->{
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.custom_dialog);
+        TextView header = dialog.findViewById(R.id.idHeaderTv);
+        EditText editText =  dialog.findViewById(R.id.idDialogEdit);
+        TextView save = dialog.findViewById(R.id.idDialogSave);
+        TextView cancel = dialog.findViewById(R.id.idDialogCancel);
 
-            if (type == 1 && !dvirSharedPref.getDVIR().equalsIgnoreCase("")) {
-                daoViewModel.insertVehicle(new VehiclesEntity(dvirSharedPref.getDVIR()));
-            } else if (type == 2 && !dvirSharedPref.getDVIR().equalsIgnoreCase("")) {
-                try {
-                    daoViewModel.insertTrailer(new TrailersEntity(dvirSharedPref.getDVIR()));
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            } else if (type == 1 && dvirSharedPref.getDVIR().equalsIgnoreCase("")) {
-                Toast.makeText(this, "Insert Unit Number!!!", Toast.LENGTH_SHORT).show();
-            } else if (type == 2 && dvirSharedPref.getDVIR().equalsIgnoreCase("")) {
+        cancel.setOnClickListener(view -> {
+            dialog.dismiss();
+        });
+
+        save.setOnClickListener(view -> {
+            if (!editText.getText().toString().equalsIgnoreCase("")){
+                dialog.dismiss();
+                apiInterface.sendTrailer(new TrailNubmer(editText.getText().toString())).enqueue(new Callback<TrailersEntity>() {
+                    @Override
+                    public void onResponse(Call<TrailersEntity> call, Response<TrailersEntity> response) {
+                        if (response.isSuccessful()){
+                            try {
+                                daoViewModel.insertTrailer(new TrailersEntity(response.body().getTrailer_id(),response.body().getNumber()));
+                            } catch (ExecutionException | InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<TrailersEntity> call, Throwable t) {
+                    }
+                });
+            }else {
                 Toast.makeText(this, "Insert Trailer Number!!!", Toast.LENGTH_SHORT).show();
             }
         });
 
+        dialog.show();
 
-        dialogClass.show();
-
-//        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-//        dialog.setTitle(title);
-//
-//        View v = getLayoutInflater().inflate(R.layout.add_unit_trailer_dialog_view, group, false);
-//        EditText editText = v.findViewById(R.id.idAddUnitTrailerEdit);
-//        editText.setHint(hint);
-//
-//        dialog.setPositiveButton("Ok", (dialog12, which) -> {
-//            if (type == 1 && !editText.getText().toString().equalsIgnoreCase("")) {
-//                daoViewModel.insertVehicle(new VehiclesEntity(editText.getText().toString()));
-//            } else if (type == 2 && !editText.getText().toString().equalsIgnoreCase("")) {
-//                try {
-//                    daoViewModel.insertTrailer(new TrailersEntity(editText.getText().toString()));
-//                } catch (ExecutionException | InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            } else if (type == 1 && editText.getText().toString().equalsIgnoreCase("")) {
-//                Toast.makeText(this, "Insert Unit Number!!!", Toast.LENGTH_SHORT).show();
-//            } else if (type == 2 && editText.getText().toString().equalsIgnoreCase("")) {
-//                Toast.makeText(this, "Insert Trailer Number!!!", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
-//        dialog.setNegativeButton("Cancel", (dialog1, which) -> dialog1.cancel());
-//
-//        dialog.setView(v);
-//        dialog.show();
-
-//        editText.getText().toString().trim();
     }
 
     private String getDialogString() {

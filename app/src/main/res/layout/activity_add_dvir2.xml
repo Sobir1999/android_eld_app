@@ -115,19 +115,6 @@
                         android:textStyle="bold"
                         app:drawableStartCompat="@drawable/ic_truck_blue" />
 
-                        <TextView
-                            android:id="@+id/idAddDvirUnitText"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="New"
-                            android:textSize="16sp"
-                            android:layout_alignParentTop="true"
-                            android:layout_alignParentBottom="true"
-                            android:layout_alignParentEnd="true"
-                            android:fontFamily="@font/montserrat"
-                            android:textColor="@color/colorPrimary"
-                            app:drawableLeftCompat="@drawable/ic_icons8_plus__" />
-
                     </RelativeLayout>
 
                     <TextView
@@ -137,7 +124,7 @@
                         android:layout_height="wrap_content"
                         android:drawablePadding="10dp"
                         android:gravity="center_vertical"
-                        android:text="Select Unit"
+                        android:text="@string/select_unit"
                         android:textSize="15sp"
                         android:textStyle="bold"
                         android:paddingBottom="5dp"
@@ -145,7 +132,7 @@
                         android:paddingHorizontal="20dp"
                         android:textColorHint="?attr/customTextHintColor"
                         android:textColor="?attr/customTextHintColor"
-                        app:drawableEndCompat="@drawable/ic_baseline_keyboard_arrow_up_24" />
+                        app:drawableEndCompat="@drawable/keyboard_bottom_arrow" />
 
                     <View
                         android:layout_width="match_parent"
@@ -153,22 +140,45 @@
                         android:layout_marginHorizontal="20dp"
                         android:background="?attr/customBgViewColor"/>
 
-                    <TextView
-                        android:id="@+id/idAddDvirUnitNumber"
-                        style="@style/TextAppearance.AppCompat"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:padding="5dp"
+                        android:visibility="gone"
+                        android:id="@+id/idSelectedUnitLayout"
+                        android:layout_marginHorizontal="20dp"
+                        android:background="?attr/customBgColor"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:drawablePadding="10dp"
-                        android:gravity="center_vertical"
-                        android:text="Select Unit"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        android:paddingVertical="5dp"
-                        android:fontFamily="@font/montserrat"
-                        android:paddingHorizontal="20dp"
-                        android:textColorHint="?attr/customTextHintColor"
-                        android:textColor="?attr/customTextHintColor"
-                        app:drawableEndCompat="@drawable/keyboard_bottom_arrow" />
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/idSelectedUnitText"
+                            android:layout_width="0dp"
+                            android:gravity="center_vertical"
+                            android:textColor="?attr/customTextColor"
+                            android:textSize="14sp"
+                            app:layout_constraintRight_toLeftOf="@id/idSelectedUnitDelete"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            android:layout_height="wrap_content"
+                            tools:ignore="MissingConstraints" />
+
+                        <View
+                            app:layout_constraintTop_toBottomOf="@id/idSelectedUnitDelete"
+                            app:layout_constraintLeft_toLeftOf="@id/idSelectedUnitText"
+                            app:layout_constraintRight_toRightOf="@id/idSelectedUnitText"
+                            android:background="@color/design_default_color_primary_dark"
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            tools:ignore="MissingConstraints" />
+
+                        <ImageView
+                            android:id="@+id/idSelectedUnitDelete"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:layout_width="wrap_content"
+                            android:src="@drawable/trailer_delete"
+                            android:layout_height="wrap_content"
+                            tools:ignore="MissingConstraints" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
                 </LinearLayout>
@@ -200,13 +210,13 @@
                             style="@style/TextAppearance.AppCompat.Medium"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentBottom="true"
                             android:drawablePadding="10dp"
                             android:fontFamily="@font/montserrat"
                             android:gravity="center_vertical"
                             android:text="@string/trailers"
-                            android:layout_alignParentStart="true"
-                            android:layout_alignParentTop="true"
-                            android:layout_alignParentBottom="true"
                             android:textColor="@color/colorPrimary"
                             android:textSize="17sp"
                             android:textStyle="bold"
@@ -242,7 +252,7 @@
                         android:fontFamily="@font/montserrat"
                         android:textStyle="bold"
                         android:textColor="?attr/customTextHintColor"
-                        app:drawableEndCompat="@drawable/ic_baseline_keyboard_arrow_up_24" />
+                        app:drawableEndCompat="@drawable/keyboard_bottom_arrow" />
 
                     <View
                         android:layout_width="wrap_content"
@@ -252,6 +262,7 @@
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/idTrailersRecyclerView"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="20dp" />
@@ -263,6 +274,7 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/idNoDefectSelected"
                             style="@style/TextAppearance.AppCompat.Medium"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -279,6 +291,7 @@
                             />
 
                         <TextView
+                            android:id="@+id/idSelectDefect"
                             style="@style/TextAppearance.AppCompat.Large"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -370,7 +383,7 @@
                             android:fontFamily="@font/nobile"
                             android:hint="Create time"
                             android:textAlignment="viewEnd"
-                            android:textColor="?attr/customTextColor"
+                            android:textColor="@color/colorPrimary"
                             android:textColorHint="@color/colorPrimary"
                             android:textSize="17sp"
                             android:textStyle="bold"
@@ -411,6 +424,7 @@
                             android:hint="Your Location"
                             android:inputType="text"
                             android:textSize="17sp"
+                            android:imeOptions="flagNoExtractUi"
                             android:textAlignment="viewEnd"
                             android:textStyle="bold"
                             android:fontFamily="@font/nobile"

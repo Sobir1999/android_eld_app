@@ -10,9 +10,11 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import com.iosix.eldblesample.fragments.GeneralFragment;
 import com.iosix.eldblesample.models.User;
+import com.iosix.eldblesample.models.eld_records.LiveDataRecord;
 import com.iosix.eldblesample.roomDatabase.converter.Converter;
+import com.iosix.eldblesample.roomDatabase.converter.TrailerConverter;
+import com.iosix.eldblesample.roomDatabase.converter.TrailerConverterString;
 import com.iosix.eldblesample.roomDatabase.daos.DVIRDao;
 import com.iosix.eldblesample.roomDatabase.daos.DayDao;
 import com.iosix.eldblesample.roomDatabase.daos.GeneralDao;
@@ -27,6 +29,7 @@ import com.iosix.eldblesample.roomDatabase.entities.MainOfficeEntity;
 import com.iosix.eldblesample.roomDatabase.entities.MechanicSignatureEntity;
 import com.iosix.eldblesample.roomDatabase.entities.SignatureEntity;
 import com.iosix.eldblesample.roomDatabase.entities.TrailerDefectsEntity;
+import com.iosix.eldblesample.roomDatabase.entities.TrailerId;
 import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
 import com.iosix.eldblesample.roomDatabase.entities.UnitDefectsEntity;
 import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
@@ -35,9 +38,9 @@ import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
         TrailersEntity.class, TrailerDefectsEntity.class,
         UnitDefectsEntity.class, VehiclesEntity.class,
         MainOfficeEntity.class, SignatureEntity.class,
-        MechanicSignatureEntity.class, User.class
-}, version = 15)
-@TypeConverters(Converter.class)
+        MechanicSignatureEntity.class, User.class, TrailerId.class, LiveDataRecord.class,
+}, version = 30)
+@TypeConverters({Converter.class, TrailerConverter.class, TrailerConverterString.class})
 public abstract class StatusTruckRoomDatabase extends RoomDatabase {
 
     public abstract StatusTruckDao statusTruckDao();

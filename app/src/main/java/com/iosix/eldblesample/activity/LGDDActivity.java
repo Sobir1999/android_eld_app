@@ -1,7 +1,12 @@
 package com.iosix.eldblesample.activity;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -15,17 +20,35 @@ import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.adapters.LGDDFragmentAdapter;
 import com.iosix.eldblesample.base.BaseActivity;
 import com.iosix.eldblesample.models.ExampleSMSModel;
+import com.iosix.eldblesample.retrofit.APIInterface;
+import com.iosix.eldblesample.retrofit.ApiClient;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
+import com.iosix.eldblesample.shared_prefs.SignaturePrefs;
+import com.iosix.eldblesample.utils.ImageUtils;
+import com.iosix.eldblesample.utils.UploadRequestBody;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class LGDDActivity extends BaseActivity {
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class LGDDActivity extends BaseActivity{
 
     private TextView textFrag;
     private int index = 0;
@@ -34,6 +57,10 @@ public class LGDDActivity extends BaseActivity {
     private String currDay;
     private String mParams;
     private final String time = "" + Calendar.getInstance().getTime();
+    private APIInterface apiInterface;
+    private Uri uri;
+    private SignaturePrefs signaturePrefs;
+
 
     @Override
     protected int getLayoutId() {
@@ -55,6 +82,9 @@ public class LGDDActivity extends BaseActivity {
 
         DayDaoViewModel dayDaoViewModel;
         dayDaoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
+
+        apiInterface = ApiClient.getClient().create(APIInterface.class);
+        signaturePrefs = new SignaturePrefs(this);
 
         dayDaoViewModel.getMgetAllDays().observe(this, dayEntities -> {
             LGDDActivity.this.dayEntities = dayEntities;
@@ -143,5 +173,10 @@ public class LGDDActivity extends BaseActivity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

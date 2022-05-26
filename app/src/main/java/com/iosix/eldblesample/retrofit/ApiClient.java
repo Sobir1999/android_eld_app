@@ -17,19 +17,19 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiClient {
 
     private static final Context context = BaseActivity.appContext;
-     public static final String BASE_URL = "https://shaxbozaka-logistic.herokuapp.com/";
+     public static final String BASE_URL = "https://fastlogz.herokuapp.com/";
     private static Retrofit retrofit = null;
 
     public static Retrofit getClient() {
 
         TokenServiceHolder myServiceHolder = new TokenServiceHolder();
-        SessionManager sessionManager = new SessionManager(context);
+        SessionManager sessionManager = SessionManager.getInstance(context.getApplicationContext());
         OkHttpClient okHttpClient;
 
         if (sessionManager.fetchAccessToken() != null){
             okHttpClient = new OkHttpClientInstance.Builder(context, myServiceHolder)
-                .addHeader("Authorization", "Bearer " + sessionManager.fetchAccessToken())
-                .build();
+                    .addHeader("Authorization", "Bearer " + sessionManager.fetchAccessToken())
+                    .build();
         }else {
             okHttpClient = new OkHttpClientInstance.Builder(context, myServiceHolder)
                     .build();

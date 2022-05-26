@@ -10,37 +10,65 @@
         android:id="@+id/idDVIRContainer2"
         android:orientation="vertical"
         android:visibility="visible"
-        android:layout_margin="10dp"
-        android:background="?attr/customBgColor">
+        android:background="@drawable/background_main_view">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingVertical="15dp"
-            android:paddingHorizontal="10dp">
+            android:layout_marginVertical="8dp"
+            android:layout_marginHorizontal="10dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 android:text="@string/vehicle"
                 android:textSize="15sp"
                 android:id="@+id/TvVehicle"
-                android:textColor="?attr/customTextColor"
+                android:fontFamily="@font/montserrat"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/TvVehicle"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:text="@string/trailer"
+                android:textSize="15sp"
+                android:visibility="gone"
+                android:fontFamily="@font/montserrat"
+                android:id="@+id/TvTrailer"
+                android:textColor="@color/colorPrimary"
                 android:textStyle="bold"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/TvVehicle"
+                android:textStyle="bold"
+                android:fontFamily="@font/montserrat"
+                android:textColor="?attr/customTextHintColor"
+                android:textSize="15sp"
+                android:layout_marginStart="4dp"
+                android:id="@+id/idTVVehicleName" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/idTVVehicleName"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/TvVehicle"
                 android:textStyle="bold"
-                android:textColor="?attr/customTextColor"
+                android:fontFamily="@font/montserrat"
+                android:visibility="gone"
+                android:layout_marginStart="4dp"
+                android:textColor="?attr/customTextHintColor"
                 android:textSize="15sp"
-                android:id="@+id/idTVVehicleName" />
+                android:id="@+id/idTVTrailerName" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -68,189 +96,211 @@
             android:layout_height="0.8dp"
             android:background="?attr/customBgViewColor"/>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingVertical="15dp"
-            android:paddingHorizontal="10dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                android:id="@+id/ImageView" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@id/ImageView"
-                android:textStyle="bold"
-                android:textSize="15sp"
-                android:layout_marginStart="5dp"
-                android:id="@+id/idTvVehicleSatisfaction" />
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                android:src="@drawable/ic_delete"
-                android:id="@+id/idDVIRDelete"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingVertical="15dp"
-            android:paddingHorizontal="10dp">
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                android:id="@+id/ImageView2"
-                android:src="@drawable/ic_baseline_access_time_24"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@id/ImageView2"
-                android:textColor="?attr/customTextHintColor"
-                android:layout_marginStart="5dp"
-                android:textSize="14sp"
-                android:id="@+id/idTvVehicleTime" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="15dp"
-            android:paddingHorizontal="10dp">
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                android:id="@+id/ImageView3"
-                android:src="@drawable/ic_baseline_location_on_24"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@id/ImageView3"
-                android:textColor="?attr/customTextHintColor"
-                android:textAllCaps="true"
-                android:textSize="14sp"
-                android:layout_marginStart="5dp"
-                android:id="@+id/idTvVehicleLocation" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.8dp"
-            android:id="@+id/idDVIRView"
-            android:background="?attr/customBgViewColor"
-            android:layout_marginHorizontal="15dp"/>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="visible"
-            android:id="@+id/idUnitsContainer"
-            android:paddingHorizontal="15dp"
-            android:paddingVertical="15dp">
+            android:visibility="gone"
+            android:id="@+id/idParentContainer">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/unit_defects"
-                android:id="@+id/UnitDefect"
-                android:textSize="15sp"
-                android:textColor="?attr/customTextColor"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/defects"
-                android:textSize="15sp"
-                android:textColor="?attr/customTextColor"
-                android:id="@+id/idUnitDefectName"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Trailer Defects"
-                android:textSize="15sp"
-                android:textColor="?attr/customTextColor"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/idTrailerDefect"
-                android:text="@string/defects"
-                android:textSize="15sp"
-                android:textColor="?attr/customTextColor"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/notes"
-                android:textSize="15sp"
-                android:textColor="?attr/customTextColor"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/notes"
-                android:textSize="15sp"
-                android:textColor="?attr/customTextColor"
-                android:id="@+id/idDVIRNotes"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/addDefect"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                style="@style/TextAppearance.AppCompat.Medium"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                android:drawablePadding="10dp"
-                android:gravity="center_vertical"
-                android:text="@string/no_defect_detected"
-                android:textColor="?attr/customTextColor"
-                app:drawableStartCompat="@drawable/defect_settings"
-                app:drawableTint="#aaa" />
+                android:layout_marginVertical="8dp"
+                android:layout_marginHorizontal="16dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:id="@+id/ImageView" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/ImageView"
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:layout_marginStart="5dp"
+                    android:id="@+id/idTvVehicleSatisfaction" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:src="@drawable/ic_delete"
+                    android:id="@+id/idDVIRDelete"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="8dp"
+                android:paddingHorizontal="16dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:id="@+id/ImageView2"
+                    android:src="@drawable/ic_baseline_access_time_24"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/ImageView2"
+                    android:textColor="?attr/customTextHintColor"
+                    android:layout_marginStart="5dp"
+                    android:textSize="14sp"
+                    android:id="@+id/idTvVehicleTime" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp"
+                android:paddingHorizontal="16dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:id="@+id/ImageView3"
+                    android:src="@drawable/ic_baseline_location_on_24"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/ImageView3"
+                    android:textColor="?attr/customTextHintColor"
+                    android:textAllCaps="true"
+                    android:textSize="14sp"
+                    android:layout_marginStart="5dp"
+                    android:id="@+id/idTvVehicleLocation" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.8dp"
+                android:id="@+id/idDVIRView"
+                android:background="?attr/customBgViewColor"
+                android:layout_marginHorizontal="15dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible"
+                android:id="@+id/idUnitsContainer"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginVertical="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/unit_defects"
+                    android:id="@+id/UnitDefect"
+                    android:fontFamily="@font/montserrat"
+                    android:textSize="15sp"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/defects"
+                    android:fontFamily="@font/montserrat"
+                    android:textSize="15sp"
+                    android:textColor="?attr/customTextHintColor"
+                    android:id="@+id/idUnitDefectName"/>
+
+                <TextView
+                    android:id="@+id/idTrailerDefects"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/montserrat"
+                    android:layout_marginTop="8dp"
+                    android:text="Trailer Defects"
+                    android:textSize="15sp"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/idTrailerDefect"
+                    android:fontFamily="@font/montserrat"
+                    android:text="@string/defects"
+                    android:textSize="15sp"
+                    android:textColor="?attr/customTextHintColor"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/notes"
+                    android:fontFamily="@font/montserrat"
+                    android:textSize="15sp"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/notes"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/montserrat"
+                    android:textColor="?attr/customTextHintColor"
+                    android:id="@+id/idDVIRNotes"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/addDefect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:drawablePadding="10dp"
+                    android:fontFamily="@font/montserrat"
+                    android:gravity="center_vertical"
+                    android:text="@string/no_defect_detected"
+                    android:textColor="?attr/customTextHintColor"
+                    app:drawableStartCompat="@drawable/defect_settings"
+                    />
+
+            </LinearLayout>
 
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:background="?attr/customBgViewColor"/>
 
     </LinearLayout>
 

@@ -26,6 +26,7 @@ public class LanguageActivity extends BaseActivity {
 
     private RadioButton eng, es, fr, ru, uz;
     private Context context;
+    private ImageView imageView;
 
     @Override
     protected int getLayoutId() {
@@ -48,17 +49,15 @@ public class LanguageActivity extends BaseActivity {
         ru = findViewById(R.id.idRadioRussian);
 
         //    private LinearLayout eng_l, es_l, fr_l, ru_l, uz_l;
-        ImageView imageBack = findViewById(R.id.idImageBack);
+        imageView = findViewById(R.id.idImageBack);
         TextView saveLang = findViewById(R.id.idSaveLanguage);
 
-        imageBack.setOnClickListener(v -> {
-            assert getFragmentManager() != null;
-            getFragmentManager().popBackStack();
+        imageView.setOnClickListener(v -> {
+            onBackPressed();
         });
 
         saveLang.setOnClickListener(v -> {
             RadioGroup radioGroup = findViewById(R.id.idLangRadioGroup);
-            Log.d("LAN", "onClick: " + findViewById(radioGroup.getCheckedRadioButtonId()));
             setSelectLang(radioGroup.getCheckedRadioButtonId());
             Intent intent =  new Intent(context, MainActivity.class);
             startActivityForResult(intent,1);
@@ -105,31 +104,6 @@ public class LanguageActivity extends BaseActivity {
         res.updateConfiguration(conf, dm);
         userData.saveLang(lang);
     }
-
-//        public void setLocale(String lang) {
-//            Locale myLocale = new Locale(lang);
-//            Resources res = getResources();
-//            DisplayMetrics dm = res.getDisplayMetrics();
-//            Configuration conf = res.getConfiguration();
-//            conf.locale = myLocale;
-//            res.updateConfiguration(conf, dm);
-//
-//            saveLanguage(lang);
-//        }
-
-//        public void saveLanguage(String language) {
-//            SharedPreferences pref = requireContext()
-//                    .getSharedPreferences("MyPref", Context.MODE_PRIVATE);
-//            SharedPreferences.Editor editor = pref.edit();
-//            editor.putString("lan", language);
-//            editor.apply();
-//        }
-//
-//        private String loadLocal() {
-//            SharedPreferences pref = requireContext()
-//                    .getSharedPreferences("MyPref", Context.MODE_PRIVATE);
-//            return pref.getString("lan", "en");
-//        }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode,Intent data) {

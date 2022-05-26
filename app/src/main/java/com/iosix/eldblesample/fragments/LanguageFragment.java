@@ -75,7 +75,6 @@ import static com.iosix.eldblesample.MyApplication.userData;
 
         saveLang.setOnClickListener(v -> {
             RadioGroup radioGroup = view.findViewById(R.id.idLangRadioGroup);
-            Log.d("LAN", "onClick: " + view.findViewById(radioGroup.getCheckedRadioButtonId()));
             setSelectLang(radioGroup.getCheckedRadioButtonId());
             Intent intent =  new Intent(context, MainActivity.class);
             startActivityForResult(intent,1);

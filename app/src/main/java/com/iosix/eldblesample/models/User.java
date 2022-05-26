@@ -3,8 +3,14 @@ package com.iosix.eldblesample.models;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverter;
+import androidx.room.TypeConverters;
 
 import com.google.gson.annotations.SerializedName;
+import com.iosix.eldblesample.roomDatabase.converter.TrailerConverter;
+import com.iosix.eldblesample.roomDatabase.converter.TrailerConverterString;
+
+import java.util.ArrayList;
 
 import retrofit2.http.Query;
 
@@ -44,8 +50,9 @@ public class User {
     private String timeZone;
 
     @SerializedName("trail_number")
+    @TypeConverters(TrailerConverterString.class)
     @ColumnInfo(name = "trail_number")
-    private String trailNumber;
+    private ArrayList<String> trailNumber;
 
     @SerializedName("notes_driver")
     @ColumnInfo(name = "notes_driver")
@@ -63,8 +70,12 @@ public class User {
     @ColumnInfo(name = "main_office")
     private String mainOffice;
 
+    @SerializedName("company")
+    @ColumnInfo(name = "company")
+    private String company;
+
     public User(String name, String lastName, String phone, String driverId, String coDriver, String homeTerminalAddress,
-                String timeZone, String trailNumber, String notes, String vehicleId, String image, String mainOffice) {
+                String timeZone, ArrayList<String> trailNumber, String notes, String vehicleId, String image, String mainOffice,String company) {
         this.name = name;
         this.lastName = lastName;
         this.phone = phone;
@@ -77,6 +88,7 @@ public class User {
         this.vehicleId = vehicleId;
         this.image = image;
         this.mainOffice = mainOffice;
+        this.company = company;
     }
 
     public int getId() {
@@ -143,11 +155,11 @@ public class User {
         this.timeZone = timeZone;
     }
 
-    public String getTrailNumber() {
+    public ArrayList<String> getTrailNumber() {
         return trailNumber;
     }
 
-    public void setTrailNumber(String trailNumber) {
+    public void setTrailNumber(ArrayList<String> trailNumber) {
         this.trailNumber = trailNumber;
     }
 
@@ -181,5 +193,13 @@ public class User {
 
     public void setMainOffice(String mainOffice) {
         this.mainOffice = mainOffice;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
     }
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/shareMenu"
@@ -10,7 +11,7 @@
     </item>
     <item
         android:id="@+id/connectMenu"
-        android:icon="@drawable/logo"
+        android:icon="@drawable/ic_lolll"
         app:showAsAction="ifRoom"
         android:title="">
     </item>

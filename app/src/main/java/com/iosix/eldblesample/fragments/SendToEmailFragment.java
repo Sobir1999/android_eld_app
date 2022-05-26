@@ -75,7 +75,6 @@ public class SendToEmailFragment extends Fragment {
         SharedPreferences prefs = this.getActivity().getSharedPreferences(MY_PREFS_NAME, Context.MODE_PRIVATE);
         login = prefs.getString("login", null);
         password = prefs.getString("password", null);
-        Log.d("SendTo", "onCreateView: " + login);
         pdf();
         tvPdf.setTextColor(Color.BLUE);
         SpannableString content = new SpannableString(tvPdf.getText());
@@ -216,12 +215,8 @@ public class SendToEmailFragment extends Fragment {
                         etEmail.getText().toString(),
                         path);
 
-
-                Log.d("SendTo", "onSuccess: " + etSubject.getText().toString());
-                Log.d("SendTO", "onSuccess: " + path);
             }
             catch (Exception e){
-                Log.e(TAG, "doInBackground: "+e.getMessage() );
             }
             return null;
         }

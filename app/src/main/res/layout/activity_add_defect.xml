@@ -70,7 +70,17 @@
         android:id="@+id/tabLayout"
         app:tabMode="fixed"
         android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"/>
+        android:layout_height="40dp"
+        android:background="?attr/customBgColor"
+        android:layout_marginHorizontal="50dp"
+        android:elevation="6dp"
+        app:tabGravity="fill"
+        app:tabMaxWidth="0dp"
+        app:tabTextAppearance="@style/textfontstyle"
+        app:tabIndicatorColor="@color/colorPrimary"
+        app:tabTextColor="?attr/customTextHintColor"
+        app:tabSelectedTextColor="@color/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewpager"

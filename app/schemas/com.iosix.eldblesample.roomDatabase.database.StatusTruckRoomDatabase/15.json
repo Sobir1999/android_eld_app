@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 15,
-    "identityHash": "9312819f9ed0d871c75fddaaa3dff617",
+    "identityHash": "84461996ce6eaaccdb0c3f4bbe3f6115",
     "entities": [
       {
         "tableName": "log_table",
@@ -183,7 +183,7 @@
       },
       {
         "tableName": "general",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `driver_name` TEXT, `distance` TEXT, `vehicle` TEXT, `trailer1` TEXT, `trailer2` TEXT, `co_driver_name` TEXT, `from_info` TEXT, `to_info` TEXT, `note` TEXT, `signature` BLOB, `day` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `distance` TEXT, `shipping_docs` TEXT, `vehicles` TEXT, `trailers` TEXT, `carrier` TEXT, `main_office` TEXT, `home_terminal_address` TEXT, `co_driver` TEXT, `from_address` TEXT, `to_address` TEXT, `notes` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -192,68 +192,68 @@
             "notNull": true
           },
           {
-            "fieldPath": "driver_name",
-            "columnName": "driver_name",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
             "fieldPath": "distance",
             "columnName": "distance",
             "affinity": "TEXT",
             "notNull": false
           },
           {
+            "fieldPath": "shippingDocs",
+            "columnName": "shipping_docs",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
             "fieldPath": "vehicle",
-            "columnName": "vehicle",
+            "columnName": "vehicles",
             "affinity": "TEXT",
             "notNull": false
           },
           {
-            "fieldPath": "trailer1",
-            "columnName": "trailer1",
+            "fieldPath": "trailers",
+            "columnName": "trailers",
             "affinity": "TEXT",
             "notNull": false
           },
           {
-            "fieldPath": "trailer2",
-            "columnName": "trailer2",
+            "fieldPath": "carrier",
+            "columnName": "carrier",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "mainOffice",
+            "columnName": "main_office",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "homrTerminalAddress",
+            "columnName": "home_terminal_address",
             "affinity": "TEXT",
             "notNull": false
           },
           {
             "fieldPath": "co_driver_name",
-            "columnName": "co_driver_name",
+            "columnName": "co_driver",
             "affinity": "TEXT",
             "notNull": false
           },
           {
             "fieldPath": "from_info",
-            "columnName": "from_info",
+            "columnName": "from_address",
             "affinity": "TEXT",
             "notNull": false
           },
           {
             "fieldPath": "to_info",
-            "columnName": "to_info",
+            "columnName": "to_address",
             "affinity": "TEXT",
             "notNull": false
           },
           {
             "fieldPath": "note",
-            "columnName": "note",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "signature",
-            "columnName": "signature",
-            "affinity": "BLOB",
-            "notNull": false
-          },
-          {
-            "fieldPath": "day",
-            "columnName": "day",
+            "columnName": "notes",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -604,7 +604,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"9312819f9ed0d871c75fddaaa3dff617\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"84461996ce6eaaccdb0c3f4bbe3f6115\")"
     ]
   }
 }

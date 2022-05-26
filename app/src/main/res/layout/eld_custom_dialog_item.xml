@@ -5,6 +5,7 @@
     android:orientation="vertical"
     android:paddingVertical="10dp"
     android:paddingHorizontal="20dp"
+    android:background="@drawable/background_main_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -22,10 +23,18 @@
             android:layout_height="wrap_content" />
 
         <TextView
-            android:text="BT Connection"
+            android:id="@+id/idEldConnection"
+            android:text="Eld Connection"
             android:layout_marginHorizontal="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/idIsConnected"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:textColor="@color/colorPrimary"/>
     </LinearLayout>
 
     <View
@@ -94,7 +103,8 @@
         <ImageView
             android:src="@drawable/ic_baseline_info_24"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            app:tint="@color/colorPrimary" />
 
         <TextView
             android:text="Vehicle Info"
@@ -132,7 +142,7 @@
 
         <TextView
             android:text="19"
-            android:textColor="@color/alertColor"
+            android:textColor="@color/colorPrimary"
             android:textSize="16sp"
             app:layout_constraintRight_toRightOf="parent"
             android:background="@drawable/background_alert_text"
@@ -146,63 +156,63 @@
         android:layout_width="match_parent"
         android:layout_height="1dp" />
 
-    <LinearLayout
-        android:id="@+id/idSendDebugLog"
-        android:layout_marginVertical="10dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+<!--    <LinearLayout-->
+<!--        android:id="@+id/idSendDebugLog"-->
+<!--        android:layout_marginVertical="10dp"-->
+<!--        android:gravity="center_vertical"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content">-->
 
-        <ImageView
-            android:src="@drawable/ic_baseline_wifi_24"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+<!--        <ImageView-->
+<!--            android:src="@drawable/ic_baseline_wifi_24"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content" />-->
 
-        <TextView
-            android:text="Send debug logs"
-            android:layout_marginHorizontal="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+<!--        <TextView-->
+<!--            android:text="Send debug logs"-->
+<!--            android:layout_marginHorizontal="10dp"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content" />-->
+<!--    </LinearLayout>-->
 
-    <View
-        android:background="@color/colorBackgroundMainView"
-        android:layout_width="match_parent"
-        android:layout_height="1dp" />
+<!--    <View-->
+<!--        android:background="@color/colorBackgroundMainView"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="1dp" />-->
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/idFaultCode"
-        android:layout_marginVertical="10dp"
-        android:gravity="center_vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--        android:id="@+id/idFaultCode"-->
+<!--        android:layout_marginVertical="10dp"-->
+<!--        android:gravity="center_vertical"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content">-->
 
-        <ImageView
-            android:id="@+id/idFault"
-            android:src="@drawable/ic_baseline_warning_24"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints" />
+<!--        <ImageView-->
+<!--            android:id="@+id/idFault"-->
+<!--            android:src="@drawable/ic_baseline_warning_24"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            tools:ignore="MissingConstraints" />-->
 
-        <TextView
-            app:layout_constraintLeft_toRightOf="@id/idFault"
-            android:text="Faults Codes"
-            android:layout_marginHorizontal="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints" />
+<!--        <TextView-->
+<!--            app:layout_constraintLeft_toRightOf="@id/idFault"-->
+<!--            android:text="Faults Codes"-->
+<!--            android:layout_marginHorizontal="10dp"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            tools:ignore="MissingConstraints" />-->
 
-        <TextView
-            android:text="9"
-            android:textColor="@color/alertColor"
-            android:textSize="16sp"
-            app:layout_constraintRight_toRightOf="parent"
-            android:background="@drawable/background_alert_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+<!--        <TextView-->
+<!--            android:text="9"-->
+<!--            android:textColor="@color/alertColor"-->
+<!--            android:textSize="16sp"-->
+<!--            app:layout_constraintRight_toRightOf="parent"-->
+<!--            android:background="@drawable/background_alert_text"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            tools:ignore="MissingConstraints" />-->
+<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
 
     <View
         android:background="@color/colorBackgroundMainView"
@@ -216,8 +226,9 @@
 
         <TextView
             android:id="@+id/idEldDialConnect"
-            android:text="CONNECT"
-            android:textColor="@color/colorAccent"
+            android:text="@string/connect"
+            android:textColor="@color/colorPrimary"
+            android:fontFamily="@font/montserrat"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -225,8 +236,11 @@
 
         <TextView
             android:id="@+id/idEldDialCancel"
-            android:text="CANCEL"
-            android:textColor="@color/colorAccent"
+            android:text="@string/cancel"
+            android:textColor="@color/colorPrimary"
+            android:fontFamily="@font/montserrat"
+            android:textAllCaps="true"
+            app:font = "@font/montserrat"
             app:layout_constraintRight_toLeftOf="@id/idEldDialConnect"
             android:layout_marginHorizontal="20dp"
             android:layout_width="wrap_content"

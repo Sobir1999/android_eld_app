@@ -47,4 +47,9 @@ public class MyApplication extends Application {
             manager.createNotificationChannel(notificationChannel);
         }
     }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+    }
 }

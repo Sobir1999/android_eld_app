@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".activity.LoginActivity"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     android:background="?attr/customBgViewColor">
 
     <ScrollView
@@ -21,10 +22,13 @@
         android:orientation="vertical">
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:src="@drawable/logo"
-        android:layout_marginVertical="30dp"/>
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/ic_lolll"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="16dp"
+        app:tint="@color/colorPrimary" />
 
 
     <EditText
@@ -32,15 +36,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/email"
+        android:imeOptions="flagNoExtractUi"
         android:textStyle="bold"
         android:drawableStart="@drawable/email"
         android:drawablePadding="10dp"
         android:textSize="16sp"
         android:fontFamily="@font/montserrat"
-        android:layout_marginHorizontal="50dp"
+        android:layout_marginHorizontal="70dp"
         android:textColorHint="?attr/customTextHintColor"
         android:textColor="?attr/customTextColor"
-        android:paddingBottom="20dp"
+        android:paddingBottom="16dp"
         android:inputType="textEmailAddress" />
 
     <EditText
@@ -49,30 +54,31 @@
         android:layout_height="wrap_content"
         android:hint="@string/password"
         android:textStyle="bold"
-        android:layout_marginHorizontal="50dp"
+        android:imeOptions="flagNoExtractUi"
+        android:layout_marginHorizontal="70dp"
         android:drawableStart="@drawable/lock"
         android:drawablePadding="10dp"
         android:textSize="16sp"
         android:textColor="?attr/customTextColor"
         android:fontFamily="@font/montserrat"
         android:textColorHint="?attr/customTextHintColor"
-        android:layout_marginTop="20dp"
-        android:paddingBottom="20dp"
+        android:layout_marginTop="16dp"
+        android:paddingBottom="16dp"
         android:inputType="textPassword"/>
 
     <Button
         android:id="@+id/idLoginButton"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="45dp"
         android:background="@drawable/button_bg"
         android:text="@string/log_in"
         android:textSize="17sp"
-        android:layout_marginHorizontal="50dp"
+        android:layout_marginHorizontal="100dp"
         android:fontFamily="@font/montserrat"
         android:textStyle="bold"
         android:textAllCaps="false"
         android:textColor="@color/colorPrimary"
-        android:layout_marginTop="30dp"/>
+        android:layout_marginTop="25dp"/>
 
     </LinearLayout>
 

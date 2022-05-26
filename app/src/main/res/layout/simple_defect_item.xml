@@ -6,25 +6,27 @@
     android:layout_marginTop="12dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <RadioButton
+    <CheckedTextView
         android:id="@+id/idRadioDefect"
         android:text="@string/english"
         android:textSize="16sp"
         android:layoutDirection="rtl"
         android:textAlignment="textStart"
         android:layout_gravity="start"
-        android:theme="@style/MyRadioButton"
         android:fontFamily="@font/montserrat"
-        android:textColor="?attr/customTextHintColor"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="10dp"
+        android:textColor="@drawable/text_color_selected"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
+
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         app:layout_constraintTop_toBottomOf="@id/idRadioDefect"
-        android:background="?attr/customTextHintColor"/>
+        android:background="@color/customViewColor"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
