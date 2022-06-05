@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.iosix.eldblesample.R;
+import com.iosix.eldblesample.shared_prefs.TinyDB;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,15 +24,22 @@ import static com.iosix.eldblesample.utils.Constants.unitDefects;
 
 public class AddDefectFragment extends Fragment {
 
-    private final List<String> selectedList = new ArrayList<>();
+    private final ArrayList<String> selectedList = new ArrayList<>();
     final int defectType;// 1- Unit Defects, 2- Trailer Defects
     String[] defectsList;
+    TinyDB tinyDB;
     RadioButton radioButton;
 
     public AddDefectFragment(int defectType) {
         this.defectType = defectType;
         if(defectType == 1) defectsList = unitDefects;
         else defectsList = trailerDefects;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        tinyDB = new TinyDB(requireContext());
     }
 
     @Override
@@ -64,19 +73,13 @@ public class AddDefectFragment extends Fragment {
         } else {
             selectedList.add(s);
         }
-        userData.addDefects(defectType, defects());
-    }
-
-        public String defects(){
-        StringBuilder defects = new StringBuilder();
-        for(int i = 0; i < selectedList.size(); i++){
-            defects.append(selectedList.get(i)).append("\n");
-        }
-        return defects.toString();
+        tinyDB.putListString(defectType,selectedList);
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onDestroy() {
+        super.onDestroy();
+        requireActivity().getViewModelStore().clear();
+        this.getViewModelStore().clear();
     }
 }

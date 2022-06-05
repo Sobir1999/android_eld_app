@@ -5,12 +5,18 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.iosix.eldblesample.models.ApkVersion;
+import com.iosix.eldblesample.models.Data;
+import com.iosix.eldblesample.models.LoginResponse;
 import com.iosix.eldblesample.models.SendDvir;
 import com.iosix.eldblesample.models.Status;
 import com.iosix.eldblesample.models.Student;
 import com.iosix.eldblesample.models.TrailNubmer;
+import com.iosix.eldblesample.models.User;
+import com.iosix.eldblesample.models.VehicleData;
+import com.iosix.eldblesample.models.VehicleList;
 import com.iosix.eldblesample.models.eld_records.BufferRecord;
 import com.iosix.eldblesample.models.eld_records.CachedEngineRecord;
 import com.iosix.eldblesample.models.eld_records.CashedMotionRecord;
@@ -26,15 +32,16 @@ import com.iosix.eldblesample.models.eld_records.TransmissionRecord;
 import com.iosix.eldblesample.retrofit.ApiRepository;
 import com.iosix.eldblesample.roomDatabase.entities.GeneralEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LiveDataEntitiy;
+import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
 
 import okhttp3.MultipartBody;
 
 public class EldJsonViewModel extends AndroidViewModel {
-    private ApiRepository repository;
+    private final ApiRepository repository;
 
     public EldJsonViewModel(@NonNull Application application) {
         super(application);
-        repository = new ApiRepository(application);
+        repository = ApiRepository.getInstance();
     }
 
     public void sendBufferRecord(BufferRecord data) {
@@ -81,64 +88,65 @@ public class EldJsonViewModel extends AndroidViewModel {
         repository.sendTransmission(data);
     }
 
-
-    public void createUser(Student student) {
-        repository.createUser(student);
+    public MutableLiveData<LoginResponse> getResponse(Student student) {
+        return repository.getLoginResponse(student);
     }
 
-    public void getUser(){
-        repository.getUser();
+
+
+    public MutableLiveData<User> getUser(){
+        return repository.getUser();
     }
 
-    public void getAllDrivers(){
-        repository.getAllDrivers();
+    public MutableLiveData<Data> getAllDrivers(){
+        return repository.getAllDrivers();
     }
 
-    public void getAllVehicles(){
-        repository.getAllVehicles();
+    public MutableLiveData<VehicleData> getAllVehicles(){
+        return repository.getAllVehicles();
     }
 
-    public void refreshToken(String token){
-        repository.refreshToken(token);
+    public MutableLiveData<LoginResponse> refreshToken(String token){
+        return repository.refreshToken(token);
     }
 
-    public void postStatus(Status status){
-        repository.postStatus(status);
+    public MutableLiveData<Status> postStatus(Status status){
+        return repository.postStatus(status);
     }
 
-    public void getVehicle(){
-        repository.getVehicle();
+    public MutableLiveData<VehicleList> getVehicle(){
+        return repository.getVehicle();
     }
 
-    public void getCoDriver(){
-        repository.getCoDriver();
+    public MutableLiveData<User> getCoDriver(){
+        return repository.getCoDriver();
     }
 
-    public void sendGeneralInfo(GeneralEntity entity){
-        repository.sendGenerelInfo(entity);
+    public MutableLiveData<GeneralEntity> sendGeneralInfo(GeneralEntity entity){
+        return repository.sendGenerelInfo(entity);
     }
 
-    public void sendTrailer(TrailNubmer trailNubmer){
-        repository.sendTrailer(trailNubmer);
+    public MutableLiveData<TrailersEntity> sendTrailer(TrailNubmer trailNubmer){
+        return repository.sendTrailer(trailNubmer);
     }
 
-    public void sendDvir(SendDvir sendDvir){
-        repository.sendDvir(sendDvir);
+    public MutableLiveData<SendDvir> sendDvir(SendDvir sendDvir){
+        return repository.sendDvir(sendDvir);
     }
 
-    public void sendSignature(MultipartBody.Part body){
-        repository.sendSignature(body);
+    public MutableLiveData<MultipartBody.Part> sendSignature(MultipartBody.Part body){
+        return repository.sendSignature(body);
     }
 
-    public void sendEldNum(Eld eld){
-        repository.sendEldNum(eld);
+    public MutableLiveData<Eld> sendEldNum(Eld eld){
+        return repository.sendEldNum(eld);
     }
 
-    public void sendLocalData(LiveDataEntitiy liveDataEntitiy){
-        repository.sendLocalData(liveDataEntitiy);
+    public MutableLiveData<LiveDataEntitiy> sendLocalData(LiveDataEntitiy liveDataEntitiy){
+        return repository.sendLocalData(liveDataEntitiy);
     }
 
-    public void sendApkVersion(ApkVersion apkVersion){
-        repository.sendApkVersion(apkVersion);
+    public MutableLiveData<ApkVersion> sendApkVersion(ApkVersion apkVersion){
+        return repository.sendApkVersion(apkVersion);
     }
 }

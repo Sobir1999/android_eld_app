@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 
+import com.iosix.eldblesample.shared_prefs.TinyDB;
 import com.iosix.eldblesample.shared_prefs.UserData;
 
 import java.security.Security;

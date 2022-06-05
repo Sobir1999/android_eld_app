@@ -33,6 +33,7 @@ public class RecapFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        daoViewModel = ViewModelProviders.of(requireActivity()).get(DayDaoViewModel.class);
 
     }
 
@@ -40,8 +41,6 @@ public class RecapFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.recap_fragment,container,false);
-        daoViewModel = new DayDaoViewModel(requireActivity().getApplication());
-        daoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
         LinearLayout linearLayout = view.findViewById(R.id.idRecapLinear);
 
         daoViewModel.getMgetAllDays().observe((LifecycleOwner) requireContext(), dayEntities -> {

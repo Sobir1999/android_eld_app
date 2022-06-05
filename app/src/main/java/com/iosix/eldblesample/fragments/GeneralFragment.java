@@ -1,19 +1,17 @@
 package com.iosix.eldblesample.fragments;
 
-import static android.content.Context.INPUT_METHOD_SERVICE;
+import static com.iosix.eldblesample.enums.Day.stringToDate;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -22,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -35,14 +34,9 @@ import com.iosix.eldblesample.adapters.TrailerRecyclerAdapter;
 import com.iosix.eldblesample.adapters.VehiclesListAdapter;
 import com.iosix.eldblesample.models.ExampleSMSModel;
 import com.iosix.eldblesample.models.TrailNubmer;
-import com.iosix.eldblesample.models.User;
-import com.iosix.eldblesample.models.VehicleList;
-import com.iosix.eldblesample.retrofit.APIInterface;
-import com.iosix.eldblesample.retrofit.ApiClient;
 import com.iosix.eldblesample.roomDatabase.entities.GeneralEntity;
 import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
 import com.iosix.eldblesample.shared_prefs.DriverSharedPrefs;
-import com.iosix.eldblesample.shared_prefs.SessionManager;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
 import com.iosix.eldblesample.viewModel.GeneralViewModel;
@@ -53,28 +47,23 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 public class GeneralFragment extends Fragment {
 
-    private ArrayList<TrailersEntity> selectedTrailers = new ArrayList<>();
-    private ArrayList<String> selectedTrailersNumber = new ArrayList<>();
+    private final ArrayList<TrailersEntity> selectedTrailers = new ArrayList<>();
+    private final ArrayList<String> selectedTrailersNumber = new ArrayList<>();
+    private final ArrayList<GeneralEntity> generalEntities = new ArrayList<>();
     private DayDaoViewModel daoViewModel;
     private UserViewModel userViewModel;
     private GeneralViewModel generalViewModel;
-    private SessionManager sessionManager;
     private DriverSharedPrefs driverSharedPrefs;
-    private APIInterface apiInterface;
     private EldJsonViewModel eldJsonViewModel;
     private DvirViewModel dvirViewModel;
     TrailerRecyclerAdapter adapter;
     private String distance = "15";
-    private ArrayList<String> trailers = new ArrayList<>();
     private String day;
 
 
@@ -104,28 +93,23 @@ public class GeneralFragment extends Fragment {
         if (getArguments() != null){
             day = getArguments().getString("currDay");
         }
-        eldJsonViewModel = new EldJsonViewModel(requireActivity().getApplication());
         eldJsonViewModel = ViewModelProviders.of(requireActivity()).get(EldJsonViewModel.class);
+        userViewModel = ViewModelProviders.of(requireActivity()).get(UserViewModel.class);
+        dvirViewModel = ViewModelProviders.of(requireActivity()).get(DvirViewModel.class);
+        generalViewModel = ViewModelProviders.of(requireActivity()).get(GeneralViewModel.class);
+
+        driverSharedPrefs = DriverSharedPrefs.getInstance(requireContext().getApplicationContext());
+
+
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_general, container, false);
         context = container.getContext();
-
-        userViewModel = new UserViewModel(this.requireActivity().getApplication());
-        userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
-
-        generalViewModel = new GeneralViewModel(this.requireActivity().getApplication());
-        generalViewModel = ViewModelProviders.of(this).get(GeneralViewModel.class);
-
-        sessionManager = new SessionManager(requireContext());
-        driverSharedPrefs = DriverSharedPrefs.getInstance(requireContext().getApplicationContext());
-
-        dvirViewModel = new DvirViewModel(getActivity().getApplication());
-        dvirViewModel = ViewModelProviders.of(getActivity()).get(DvirViewModel.class);
 
         driverFullName = view.findViewById(R.id.tv_driver_name);
         driverInfo = view.findViewById(R.id.idDriverNameCons);
@@ -170,73 +154,96 @@ public class GeneralFragment extends Fragment {
         tv_main_office.setText(driverSharedPrefs.getMainOffice());
         tv_terminal_address.setText(driverSharedPrefs.getHomeTerAdd());
 
-        apiInterface = ApiClient.getClient().create(APIInterface.class);
-
         getGeneralInfo();
         getDriverInfo();
 
         dvirViewModel.getCurrentName().observe(getViewLifecycleOwner(),c -> {
             day = c;
-        });
-
-        idSaveGeneral.setOnClickListener(v -> {
-            apiInterface.sendGeneralInfo(new GeneralEntity(distance,shippingDocsEdit.getText().toString(),
-                    idVehiclesEdit.getText().toString(), selectedTrailersNumber,driverSharedPrefs.getCompany(),
-                    driverSharedPrefs.getMainOffice(),"driverSharedPrefs.getHomeTerAdd()",
-                    tv_co_drivers.getText().toString(),tv_from_destination.getText().toString(),
-                    tv_to_destination.getText().toString(),tv_notes.getText().toString(),day)).enqueue(new Callback<GeneralEntity>() {
-                @Override
-                public void onResponse(Call<GeneralEntity> call, Response<GeneralEntity> response) {
-                    if (response.isSuccessful()){
-
+            generalViewModel.getMgetGenerals().observe(getViewLifecycleOwner(),generalEntities -> {
+                this.generalEntities.clear();
+                for (int i = 0; i < generalEntities.size(); i++) {
+                    if (generalEntities.get(i).getDay().equals(c)){
+                        this.generalEntities.add(generalEntities.get(i));
                     }
                 }
-
-                @Override
-                public void onFailure(Call<GeneralEntity> call, Throwable t) {
-                }
+                hasGeneral();
             });
 
-            try {
-                generalViewModel.insertGeneral(new GeneralEntity(distance,shippingDocsEdit.getText().toString(),
-                        idVehiclesEdit.getText().toString(), selectedTrailersNumber,driverSharedPrefs.getCompany(),
-                        driverSharedPrefs.getMainOffice(),"driverSharedPrefs.getHomeTerAdd()",
-                        tv_co_drivers.getText().toString(),tv_from_destination.getText().toString(),
-                        tv_to_destination.getText().toString(),tv_notes.getText().toString(),day));
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
-            }
+
+            idSaveGeneral.setOnClickListener(v -> {
+                try {
+                    eldJsonViewModel.sendGeneralInfo(new GeneralEntity(distance,shippingDocsEdit.getText().toString(),
+                            idVehiclesEdit.getText().toString(), selectedTrailers,driverSharedPrefs.getCompany(),
+                            driverSharedPrefs.getMainOffice(),"driverSharedPrefs.getHomeTerAdd()",
+                            tv_co_drivers.getText().toString(),tv_from_destination.getText().toString(),
+                            tv_to_destination.getText().toString(),tv_notes.getText().toString(),stringToDate(day))).observe(getViewLifecycleOwner(),generalInfo ->{
+                                if (generalInfo != null){
+                                    Toast.makeText(getContext(),"Successfully saved and send",Toast.LENGTH_SHORT).show();
+                                }
+                    });
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    generalViewModel.insertGeneral(new GeneralEntity(distance,shippingDocsEdit.getText().toString(),
+                            idVehiclesEdit.getText().toString(), selectedTrailers,driverSharedPrefs.getCompany(),
+                            driverSharedPrefs.getMainOffice(),"",
+                            tv_co_drivers.getText().toString(),tv_from_destination.getText().toString(),
+                            tv_to_destination.getText().toString(),tv_notes.getText().toString(),day));
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
         });
+
         return view;
     }
 
-    private void getDriverInfo(){
-        apiInterface.getVehicle().enqueue(new Callback<VehicleList>() {
-            @Override
-            public void onResponse(Call<VehicleList> call, Response<VehicleList> response) {
-                if (response.isSuccessful()){
-                    if (response.body() != null) {
-                        VehicleList vehicle = response.body();
-                    }
-                }
+    public void hasGeneral(){
+        if (generalEntities.size() != 0){
+            shippingDocsEdit.setText(generalEntities.get(generalEntities.size()-1).getShippingDocs());
+            tvDistance.setText(generalEntities.get(generalEntities.size()-1).getDistance());
+            idVehiclesEdit.setText(generalEntities.get(generalEntities.size()-1).getVehicle());
+            tv_carrier.setText(generalEntities.get(generalEntities.size()-1).getCarrier());
+            tv_main_office.setText(generalEntities.get(generalEntities.size()-1).getMainOffice());
+            tv_terminal_address.setText(generalEntities.get(generalEntities.size()-1).getHomrTerminalAddress());
+            if (generalEntities.get(generalEntities.size()-1).getCo_driver_name().equals("")){
+                tv_co_drivers.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,R.drawable.ic_icons8_plus__,0);
             }
+            tv_co_drivers.setText(generalEntities.get(generalEntities.size()-1).getCo_driver_name());
+            tv_from_destination.setText(generalEntities.get(generalEntities.size()-1).getFrom_info());
+            tv_to_destination.setText(generalEntities.get(generalEntities.size()-1).getTo_info());
+            tv_notes.setText(generalEntities.get(generalEntities.size()-1).getNote());
 
-            @Override
-            public void onFailure(Call<VehicleList> call, Throwable t) {
+            shippingDocsLayout.setVisibility(View.VISIBLE);
+            idVehiclesLayout.setVisibility(View.VISIBLE);
+
+            selectedTrailers.addAll(generalEntities.get(generalEntities.size()-1).getTrailers());
+            dvirViewModel.getSelectedTrailerCount().postValue(selectedTrailers.size());
+        }else {
+            tvDistance.setText("0.0");
+            shippingDocsLayout.setVisibility(View.GONE);
+            idVehiclesLayout.setVisibility(View.GONE);
+            tv_from_destination.setText(R.string.enter_information);
+            tv_to_destination.setText(R.string.enter_information);
+            tv_notes.setText(R.string.loads);
+            tv_co_drivers.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,R.drawable.ic_icons8_plus__,0);
+
+        }
+    }
+
+    private void getDriverInfo(){
+        eldJsonViewModel.getVehicle().observe(getViewLifecycleOwner(),vehicleList -> {
+            if (vehicleList != null){
+                idVehiclesEdit.setText(vehicleList.getVehicle_id());
+                idVehiclesLayout.setVisibility(View.VISIBLE);
             }
         });
 
-        apiInterface.getCoDriver().enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                if (response.isSuccessful()){
-                    if (response.body().getName() != null){
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
+        eldJsonViewModel.getCoDriver().observe(getViewLifecycleOwner(),coDriver ->{
+            if (coDriver != null){
+                tv_co_drivers.setText(String.format("%s %s",coDriver.getName(),coDriver.getLastName()));
+                tv_co_drivers.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,0,0);
             }
         });
     }
@@ -306,20 +313,13 @@ public class GeneralFragment extends Fragment {
                 send.setOnClickListener(view1 -> {
                     if (!trailer.getText().toString().equals("")){
                         trailerDialog.dismiss();
-                        apiInterface.sendTrailer(new TrailNubmer(trailer.getText().toString())).enqueue(new Callback<TrailersEntity>() {
-                            @Override
-                            public void onResponse(Call<TrailersEntity> call, Response<TrailersEntity> response) {
-                                if (response.isSuccessful()){
-                                    try {
-                                        daoViewModel.insertTrailer(new TrailersEntity(response.body().getTrailer_id(),response.body().getNumber()));
-                                    } catch (ExecutionException | InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
+                        eldJsonViewModel.sendTrailer(new TrailNubmer(trailer.getText().toString())).observe(getViewLifecycleOwner(),getTrailer ->{
+                            if (getTrailer != null){
+                                try {
+                                    daoViewModel.insertTrailer(new TrailersEntity(getTrailer.getTrailer_id(),getTrailer.getNumber()));
+                                } catch (ExecutionException | InterruptedException e) {
+                                    e.printStackTrace();
                                 }
-                            }
-
-                            @Override
-                            public void onFailure(Call<TrailersEntity> call, Throwable t) {
                             }
                         });
                     }else {
@@ -520,7 +520,17 @@ public class GeneralFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onPause() {
+        super.onPause();
+        requireActivity().getViewModelStore().clear();
+        this.getViewModelStore().clear();
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        requireActivity().getViewModelStore().clear();
+        this.getViewModelStore().clear();
+    }
+
 }

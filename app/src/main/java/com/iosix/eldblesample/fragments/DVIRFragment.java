@@ -75,6 +75,7 @@ public class DVIRFragment extends Fragment {
         if (getArguments() != null) {
             currDay = getArguments().getString("ARG_PARAM1");
         }
+        dvirViewModel = ViewModelProviders.of(requireActivity()).get(DvirViewModel.class);
     }
 
     @Override
@@ -88,10 +89,6 @@ public class DVIRFragment extends Fragment {
         createButton = v.findViewById(R.id.create_new_dvir_button);
         dvir_recyclerview = v.findViewById(R.id.idDvirRecyclerView);
         idFABAddDvir = v.findViewById(R.id.idFABAddDvir);
-
-
-        dvirViewModel = new DvirViewModel(requireActivity().getApplication());
-        dvirViewModel = ViewModelProviders.of((FragmentActivity) requireContext()).get(DvirViewModel.class);
 
         dvirEntities = new ArrayList<>();
 
@@ -132,7 +129,6 @@ public class DVIRFragment extends Fragment {
 
 
         dvirViewModel.getCurrentName().observe(getViewLifecycleOwner(), s -> {
-            Log.d("Adverse Diving",s);
 
                 dvirViewModel.getMgetDvirs().observe(getViewLifecycleOwner(),dvirEntities1 -> {
                     adapter = new DvirlistAdapter(requireContext(),dvirEntities1,s);
@@ -203,7 +199,9 @@ public class DVIRFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onDestroy() {
+        super.onDestroy();
+        requireActivity().getViewModelStore().clear();
+        this.getViewModelStore().clear();
     }
 }

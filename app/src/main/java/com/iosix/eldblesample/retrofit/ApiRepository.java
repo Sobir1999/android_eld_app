@@ -3,12 +3,15 @@ package com.iosix.eldblesample.retrofit;
 import android.app.Application;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.iosix.eldblesample.models.ApkVersion;
 import com.iosix.eldblesample.models.Data;
 import com.iosix.eldblesample.models.Driver;
+import com.iosix.eldblesample.models.LoginResponse;
 import com.iosix.eldblesample.models.SendDvir;
 import com.iosix.eldblesample.models.SendExampleModelData;
 import com.iosix.eldblesample.models.Status;
@@ -33,16 +36,46 @@ import com.iosix.eldblesample.models.eld_records.TransmissionRecord;
 import com.iosix.eldblesample.roomDatabase.entities.GeneralEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LiveDataEntitiy;
 import com.iosix.eldblesample.roomDatabase.entities.SignatureEntity;
+import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
 import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
 
+import java.io.IOException;
 import java.util.List;
 
 import okhttp3.MultipartBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ApiRepository {
-    private APIInterface apiInterface;
+    private static APIInterface apiInterface;
+    private final MutableLiveData<LoginResponse> studentMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<LoginResponse> refreshTokenResponse = new MutableLiveData<>();
+    private final MutableLiveData<User> getUserInfo = new MutableLiveData<>();
+    private final MutableLiveData<Data> getAllUsers = new MutableLiveData<>();
+    private final MutableLiveData<VehicleData> getAllVehicles = new MutableLiveData<>();
+    private final MutableLiveData<Status> getStatus = new MutableLiveData<>();
+    private final MutableLiveData<VehicleList> getVehicle = new MutableLiveData<>();
+    private final MutableLiveData<User> getCoDriver = new MutableLiveData<>();
+    private final MutableLiveData<GeneralEntity> getGeneralInfo = new MutableLiveData<>();
+    private final MutableLiveData<TrailersEntity> getTrailer = new MutableLiveData<>();
+    private final MutableLiveData<SendDvir> dvir = new MutableLiveData<>();
+    private final MutableLiveData<MultipartBody.Part> signature = new MutableLiveData<>();
+    private final MutableLiveData<Eld> eldMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<LiveDataEntitiy> liveDataEntitiyMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<ApkVersion> apkVersionMutableLiveData = new MutableLiveData<>();
 
-    public ApiRepository(Application application) {
+    private static ApiRepository newsRepository;
+
+    public static ApiRepository getInstance(){
+        if (newsRepository == null){
+            newsRepository = new ApiRepository();
+        }
+        return newsRepository;
+    }
+
+    public ApiRepository(){
         apiInterface = ApiClient.getClient().create(APIInterface.class);
     }
 
@@ -248,265 +281,300 @@ public class ApiRepository {
     }
 
 
-    public void createUser(Student student){
-        new createUser(apiInterface).execute(student);
-    }
-
-    private static class createUser extends AsyncTask<Student,Void,Void>{
-        private APIInterface apiInterface;
-
-        public createUser(APIInterface apiInterface){this.apiInterface = apiInterface;}
-
-        @Override
-        protected Void doInBackground(Student... students) {
-            apiInterface.createUser(students[0]);
-            return null;
-        }
-    }
-
-    public void getUser(){
-        new getUser(apiInterface).execute();
-    }
-
-    private static class getUser extends AsyncTask<User,Void,Void>{
-        private APIInterface apiInterface;
-
-        public getUser(APIInterface apiInterface){this.apiInterface = apiInterface;}
-
-        @Override
-        protected Void doInBackground(User... users) {
-            apiInterface.getUser();
-            return null;
-        }
-    }
-
-    public void getAllDrivers(){
-        new getAllDrivers(apiInterface).execute();
-    }
-
-    private static class getAllDrivers extends AsyncTask<Data,Void,Void>{
-        private APIInterface apiInterface;
-
-        public getAllDrivers(APIInterface apiInterface){this.apiInterface = apiInterface;}
-
-        @Override
-        protected Void doInBackground(Data... users) {
-            apiInterface.getAllDrivers();
-            return null;
-        }
-    }
-
-    public void getAllVehicles(){
-        new getAllDrivers(apiInterface).execute();
-    }
-
-    private static class getAllVehicles extends AsyncTask<VehicleData,Void,Void>{
-        private APIInterface apiInterface;
-
-        public getAllVehicles(APIInterface apiInterface){this.apiInterface = apiInterface;}
-
-        @Override
-        protected Void doInBackground(VehicleData... users) {
-            apiInterface.getAllDrivers();
-            return null;
-        }
-    }
-
-    public void refreshToken(String refreshToken){
-        new refreshToken(apiInterface).execute(refreshToken);
-    }
-
-    private static class refreshToken extends AsyncTask<String,Void,Void>{
-        private APIInterface apiInterface;
-
-        public refreshToken(APIInterface apiInterface){this.apiInterface = apiInterface;}
-
-        @Override
-        protected Void doInBackground(String... refreshTokens) {
-            apiInterface.refreshToken(refreshTokens[0]);
-            return null;
-        }
-    }
-
-    public void postStatus(Status status){
-        new postStatus(apiInterface).execute(status);
-    }
-
-    private static class postStatus extends AsyncTask<Status,Void,Void>{
-
-        private APIInterface apiInterface;
-
-        public postStatus(APIInterface apiInterface){
-            this.apiInterface = apiInterface;
-        }
-
-        @Override
-        protected Void doInBackground(com.iosix.eldblesample.models.Status... statuses) {
-            apiInterface.postStatus(statuses[0]);
-            return null;
-        }
-    }
-
-    public void getVehicle(){
-        new getVehicle(apiInterface).execute();}
-
-    public static class getVehicle extends AsyncTask<VehicleList,Void,Void>{
-
-        APIInterface apiInterface;
-
-        public getVehicle(APIInterface apiInterface){
-            this.apiInterface = apiInterface;
-        }
-
-        @Override
-        protected Void doInBackground(VehicleList... vehicleLists) {
-            apiInterface.getVehicle();
-            return null;
-        }
-    }
-
-    public void getCoDriver(){
-        new getCoDriver(apiInterface).execute();}
-
-    public static class getCoDriver extends AsyncTask<User,Void,Void>{
-
-        APIInterface apiInterface;
-
-        public getCoDriver(APIInterface apiInterface){
-            this.apiInterface = apiInterface;
-        }
-
-        @Override
-        protected Void doInBackground(User... users) {
-            apiInterface.getCoDriver();
-            return null;
-        }
-    }
-
-    public void sendGenerelInfo(GeneralEntity entity){
-        new sendGenerelInfo(apiInterface).execute(entity);}
-
-    public static class sendGenerelInfo extends AsyncTask<GeneralEntity,Void,Void>{
-
-        APIInterface apiInterface;
-
-        public sendGenerelInfo(APIInterface apiInterface){
-            this.apiInterface = apiInterface;
-        }
-
-        @Override
-        protected Void doInBackground(GeneralEntity... generalEntities) {
-            apiInterface.sendGeneralInfo(generalEntities[0]);
-            return null;
-        }
-    }
-
-    public void sendTrailer(TrailNubmer trailNubmer){
-        new sendTrailer(apiInterface).execute(trailNubmer);}
-
-    public static class sendTrailer extends AsyncTask<TrailNubmer,Void,Void>{
-
-        APIInterface apiInterface;
-
-        public sendTrailer(APIInterface apiInterface){
-            this.apiInterface = apiInterface;
-        }
-
-        @Override
-        protected Void doInBackground(TrailNubmer... trailNubmers) {
-            apiInterface.sendTrailer(trailNubmers[0]);
-            return null;
-        }
-    }
-
-    public void sendDvir(SendDvir sendDvir){
-        new sendDvir(apiInterface).execute(sendDvir);}
-
-    public static class sendDvir extends AsyncTask<SendDvir,Void,Void>{
-
-        APIInterface apiInterface;
-
-        public sendDvir(APIInterface apiInterface){
-            this.apiInterface = apiInterface;
-        }
-
-        @Override
-        protected Void doInBackground(SendDvir... sendDvirs) {
-            apiInterface.sendDvir(sendDvirs[0]);
-            return null;
-        }
-    }
-
-    public void sendSignature(MultipartBody.Part body){
-        new sendSignature(apiInterface).execute(body);}
-
-    public static class sendSignature extends AsyncTask<MultipartBody.Part,Void,Void>{
-
-        APIInterface apiInterface;
-
-        public sendSignature(APIInterface apiInterface){
-            this.apiInterface = apiInterface;
-        }
-
-        @Override
-        protected Void doInBackground(MultipartBody.Part... uris) {
-            apiInterface.sendSignature(uris[0]);
-            return null;
-        }
-    }
-
-    public void sendEldNum(Eld eld){
-        new sendEldNum(apiInterface).execute(eld);}
-
-    public static class sendEldNum extends AsyncTask<Eld,Void,Void>{
-
-        APIInterface apiInterface;
-
-        public sendEldNum(APIInterface apiInterface){
-            this.apiInterface = apiInterface;
-        }
-
-        @Override
-        protected Void doInBackground(Eld... elds) {
-            apiInterface.sendEldNum(elds[0]);
-            return null;
-        }
-    }
-
-    public void sendLocalData(LiveDataEntitiy liveDataEntitiy){
-        new sendLocalData(apiInterface).execute(liveDataEntitiy);}
-
-    public static class sendLocalData extends AsyncTask<LiveDataEntitiy,Void,Void>{
-
-        APIInterface apiInterface;
-
-        public sendLocalData(APIInterface apiInterface){
-            this.apiInterface = apiInterface;
-        }
-
-        @Override
-        protected Void doInBackground(LiveDataEntitiy... liveDataEntitiys) {
-            apiInterface.sendLocalData(liveDataEntitiys[0]);
-            return null;
-        }
-    }public void sendApkVersion(ApkVersion apkVersion){
-        new sendApkVersion(apiInterface).execute(apkVersion);}
-
-    public static class sendApkVersion extends AsyncTask<ApkVersion,Void,Void>{
-
-        APIInterface apiInterface;
-
-        public sendApkVersion(APIInterface apiInterface){
-            this.apiInterface = apiInterface;
-        }
-
-        @Override
-        protected Void doInBackground(ApkVersion... apkVersions) {
-            apiInterface.sendApkVersion(apkVersions[0]);
-            return null;
-        }
+    public MutableLiveData<LoginResponse> getLoginResponse(Student student){
+
+        apiInterface.createUser(student).enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                if (response.isSuccessful()){
+                    studentMutableLiveData.postValue(response.body());
+                }else {
+                    studentMutableLiveData.postValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                studentMutableLiveData.postValue(null);
+            }
+        });
+
+        return studentMutableLiveData;
     }
 
 
+    public MutableLiveData<User> getUser(){
+        apiInterface.getUser().enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()){
+                    getUserInfo.postValue(response.body());
+                }else {
+                    getUserInfo.postValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                getUserInfo.postValue(null);
+            }
+        });
+        return getUserInfo;
+    }
+
+    public MutableLiveData<Data> getAllDrivers(){
+
+        apiInterface.getAllDrivers().enqueue(new Callback<Data>() {
+            @Override
+            public void onResponse(Call<Data> call, Response<Data> response) {
+                if (response.isSuccessful()){
+                    getAllUsers.postValue(response.body());
+                }else {
+                    getAllUsers.postValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Data> call, Throwable t) {
+                getAllUsers.postValue(null);
+            }
+        });
+        return getAllUsers;
+    }
+
+
+    public MutableLiveData<VehicleData> getAllVehicles(){
+        apiInterface.getAllVehicles().enqueue(new Callback<VehicleData>() {
+            @Override
+            public void onResponse(Call<VehicleData> call, Response<VehicleData> response) {
+                if (response.isSuccessful()){
+                    getAllVehicles.postValue(response.body());
+                }else {
+                    getAllVehicles.postValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VehicleData> call, Throwable t) {
+                getAllVehicles.postValue(null);
+            }
+        });
+        return getAllVehicles;
+    }
+
+    public MutableLiveData<LoginResponse> refreshToken(String refreshToken){
+        apiInterface.refreshToken(refreshToken).enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                if (response.isSuccessful()){
+                    refreshTokenResponse.postValue(response.body());
+                }else refreshTokenResponse.postValue(null);
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                refreshTokenResponse.postValue(null);
+            }
+        });
+        return refreshTokenResponse;
+    }
+
+    public MutableLiveData<Status> postStatus(Status status){
+        apiInterface.postStatus(status).enqueue(new Callback<Status>() {
+            @Override
+            public void onResponse(Call<Status> call, Response<Status> response) {
+                if (response.isSuccessful()){
+                    getStatus.postValue(response.body());
+                }else {
+                    getStatus.postValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Status> call, Throwable t) {
+                getStatus.postValue(null);
+            }
+        });
+        return getStatus;
+    }
+
+    public MutableLiveData<VehicleList> getVehicle(){
+        apiInterface.getVehicle().enqueue(new Callback<VehicleList>() {
+            @Override
+            public void onResponse(Call<VehicleList> call, Response<VehicleList> response) {
+                if (response.isSuccessful()){
+                    if (response.body() != null){
+                        getVehicle.postValue(response.body());
+                    }else {
+                        getCoDriver.postValue(null);
+                    }
+                }else {
+                    getVehicle.postValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VehicleList> call, Throwable t) {
+                getVehicle.postValue(null);
+            }
+        });
+        return getVehicle;
+    }
+
+    public MutableLiveData<User> getCoDriver(){
+        apiInterface.getCoDriver().enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()){
+                    if (response.body() != null){
+                        getCoDriver.postValue(response.body());
+                    }else {
+                        getCoDriver.postValue(null);
+                    }
+                }else {
+                    getCoDriver.postValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                getCoDriver.postValue(null);
+            }
+        });
+        return getCoDriver;
+    }
+
+    public MutableLiveData<GeneralEntity> sendGenerelInfo(GeneralEntity entity){
+        apiInterface.sendGeneralInfo(entity).enqueue(new Callback<GeneralEntity>() {
+            @Override
+            public void onResponse(Call<GeneralEntity> call, Response<GeneralEntity> response) {
+                if (response.isSuccessful()){
+                    getGeneralInfo.postValue(response.body());
+                }else {
+                    getGeneralInfo.postValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GeneralEntity> call, Throwable t) {
+                getGeneralInfo.postValue(null);
+            }
+        });
+        return getGeneralInfo;
+    }
+
+    public MutableLiveData<TrailersEntity> sendTrailer(TrailNubmer trailNubmer){
+       apiInterface.sendTrailer(trailNubmer).enqueue(new Callback<TrailersEntity>() {
+           @Override
+           public void onResponse(Call<TrailersEntity> call, Response<TrailersEntity> response) {
+               if (response.isSuccessful()){
+                    getTrailer.postValue(response.body());
+               }else {
+                   getTrailer.postValue(null);
+               }
+           }
+
+           @Override
+           public void onFailure(Call<TrailersEntity> call, Throwable t) {
+                getTrailer.postValue(null);
+           }
+       });
+       return getTrailer;
+    }
+
+    public MutableLiveData<SendDvir> sendDvir(SendDvir sendDvir){
+        apiInterface.sendDvir(sendDvir).enqueue(new Callback<SendDvir>() {
+            @Override
+            public void onResponse(Call<SendDvir> call, Response<SendDvir> response) {
+                if (response.isSuccessful()){
+                    dvir.postValue(response.body());
+                }else {
+                    dvir.postValue(null);
+                    try {
+                        Log.d("Adverse Diving",response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SendDvir> call, Throwable t) {
+                dvir.postValue(null);
+            }
+        });
+        return dvir;
+    }
+
+    public MutableLiveData<MultipartBody.Part> sendSignature(MultipartBody.Part body){
+        apiInterface.sendSignature(body).enqueue(new Callback<MultipartBody.Part>() {
+            @Override
+            public void onResponse(Call<MultipartBody.Part> call, Response<MultipartBody.Part> response) {
+                if (response.isSuccessful()){
+                    signature.postValue(response.body());
+                }else {
+                    signature.postValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MultipartBody.Part> call, Throwable t) {
+                signature.postValue(null);
+            }
+        });
+        return signature;
+    }
+
+    public MutableLiveData<Eld> sendEldNum(Eld eld){
+        apiInterface.sendEldNum(eld).enqueue(new Callback<Eld>() {
+            @Override
+            public void onResponse(Call<Eld> call, Response<Eld> response) {
+                if (response.isSuccessful()){
+                    eldMutableLiveData.postValue(response.body());
+                }else eldMutableLiveData.postValue(null);
+            }
+
+            @Override
+            public void onFailure(Call<Eld> call, Throwable t) {
+                eldMutableLiveData.postValue(null);
+            }
+        });
+        return eldMutableLiveData;
+    }
+
+
+    public MutableLiveData<LiveDataEntitiy> sendLocalData(LiveDataEntitiy liveDataEntitiy){
+        apiInterface.sendLocalData(liveDataEntitiy).enqueue(new Callback<LiveDataEntitiy>() {
+            @Override
+            public void onResponse(Call<LiveDataEntitiy> call, Response<LiveDataEntitiy> response) {
+                if (response.isSuccessful()){
+                    liveDataEntitiyMutableLiveData.postValue(response.body());
+                }else liveDataEntitiyMutableLiveData.postValue(null);
+            }
+
+            @Override
+            public void onFailure(Call<LiveDataEntitiy> call, Throwable t) {
+                liveDataEntitiyMutableLiveData.postValue(null);
+            }
+        });
+        return liveDataEntitiyMutableLiveData;
+    }
+
+    public MutableLiveData<ApkVersion> sendApkVersion(ApkVersion apkVersion){
+        apiInterface.sendApkVersion(apkVersion).enqueue(new Callback<ApkVersion>() {
+            @Override
+            public void onResponse(Call<ApkVersion> call, Response<ApkVersion> response) {
+                if (response.isSuccessful()){
+                    apkVersionMutableLiveData.postValue(response.body());
+                }else apkVersionMutableLiveData.postValue(null);
+            }
+
+            @Override
+            public void onFailure(Call<ApkVersion> call, Throwable t) {
+                apkVersionMutableLiveData.postValue(null);
+            }
+        });
+        return apkVersionMutableLiveData;
+    }
 
 }

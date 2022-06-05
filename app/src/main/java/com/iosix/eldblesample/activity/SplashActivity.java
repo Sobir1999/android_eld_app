@@ -51,8 +51,6 @@ public class SplashActivity extends BaseActivity {
 
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
-        daoViewModel = new DayDaoViewModel(this.getApplication());
-
         daoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
         logEntities = new ArrayList<>();
         truckEntities = new ArrayList<>();
@@ -150,5 +148,9 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        getViewModelStore();
+        if (!isChangingConfigurations()) {
+            getViewModelStore().clear();
+        }
     }
 }

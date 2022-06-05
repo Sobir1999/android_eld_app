@@ -60,6 +60,7 @@ public class LGDDActivity extends BaseActivity{
     private APIInterface apiInterface;
     private Uri uri;
     private SignaturePrefs signaturePrefs;
+    private DayDaoViewModel dayDaoViewModel;
 
 
     @Override
@@ -77,13 +78,10 @@ public class LGDDActivity extends BaseActivity{
     public void initView() {
         super.initView();
 
-        dvirViewModel = new DvirViewModel(this.getApplication());
         dvirViewModel = ViewModelProviders.of(this).get(DvirViewModel.class);
 
-        DayDaoViewModel dayDaoViewModel;
         dayDaoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
 
-        apiInterface = ApiClient.getClient().create(APIInterface.class);
         signaturePrefs = new SignaturePrefs(this);
 
         dayDaoViewModel.getMgetAllDays().observe(this, dayEntities -> {
@@ -105,6 +103,7 @@ public class LGDDActivity extends BaseActivity{
             Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
+            finish();
         });
 
         textFrag = findViewById(R.id.idTextFrag);
@@ -169,14 +168,21 @@ public class LGDDActivity extends BaseActivity{
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        this.finish();
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+        finish();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.getViewModelStore().clear();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        this.getViewModelStore().clear();
     }
 }

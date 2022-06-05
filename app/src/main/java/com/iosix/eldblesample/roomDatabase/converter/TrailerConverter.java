@@ -56,4 +56,25 @@ public class TrailerConverter {
         return gson.toJson(value,type);
     }
 
+    @TypeConverter
+    public static ArrayList<TrailersEntity> toTrailersEntity(String value){
+        if (value == null) {
+            return (null);
+        }
+        Gson gson = new Gson();
+        Type type = new TypeToken<List<TrailersEntity>>() {
+        }.getType();
+        return gson.fromJson(value,type);
+    }
+
+    @TypeConverter
+    public static String toStringFromTrailersEntity(ArrayList<TrailersEntity> value){
+        if (value== null) {
+            return (null);
+        }
+        Gson gson = new Gson();
+        Type type = new TypeToken<ArrayList<TrailersEntity>>() {}.getType();
+        return gson.toJson(value,type);
+    }
+
 }

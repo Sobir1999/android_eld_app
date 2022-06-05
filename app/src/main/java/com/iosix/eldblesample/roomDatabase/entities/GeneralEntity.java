@@ -28,10 +28,10 @@ public class GeneralEntity {
     @SerializedName("vehicles")
     @ColumnInfo(name = "vehicles")
     private String vehicle;
-    @TypeConverters(TrailerConverterString.class)
+    @TypeConverters(TrailerConverter.class)
     @SerializedName("trailers")
     @ColumnInfo(name = "trailers")
-    private ArrayList<String> trailers;
+    private ArrayList<TrailersEntity> trailers;
     @SerializedName("carrier")
     @ColumnInfo(name = "carrier")
     private String carrier;
@@ -60,7 +60,7 @@ public class GeneralEntity {
 //    private Bitmap signature;
 
 
-    public GeneralEntity(String distance, String shippingDocs, String vehicle, ArrayList<String> trailers, String carrier, String mainOffice, String homrTerminalAddress, String co_driver_name, String from_info, String to_info, String note, String day) {
+    public GeneralEntity(String distance, String shippingDocs, String vehicle, ArrayList<TrailersEntity> trailers, String carrier, String mainOffice, String homrTerminalAddress, String co_driver_name, String from_info, String to_info, String note, String day) {
         this.distance = distance;
         this.shippingDocs = shippingDocs;
         this.vehicle = vehicle;
@@ -107,11 +107,11 @@ public class GeneralEntity {
         this.vehicle = vehicle;
     }
 
-    public ArrayList<String> getTrailers() {
+    public ArrayList<TrailersEntity> getTrailers() {
         return trailers;
     }
 
-    public void setTrailers(ArrayList<String> trailers) {
+    public void setTrailers(ArrayList<TrailersEntity> trailers) {
         this.trailers = trailers;
     }
 

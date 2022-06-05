@@ -30,7 +30,6 @@ public class AccountActivity extends BaseActivity {
         idAccountLastName = findViewById(R.id.idAccountLastName);
         idAccountPhoneNumber = findViewById(R.id.idAccountPhoneNumber);
 
-        userViewModel = new UserViewModel(getApplication());
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
 
         driverSharedPrefs = DriverSharedPrefs.getInstance(getApplicationContext());

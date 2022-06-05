@@ -32,13 +32,11 @@ public class DvirlistAdapter extends RecyclerView.Adapter<DvirlistAdapter.Dvirli
 
     public DvirlistAdapter(Context context, List<DvirEntity> dvirEntities1,String currday) {
         ctx = context;
-        Log.d("Adverse Diving",dvirEntities.size() + "A");
         for (int i = 0; i < dvirEntities1.size() ; i++) {
             if (dvirEntities1.get(i).getDay().equals(currday)){
                 dvirEntities.add(dvirEntities1.get(i));
             }
         }
-        Log.d("Adverse Diving",dvirEntities.size() + "B");
 
     }
 

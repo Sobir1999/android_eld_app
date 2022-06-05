@@ -53,6 +53,7 @@ public class SignatureFragment extends Fragment {
     private String day;
     private SignaturePrefs signaturePrefs;
     private SessionManager sessionManager;
+    private SignatureViewModel signatureViewModel;
 
     public SignatureFragment() {
         // Required empty public constructor
@@ -77,6 +78,10 @@ public class SignatureFragment extends Fragment {
             ArrayList<String> mParams = getArguments().getStringArrayList(ARG_PARAM2);
             day = getArguments().getString("PARAM");
         }
+        signaturePrefs = new SignaturePrefs(context);
+        sessionManager = new SessionManager(context);
+        signatureViewModel = ViewModelProviders.of(requireActivity()).get(SignatureViewModel.class);
+
     }
 
     @Override
@@ -102,11 +107,7 @@ public class SignatureFragment extends Fragment {
         mechanicLayout = view.findViewById(R.id.idMechanicLayout);
         previousMechanicSignature = view.findViewById(R.id.idTVPreviousMechanicSignature);
 
-        signaturePrefs = new SignaturePrefs(context);
-        sessionManager = new SessionManager(context);
 
-        SignatureViewModel signatureViewModel = new SignatureViewModel(requireActivity().getApplication());
-        signatureViewModel = ViewModelProviders.of((FragmentActivity) requireContext()).get(SignatureViewModel.class);
         signatureViewModel.getMgetAllSignatures().observe(getViewLifecycleOwner(), signatureEntities -> {
         });
 
@@ -211,4 +212,10 @@ public class SignatureFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        requireActivity().getViewModelStore().clear();
+        this.getViewModelStore().clear();
+    }
 }

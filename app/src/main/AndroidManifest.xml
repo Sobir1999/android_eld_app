@@ -35,7 +35,7 @@
         android:configChanges="orientation"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="FastLogZ"
+        android:label="FastlogZ"
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
@@ -118,14 +118,7 @@
             android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.BleConnect"
-            android:label="@string/app_name" /> <!-- <receiver -->
-        <!-- android:name=".broadcasts.ChangeDateTimeBroadcast" -->
-        <!-- android:enabled="true" -->
-        <!-- android:exported="true"> -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="android.intent.action.DATE_CHANGED" /> -->
-        <!-- </intent-filter> -->
-        <!-- </receiver> -->
+            android:label="@string/app_name" />
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

@@ -47,15 +47,13 @@ public class TokenAuthenticator implements Authenticator {
 
         assert service != null;
         if (sessionManager.fetchToken() != null) {
-            retrofit2.Response<ResponseBody> bodyResponse = service.refreshToken(sessionManager.fetchToken()).execute();
-            Gson gson = new Gson();
-            LoginResponse loginResponse = gson.fromJson(bodyResponse.body().string(), LoginResponse.class);
-            sessionManager.saveAccessToken(loginResponse.getAccessToken());
-            sessionManager.saveToken(loginResponse.getrefreshToken());
+            retrofit2.Response<LoginResponse> bodyResponse = service.refreshToken(sessionManager.fetchToken()).execute();
+            sessionManager.saveAccessToken(bodyResponse.body().getAccessToken());
+            sessionManager.saveToken(bodyResponse.body().getrefreshToken());
             lastStopSharedPrefs.saveLastStopTime(getCurrentSeconds());
             lastStopSharedPrefs.saveLastStopDate(today);
             return response.request().newBuilder()
-                    .header("Authorization","Bearer " + loginResponse.getAccessToken())
+                    .header("Authorization","Bearer " + bodyResponse.body().getAccessToken())
                 .build();
         }
         return null;

@@ -52,13 +52,11 @@ public class LoginActivity extends BaseActivity {
     @Override
     public void initView() {
         super.initView();
-//        getWindow().setStatusBarColor(ActivityCompat.getColor(this,R.color.example));
 
         Button button = findViewById(R.id.idLoginButton);
         EditText login = findViewById(R.id.idEditTextLogin);
         EditText password = findViewById(R.id.idEditTextPassword);
 
-        eldJsonViewModel = new EldJsonViewModel(getApplication());
         eldJsonViewModel = ViewModelProviders.of(this).get(EldJsonViewModel.class);
 
         apiInterface = ApiClient.getClient().create(APIInterface.class);
@@ -72,8 +70,6 @@ public class LoginActivity extends BaseActivity {
         mProgress.setCancelable(false);
         mProgress.setIndeterminate(true);
 
-
-
         button.setOnClickListener(v -> {
 
             networkConnectionLiveData.observe(LoginActivity.this,isConnected ->{
@@ -85,43 +81,61 @@ public class LoginActivity extends BaseActivity {
                         Toast.makeText(LoginActivity.this,"Please fill all free spaces!",Toast.LENGTH_SHORT).show();
                     }else {
 
-//                        eldJsonViewModel.createUser(new Student(login.getText().toString(),password.getText().toString()));
-                        apiInterface.createUser(new Student(login.getText().toString(),password.getText().toString()))
-                                .enqueue(new Callback<ResponseBody>() {
-                                    @Override
-                                    public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                                        Gson gson = new Gson();
-                                        try {
-
-                                            if(response.isSuccessful()){
-                                                LoginResponse loginResponse = gson.fromJson(response.body().string(), LoginResponse.class);
-                                                sessionManager.saveAccessToken(loginResponse.getAccessToken());
-                                                sessionManager.saveToken(loginResponse.getrefreshToken());
-                                                sessionManager.saveEmail(login.getText().toString());
-                                                sessionManager.savePassword(password.getText().toString());
-                                                lastStopSharedPrefs.saveLastStopTime(getCurrentSeconds());
-                                                lastStopSharedPrefs.saveLastStopDate(today);
-                                                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-                                                intent.putExtra("JSON",1);
-                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                startActivity(intent);
-                                                mProgress.cancel();
-                                            }else {
-                                                mProgress.cancel();
-                                                Toast.makeText(LoginActivity.this, "No active account found with the given credentials", Toast.LENGTH_SHORT).show();
-                                            }
-                                            mProgress.cancel();
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                                        mProgress.cancel();
-                                    }
-                                });
+                        eldJsonViewModel.getResponse(new Student(login.getText().toString(),password.getText().toString())).observe(this,loginResponse -> {
+                            if (loginResponse != null){
+                                sessionManager.saveAccessToken(loginResponse.getAccessToken());
+                                sessionManager.saveToken(loginResponse.getrefreshToken());
+                                sessionManager.saveEmail(login.getText().toString());
+                                sessionManager.savePassword(password.getText().toString());
+                                lastStopSharedPrefs.saveLastStopTime(getCurrentSeconds());
+                                lastStopSharedPrefs.saveLastStopDate(today);
+                                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                                intent.putExtra("JSON",1);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                                mProgress.cancel();
+                            }else {
+                                mProgress.cancel();
+                                Toast.makeText(LoginActivity.this, "No active account found with the given credentials", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+//                        apiInterface.createUser(new Student(login.getText().toString(),password.getText().toString()))
+//                                .enqueue(new Callback<ResponseBody>() {
+//                                    @Override
+//                                    public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+//                                        Gson gson = new Gson();
+//                                        try {
+//
+//                                            if(response.isSuccessful()){
+//                                                LoginResponse loginResponse = gson.fromJson(response.body().string(), LoginResponse.class);
+//                                                sessionManager.saveAccessToken(loginResponse.getAccessToken());
+//                                                sessionManager.saveToken(loginResponse.getrefreshToken());
+//                                                sessionManager.saveEmail(login.getText().toString());
+//                                                sessionManager.savePassword(password.getText().toString());
+//                                                lastStopSharedPrefs.saveLastStopTime(getCurrentSeconds());
+//                                                lastStopSharedPrefs.saveLastStopDate(today);
+//                                                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+//                                                intent.putExtra("JSON",1);
+//                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                                startActivity(intent);
+//                                                mProgress.cancel();
+//                                            }else {
+//                                                mProgress.cancel();
+//                                                Toast.makeText(LoginActivity.this, "No active account found with the given credentials", Toast.LENGTH_SHORT).show();
+//                                            }
+//                                            mProgress.cancel();
+//                                        } catch (IOException e) {
+//                                            e.printStackTrace();
+//                                        }
+//                                    }
+//
+//                                    @Override
+//                                    public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+//                                        mProgress.cancel();
+//                                    }
+//                                });
                     }
                 }else {
                     mProgress.cancel();
@@ -149,5 +163,6 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        this.getViewModelStore().clear();
     }
 }

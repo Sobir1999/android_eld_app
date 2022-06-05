@@ -77,17 +77,6 @@ public class CustomLiveRulerChart extends CustomRulerChart {
 
         int start = 0;
 
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                int hour = Calendar.getInstance().getTime().getHours();
-//                int minut = Calendar.getInstance().getTime().getMinutes();
-//                int second = Calendar.getInstance().getTime().getSeconds();
-//                currentDate = hour * 3600 + minut * 60 + second;
-//            }
-//        }, 500);
-
-
         for (int i = 0; i < arrayList.size(); i++) {
             startY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * arrayList.get(i).getFrom_status()) / 4;
             endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * arrayList.get(i).getTo_status()) / 4;

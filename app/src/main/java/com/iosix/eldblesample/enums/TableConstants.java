@@ -38,7 +38,7 @@ public class TableConstants {
     public static Paint getONPaint() {
         paint = new Paint();
         paint.setStrokeWidth(textWidth);
-        paint.setColor(Color.parseColor("#851DC6"));
+        paint.setColor(Color.parseColor("#850531"));
         paint.setTextSize(textSize);
         return paint;
     }

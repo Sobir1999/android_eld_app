@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -38,6 +39,7 @@ import com.iosix.eldblesample.shared_prefs.SignaturePrefs;
 import com.iosix.eldblesample.shared_prefs.UserData;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
 import com.iosix.eldblesample.viewModel.SignatureViewModel;
+import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -49,6 +51,8 @@ import java.util.concurrent.ExecutionException;
 
 import static android.os.Build.VERSION.SDK_INT;
 
+import static com.iosix.eldblesample.utils.Utils.defects;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -57,12 +61,14 @@ public class SignatureActivity extends BaseActivity {
 
     private ArrayList<String> mParams;
     private ArrayList<String> selectedTrailers;
+    private ArrayList<String> unitDefects;
+    private ArrayList<String> trailerDefects;
     private String day;
     private DvirViewModel dvirViewModel;
     private SignatureViewModel signatureViewModel;
     private SignaturePrefs signaturePrefs;
-    private APIInterface apiInterface;
     private SessionManager sessionManager;
+    private EldJsonViewModel eldJsonViewModel;
 
     @Override
     protected int getLayoutId() {
@@ -85,11 +91,13 @@ public class SignatureActivity extends BaseActivity {
         boolean mParam1 = getIntent().getBooleanExtra("isTruckSelected", false);
         mParams = getIntent().getStringArrayListExtra("arrayList");
         selectedTrailers = getIntent().getStringArrayListExtra("selectedTrailers");
+        unitDefects = getIntent().getStringArrayListExtra("unitDefects");
+        trailerDefects = getIntent().getStringArrayListExtra("trailerDefects");
         day = getIntent().getStringExtra("day");
         signaturePrefs = new SignaturePrefs(this);
         sessionManager = new SessionManager(this);
 
-        apiInterface = ApiClient.getClient().create(APIInterface.class);
+        eldJsonViewModel = ViewModelProviders.of(this).get(EldJsonViewModel.class);
 
         verifyStoragePermissions(this);
 
@@ -104,7 +112,6 @@ public class SignatureActivity extends BaseActivity {
         signatureViewModel.getMgetAllSignatures().observe(this, signatureEntities -> {
         });
 
-        dvirViewModel = new DvirViewModel(this.getApplication());
         dvirViewModel = ViewModelProviders.of(this).get(DvirViewModel.class);
         dvirViewModel.getMgetDvirs().observe(this, dvirEntities -> {
         });
@@ -153,11 +160,11 @@ public class SignatureActivity extends BaseActivity {
                         saveTempBitmap(signaturePrefs.fetchSignature());
                         saveTempBitmap(signaturePrefs.fetchMechanicSignature());
                         String currDay;
-                        currDay = mParams.get(6);
+                        currDay = mParams.get(4);
                         try {
                             dvirViewModel.insertDvir(new DvirEntity(
-                                    mParams.get(0),getString(selectedTrailers),mParams.get(1),mParams.get(2),true,
-                                    mParams.get(3),mParams.get(4),mParams.get(5), day
+                                    mParams.get(0),getString(selectedTrailers),defects(unitDefects),defects(trailerDefects),true,
+                                    mParams.get(1),mParams.get(2),mParams.get(2), day
                             ));
                             Intent intent = new Intent(SignatureActivity.this, LGDDActivity.class);
                             intent.putExtra("position", 3);
@@ -166,25 +173,20 @@ public class SignatureActivity extends BaseActivity {
 
                             sessionManager.saveSignature(signaturePrefs.fetchSignature());
 
-                            apiInterface.sendDvir(new SendDvir(null,null,null,mParams.get(3),
-                                    mParams.get(4),mParams.get(5))).enqueue(new Callback<SendDvir>() {
-                                @Override
-                                public void onResponse(Call<SendDvir> call, Response<SendDvir> response) {
-                                    try {
-                                        Log.d("Adverse Diving",response.errorBody().string());
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    if (response.isSuccessful()){
-                                        Log.d("Adverse Diving","Response is Successfull");
-                                    }
+                            if (unitDefects.size() == 0 && trailerDefects.size() == 0){
+                                if (selectedTrailers.size() == 0){
+                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),null,null,"null",mParams.get(1),null));
+                                }else {
+                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),selectedTrailers,null,"null",mParams.get(1),null));
                                 }
-
-                                @Override
-                                public void onFailure(Call<SendDvir> call, Throwable t) {
-                                    Log.d("Adverse Diving",t.getMessage());
+                            }else {
+                                trailerDefects.addAll(unitDefects);
+                                if (selectedTrailers.size() == 0){
+                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),null,trailerDefects,mParams.get(3),mParams.get(1),null));
+                                }else {
+                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),selectedTrailers,trailerDefects,mParams.get(3),mParams.get(1),null));
                                 }
-                            });
+                            }
 
                         } catch (ExecutionException | InterruptedException e) {
                             e.printStackTrace();
@@ -208,12 +210,12 @@ public class SignatureActivity extends BaseActivity {
                     }
                     saveTempBitmap(signaturePrefs.fetchSignature());
                     String currDay;
-                    currDay = mParams.get(6);
+                    currDay = mParams.get(4);
                     try {
                         if (!mParams.get(1).equals("No unit selected") || !mParams.get(2).equals("No trailer selected")){
                             dvirViewModel.insertDvir(new DvirEntity(
-                                    mParams.get(0),getString(selectedTrailers),mParams.get(1),mParams.get(2),false,
-                                    mParams.get(3),mParams.get(4),mParams.get(5), day
+                                    mParams.get(0),getString(selectedTrailers),defects(unitDefects),defects(unitDefects),false,
+                                    mParams.get(1),mParams.get(2),mParams.get(2), day
                             ));
                             Intent intent = new Intent(this, LGDDActivity.class);
                             intent.putExtra("position", 3);
@@ -221,29 +223,25 @@ public class SignatureActivity extends BaseActivity {
                             startActivity(intent);
                             sessionManager.saveSignature(signaturePrefs.fetchSignature());
 
-                            apiInterface.sendDvir(new SendDvir(null,null,null,mParams.get(3),
-                                    mParams.get(4),mParams.get(5))).enqueue(new Callback<SendDvir>() {
-                                @Override
-                                public void onResponse(Call<SendDvir> call, Response<SendDvir> response) {
-                                    try {
-                                        Log.d("Adverse Diving",response.errorBody().string());
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    if (response.isSuccessful()){
-                                        Log.d("Adverse Diving","Response is Successfull");
-                                    }
+                            if (unitDefects.size() == 0 && trailerDefects.size() == 0){
+                                if (selectedTrailers.size() == 0){
+                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),null,null,"null",mParams.get(1),null));
+                                }else {
+                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),selectedTrailers,null,"null",mParams.get(1),null));
                                 }
+                            }else {
+                                trailerDefects.addAll(unitDefects);
+                                if (selectedTrailers.size() == 0){
+                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),null,trailerDefects,mParams.get(3),mParams.get(1),null));
+                                }else {
+                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),selectedTrailers,trailerDefects,mParams.get(3),mParams.get(1),null));
+                                }
+                            }
 
-                                @Override
-                                public void onFailure(Call<SendDvir> call, Throwable t) {
-                                    Log.d("Adverse Diving",t.getMessage());
-                                }
-                            });
                         }else {
                             dvirViewModel.insertDvir(new DvirEntity(
-                                    mParams.get(0),getString(selectedTrailers),mParams.get(1),mParams.get(2),true,
-                                    mParams.get(3),mParams.get(4),mParams.get(5), day
+                                    mParams.get(0),getString(selectedTrailers),defects(unitDefects),defects(trailerDefects),true,
+                                    mParams.get(1),mParams.get(2),mParams.get(3), day
                             ));
                             Intent intent = new Intent(this, LGDDActivity.class);
                             intent.putExtra("position", 3);
@@ -253,25 +251,20 @@ public class SignatureActivity extends BaseActivity {
                             sessionManager.saveSignature(signaturePrefs.fetchSignature());
 
 
-                            apiInterface.sendDvir(new SendDvir(null,null,null,mParams.get(3),
-                                    mParams.get(4),mParams.get(5))).enqueue(new Callback<SendDvir>() {
-                                @Override
-                                public void onResponse(Call<SendDvir> call, Response<SendDvir> response) {
-                                    try {
-                                        Log.d("Adverse Diving",response.errorBody().string());
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    if (response.isSuccessful()){
-                                        Log.d("Adverse Diving","Response is Successfull");
-                                    }
+                            if (unitDefects.size() == 0 && trailerDefects.size() == 0){
+                                if (selectedTrailers.size() == 0){
+                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),null,null,"null",mParams.get(1),null));
+                                }else {
+                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),selectedTrailers,null,"null",mParams.get(1),null));
                                 }
-
-                                @Override
-                                public void onFailure(Call<SendDvir> call, Throwable t) {
-                                    Log.d("Adverse Diving",t.getMessage());
+                            }else {
+                                trailerDefects.addAll(unitDefects);
+                                if (selectedTrailers.size() == 0){
+                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),null,trailerDefects,mParams.get(3),mParams.get(1),null));
+                                }else {
+                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),selectedTrailers,trailerDefects,mParams.get(3),mParams.get(1),null));
                                 }
-                            });
+                            }
 
                         }
                     } catch (ExecutionException | InterruptedException e) {
@@ -322,15 +315,6 @@ public class SignatureActivity extends BaseActivity {
         }
     }
 
-    /* Checks if external storage is available for read and write */
-//    public boolean isExternalStorageWritable() {
-//        String state = Environment.getExternalStorageState();
-//        if (Environment.MEDIA_MOUNTED.equals(state)) {
-//            return true;
-//        }
-//        return false;
-//    }
-
     public static void verifyStoragePermissions(Activity activity) {
         if (SDK_INT >= Build.VERSION_CODES.R) {
             if (!Environment.isExternalStorageManager()) {
@@ -353,6 +337,12 @@ public class SignatureActivity extends BaseActivity {
             }
             return stringBuilder.toString();
         }else return "";
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.getViewModelStore().clear();
     }
 }
 
@@ -381,4 +371,5 @@ class SignatureFragmentAdapter extends FragmentStateAdapter {
     public int getItemCount() {
         return 1;
     }
+
 }

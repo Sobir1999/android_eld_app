@@ -7,7 +7,6 @@ import static java.lang.Thread.sleep;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -27,16 +26,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -62,6 +60,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.snackbar.Snackbar;
 import com.iosix.eldblelib.EldBleConnectionStateChangeCallback;
 import com.iosix.eldblelib.EldBleDataCallback;
 import com.iosix.eldblelib.EldBleError;
@@ -70,12 +69,9 @@ import com.iosix.eldblelib.EldBroadcast;
 import com.iosix.eldblelib.EldBroadcastTypes;
 import com.iosix.eldblelib.EldBufferRecord;
 import com.iosix.eldblelib.EldDataRecord;
-import com.iosix.eldblelib.EldDtcCallback;
 import com.iosix.eldblelib.EldEngineStates;
-import com.iosix.eldblelib.EldFirmwareUpdateCallback;
 import com.iosix.eldblelib.EldFuelRecord;
 import com.iosix.eldblelib.EldManager;
-import com.iosix.eldblelib.EldParameterTypes;
 import com.iosix.eldblelib.EldScanObject;
 import com.iosix.eldblesample.BuildConfig;
 import com.iosix.eldblesample.R;
@@ -88,13 +84,13 @@ import com.iosix.eldblesample.dialogs.ConnectToEldDialog;
 import com.iosix.eldblesample.dialogs.SearchEldDeviceDialog;
 import com.iosix.eldblesample.enums.Day;
 import com.iosix.eldblesample.enums.EnumsConstants;
+import com.iosix.eldblesample.enums.GPSTracker;
 import com.iosix.eldblesample.fragments.InspectionModuleFragment;
 import com.iosix.eldblesample.models.ApkVersion;
-import com.iosix.eldblesample.models.Data;
 import com.iosix.eldblesample.models.MessageModel;
+import com.iosix.eldblesample.models.SendDvir;
 import com.iosix.eldblesample.models.Status;
 import com.iosix.eldblesample.models.User;
-import com.iosix.eldblesample.models.VehicleData;
 import com.iosix.eldblesample.models.eld_records.BufferRecord;
 import com.iosix.eldblesample.models.eld_records.Eld;
 import com.iosix.eldblesample.models.eld_records.FuelRecord;
@@ -147,6 +143,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     private Switch nightModeSwitch;
     private int current_status = EnumsConstants.STATUS_OFF;
     private int last_status;
+    private boolean isTouch = false;
     private String time = "" + Calendar.getInstance().getTime();
     public String today = time.split(" ")[1] + " " + time.split(" ")[2];
     private ArrayList<LogEntity> truckStatusEntities;
@@ -168,17 +165,16 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     private ArrayList<User> users;
     private DriverSharedPrefs driverSharedPrefs;
     private NetworkConnectionLiveData networkConnectionLiveData;
+    private FusedLocationProviderClient fusedLocationClient;
 
 
     private double latitude;
     private double longtitude;
 
     String MAC;
-    private int updateSelection;
 
     private EldManager mEldManager;
     private final Set<EldBroadcastTypes> subscribedRecords = EnumSet.of(EldBroadcastTypes.ELD_BUFFER_RECORD, EldBroadcastTypes.ELD_CACHED_RECORD, EldBroadcastTypes.ELD_FUEL_RECORD, EldBroadcastTypes.ELD_DATA_RECORD, EldBroadcastTypes.ELD_DRIVER_BEHAVIOR_RECORD, EldBroadcastTypes.ELD_EMISSIONS_PARAMETERS_RECORD, EldBroadcastTypes.ELD_ENGINE_PARAMETERS_RECORD, EldBroadcastTypes.ELD_TRANSMISSION_PARAMETERS_RECORD);
-    private boolean diagnosticEnabled = false, fuelEnabled = false, engineEnabled = false, transmissionEnabled = false, emissionsEnabled = false, driverEnabled = false;
 
     private static final int REQUEST_BASE = 100;
     private static final int REQUEST_BT_ENABLE = REQUEST_BASE + 1;
@@ -215,10 +211,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         lastStatusData = LastStatusData.getInstance(getApplicationContext());
         logEntities = new ArrayList<>();
 
-        userViewModel = new UserViewModel(this.getApplication());
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
 
-        eldJsonViewModel = new EldJsonViewModel(getApplication());
         eldJsonViewModel = ViewModelProviders.of(this).get(EldJsonViewModel.class);
 
         networkConnectionLiveData = new NetworkConnectionLiveData(getApplicationContext());
@@ -258,6 +252,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         mEldManager = EldManager.GetEldManager(this, "123456789A");
 
         vehiclesEntities = new ArrayList<>();
+        users = new ArrayList<>();
         driverSharedPrefs = DriverSharedPrefs.getInstance(getApplicationContext());
 
         if (getIntent().getIntExtra("JSON", 0) == 1) {
@@ -282,16 +277,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     }
 
     private void sendApkVersion() {
-        apiInterface.sendApkVersion(new ApkVersion(BuildConfig.VERSION_NAME, Build.VERSION.RELEASE)).enqueue(new Callback<ApkVersion>() {
-            @Override
-            public void onResponse(Call<ApkVersion> call, Response<ApkVersion> response) {
-            }
-
-            @Override
-            public void onFailure(Call<ApkVersion> call, Throwable t) {
-
-            }
-        });
+        eldJsonViewModel.sendApkVersion(new ApkVersion(BuildConfig.VERSION_NAME, Build.VERSION.RELEASE));
     }
 
     private void update() {
@@ -376,7 +362,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                     }
 
                     if (engine_state.size() > 0) {
-                        apiInterface.sendLocalData(new LiveDataEntitiy(
+                        eldJsonViewModel.sendLocalData(new LiveDataEntitiy(
                                 engine_state,
                                 vin,
                                 speed,
@@ -394,16 +380,9 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                                 dop,
                                 sequence_number,
                                 firmware_version
-                        )).enqueue(new Callback<LiveDataEntitiy>() {
-                            @Override
-                            public void onResponse(Call<LiveDataEntitiy> call, Response<LiveDataEntitiy> response) {
-                                if (response.isSuccessful()) {
-                                    userViewModel.deleteLocalData();
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<LiveDataEntitiy> call, Throwable t) {
+                        )).observe(this, localData -> {
+                            if (localData != null) {
+                                userViewModel.deleteLocalData();
                             }
                         });
                     }
@@ -416,88 +395,70 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
 
         userViewModel.deleteUser();
-        apiInterface.getUser().enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
-                if (response.isSuccessful()) {
-                    User user = response.body();
-                    assert user != null;
-                    driverSharedPrefs.saveLastUsername(user.getName());
-                    driverSharedPrefs.saveLastSurname(user.getLastName());
-                    driverSharedPrefs.saveLastImage(user.getImage());
-                    driverSharedPrefs.saveLastHomeTerAdd(user.getHomeTerminalAddress());
-                    driverSharedPrefs.saveLastHomeTerTimeZone(user.getTimeZone());
-                    driverSharedPrefs.saveLastMainOffice(user.getMainOffice());
-                    driverSharedPrefs.saveLastPhoneNumber(user.getPhone());
-                    driverSharedPrefs.saveCompany(user.getCompany());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+        eldJsonViewModel.getUser().observe(this, user -> {
+            if (user != null) {
+                driverSharedPrefs.saveLastUsername(user.getName());
+                driverSharedPrefs.saveLastSurname(user.getLastName());
+                driverSharedPrefs.saveLastImage(user.getImage());
+                driverSharedPrefs.saveLastHomeTerAdd(user.getHomeTerminalAddress());
+                driverSharedPrefs.saveLastHomeTerTimeZone(user.getTimeZone());
+                driverSharedPrefs.saveLastMainOffice(user.getMainOffice());
+                driverSharedPrefs.saveLastPhoneNumber(user.getPhone());
+                driverSharedPrefs.saveCompany(user.getCompany());
             }
         });
-
     }
 
     private void getAllDrivers() {
-        userViewModel.deleteUser();
-        apiInterface.getAllDrivers().enqueue(new Callback<Data>() {
-            @Override
-            public void onResponse(@NonNull Call<Data> call, @NonNull Response<Data> response) {
-                if (response.isSuccessful()) {
-                    Data users = response.body();
-                    assert users != null;
-                    if (MainActivity.this.users.size() == 0) {
-                        for (int i = 0; i < users.getDriver().getUser().size(); i++) {
-                            userViewModel.insertUser(users.getDriver().getUser().get(i));
-                        }
-                    } else {
-                        for (int i = 0; i < users.getDriver().getUser().size(); i++) {
-                            for (int j = 0; j < MainActivity.this.users.size(); j++) {
-                                if (!users.getDriver().getUser().get(i).getPhone().equals(MainActivity.this.users.get(j).getPhone())) {
-                                    MainActivity.this.users.add(users.getDriver().getUser().get(i));
-                                }
+
+        eldJsonViewModel.getAllDrivers().observe(this, users -> {
+            if (users != null) {
+                for (int i = 0; i < users.getDriver().getUser().size(); i++) {
+                    userViewModel.insertUser(users.getDriver().getUser().get(i));
+                }
+                if (this.users.size() != 0) {
+                    int count = 0;
+                    for (int i = 0; i < users.getDriver().getUser().size(); i++) {
+                        for (int j = 0; j < this.users.size(); j++) {
+                            if (users.getDriver().getUser().get(i).getName().equals(this.users.get(j).getName())) {
+                                count++;
                             }
                         }
+                        if (count == 0) {
+                            userViewModel.insertUser(users.getDriver().getUser().get(i));
+                        } else {
+                            count = 0;
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < users.getDriver().getUser().size(); i++) {
+                        userViewModel.insertUser(users.getDriver().getUser().get(i));
                     }
                 }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<Data> call, @NonNull Throwable t) {
             }
         });
-        apiInterface.getAllVehicles().enqueue(new Callback<VehicleData>() {
-            @Override
-            public void onResponse(@NonNull Call<VehicleData> call, @NonNull Response<VehicleData> response) {
-                if (response.isSuccessful()) {
-                    VehicleData vehicleData = response.body();
-                    assert vehicleData != null;
-                    if (vehiclesEntities.size() != 0) {
-                        int count = 0;
-                        for (int i = 0; i < vehicleData.getVehicle().getVehicleList().size(); i++) {
-                            for (int j = 0; j < vehiclesEntities.size(); j++) {
-                                if (vehicleData.getVehicle().getVehicleList().get(i).getVehicle_id().equals(vehiclesEntities.get(j).getName())) {
-                                    count++;
-                                }
-                            }
-                            if (count == 0) {
-                                daoViewModel.insertVehicle(new VehiclesEntity(vehicleData.getVehicle().getVehicleList().get(i).getVehicle_id()));
-                            } else {
-                                count = 0;
+
+        eldJsonViewModel.getAllVehicles().observe(this, vehicleData -> {
+            if (vehicleData != null) {
+                if (vehiclesEntities.size() != 0) {
+                    int count = 0;
+                    for (int i = 0; i < vehicleData.getVehicle().getVehicleList().size(); i++) {
+                        for (int j = 0; j < vehiclesEntities.size(); j++) {
+                            if (vehicleData.getVehicle().getVehicleList().get(i).getVehicle_id().equals(vehiclesEntities.get(j).getName())) {
+                                count++;
                             }
                         }
-                    } else {
-                        for (int i = 0; i < vehicleData.getVehicle().getVehicleList().size(); i++) {
+                        if (count == 0) {
                             daoViewModel.insertVehicle(new VehiclesEntity(vehicleData.getVehicle().getVehicleList().get(i).getVehicle_id()));
+                        } else {
+                            count = 0;
                         }
                     }
+                } else {
+                    for (int i = 0; i < vehicleData.getVehicle().getVehicleList().size(); i++) {
+                        daoViewModel.insertVehicle(new VehiclesEntity(vehicleData.getVehicle().getVehicleList().get(i).getVehicle_id()));
+                    }
                 }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<VehicleData> call, @NonNull Throwable t) {
             }
         });
     }
@@ -523,6 +484,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                     intent.putExtra("position", 3);
                     intent.putExtra("currDay", s);
                     startActivity(intent);
+                    finish();
                 } else {
                     Intent intent = new Intent(MainActivity.this, AddDvirActivity.class);
                     intent.putExtra("currDay", s);
@@ -554,12 +516,14 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             Intent intent = new Intent(this, SettingActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
+            drawerLayout.close();
         });
 
         hosRules.setOnClickListener(view -> {
             Intent intent = new Intent(this, RulesActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
+            drawerLayout.close();
         });
 
         idLogout.setOnClickListener(v -> {
@@ -589,8 +553,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             dialog.show();
         });
 
-        dvirViewModel = new DvirViewModel(this.getApplication());
-        dvirViewModel = ViewModelProviders.of(this).get(DvirViewModel.class);
         dvirViewModel.getMgetDvirs().observe(this, dvirEntities -> {
 
             boolean hasDvir = false;
@@ -678,9 +640,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                 }
         );
 
-
-//        recap.setOnClickListener(v -> loadLGDDFragment(RecapFragment.newInstance()));
-//
         inspectionMode.setOnClickListener(v -> {
             loadLGDDFragment(InspectionModuleFragment.newInstance());
             drawerLayout.close();
@@ -696,10 +655,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     }
 
     private void optimizeViewModels() {
-        statusDaoViewModel = new StatusDaoViewModel(this.getApplication());
-        daoViewModel = new DayDaoViewModel(this.getApplication());
-        dvirViewModel = new DvirViewModel(this.getApplication());
         dvirViewModel = ViewModelProviders.of(this).get(DvirViewModel.class);
+        daoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
 
         apiInterface = ApiClient.getClient().create(APIInterface.class);
         truckStatusEntities = new ArrayList<>();
@@ -720,10 +677,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                 }
                 logEntities.add(truckStatusEntities.get(i));
             }
-        });
-
-        daoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
-        daoViewModel.getMgetAllDays().observe(this, dayEntities -> {
         });
 
     }
@@ -770,63 +723,26 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         final EditText note = findViewById(R.id.idNoteEdit);
 
         findLocation.setOnClickListener(v -> {
-            if (checkGrantResults(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, new int[]{1})) {
-                Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
-                if (latitude != 0 && longtitude != 0) {
-                    try {
-                        List<Address> addresses = geocoder.getFromLocation(latitude, longtitude, 1);
-                        Address obj = addresses.get(0);
-                        String add = obj.getCountryName();
-                        add = add + ", " + obj.getSubAdminArea();
+            GPSTracker gpsTracker = new GPSTracker(this);
+            longtitude = gpsTracker.getLongitude();
+            latitude = gpsTracker.getLatitude();
+            Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
+            try {
+                List<Address> addresses = geocoder.getFromLocation(latitude, longtitude, 1);
+                Address obj = addresses.get(0);
+                String add = obj.getCountryName();
+                String address = obj.getAddressLine(0);
+                add = add + ", " + obj.getSubAdminArea();
+                Log.d("Adverse Diving",add);
 
-                        editLocation.setText(add);
-                        editLocation.setClickable(false);
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(MainActivity.this, "Failed to detect location", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+                editLocation.setText(add);
+                editLocation.setClickable(false);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
-            dvirViewModel.getIsConnectedtoEld().observe(this, isConnected -> {
-                if (!isConnected) {
-                    FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
-                        return;
-                    }
-                    fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            Log.d("Adverse Diving","Eld is not Connected");
-                            if (location != null){
-                                Log.d("Adverse Diving",location.getLatitude()+location.getLongitude()+" " + location.toString());
-                                Log.d("Adverse Diving","Eld is not Connected");
-                            }
-                        }
-                    });
-                }
-            });
-//            else {
-//                AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-//                alertDialog.setTitle("Location not found")
-//                        .setMessage("Check Eld connection!")
-//                        .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
-//                AlertDialog alert = alertDialog.create();
-//                alert.show();
-//            }
-
-    });
+            Log.d("Adverse Diving",latitude + " " + longtitude + "A");
+        });
 
         cancel.setOnClickListener(v -> {
             visiblityViewCons.setVisibility(View.GONE);
@@ -862,100 +778,60 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                 reqdelinprogress = true;
                 reccount = 0;
 
-//                if (editLocation.getText().toString().equals("")){
-//                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-//                    alertDialog.setTitle("No location created")
-//                            .setMessage("Create current location!")
-//                            .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
-//                    AlertDialog alert = alertDialog.create();
-//                    alert.show();
-//                }
-//                else
-//                    if (note.getText().toString().equals("")){
-//                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-//                    alertDialog.setTitle("No note created")
-//                            .setMessage("Create note!")
-//                            .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
-//                    AlertDialog alert = alertDialog.create();
-//                    alert.show();
-//                }
-//                else{
-//                    Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
-//                    try {
-//                        List<Address> geoResults = geocoder.getFromLocationName(editLocation.getText().toString(), 1);
-//                        geoResults.size();
-//                        Address addr = geoResults.get(0);
-//                        latitude = addr.getLatitude();
-//                        longtitude = addr.getLongitude();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-
-                    ArrayList<Double> arrayList = new ArrayList<>();
+                ArrayList<Double> arrayList = new ArrayList<>();
+                if (latitude != 0 && longtitude != 0){
                     arrayList.add(latitude);
                     arrayList.add(longtitude);
                     if (current_status == EnumsConstants.STATUS_OFF){
-                        Call<Status> call = apiInterface.postStatus(new Status("OFF",new Point("Point",arrayList)
+
+                        eldJsonViewModel.postStatus(new Status("OFF",new Point("Point",arrayList)
                                 ,note.getText().toString(),new Date().toInstant().toString()));
 
-                        call.enqueue(new Callback<Status>() {
-                            @Override
-                            public void onResponse(Call<Status> call, Response<Status> response) {
-                                if (response.isSuccessful()){
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<Status> call, Throwable t) {
-
-                            }
-                        });
                     }else if (current_status == EnumsConstants.STATUS_SB){
-                        Call<Status> call = apiInterface.postStatus(new Status("SB",new Point("Point",arrayList)
+
+                        eldJsonViewModel.postStatus(new Status("SB",new Point("Point",arrayList)
                                 ,note.getText().toString(),new Date().toInstant().toString()));
-                        call.enqueue(new Callback<Status>() {
-                            @Override
-                            public void onResponse(Call<Status> call, Response<Status> response) {
-                            }
 
-                            @Override
-                            public void onFailure(Call<Status> call, Throwable t) {
-
-                            }
-                        });
                     }else if (current_status == EnumsConstants.STATUS_DR){
-                            Call<Status> call = apiInterface.postStatus(new Status("D",new Point("Point",arrayList)
-                                    ,note.getText().toString(),new Date().toInstant().toString()));
-                            call.enqueue(new Callback<Status>() {
-                                @Override
-                                public void onResponse(Call<Status> call, Response<Status> response) {
-                                }
 
-                                @Override
-                                public void onFailure(Call<Status> call, Throwable t) {
-
-                                }
-                            });
+                        eldJsonViewModel.postStatus(new Status("D",new Point("Point",arrayList)
+                                ,note.getText().toString(),new Date().toInstant().toString()));
 
                     }else if (current_status == EnumsConstants.STATUS_ON){
-                        Call<Status> call = apiInterface.postStatus(new Status("ON",new Point("Point",arrayList)
-                                ,note.getText().toString(),new Date().toInstant().toString()));
-                        call.enqueue(new Callback<Status>() {
-                            @Override
-                            public void onResponse(Call<Status> call, Response<Status> response) {
-                                if (response.isSuccessful()){
-                                }
-                            }
 
-                            @Override
-                            public void onFailure(Call<Status> call, Throwable t) {
-                            }
-                        });
+                        eldJsonViewModel.postStatus(new Status("ON",new Point("Point",arrayList)
+                                ,note.getText().toString(),new Date().toInstant().toString()));
+
                     }
-                statusDaoViewModel.insertStatus(new LogEntity(last_status, current_status, editLocation.getText().toString(), note.getText().toString(), null, today, getCurrentSeconds()));
-                lastStatusData.saveLasStatus(current_status,getCurrentSeconds());
-                restartActivity();
-//                }
+                    statusDaoViewModel.insertStatus(new LogEntity(last_status, current_status, editLocation.getText().toString(), note.getText().toString(), null, today, getCurrentSeconds()));
+                    lastStatusData.saveLasStatus(current_status,getCurrentSeconds());
+                    restartActivity();
+                }else {
+                    if (current_status == EnumsConstants.STATUS_OFF){
+
+                        eldJsonViewModel.postStatus(new Status("OFF",null
+                                ,note.getText().toString(),new Date().toInstant().toString()));
+
+                    }else if (current_status == EnumsConstants.STATUS_SB){
+
+                        eldJsonViewModel.postStatus(new Status("SB",null
+                                ,note.getText().toString(),new Date().toInstant().toString()));
+
+                    }else if (current_status == EnumsConstants.STATUS_DR){
+
+                        eldJsonViewModel.postStatus(new Status("D",null
+                                ,note.getText().toString(),new Date().toInstant().toString()));
+
+                    }else if (current_status == EnumsConstants.STATUS_ON){
+
+                        eldJsonViewModel.postStatus(new Status("ON",null
+                                ,note.getText().toString(),new Date().toInstant().toString()));
+
+                    }
+                    statusDaoViewModel.insertStatus(new LogEntity(last_status, current_status, editLocation.getText().toString(), note.getText().toString(), null, today, getCurrentSeconds()));
+                    lastStatusData.saveLasStatus(current_status,getCurrentSeconds());
+                    restartActivity();
+                }
             }else {
                 if(last_status == EnumsConstants.STATUS_OFF){
                     off.setClickable(false);
@@ -973,6 +849,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         });
 
         dvirViewModel.getIsConnectedtoEld().observe(this,isConnected ->{
+            final int[] m = {0};
+            Timer t = new Timer();
             if (isConnected){
                 dvirViewModel.getTruckSpeed().observe(MainActivity.this,speed ->{
                     ArrayList<Double> arrayList = new ArrayList<>();
@@ -988,7 +866,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                             TextView textView = dialog.findViewById(R.id.idConfirmationTitle);
                             Button stay = dialog.findViewById(R.id.idDialogStayDriving);
                             Button go = dialog.findViewById(R.id.idDialogChangeStatus);
-                            Timer t = new Timer();
                             t.scheduleAtFixedRate(new TimerTask() {
                                 @Override
                                 public void run() {
@@ -998,21 +875,9 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                                             textView.setText(count[0] + " sec");
                                         }else {
                                             current_status = EnumsConstants.STATUS_ON;
-                                            Call<Status> call = apiInterface.postStatus(new Status("ON",new Point("Point",arrayList)
+                                            eldJsonViewModel.postStatus(new Status("ON",new Point("Point",arrayList)
                                                     ,note.getText().toString(),new Date().toInstant().toString()));
 
-                                            call.enqueue(new Callback<Status>() {
-                                                @Override
-                                                public void onResponse(Call<Status> call, Response<Status> response) {
-                                                    if (response.isSuccessful()){
-                                                    }
-                                                }
-
-                                                @Override
-                                                public void onFailure(Call<Status> call, Throwable t) {
-
-                                                }
-                                            });
                                             statusDaoViewModel.insertStatus(new LogEntity(last_status, current_status, editLocation.getText().toString(), note.getText().toString(), null, today, getCurrentSeconds()));
                                             lastStatusData.saveLasStatus(current_status,getCurrentSeconds());
                                             restartActivity();
@@ -1032,21 +897,9 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                                 dialog.dismiss();
                                 t.cancel();
                                 current_status = EnumsConstants.STATUS_OFF;
-                                Call<Status> call = apiInterface.postStatus(new Status("OFF",new Point("Point",arrayList)
+                                eldJsonViewModel.postStatus(new Status("OFF",new Point("Point",arrayList)
                                         ,note.getText().toString(),new Date().toInstant().toString()));
 
-                                call.enqueue(new Callback<Status>() {
-                                    @Override
-                                    public void onResponse(Call<Status> call, Response<Status> response) {
-                                        if (response.isSuccessful()){
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<Status> call, Throwable t) {
-
-                                    }
-                                });
                                 statusDaoViewModel.insertStatus(new LogEntity(last_status, current_status, editLocation.getText().toString(), note.getText().toString(), null, today, getCurrentSeconds()));
                                 lastStatusData.saveLasStatus(current_status,getCurrentSeconds());
                                 restartActivity();
@@ -1271,375 +1124,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
     }
 
-    private final EldDtcCallback dtcCallback = new EldDtcCallback() {
-        @Override
-        public void onDtcDetected(final String status, final String jsonString) {
-            runOnUiThread(() -> {
-                EventBus.getDefault().postSticky(new MessageModel(status, "EldDtcCallback"));
-            });
-        }
-    };
-
-    private final EldFirmwareUpdateCallback fwUpdateCallback = new EldFirmwareUpdateCallback() {
-        @Override
-        public void onUpdateNotification(final String status) {
-            runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("", "EldFirmwareUpdateCallback")));
-        }
-    };
-
-
-    public void onCheckUpdateClicked(View v) {
-        if (v.getId() == R.id.FW_CHECK) {
-//            final String Status = mEldManager.CheckFirmwareUpdate();
-
-            runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("Current firmware: " + mEldManager.GetFirmwareVersion() + " Available firmware: " + mEldManager.CheckFirmwareUpdate() + "\r\n", "")));
-        }
-    }
-
-    public void onReqDebugClicked(View v) {
-        if (v.getId() == R.id.REQ_DEBUG) {
-            EldBleError status = mEldManager.RequestDebugData();
-            if (status != EldBleError.SUCCESS) {
-                runOnUiThread(() -> {
-//                        mStatusView.append("Request Debug Failed\n");
-                    EventBus.getDefault().postSticky(new MessageModel("Request Debug Failed\n", ""));
-//                        EventBus.getDefault().postSticky(new MessageModel("Request Debug Failed4", "4"));
-                });
-            } else {
-                runOnUiThread(() -> {
-//                        mStatusView.append("Request Debug Succeeded\n");
-                    EventBus.getDefault().postSticky(new MessageModel("Request Debug Succeeded\n", ""));
-//                        EventBus.getDefault().postSticky(new MessageModel("Request Debug Succeeded5", "5"));
-
-                });
-            }
-        }
-    }
-
-    @SuppressLint("NonConstantResourceId")
-    public void onUpdateFwClicked(View v) {
-        if (v.getId() == R.id.updateFw) {
-
-            updateSelection = 0;
-
-            // get prompts.xml view
-            LayoutInflater li = LayoutInflater.from(this);
-            View promptsView = li.inflate(R.layout.update_popup, null);
-            final EditText downloadInput = promptsView.findViewById(R.id.downloadInput);
-            final EditText localInput = promptsView.findViewById(R.id.localInput);
-            final RadioGroup radioGroup = promptsView.findViewById(R.id.radiogroup);
-
-            android.app.AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(this);
-            alertDialogBuilder.setView(promptsView);
-
-            alertDialogBuilder
-                    .setCancelable(true)
-                    .setPositiveButton("START",
-                            (dialog, id) -> {
-                                if (updateSelection == 0) {
-                                    if (downloadInput.getText().toString().equals("")) {
-                                        mEldManager.StartUpdate(fwUpdateCallback, null);
-                                    } else if (downloadInput.getText().toString().equalsIgnoreCase("FLASHERROR")) {
-                                        mEldManager.SendSpecialString("FLASHERROR");
-                                    } else {
-                                        mEldManager.StartUpdate(fwUpdateCallback, downloadInput.getText().toString());
-                                    }
-                                } else {
-                                    mEldManager.StartUpdateLocal(fwUpdateCallback, localInput.getText().toString());
-                                }
-                            })
-                    .setNegativeButton("Cancel",
-                            (dialog, id) -> dialog.cancel());
-
-            radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-                        switch (checkedId) {
-                            case R.id.downloadbutton:
-                                updateSelection = 0;
-                                break;
-                            case R.id.localbutton:
-                                updateSelection = 1;
-                                break;
-                        }
-                    }
-            );
-
-            // create alert dialog
-            android.app.AlertDialog alertDialog = alertDialogBuilder.create();
-
-            // show it
-            alertDialog.show();
-        }
-    }
-
-    @SuppressLint("UseSwitchCompatOrMaterialCode")
-    public void onEnableParametersClicked(View v) {
-        if (v.getId() == R.id.ENABLE_PARAM) {
-            LayoutInflater li = LayoutInflater.from(this);
-            View promptsView = li.inflate(R.layout.param_popup, null);
-            final Switch dtcSwitch = promptsView.findViewById(R.id.diagnostics);
-            final Switch fuelSwitch = promptsView.findViewById(R.id.fuel);
-            final Switch engineSwitch = promptsView.findViewById(R.id.engine);
-            final Switch transmissionSwitch = promptsView.findViewById(R.id.transmission);
-            final Switch emissionsSwitch = promptsView.findViewById(R.id.emissions);
-            final Switch driverSwitch = promptsView.findViewById(R.id.driver);
-
-            dtcSwitch.setChecked(diagnosticEnabled);
-            fuelSwitch.setChecked(fuelEnabled);
-            engineSwitch.setChecked(engineEnabled);
-            transmissionSwitch.setChecked(transmissionEnabled);
-            emissionsSwitch.setChecked(emissionsEnabled);
-            driverSwitch.setChecked(driverEnabled);
-
-            android.app.AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(this);
-            alertDialogBuilder.setView(promptsView);
-
-            alertDialogBuilder
-                    .setCancelable(true)
-                    .setPositiveButton("OK",
-                            (dialog, id) -> {
-                                if (dtcSwitch.isChecked() && !diagnosticEnabled) {
-                                    final EldBleError status = mEldManager.EnableAdditionalParameters(EldParameterTypes.DIAGNOSTIC_PARAMETERS);
-                                    subscribedRecords.add(EldBroadcastTypes.ELD_DIAGNOSTIC_RECORD);
-                                    diagnosticEnabled = true;
-                                    runOnUiThread(() -> {
-                                        //todo mStatusView.append("EnableAdditionalParameters (" + status + ")\n");
-                                    });
-                                } else if (!dtcSwitch.isChecked() && diagnosticEnabled) {
-                                    final EldBleError status = mEldManager.DisableAdditionalParameters(EldParameterTypes.DIAGNOSTIC_PARAMETERS);
-                                    subscribedRecords.remove(EldBroadcastTypes.ELD_DIAGNOSTIC_RECORD);
-                                    diagnosticEnabled = false;
-                                    runOnUiThread(() -> {
-                                        //todo mStatusView.append("DisableAdditionalParameters (" + status + ")\n");
-                                    });
-                                }
-
-                                if (fuelSwitch.isChecked() && !fuelEnabled) {
-                                    final EldBleError status = mEldManager.EnableAdditionalParameters(EldParameterTypes.FUEL_PARAMETERS);
-                                    subscribedRecords.add(EldBroadcastTypes.ELD_FUEL_RECORD);
-                                    fuelEnabled = true;
-                                    runOnUiThread(() -> {
-                                        //todo mStatusView.append("EnableAdditionalParameters (" + status + ")\n");
-                                    });
-                                } else if (!fuelSwitch.isChecked() && fuelEnabled) {
-                                    final EldBleError status = mEldManager.DisableAdditionalParameters(EldParameterTypes.FUEL_PARAMETERS);
-                                    subscribedRecords.remove(EldBroadcastTypes.ELD_FUEL_RECORD);
-                                    fuelEnabled = false;
-                                    runOnUiThread(() -> {
-                                        //todo mStatusView.append("DisableAdditionalParameters (" + status + ")\n");
-                                    });
-                                }
-
-                                if (engineSwitch.isChecked() && !engineEnabled) {
-                                    final EldBleError status = mEldManager.EnableAdditionalParameters(EldParameterTypes.ENGINE_PARAMETERS);
-                                    subscribedRecords.add(EldBroadcastTypes.ELD_ENGINE_PARAMETERS_RECORD);
-                                    engineEnabled = true;
-                                    runOnUiThread(() -> {
-                                        //todo mStatusView.append("EnableAdditionalParameters (" + status + ")\n");
-                                    });
-                                } else if (!engineSwitch.isChecked() && engineEnabled) {
-                                    final EldBleError status = mEldManager.DisableAdditionalParameters(EldParameterTypes.ENGINE_PARAMETERS);
-                                    subscribedRecords.remove(EldBroadcastTypes.ELD_ENGINE_PARAMETERS_RECORD);
-                                    engineEnabled = false;
-                                    runOnUiThread(() -> {
-                                        //todo mStatusView.append("DisableAdditionalParameters (" + status + ")\n");
-                                    });
-                                }
-
-                                if (transmissionSwitch.isChecked() && !transmissionEnabled) {
-                                    final EldBleError status = mEldManager.EnableAdditionalParameters(EldParameterTypes.TRANSMISSION_PARAMETERS);
-                                    subscribedRecords.add(EldBroadcastTypes.ELD_TRANSMISSION_PARAMETERS_RECORD);
-                                    transmissionEnabled = true;
-                                    runOnUiThread(() -> {
-                                        //todo mStatusView.append("EnableAdditionalParameters (" + status + ")\n");
-                                    });
-                                } else if (!transmissionSwitch.isChecked() && transmissionEnabled) {
-                                    final EldBleError status = mEldManager.DisableAdditionalParameters(EldParameterTypes.TRANSMISSION_PARAMETERS);
-                                    subscribedRecords.remove(EldBroadcastTypes.ELD_TRANSMISSION_PARAMETERS_RECORD);
-                                    transmissionEnabled = false;
-                                    runOnUiThread(() -> {
-                                        //todo mStatusView.append("DisableAdditionalParameters (" + status + ")\n");
-                                    });
-                                }
-
-                                if (emissionsSwitch.isChecked() && !emissionsEnabled) {
-                                    final EldBleError status = mEldManager.EnableAdditionalParameters(EldParameterTypes.EMISSIONS_PARAMETERS);
-                                    subscribedRecords.add(EldBroadcastTypes.ELD_EMISSIONS_PARAMETERS_RECORD);
-                                    emissionsEnabled = true;
-                                    runOnUiThread(() -> {
-                                        //todo mStatusView.append("EnableAdditionalParameters (" + status + ")\n");
-                                    });
-                                } else if (!emissionsSwitch.isChecked() && emissionsEnabled) {
-                                    final EldBleError status = mEldManager.DisableAdditionalParameters(EldParameterTypes.EMISSIONS_PARAMETERS);
-                                    subscribedRecords.remove(EldBroadcastTypes.ELD_EMISSIONS_PARAMETERS_RECORD);
-                                    emissionsEnabled = false;
-                                    runOnUiThread(() -> {
-                                        //todo mStatusView.append("DisableAdditionalParameters (" + status + ")\n");
-                                    });
-                                }
-
-                                if (driverSwitch.isChecked() && !driverEnabled) {
-                                    final EldBleError status = mEldManager.EnableAdditionalParameters(EldParameterTypes.DRIVER_BEHAVIOR);
-                                    subscribedRecords.add(EldBroadcastTypes.ELD_DRIVER_BEHAVIOR_RECORD);
-                                    driverEnabled = true;
-                                    runOnUiThread(() -> {
-                                        //todo mStatusView.append("EnableAdditionalParameters (" + status + ")\n");
-                                    });
-                                } else if (!driverSwitch.isChecked() && driverEnabled) {
-                                    final EldBleError status = mEldManager.DisableAdditionalParameters(EldParameterTypes.DRIVER_BEHAVIOR);
-                                    subscribedRecords.remove(EldBroadcastTypes.ELD_DRIVER_BEHAVIOR_RECORD);
-                                    driverEnabled = false;
-                                    runOnUiThread(() -> {
-                                        //todo mStatusView.append("DisableAdditionalParameters (" + status + ")\n");
-                                    });
-                                }
-
-                                mEldManager.UpdateSubscribedRecordTypes(subscribedRecords);
-                            })
-                    .setNegativeButton("Cancel",
-                            (dialog, id) -> dialog.cancel());
-
-            android.app.AlertDialog alertDialog = alertDialogBuilder.create();
-            alertDialog.show();
-        }
-    }
-
-    public void onSetPeriodClicked(View v) {
-        if (v.getId() == R.id.SET_PERIOD) {
-            LayoutInflater li = LayoutInflater.from(this);
-            View promptsView = li.inflate(R.layout.period_popup, null);
-            final EditText periodInput = promptsView.findViewById(R.id.periodinput);
-
-            android.app.AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(this);
-            alertDialogBuilder.setView(promptsView);
-
-            alertDialogBuilder
-                    .setCancelable(true)
-                    .setPositiveButton("OK",
-                            (dialog, id) -> {
-                                int period = Integer.parseInt(periodInput.getText().toString()) * 1000;
-                                final EldBleError status = mEldManager.SetRecordingInterval(period);
-                                runOnUiThread(() -> {
-                                    //todo mStatusView.append("Set Period Status (" + status + ")\n");
-                                });
-                            })
-                    .setNegativeButton("Cancel",
-                            (dialog, id) -> dialog.cancel());
-
-            android.app.AlertDialog alertDialog = alertDialogBuilder.create();
-            alertDialog.show();
-        }
-    }
-
-    public void onReqRecordClicked(View v) {
-        if (v.getId() == R.id.reqButton) {
-            final EldBleError status = mEldManager.RequestRecord();
-            runOnUiThread(() -> {
-                //todo mStatusView.append("ReqRecordStatus (" + status + ")\n");
-            });
-        }
-    }
-
-    public void onReqDelClicked(View v) {
-        if (v.getId() == R.id.reqDelButton) {
-//            1. request 10 records, for example from 1 to 10
-//            2. Wait until 10th record is received
-//            3. call deleteRecord method with parameters 1, 10
-//            4. request record 11
-//               In that case library does not return 11th record, need to request it few times or wait some time
-
-            reqdelinprogress = true;
-            reccount = 0;
-
-            for (int i = startseq; i < startseq + 10; i++) {
-                EldBleError err = mEldManager.RequestRecord(i);
-                if (err == EldBleError.RECORD_OUT_OF_RANGE) {
-                    break;
-                }
-            }
-        }
-    }
-
-    public void onDisconnectClicked(View v) {
-        if (v.getId() == R.id.Disconnect) {
-            mEldManager.DisconnectEld();
-        }
-    }
-
-
-    public void onRescanClicked(View v) {
-        if (v.getId() == R.id.Rescan) {
-            ScanForEld();
-        }
-    }
-
-    public void onDelRecordClicked(View v) {
-        if (v.getId() == R.id.delButton) {
-            final EldBleError status = mEldManager.DeleteRecord(startseq, startseq);
-            runOnUiThread(() -> {
-                //todo mStatusView.append("DelRecordStatus (" + status + ")\n");
-            });
-        }
-    }
-
-    public void onSetOdoClicked(View v) {
-        if (v.getId() == R.id.SET_ODO) {
-            LayoutInflater li = LayoutInflater.from(this);
-            View promptsView = li.inflate(R.layout.odo_popup, null);
-            final EditText odoInput = promptsView.findViewById(R.id.odoinput);
-
-            android.app.AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(this);
-            alertDialogBuilder.setView(promptsView);
-
-            alertDialogBuilder
-                    .setCancelable(true)
-                    .setPositiveButton("OK",
-                            (dialog, id) -> {
-                                int odo = Integer.parseInt(odoInput.getText().toString());
-                                if (odo > 0) {
-                                    mEldManager.SetOdometer(odo);
-                                }
-                            })
-                    .setNegativeButton("Cancel",
-                            (dialog, id) -> dialog.cancel());
-
-            // create alert dialog
-            android.app.AlertDialog alertDialog = alertDialogBuilder.create();
-
-            // show it
-            alertDialog.show();
-        }
-    }
-
-    public void onSetTimeClicked(View v) {
-        if (v.getId() == R.id.SET_TIME) {
-            // get prompts.xml view
-            LayoutInflater li = LayoutInflater.from(this);
-            View promptsView = li.inflate(R.layout.time_popup, null);
-            final EditText timeInput = promptsView.findViewById(R.id.timeinput);
-
-            android.app.AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(this);
-            alertDialogBuilder.setView(promptsView);
-
-            alertDialogBuilder
-                    .setCancelable(true)
-                    .setPositiveButton("OK",
-                            (dialog, id) -> {
-                                int time = Integer.parseInt(timeInput.getText().toString());
-                                if (time > 0) {
-                                    mEldManager.SetTime(time);
-                                }
-                            })
-                    .setNegativeButton("Cancel",
-                            (dialog, id) -> dialog.cancel());
-
-            // create alert dialog
-            AlertDialog alertDialog = alertDialogBuilder.create();
-
-            // show it
-            alertDialog.show();
-        }
-    }
-
     /**
      * @param context application Context so method can access LOCATION_SERVICE
      * @return true if location services are enabled else false
@@ -1684,7 +1168,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             runOnUiThread(() -> {
                 //todo mDataView.append("New State of connection" + Integer.toString(newState, 10) + "\n");
                 EventBus.getDefault().postSticky(new MessageModel("newState", "EldBleConnectionStateChangeCallback"));
-//                EventBus.getDefault().postSticky(new MessageModel("newState6", "EldBleConnectionStateChangeCallback6"));
             });
         }
     };
@@ -2340,7 +1823,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                             }
                         }else
                             if (RecordType == EldBroadcastTypes.ELD_FUEL_RECORD){
-                            fuelEnabled = true;
                             int highrpmState = 0;
                             switch (((EldFuelRecord)dataRec).getStateHighRPM()){
                                 case BAD: highrpmState = 1;
@@ -2558,32 +2040,24 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             final String strDevice;
             if (device != null) {
                 strDevice = device.getDeviceId();
-                apiInterface.sendEldNum(new Eld(strDevice,mEldManager.GetApiVersion())).enqueue(new Callback<Eld>() {
-                    @Override
-                    public void onResponse(Call<Eld> call, Response<Eld> response) {
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<Eld> call, Throwable t) {
-
-                    }
-                });
+                eldJsonViewModel.sendEldNum(new Eld(strDevice,mEldManager.GetApiVersion()));
                 runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("ELD " + strDevice + " found, now connecting...\n", "")));
 
                 EldBleError res = mEldManager.ConnectToEld(bleDataCallback, subscribedRecords, bleConnectionStateChangeCallback);
 
                 if (res != EldBleError.SUCCESS) {
                     dvirViewModel.getIsConnectedtoEld().postValue(false);
-
+                    Toast.makeText(getBaseContext(),"Connection failed",Toast.LENGTH_SHORT).show();
                     runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("Connection Failed\n", "")));
                 }else {
                     dvirViewModel.getIsConnectedtoEld().postValue(true);
+                    Toast.makeText(getBaseContext(),"Conncected to Eld",Toast.LENGTH_SHORT).show();
                     runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("Conncected to Eld\n", "")));
                 }
 
             } else {
                 dvirViewModel.getIsConnectedtoEld().postValue(false);
+                Toast.makeText(getBaseContext(),"No ELD found",Toast.LENGTH_SHORT).show();
                 runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("No ELD found\n", "")));
             }
         }
@@ -2598,30 +2072,23 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                 so = (EldScanObject) deviceList.get(0);
                 strDevice = so.getDeviceId();
                 MAC = strDevice;
-                apiInterface.sendEldNum(new Eld(MAC,mEldManager.GetApiVersion())).enqueue(new Callback<Eld>() {
-                    @Override
-                    public void onResponse(Call<Eld> call, Response<Eld> response) {
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<Eld> call, Throwable t) {
-
-                    }
-                });
+                eldJsonViewModel.sendEldNum(new Eld(MAC,mEldManager.GetApiVersion()));
                 runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("ELD " + strDevice + " found, now connecting...\n", "")));
 
                 EldBleError res = mEldManager.ConnectToEld(bleDataCallback, subscribedRecords, bleConnectionStateChangeCallback, strDevice);
                 if (res != EldBleError.SUCCESS) {
                     dvirViewModel.getIsConnectedtoEld().postValue(false);
+                    Toast.makeText(getBaseContext(),"Connection failed",Toast.LENGTH_SHORT).show();
                     runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("Connection Failed\n", "")));
                 } else {
                     dvirViewModel.getIsConnectedtoEld().postValue(true);
+                    Toast.makeText(getBaseContext(),"Conncected to Eld",Toast.LENGTH_SHORT).show();
                     runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("Conncected to Eld\n", "")));
                 }
 
             } else {
                 dvirViewModel.getIsConnectedtoEld().postValue(false);
+                Toast.makeText(getBaseContext(),"No ELD found",Toast.LENGTH_SHORT).show();
                 runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("No ELD found\n", "")));
             }
         }
@@ -2666,9 +2133,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             public void onDayChanged() {
                 time = "" + Calendar.getInstance().getTime();
                 today = time.split(" ")[1] + " " + time.split(" ")[2];
-
-                Log.d("Adverse Diving","Day is changed");
-                Toast.makeText(getApplicationContext(),"Day is Changed",Toast.LENGTH_SHORT).show();
                 daoViewModel.deleteAllDays();
                 for (int i = 7; i >= 0; i--) {
                     String time = Day.getCalculatedDate(-i);
@@ -2725,8 +2189,15 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        this.getViewModelStore().clear();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
+        this.getViewModelStore().clear();
         this.unregisterReceiver(changeDateTimeBroadcast);
     }
 }

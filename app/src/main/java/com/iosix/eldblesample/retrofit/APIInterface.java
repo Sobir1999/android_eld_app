@@ -60,11 +60,11 @@ public interface APIInterface {
     Call<User> getUser();
 
     @POST("api/token/")
-    Call<ResponseBody> createUser(@Body Student student);
+    Call<LoginResponse> createUser(@Body Student student);
 
     @FormUrlEncoded
     @POST("api/token/refresh/")
-    Call<ResponseBody> refreshToken(
+    Call<LoginResponse> refreshToken(
             @Field("refresh") String refreshToken
     );
 

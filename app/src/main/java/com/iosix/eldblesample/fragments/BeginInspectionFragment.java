@@ -43,7 +43,6 @@ public class BeginInspectionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        userViewModel = new UserViewModel(this.requireActivity().getApplication());
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
 
         generalViewModel = new GeneralViewModel(this.requireActivity().getApplication());

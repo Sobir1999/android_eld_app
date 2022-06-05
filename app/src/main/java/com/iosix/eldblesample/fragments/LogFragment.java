@@ -46,6 +46,7 @@ public class LogFragment extends Fragment {
     private RecyclerView recyclerView_log;
     private LogRecyclerViewAdapter logRecyclerViewAdapter;
     private LastStatusData lastStatusData;
+    private DvirViewModel dvirViewModel;
 
 
     public static LogFragment newInstance(String param1) {
@@ -62,6 +63,8 @@ public class LogFragment extends Fragment {
         if (getArguments() != null) {
             String currDay = getArguments().getString("ARG_PARAM1");
         }
+        dvirViewModel = ViewModelProviders.of(requireActivity()).get(DvirViewModel.class);
+
     }
 
     @Override
@@ -76,11 +79,6 @@ public class LogFragment extends Fragment {
         lastStatusData = LastStatusData.getInstance(requireContext().getApplicationContext());
         last_status = lastStatusData.getLastStatus();
 
-        DvirViewModel dvirViewModel = new DvirViewModel(requireActivity().getApplication());
-        dvirViewModel = ViewModelProviders.of((FragmentActivity) requireContext()).get(DvirViewModel.class);
-
-
-        statusDaoViewModel = new StatusDaoViewModel(requireActivity().getApplication());
         statusDaoViewModel = ViewModelProviders.of(this).get(StatusDaoViewModel.class);
         statusDaoViewModel.getmAllStatus().observe(getViewLifecycleOwner(),trackEntities ->{
 
@@ -146,8 +144,10 @@ public class LogFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onDestroy() {
+        super.onDestroy();
+        requireActivity().getViewModelStore().clear();
+        this.getViewModelStore().clear();
         _context.unregisterReceiver(changeDateTimeBroadcast);
     }
 }

@@ -37,6 +37,7 @@ import com.iosix.eldblesample.shared_prefs.SessionManager;
 import com.iosix.eldblesample.shared_prefs.SignaturePrefs;
 import com.iosix.eldblesample.utils.UploadRequestBody;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
+import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -63,10 +64,10 @@ public class DocsFragment extends Fragment implements UploadRequestBody.UploadCa
     private TextView idDrawSignature;
     private SignaturePad idSignature;
     private Button idClearSignature,idSubmitSignature;
-    private APIInterface apiInterface;
     private DvirViewModel dvirViewModel;
     private SessionManager sessionManager;
     private SignaturePrefs signaturePrefs;
+    private EldJsonViewModel eldJsonViewModel;
 
     public static DocsFragment newInstance(String param1) {
         DocsFragment fragment = new DocsFragment();
@@ -82,6 +83,12 @@ public class DocsFragment extends Fragment implements UploadRequestBody.UploadCa
         if (getArguments() != null) {
             mParam1 = getArguments().getString("ARG_PARAM1");
         }
+        eldJsonViewModel = ViewModelProviders.of(requireActivity()).get(EldJsonViewModel.class);
+
+        dvirViewModel = ViewModelProviders.of(requireActivity()).get(DvirViewModel.class);
+
+        sessionManager = new SessionManager(requireContext());
+        signaturePrefs = new SignaturePrefs(requireContext());
     }
 
     @Override
@@ -93,14 +100,6 @@ public class DocsFragment extends Fragment implements UploadRequestBody.UploadCa
         idSignature = v.findViewById(R.id.idSignature);
         idClearSignature = v.findViewById(R.id.idClearSignature);
         idSubmitSignature = v.findViewById(R.id.idSubmitSignature);
-
-        apiInterface = ApiClient.getClient().create(APIInterface.class);
-
-        dvirViewModel = new DvirViewModel(getActivity().getApplication());
-        dvirViewModel = ViewModelProviders.of(this).get(DvirViewModel.class);
-
-        sessionManager = new SessionManager(requireContext());
-        signaturePrefs = new SignaturePrefs(requireContext());
 
         verifyStoragePermissions(requireActivity());
 
@@ -130,17 +129,7 @@ public class DocsFragment extends Fragment implements UploadRequestBody.UploadCa
                 Uri uri = getImageUri(getActivity().getApplicationContext(),idSignature.getSignatureBitmap());
                 File file = new File(getPathFromURI(uri));
                 RequestBody body = new UploadRequestBody(file,"image",this);
-                apiInterface.sendSignature(MultipartBody.Part.createFormData("sign",file.getName(),body)).enqueue(new Callback<MultipartBody.Part>() {
-                    @Override
-                    public void onResponse(Call<MultipartBody.Part> call, Response<MultipartBody.Part> response) {
-                        if (response.isSuccessful()){
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<MultipartBody.Part> call, Throwable t) {
-                    }
-                });
+                eldJsonViewModel.sendSignature(MultipartBody.Part.createFormData("sign",file.getName(),body));
             }
         });
 
@@ -230,7 +219,9 @@ public class DocsFragment extends Fragment implements UploadRequestBody.UploadCa
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onDestroy() {
+        super.onDestroy();
+        requireActivity().getViewModelStore().clear();
+        this.getViewModelStore().clear();
     }
 }

@@ -13,6 +13,8 @@ import androidx.core.content.ContextCompat;
 import com.iosix.eldblesample.MyApplication;
 import com.iosix.eldblesample.R;
 
+import java.util.ArrayList;
+
 
 public class Utils {
 
@@ -58,4 +60,11 @@ public class Utils {
         return ContextCompat.getColor(MyApplication.context, id);
     }
 
+    public static String defects(ArrayList<String> selectedList){
+        StringBuilder defects = new StringBuilder();
+        for(int i = 0; i < selectedList.size(); i++){
+            defects.append(selectedList.get(i)).append("\n");
+        }
+        return defects.toString();
+    }
 }

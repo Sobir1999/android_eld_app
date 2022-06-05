@@ -23,6 +23,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.base.BaseActivity;
 import com.iosix.eldblesample.fragments.AddDefectFragment;
+import com.iosix.eldblesample.shared_prefs.TinyDB;
 
 import static com.iosix.eldblesample.MyApplication.userData;
 
@@ -30,6 +31,7 @@ public class AddDefectActivity extends BaseActivity {
 
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
+    private TinyDB tinyDB;
 
     @Override
     protected int getLayoutId() {
@@ -42,6 +44,8 @@ public class AddDefectActivity extends BaseActivity {
 
         boolean isTruckSelected = getIntent().getBooleanExtra("isTruckSelected", false);
         boolean isUnitSelected = getIntent().getBooleanExtra("isUnitSelected", false);
+
+        tinyDB = new TinyDB(this);
 
         tabLayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.viewpager);
@@ -109,15 +113,13 @@ public class AddDefectActivity extends BaseActivity {
     }
 
     private void back(String note) {
-        String unitDefects = userData.getDefects(1);
-        String trailerDefects = userData.getDefects(2);
 
         Intent intent = getIntent();
-        if (unitDefects.equals("") && trailerDefects.equals("")) {
+        if (tinyDB.getListString(1).size() == 0 && tinyDB.getListString(2).size() == 0) {
             setResult(RESULT_CANCELED, intent);
         } else {
-            intent.putExtra("unitDefects", userData.getDefects(1));
-            intent.putExtra("trailerDefects", userData.getDefects(2));
+            intent.putExtra("unitDefects", tinyDB.getListString(1));
+            intent.putExtra("trailerDefects", tinyDB.getListString(2));
             intent.putExtra("notes", note);
             setResult(RESULT_OK, intent);
             userData.clearDefects(1);
@@ -126,6 +128,11 @@ public class AddDefectActivity extends BaseActivity {
         finish();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.getViewModelStore().clear();
+    }
 }
 
 class DefectsFragmentAdapter extends FragmentStateAdapter {

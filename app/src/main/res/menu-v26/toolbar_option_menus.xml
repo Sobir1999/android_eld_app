@@ -10,7 +10,7 @@
     </item>
     <item
         android:id="@+id/connectMenu"
-        android:icon="@drawable/ic_lolll"
+        android:icon="@drawable/ic_connection"
         app:showAsAction="ifRoom"
         android:title="">
     </item>

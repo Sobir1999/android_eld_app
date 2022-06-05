@@ -67,7 +67,7 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
             if (position < logEntities.size() - 1){
                 time = logEntities.get(position + 1).getSeconds()-logEntities.get(position).getSeconds();
 
-                holder.onBind(logEntities.get(position));
+                holder.onBind(logEntities.get(position + 1));
             }else {
                 switch (last_status){
                     case EnumsConstants.STATUS_OFF :
@@ -114,7 +114,7 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
 
                     holder.onBind(logEntities.get(position + 1));
                 }else {
-                    switch (last_status){
+                    switch (logEntities.get(position).getTo_status()){
                         case EnumsConstants.STATUS_OFF :
                             dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusOFF));
                             dr_text.setText(R.string.off);
