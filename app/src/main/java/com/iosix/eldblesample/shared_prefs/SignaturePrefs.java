@@ -15,7 +15,14 @@ public class SignaturePrefs {
     Context context;
     private static SharedPreferences sharedPreferences;
     public static SharedPreferences.Editor editor;
+    public static SignaturePrefs instance;
 
+    public static synchronized SignaturePrefs getInstance(Context applicationContext){
+        if (instance == null){
+            instance = new SignaturePrefs(applicationContext);
+        }
+        return instance;
+    }
 
     public SignaturePrefs(Context context){
         this.context = context;

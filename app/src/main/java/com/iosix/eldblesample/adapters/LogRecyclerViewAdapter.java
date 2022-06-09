@@ -36,15 +36,13 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
     private ConstraintLayout idStatusContainer;
     private ConstraintLayout idLocationContainer;
     private DriverSharedPrefs driverSharedPrefs;
-    private int last_status;
     private String day;
     String time = "" + Calendar.getInstance().getTime();
     String today = time.split(" ")[1] + " " + time.split(" ")[2];
 
-    public LogRecyclerViewAdapter(Context context, List<LogEntity> logEntities,int last_status,String day){
+    public LogRecyclerViewAdapter(Context context, List<LogEntity> logEntities,String day){
         this.context = context;
         this.logEntities = logEntities;
-        this.last_status = last_status;
         this.day = day;
         driverSharedPrefs = DriverSharedPrefs.getInstance(context);
     }
@@ -69,7 +67,7 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
 
                 holder.onBind(logEntities.get(position + 1));
             }else {
-                switch (last_status){
+                switch (logEntities.get(logEntities.size()-1).getTo_status()){
                     case EnumsConstants.STATUS_OFF :
                         dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusOFF));
                         dr_text.setText(R.string.off);
@@ -102,7 +100,6 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
             }
         }else {
             if (logEntities.size() == 0){
-                last_status = EnumsConstants.STATUS_OFF;
                 dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusOFF));
                 dr_text.setText(R.string.off);
                 dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusOFFBold));

@@ -4,35 +4,26 @@ import static com.iosix.eldblesample.enums.Day.getCurrentSeconds;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.iosix.eldblesample.enums.Day;
 import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.enums.TableConstants;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
-import com.iosix.eldblesample.shared_prefs.LastStatusData;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class CustomLiveRulerChart extends CustomRulerChart {
-    private float START_POINT_X = TableConstants.START_POINT_X;
-    private float START_POINT_Y = TableConstants.START_POINT_Y;
-//    private int currentDate;
-    private int last_status;
+    private final float START_POINT_X = TableConstants.START_POINT_X;
+    private final float START_POINT_Y = TableConstants.START_POINT_Y;
     private int off = 0, sb = 0, dr = 0, on = 0;
-    private LastStatusData lastStatusData;
 
     private ArrayList<LogEntity> arrayList = new ArrayList();
 
-    private ArrayList<Paint> paintArray = new ArrayList<Paint>() {{
+    private final ArrayList<Paint> paintArray = new ArrayList<Paint>() {{
         add(TableConstants.getOFFPaint());
         add(TableConstants.getSBPaint());
         add(TableConstants.getDRPaint());
@@ -55,8 +46,6 @@ public class CustomLiveRulerChart extends CustomRulerChart {
     }
 
     private void init(Context context) {
-        lastStatusData = LastStatusData.getInstance(context.getApplicationContext());
-        last_status = lastStatusData.getLastStatus();
     }
 
     public void setArrayList(ArrayList<LogEntity> arrayList) {
@@ -69,7 +58,7 @@ public class CustomLiveRulerChart extends CustomRulerChart {
         float CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 8;
         float startX = START_POINT_X + CUSTOM_TABLE_WIDTH / 26f;
         float startPointxX = START_POINT_X + CUSTOM_TABLE_WIDTH / 26f;
-        float startY = 0;
+        float startY;
         float endX = 0;
         float endY = 0;
 
@@ -116,22 +105,6 @@ public class CustomLiveRulerChart extends CustomRulerChart {
             else if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_ON) {
                 on += (getCurrentSeconds() - start);
             }
-        } else {
-            endY = TableConstants.START_POINT_Y + CUSTOM_TABLE_HEIGHT/8 + (CUSTOM_TABLE_HEIGHT*last_status)/4;
-            canvas.drawLine(startX, endY, startPointxX + ((getCurrentSeconds() / (3600*24f)) * CUSTOM_TABLE_WIDTH*24/26), endY, paintArray.get(last_status));
-
-            if (last_status == EnumsConstants.STATUS_OFF) {
-                off = getCurrentSeconds();
-            }
-            if (last_status == EnumsConstants.STATUS_SB) {
-                sb = getCurrentSeconds();
-            }
-            if (last_status == EnumsConstants.STATUS_DR) {
-                dr = getCurrentSeconds();
-            }
-            if (last_status == EnumsConstants.STATUS_ON) {
-                on = getCurrentSeconds();
-            }
         }
 
         this.off = off;
@@ -175,7 +148,7 @@ public class CustomLiveRulerChart extends CustomRulerChart {
 
     @SuppressLint("DefaultLocale")
     private String getTime(int sum) {
-        String s = "";
+        String s;
         int hour = sum / 3600;
         int min = (sum % 3600) / 60;
         s = String.format("%02d:%02d", hour, min);
@@ -184,7 +157,7 @@ public class CustomLiveRulerChart extends CustomRulerChart {
 
     @SuppressLint("DefaultLocale")
     public String getDr() {
-        String s = "";
+        String s;
         int hour = dr / 3600;
         int min = (dr % 3600) / 60;
         s = String.format("%02dh %02dm", hour, min);

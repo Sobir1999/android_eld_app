@@ -1,9 +1,7 @@
 package com.iosix.eldblesample.fragments;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,23 +9,16 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.iosix.eldblesample.R;
-import com.iosix.eldblesample.roomDatabase.entities.MechanicSignatureEntity;
-import com.iosix.eldblesample.roomDatabase.entities.SignatureEntity;
 import com.iosix.eldblesample.shared_prefs.SessionManager;
 import com.iosix.eldblesample.shared_prefs.SignaturePrefs;
-import com.iosix.eldblesample.viewModel.DayDaoViewModel;
-import com.iosix.eldblesample.viewModel.DvirViewModel;
 import com.iosix.eldblesample.viewModel.SignatureViewModel;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class SignatureFragment extends Fragment {
@@ -36,21 +27,13 @@ public class SignatureFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     private boolean mParam1;
-    private DayDaoViewModel daoViewModel;
-    private DvirViewModel dvirViewModel;
 
     private SignaturePad signature,mechanicSignature;
     private LinearLayout mechanicLayout;
     private TextView previousSignature, clearSignature,drawSignature,drawMecanicSignature,previousMechanicSignature;
-    private boolean hasSignature = false,hasMechanicSignature = false;
-    private Context context;
     private Bitmap bitmap;
-    List<SignatureEntity> signatureEntities = new ArrayList<>();
-    List<MechanicSignatureEntity> mechanicSignatureEntities = new ArrayList<>();
     private RadioButton no_defect, correct_defect, corrected_defect;
-    private ConstraintLayout mechanicCons;
-    private TextView mechamnicTextView, mechanicText;
-    private String day;
+    private TextView mechamnicTextView;
     private SignaturePrefs signaturePrefs;
     private SessionManager sessionManager;
     private SignatureViewModel signatureViewModel;
@@ -75,11 +58,9 @@ public class SignatureFragment extends Fragment {
 
         if (getArguments() != null) {
             mParam1 = getArguments().getBoolean(ARG_PARAM1);
-            ArrayList<String> mParams = getArguments().getStringArrayList(ARG_PARAM2);
-            day = getArguments().getString("PARAM");
         }
-        signaturePrefs = new SignaturePrefs(context);
-        sessionManager = new SessionManager(context);
+        signaturePrefs = SignaturePrefs.getInstance(requireContext());
+        sessionManager = SessionManager.getInstance(requireContext());
         signatureViewModel = ViewModelProviders.of(requireActivity()).get(SignatureViewModel.class);
 
     }
@@ -88,10 +69,6 @@ public class SignatureFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_signature, container, false);
-
-        context = requireContext();
-
-
         signature = view.findViewById(R.id.idSignature);
         previousSignature = view.findViewById(R.id.idTVPreviousSignature);
         clearSignature = view.findViewById(R.id.idTVClearSignature);
@@ -100,8 +77,6 @@ public class SignatureFragment extends Fragment {
         correct_defect = view.findViewById(R.id.idNeedCorrected);
         corrected_defect = view.findViewById(R.id.idCorrected);
         mechamnicTextView = view.findViewById(R.id.idClearSignTextViewMechanic);
-        mechanicCons = view.findViewById(R.id.idMechanicCons);
-        mechanicText = view.findViewById(R.id.idMechanicSignatureText);
         mechanicSignature = view.findViewById(R.id.idSignatureMechanic);
         drawMecanicSignature = view.findViewById(R.id.idTvDrawSignatureMechanic);
         mechanicLayout = view.findViewById(R.id.idMechanicLayout);
@@ -173,7 +148,6 @@ public class SignatureFragment extends Fragment {
             public void onSigned() {
                 mechamnicTextView.setClickable(true);
                 drawMecanicSignature.setVisibility(View.GONE);
-                hasMechanicSignature = true;
                 signaturePrefs.saveMechanicSignature(mechanicSignature.getSignatureBitmap());
             }
 
@@ -181,7 +155,6 @@ public class SignatureFragment extends Fragment {
             public void onClear() {
                 mechamnicTextView.setClickable(false);
                 drawMecanicSignature.setVisibility(View.VISIBLE);
-                hasMechanicSignature = false;
                 signaturePrefs.clearMechanicSignature();
 
             }

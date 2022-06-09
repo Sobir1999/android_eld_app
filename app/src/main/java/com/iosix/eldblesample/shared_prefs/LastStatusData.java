@@ -38,10 +38,20 @@ public class LastStatusData {
         editor.putString("date",date);
     }
 
+    public void saveLastEldState(String state){
+        editor = userPref.edit();
+        editor.putString("state",state);
+    }
+
+    public String getLastEldState(){
+        return userPref.getString("state","Not Connected");
+    }
 
     public int getLastStatus() {
         return userPref.getInt("status", 0);
     }
+
+
 
     public String getLastDate(){
         return userPref.getString("date","");

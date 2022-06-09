@@ -99,11 +99,7 @@ public class LGDDActivity extends BaseActivity{
             mParams = getIntent().getStringExtra("currDay");
 
         findViewById(R.id.idImageBack).setOnClickListener(v -> {
-            this.finish();
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
+            onBackPressed();
         });
 
         textFrag = findViewById(R.id.idTextFrag);
@@ -168,10 +164,6 @@ public class LGDDActivity extends BaseActivity{
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
     }
 
     @Override

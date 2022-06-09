@@ -6,15 +6,22 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 
 import com.iosix.eldblesample.shared_prefs.TinyDB;
 import com.iosix.eldblesample.shared_prefs.UserData;
 
 import java.security.Security;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static com.iosix.eldblesample.shared_prefs.SharedPrefs.callUserPrefs;
 import static com.iosix.eldblesample.utils.Constants.CHANNEL_ID;
+
+import androidx.core.os.HandlerCompat;
 
 public class MyApplication extends Application {
     public static Application instance;

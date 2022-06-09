@@ -3,10 +3,7 @@ package com.iosix.eldblesample.dialogs;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.Window;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,12 +16,12 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 public class SearchEldDeviceDialog extends Dialog {
-    private ProgressBar progressBar;
-    private String resultSearching = "";
     private TextView resultText;
+    private Context context;
 
     public SearchEldDeviceDialog(@NonNull Context context) {
         super(context);
+        this.context = context;
     }
 
     @Override

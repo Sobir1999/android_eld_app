@@ -80,7 +80,7 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
 
     @Override
     public int getItemCount() {
-        return dayEntities.size();
+        return dayEntities.size()-1;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

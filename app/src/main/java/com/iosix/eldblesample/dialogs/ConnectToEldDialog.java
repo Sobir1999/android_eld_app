@@ -15,17 +15,18 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.interfaces.AlertDialogItemClickInterface;
+import com.iosix.eldblesample.shared_prefs.LastStatusData;
 
 public class ConnectToEldDialog extends Dialog {
     private LinearLayout vehicleInfo, sendLog;
     private ConstraintLayout undintifiedDriving, faultCode;
     private TextView connect, cancel,idEldConnection,idIsConnected;
     private AlertDialogItemClickInterface alerrtDialogItemClickInterface;
-    private Boolean isConnectedToEld;
+    private String lastStatusData;
 
-    public ConnectToEldDialog(@NonNull Context context,Boolean isConnectedToEld) {
+    public ConnectToEldDialog(@NonNull Context context, String lastStatusData) {
         super(context);
-        this.isConnectedToEld = isConnectedToEld;
+        this.lastStatusData = lastStatusData;
     }
 
     public void setAlerrtDialogItemClickInterface(AlertDialogItemClickInterface alerrtDialogItemClickInterface) {
@@ -44,11 +45,11 @@ public class ConnectToEldDialog extends Dialog {
         cancel = findViewById(R.id.idEldDialCancel);
         connect = findViewById(R.id.idEldDialConnect);
 
-        if (isConnectedToEld){
-            idIsConnected.setText(R.string.connected);
+        idIsConnected.setText(lastStatusData);
+
+        if (lastStatusData.equals("Conncected to Eld")){
             connect.setText(R.string.disconnect);
         }else {
-            idIsConnected.setText(R.string.not_connected);
             connect.setText(R.string.connect);
         }
 

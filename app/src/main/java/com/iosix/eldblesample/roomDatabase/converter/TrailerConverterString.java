@@ -17,7 +17,11 @@ public class TrailerConverterString {
 
     @TypeConverter
     public String  toString(ArrayList<String> arrayList){
-        return arrayList.get(0);
+        if (arrayList.size()>0){
+            return arrayList.get(0);
+        }else {
+            return null;
+        }
     }
 
     @TypeConverter

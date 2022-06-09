@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">FastLogz</string>
     <string name="off">OFF</string>
-    <string name="leak_canary_test_class_name" translatable="false">assertk.Assert</string>
 
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
     <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>

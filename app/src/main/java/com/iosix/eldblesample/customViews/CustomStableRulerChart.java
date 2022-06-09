@@ -106,21 +106,10 @@ public class CustomStableRulerChart extends CustomRulerChart {
                 on += (86400 - start);
             }
         } else {
-            endY = TableConstants.START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * last_status) / 4;
-            canvas.drawLine(startX, endY, startPointX + CUSTOM_TABLE_WIDTH*24/26, endY, paintArray.get(last_status));
+            endY = TableConstants.START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * EnumsConstants.STATUS_OFF) / 4;
+            canvas.drawLine(startX, endY, startPointX + CUSTOM_TABLE_WIDTH*24/26, endY, paintArray.get(EnumsConstants.STATUS_OFF));
 
-            if (last_status == EnumsConstants.STATUS_OFF) {
                 off = 86400;
-            }
-            if (last_status == EnumsConstants.STATUS_SB) {
-                sb = 86400;
-            }
-            if (last_status == EnumsConstants.STATUS_DR) {
-                dr = 86400;
-            }
-            if (last_status == EnumsConstants.STATUS_ON) {
-                on = 86400;
-            }
         }
 
         this.off = off;

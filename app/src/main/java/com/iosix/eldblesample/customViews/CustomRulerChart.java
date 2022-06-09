@@ -2,6 +2,7 @@ package com.iosix.eldblesample.customViews;
 
 import static com.iosix.eldblesample.MyApplication.userData;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -14,15 +15,15 @@ import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.enums.TableConstants;
 
 public abstract class   CustomRulerChart extends View {
-    private Paint table_paint = new Paint();
-    private Paint table_time_paint = new Paint();
-    private Paint table_time_paint_tex = new Paint();
-    private Paint table_text_paint = new Paint();
+    private final Paint table_paint = new Paint();
+    private final Paint table_time_paint = new Paint();
+    private final Paint table_time_paint_tex = new Paint();
+    private final Paint table_text_paint = new Paint();
 
     private int CUSTOM_WIDTH;
 
-    private float START_POINT_X = TableConstants.START_POINT_X;
-    private float START_POINT_Y = TableConstants.START_POINT_Y;
+    private final float START_POINT_X = TableConstants.START_POINT_X;
+    private final float START_POINT_Y = TableConstants.START_POINT_Y;
 
     private float CUSTOM_TABLE_WIDTH;
 
@@ -84,6 +85,7 @@ public abstract class   CustomRulerChart extends View {
         setMeasuredDimension(measureWith, measureHeight);
     }
 
+    @SuppressLint("SwitchIntDef")
     private int reconcileSize(int contentSize, int measureSpace) {
         int mode = MeasureSpec.getMode(measureSpace);
         int specSize = MeasureSpec.getSize(measureSpace);
@@ -91,11 +93,7 @@ public abstract class   CustomRulerChart extends View {
             case MeasureSpec.EXACTLY:
                 return specSize;
             case MeasureSpec.AT_MOST:
-                if (contentSize < specSize) {
-                    return contentSize;
-                } else {
-                    return specSize;
-                }
+                return Math.min(contentSize, specSize);
             default:
                 return contentSize;
         }
@@ -288,8 +286,6 @@ public abstract class   CustomRulerChart extends View {
                         START_POINT_Y + 29 * CUSTOM_TABLE_HEIGHT / 32,
                         TableConstants.getONPaint()
                 );
-            }else if (i == 26){
-
             }
             else if (i<13){
                 canvas.drawText(

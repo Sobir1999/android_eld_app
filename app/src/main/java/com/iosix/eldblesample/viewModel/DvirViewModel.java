@@ -26,7 +26,6 @@ public class DvirViewModel extends AndroidViewModel {
     }
 
     private MutableLiveData<String> currentName;
-    private MutableLiveData<Boolean> isConnectedtoEld;
     private MutableLiveData<Boolean> isUploadImage;
     private MutableLiveData<Boolean> truckSpeed;
     private MutableLiveData<Integer> selectedTrailerCount;
@@ -52,14 +51,6 @@ public class DvirViewModel extends AndroidViewModel {
             truckSpeed.postValue(false);
         }
         return truckSpeed;
-    }
-
-    public MutableLiveData<Boolean> getIsConnectedtoEld(){
-        if (isConnectedtoEld == null){
-            isConnectedtoEld = new MutableLiveData<Boolean>();
-            isConnectedtoEld.postValue(false);
-        }
-        return isConnectedtoEld;
     }
 
     public MutableLiveData<Boolean> getIsUploadImage(){

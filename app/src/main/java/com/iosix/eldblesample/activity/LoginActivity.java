@@ -2,10 +2,14 @@ package com.iosix.eldblesample.activity;
 
 import static com.iosix.eldblesample.enums.Day.getCurrentSeconds;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -35,14 +39,17 @@ import retrofit2.Response;
 
 public class LoginActivity extends BaseActivity {
 
-    private APIInterface apiInterface;
     private EldJsonViewModel eldJsonViewModel;
     private SessionManager sessionManager;
     private ProgressDialog mProgress;
     private LastStopSharedPrefs lastStopSharedPrefs;
-    private String time = "" + Calendar.getInstance().getTime();
-    private String today = time.split(" ")[1] + " " + time.split(" ")[2];
+    private final String time = "" + Calendar.getInstance().getTime();
+    private final String today = time.split(" ")[1] + " " + time.split(" ")[2];
     private NetworkConnectionLiveData networkConnectionLiveData;
+    private EditText password;
+    private EditText login;
+    private Button button;
+    private boolean isConnected;
 
     @Override
     protected int getLayoutId() {
@@ -53,15 +60,14 @@ public class LoginActivity extends BaseActivity {
     public void initView() {
         super.initView();
 
-        Button button = findViewById(R.id.idLoginButton);
-        EditText login = findViewById(R.id.idEditTextLogin);
-        EditText password = findViewById(R.id.idEditTextPassword);
+        button = findViewById(R.id.idLoginButton);
+        login = findViewById(R.id.idEditTextLogin);
+        password = findViewById(R.id.idEditTextPassword);
 
         eldJsonViewModel = ViewModelProviders.of(this).get(EldJsonViewModel.class);
 
-        apiInterface = ApiClient.getClient().create(APIInterface.class);
         lastStopSharedPrefs = new LastStopSharedPrefs(this);
-        networkConnectionLiveData = new NetworkConnectionLiveData(getApplicationContext());
+        networkConnectionLiveData = new NetworkConnectionLiveData(this);
 
         sessionManager = SessionManager.getInstance(getApplicationContext());
         mProgress = new ProgressDialog(this);
@@ -70,88 +76,57 @@ public class LoginActivity extends BaseActivity {
         mProgress.setCancelable(false);
         mProgress.setIndeterminate(true);
 
-        button.setOnClickListener(v -> {
 
-            networkConnectionLiveData.observe(LoginActivity.this,isConnected ->{
-                if (isConnected){
-                    mProgress.show();
-
-                    if (login.getText().toString().equals("") || password.getText().toString().equals("")){
-                        mProgress.cancel();
-                        Toast.makeText(LoginActivity.this,"Please fill all free spaces!",Toast.LENGTH_SHORT).show();
-                    }else {
-
-                        eldJsonViewModel.getResponse(new Student(login.getText().toString(),password.getText().toString())).observe(this,loginResponse -> {
-                            if (loginResponse != null){
-                                sessionManager.saveAccessToken(loginResponse.getAccessToken());
-                                sessionManager.saveToken(loginResponse.getrefreshToken());
-                                sessionManager.saveEmail(login.getText().toString());
-                                sessionManager.savePassword(password.getText().toString());
-                                lastStopSharedPrefs.saveLastStopTime(getCurrentSeconds());
-                                lastStopSharedPrefs.saveLastStopDate(today);
-                                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-                                intent.putExtra("JSON",1);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
-                                mProgress.cancel();
-                            }else {
-                                mProgress.cancel();
-                                Toast.makeText(LoginActivity.this, "No active account found with the given credentials", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-//                        apiInterface.createUser(new Student(login.getText().toString(),password.getText().toString()))
-//                                .enqueue(new Callback<ResponseBody>() {
-//                                    @Override
-//                                    public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-//                                        Gson gson = new Gson();
-//                                        try {
-//
-//                                            if(response.isSuccessful()){
-//                                                LoginResponse loginResponse = gson.fromJson(response.body().string(), LoginResponse.class);
-//                                                sessionManager.saveAccessToken(loginResponse.getAccessToken());
-//                                                sessionManager.saveToken(loginResponse.getrefreshToken());
-//                                                sessionManager.saveEmail(login.getText().toString());
-//                                                sessionManager.savePassword(password.getText().toString());
-//                                                lastStopSharedPrefs.saveLastStopTime(getCurrentSeconds());
-//                                                lastStopSharedPrefs.saveLastStopDate(today);
-//                                                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-//                                                intent.putExtra("JSON",1);
-//                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                                                startActivity(intent);
-//                                                mProgress.cancel();
-//                                            }else {
-//                                                mProgress.cancel();
-//                                                Toast.makeText(LoginActivity.this, "No active account found with the given credentials", Toast.LENGTH_SHORT).show();
-//                                            }
-//                                            mProgress.cancel();
-//                                        } catch (IOException e) {
-//                                            e.printStackTrace();
-//                                        }
-//                                    }
-//
-//                                    @Override
-//                                    public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-//                                        mProgress.cancel();
-//                                    }
-//                                });
-                    }
-                }else {
-                    mProgress.cancel();
-                    Toast.makeText(LoginActivity.this,"CHeck internet connection",Toast.LENGTH_SHORT).show();
-                }
-            });
-
+        networkConnectionLiveData.observe(LoginActivity.this,isConnected ->{
+            this.isConnected = isConnected;
         });
+
+        eldJsonViewModel.getResponse(new Student(login.getText().toString(),password.getText().toString())).observe(this,loginResponse -> {
+            if (loginResponse != null){
+                sessionManager.saveAccessToken(loginResponse.getAccessToken());
+                sessionManager.saveToken(loginResponse.getrefreshToken());
+                sessionManager.saveEmail(login.getText().toString());
+                sessionManager.savePassword(password.getText().toString());
+                lastStopSharedPrefs.saveLastStopTime(getCurrentSeconds());
+                lastStopSharedPrefs.saveLastStopDate(today);
+                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                intent.putExtra("JSON",1);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+                mProgress.cancel();
+            }else {
+                mProgress.cancel();
+                new AlertDialog.Builder(this)
+                        .setMessage("INCORRECT LOGIN OR PASSWORD")
+                        .setCancelable(true)
+                        .setPositiveButton("OK", (dialogInterface, i) -> {
+                            dialogInterface.cancel();
+                        }).create().show();
+            }
+        });
+
+        login();
     }
 
-    @Override public void onStop() {
-        super.onStop();
-        if (mProgress != null) {
-            mProgress.dismiss();
-            mProgress = null;
-        }
+    private void login(){
+
+        button.setOnClickListener(view -> {
+            if (isConnected){
+                mProgress.show();
+                if (login.getText().toString().equals("") || password.getText().toString().equals("")){
+                    mProgress.cancel();
+                    Toast.makeText(LoginActivity.this,"Please fill all free spaces!",Toast.LENGTH_SHORT).show();
+                }else {
+                    eldJsonViewModel.getResponse(new Student(login.getText().toString(),password.getText().toString()));
+                }
+            }else {
+                mProgress.cancel();
+                Toast.makeText(LoginActivity.this,"CHeck internet connection",Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     @Override

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.ResultReceiver;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -290,7 +291,14 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
                 intent.putExtra("trailerDefects",trailerDefectsString);
                 intent.putExtra("selectedTrailers",selectedTrailersNumber);
                 intent.putExtra("day",day);
-                startActivity(intent);
+                intent.putExtra("finisher",new ResultReceiver(null){
+                    @Override
+                    protected void onReceiveResult(int resultCode, Bundle resultData) {
+                        super.onReceiveResult(resultCode, resultData);
+                        AddDvirActivity.this.finish();
+                    }
+                });
+                startActivityForResult(intent,2);
             }
 
         });
@@ -368,29 +376,6 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
 
         dialog.show();
 
-    }
-
-    private String getDialogString() {
-        AlertDialog.Builder builderSingle = new AlertDialog.Builder(this);
-        builderSingle.setTitle("Select Trailers");
-        final String[] strName = new String[1];
-
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_selectable_list_item);
-        daoViewModel.getGetAllTrailers().observe(this, trailersEntities -> {
-            for (int i = 0; i < trailersEntities.size(); i++) {
-                arrayAdapter.add(trailersEntities.get(i).getNumber());
-            }
-        });
-
-        builderSingle.setNegativeButton("cancel", (dialog, which) -> dialog.dismiss());
-
-        builderSingle.setAdapter(arrayAdapter, (dialog, which) -> {
-            strName[0] = arrayAdapter.getItem(which);
-            adapter.notifyDataSetChanged();
-        });
-        builderSingle.show();
-
-        return strName[0];
     }
 
     @Override

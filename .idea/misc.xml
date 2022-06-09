@@ -68,6 +68,9 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/unit_item.xml" value="0.23731884057971014" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/menu-v26/toolbar_option_menus.xml" value="0.27447916666666666" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/menu/toolbar_option_menus.xml" value="0.1829861111111111" />
+        <entry key="..\:/Users/User/Androidstudioprojects/android_eld_app/app/src/main/res/layout/activity_main.xml" value="0.1560792349726776" />
+        <entry key="..\:/Users/User/Androidstudioprojects/android_eld_app/app/src/main/res/layout/custom_drawer_layout.xml" value="0.17708333333333334" />
+        <entry key="..\:/Users/User/Androidstudioprojects/android_eld_app/app/src/main/res/layout/eld_custom_dialog_item.xml" value="0.17708333333333334" />
         <entry key="..\:/Users/User/AppData/Local/Android/Sdk/platforms/android-30/data/res/layout/simple_list_item_1.xml" value="0.23731884057971014" />
         <entry key="..\:/Users/User/AppData/Local/Android/Sdk/platforms/android-30/data/res/layout/simple_selectable_list_item.xml" value="0.23731884057971014" />
         <entry key="..\:/Users/musta/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable-xxxhdpi/add_signature_background.xml" value="0.290625" />
@@ -153,6 +156,10 @@
         <entry key="..\:/idrok/android_eld_app/app/src/main/res/layout/fragment_begin_inspection.xml" value="0.1721014492753623" />
         <entry key="..\:/idrok/android_eld_app/app/src/main/res/layout/fragment_inspection_module.xml" value="0.1721014492753623" />
         <entry key="..\:/idrok/android_eld_app/app/src/main/res/layout/fragment_send_to_email.xml" value="0.264" />
+        <entry key="..\:/Новая папка/android_eld_app/app/src/main/res/layout/custom_table_view.xml" value="0.1" />
+        <entry key="..\:/Новая папка/android_eld_app/app/src/main/res/layout/eld_custom_dialog_item.xml" value="0.1" />
+        <entry key="..\:/Новая папка/android_eld_app/app/src/main/res/layout/last_days_recycler_view.xml" value="0.1560792349726776" />
+        <entry key="..\:/Новая папка/android_eld_app/app/src/main/res/layout/main_activity_view.xml" value="0.1" />
       </map>
     </option>
   </component>

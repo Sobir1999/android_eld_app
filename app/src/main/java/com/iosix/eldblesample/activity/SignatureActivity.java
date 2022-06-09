@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.ResultReceiver;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -69,6 +70,7 @@ public class SignatureActivity extends BaseActivity {
     private SignaturePrefs signaturePrefs;
     private SessionManager sessionManager;
     private EldJsonViewModel eldJsonViewModel;
+    private ResultReceiver resultReceiver;
 
     @Override
     protected int getLayoutId() {
@@ -93,6 +95,7 @@ public class SignatureActivity extends BaseActivity {
         selectedTrailers = getIntent().getStringArrayListExtra("selectedTrailers");
         unitDefects = getIntent().getStringArrayListExtra("unitDefects");
         trailerDefects = getIntent().getStringArrayListExtra("trailerDefects");
+        resultReceiver = getIntent().getParcelableExtra("finisher");
         day = getIntent().getStringExtra("day");
         signaturePrefs = new SignaturePrefs(this);
         sessionManager = new SessionManager(this);
@@ -170,6 +173,8 @@ public class SignatureActivity extends BaseActivity {
                             intent.putExtra("position", 3);
                             intent.putExtra("currDay",currDay);
                             startActivity(intent);
+                            finish();
+                            resultReceiver.send(2,new Bundle());
 
                             sessionManager.saveSignature(signaturePrefs.fetchSignature());
 
@@ -221,6 +226,8 @@ public class SignatureActivity extends BaseActivity {
                             intent.putExtra("position", 3);
                             intent.putExtra("currDay",currDay);
                             startActivity(intent);
+                            finish();
+                            resultReceiver.send(2,new Bundle());
                             sessionManager.saveSignature(signaturePrefs.fetchSignature());
 
                             if (unitDefects.size() == 0 && trailerDefects.size() == 0){
@@ -247,6 +254,8 @@ public class SignatureActivity extends BaseActivity {
                             intent.putExtra("position", 3);
                             intent.putExtra("currDay",currDay);
                             startActivity(intent);
+                            finish();
+                            resultReceiver.send(2,new Bundle());
 
                             sessionManager.saveSignature(signaturePrefs.fetchSignature());
 
@@ -279,7 +288,6 @@ public class SignatureActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
     }
 
     public void saveTempBitmap(Bitmap bitmap) {

@@ -39,13 +39,11 @@ public class LogFragment extends Fragment {
     private CustomStableRulerChart idCustomChart;
     private CustomLiveRulerChart idCustomChartLive;
     Context _context;
-    private int last_status;
     private ChangeDateTimeBroadcast changeDateTimeBroadcast;
     private String time = "" + Calendar.getInstance().getTime();
     private String today = time.split(" ")[1] + " " + time.split(" ")[2];
     private RecyclerView recyclerView_log;
     private LogRecyclerViewAdapter logRecyclerViewAdapter;
-    private LastStatusData lastStatusData;
     private DvirViewModel dvirViewModel;
 
 
@@ -76,9 +74,6 @@ public class LogFragment extends Fragment {
         idCustomChartLive = view.findViewById(R.id.idCustomChartLive);
         recyclerView_log = view.findViewById(R.id.recyclerView_log_page);
 
-        lastStatusData = LastStatusData.getInstance(requireContext().getApplicationContext());
-        last_status = lastStatusData.getLastStatus();
-
         statusDaoViewModel = ViewModelProviders.of(this).get(StatusDaoViewModel.class);
         statusDaoViewModel.getmAllStatus().observe(getViewLifecycleOwner(),trackEntities ->{
 
@@ -102,7 +97,7 @@ public class LogFragment extends Fragment {
                     }
                 }
 
-                logRecyclerViewAdapter = new LogRecyclerViewAdapter(requireContext().getApplicationContext(),truckStatusEntities,last_status,c);
+                logRecyclerViewAdapter = new LogRecyclerViewAdapter(requireContext().getApplicationContext(),truckStatusEntities,c);
                 recyclerView_log.setAdapter(logRecyclerViewAdapter);
             });
             if(c.equals(today)){
