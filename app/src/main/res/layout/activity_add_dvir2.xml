@@ -325,7 +325,7 @@
                             android:id="@+id/unitDefects"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/dual_vertical_margin"
+                            android:layout_marginTop="@dimen/quarter_vertical_margin"
                             android:textColor="?attr/customTextColor" />
 
                         <TextView
@@ -341,7 +341,7 @@
                             android:id="@+id/trailerDefects"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/dual_vertical_margin"
+                            android:layout_marginTop="@dimen/quarter_vertical_margin"
                             android:textColor="?attr/customTextColor" />
 
                         <TextView
@@ -356,7 +356,7 @@
                             android:id="@+id/notes"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/dual_vertical_margin"
+                            android:layout_marginTop="@dimen/quarter_vertical_margin"
                             android:textColor="?attr/customTextColor" />
 
                     </LinearLayout>

@@ -36,27 +36,32 @@
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
         android:label="FastlogZ"
+        android:exported="true"
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true"
         tools:ignore="ExtraText">
         <activity
+            android:exported="true"
             android:name=".activity.RecapActivity"
             android:configChanges="orientation"
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="sensorLandscape"/>
         <activity
+            android:exported="true"
             android:name=".activity.LanguageActivity"
             android:configChanges="orientation"
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="sensorLandscape" />
         <activity
+            android:exported="true"
             android:name=".activity.SettingActivity"
             android:configChanges="orientation"
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="sensorLandscape" />
         <activity
+            android:exported="true"
             android:name=".activity.AccountActivity"
             android:configChanges="orientation"
             android:windowSoftInputMode="adjustResize"
@@ -68,16 +73,19 @@
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="sensorLandscape" />
         <activity
+            android:exported="true"
             android:name=".activity.AddDvirActivity"
             android:configChanges="orientation"
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="sensorLandscape" />
         <activity
+            android:exported="true"
             android:name=".activity.LGDDActivity"
             android:configChanges="orientation"
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="sensorLandscape" />
         <activity
+            android:exported="true"
             android:name=".activity.SignatureActivity"
             android:configChanges="orientation"
             android:windowSoftInputMode="adjustResize"
@@ -93,16 +101,19 @@
         <service android:name=".services.foreground.ForegroundService" />
 
         <activity
+            android:exported="true"
             android:name=".activity.LoginActivity"
             android:configChanges="orientation"
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="sensorLandscape" />
         <activity
+            android:exported="true"
             android:name=".activity.AddDefectActivity"
             android:configChanges="orientation"
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="sensorLandscape" />
         <activity
+            android:exported="true"
             android:name=".activity.SplashActivity"
             android:configChanges="orientation"
             android:screenOrientation="sensorLandscape">
@@ -113,6 +124,7 @@
             </intent-filter>
         </activity>
         <activity
+            android:exported="true"
             android:name=".activity.MainActivity"
             android:configChanges="orientation"
             android:screenOrientation="sensorLandscape" />

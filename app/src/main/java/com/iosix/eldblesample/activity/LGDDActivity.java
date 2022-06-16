@@ -1,13 +1,6 @@
 package com.iosix.eldblesample.activity;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,33 +13,14 @@ import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.adapters.LGDDFragmentAdapter;
 import com.iosix.eldblesample.base.BaseActivity;
 import com.iosix.eldblesample.models.ExampleSMSModel;
-import com.iosix.eldblesample.retrofit.APIInterface;
-import com.iosix.eldblesample.retrofit.ApiClient;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
-import com.iosix.eldblesample.shared_prefs.SignaturePrefs;
-import com.iosix.eldblesample.utils.ImageUtils;
-import com.iosix.eldblesample.utils.UploadRequestBody;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class LGDDActivity extends BaseActivity{
 
@@ -56,10 +30,6 @@ public class LGDDActivity extends BaseActivity{
     private List<DayEntity> dayEntities = new ArrayList<>();
     private String currDay;
     private String mParams;
-    private final String time = "" + Calendar.getInstance().getTime();
-    private APIInterface apiInterface;
-    private Uri uri;
-    private SignaturePrefs signaturePrefs;
     private DayDaoViewModel dayDaoViewModel;
 
 
@@ -82,8 +52,6 @@ public class LGDDActivity extends BaseActivity{
 
         dayDaoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
 
-        signaturePrefs = new SignaturePrefs(this);
-
         dayDaoViewModel.getMgetAllDays().observe(this, dayEntities -> {
             LGDDActivity.this.dayEntities = dayEntities;
             dvirViewModel.getCurrentName().setValue(mParams);
@@ -92,19 +60,18 @@ public class LGDDActivity extends BaseActivity{
                      index = i;
                 }
             }
-            textFrag.setText(mParams);
+            textFrag.setText(currDay);
         });
 
         int pos = getIntent().getIntExtra("position", 0);
             mParams = getIntent().getStringExtra("currDay");
+            currDay = mParams;
 
-        findViewById(R.id.idImageBack).setOnClickListener(v -> {
-            onBackPressed();
-        });
+        findViewById(R.id.idImageBack).setOnClickListener(v -> onBackPressed());
 
         textFrag = findViewById(R.id.idTextFrag);
         FragmentManager fragmentManager = getSupportFragmentManager();
-        LGDDFragmentAdapter adapter = new LGDDFragmentAdapter(fragmentManager, 1, mParams);
+        LGDDFragmentAdapter adapter = new LGDDFragmentAdapter(fragmentManager, 4, mParams);
 
         TabLayout tabLayout = findViewById(R.id.tab_layout);
         ViewPager viewPager = findViewById(R.id.pager);

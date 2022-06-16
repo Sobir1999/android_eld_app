@@ -39,7 +39,6 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
@@ -51,6 +50,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -61,10 +61,8 @@ import com.iosix.eldblelib.EldBleError;
 import com.iosix.eldblelib.EldBleScanCallback;
 import com.iosix.eldblelib.EldBroadcast;
 import com.iosix.eldblelib.EldBroadcastTypes;
-import com.iosix.eldblelib.EldCachedMotionStartRecord;
-import com.iosix.eldblelib.EldCachedMotionStopRecord;
+import com.iosix.eldblelib.EldBufferRecord;
 import com.iosix.eldblelib.EldDataRecord;
-import com.iosix.eldblelib.EldEngineStates;
 import com.iosix.eldblelib.EldManager;
 import com.iosix.eldblelib.EldScanObject;
 import com.iosix.eldblesample.BuildConfig;
@@ -75,6 +73,7 @@ import com.iosix.eldblesample.broadcasts.ChangeDateTimeBroadcast;
 import com.iosix.eldblesample.broadcasts.NetworkConnectionLiveData;
 import com.iosix.eldblesample.customViews.CustomLiveRulerChart;
 import com.iosix.eldblesample.dialogs.ConnectToEldDialog;
+import com.iosix.eldblesample.dialogs.ManageStatusDialog;
 import com.iosix.eldblesample.dialogs.SearchEldDeviceDialog;
 import com.iosix.eldblesample.enums.Day;
 import com.iosix.eldblesample.enums.EnumsConstants;
@@ -87,6 +86,8 @@ import com.iosix.eldblesample.models.User;
 import com.iosix.eldblesample.models.eld_records.Eld;
 import com.iosix.eldblesample.models.eld_records.LiveDataRecord;
 import com.iosix.eldblesample.models.eld_records.Point;
+import com.iosix.eldblesample.retrofit.APIInterface;
+import com.iosix.eldblesample.retrofit.ApiClient;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.DvirEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LiveDataEntitiy;
@@ -104,6 +105,8 @@ import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.EnumSet;
@@ -111,12 +114,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends BaseActivity implements TimePickerDialog.OnTimeSetListener {
 
@@ -129,8 +127,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     private int current_status = EnumsConstants.STATUS_OFF;
     private int last_status;
     private int getLastTime;
-    private String eldConnectionState = "not Connected";
-    private double speed = 0.0;
     private String time = "" + Calendar.getInstance().getTime();
     public String today = time.split(" ")[1] + " " + time.split(" ")[2];
     private ArrayList<LogEntity> truckStatusEntities;
@@ -151,6 +147,15 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     private ArrayList<User> users;
     private DriverSharedPrefs driverSharedPrefs;
     private NetworkConnectionLiveData networkConnectionLiveData;
+    private APIInterface apiInterface;
+    int currentMinute;
+    int currentSecond;
+    int lastMinute = 0;
+    int lastSecond = -1;
+    double speed = -1;
+    String eldState = "DISCONNECTED";
+    String engineState = "ENGINE_INVALID";
+    MutableLiveData<Double> mutableLiveData = new MutableLiveData<>();
 
 
     private double latitude;
@@ -164,8 +169,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     private static final int REQUEST_BASE = 100;
     private static final int REQUEST_BT_ENABLE = REQUEST_BASE + 1;
 
-    boolean reqdelinprogress = false;
-    int reccount = 0;
     private boolean exit = false;
 
     private StatusDaoViewModel statusDaoViewModel;
@@ -176,6 +179,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     private Menu optionMenu;
     private final ArrayList<String> daysArray = new ArrayList<>();
     private RecyclerViewLastAdapter lastAdapter;
+    private DateFormat dateFormat;
 
     @Override
     protected int getLayoutId() {
@@ -189,12 +193,12 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void initView() {
         super.initView();
         logEntities = new ArrayList<>();
 
+        apiInterface = ApiClient.getClient().create(APIInterface.class);
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
 
         eldJsonViewModel = ViewModelProviders.of(this).get(EldJsonViewModel.class);
@@ -211,7 +215,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         drawerLayout = findViewById(R.id.drawer_layout);
         RecyclerView last_recycler_view = findViewById(R.id.idRecyclerView);
         customRulerChart = findViewById(R.id.idCustomLiveChart);
-
 
         daoViewModel.getMgetAllDays().observe(this, dayEntities -> {
 
@@ -231,8 +234,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         //Required to allow bluetooth scanning
-        if (!checkGrantResults(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, new int[]{0,1})){
-            requestBlePermissions(this,1);
+        if (!checkGrantResults(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, new int[]{0, 1})) {
+            requestBlePermissions(this, 1);
         }
 
         mEldManager = EldManager.GetEldManager(this, "123456789A");
@@ -240,10 +243,9 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         vehiclesEntities = new ArrayList<>();
         driverSharedPrefs = DriverSharedPrefs.getInstance(getApplicationContext());
 
-        if (getIntent().getIntExtra("JSON", 0) == 1) {
-            getUSerInfo();
-            sendApkVersion();
-        }
+        getUSerInfo();
+        sendApkVersion();
+
 
         onClickCustomBtn();
         onClickVisiblityCanAndSaveBtn();
@@ -259,6 +261,25 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
         getAllDrivers();
         sendLocalData();
+//        manageStatusState();
+        dateFormat=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+
+        mutableLiveData.observe(this,mutableLiveData ->{
+            Handler handler = new Handler();
+            Runnable runnable = () -> manageStatusState();
+            if (mutableLiveData == 0.0){
+                handler.postDelayed(runnable,10000);
+            }else {
+                handler.removeCallbacks(runnable);
+            }
+        });
+    }
+
+    private void manageStatusState(){
+
+        Dialog dialog = new ManageStatusDialog(MainActivity.this,eldJsonViewModel,statusDaoViewModel,latitude,longtitude);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
 
     }
 
@@ -304,7 +325,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         }.start();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void sendLocalData() {
         networkConnectionLiveData.observe(this, isConnected -> {
             if (isConnected) {
@@ -629,10 +649,15 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         truckStatusEntities = new ArrayList<>();
         users = new ArrayList<>();
 
-        daoViewModel.getGetAllVehicles().observe(this, vehiclesEntities -> this.vehiclesEntities.addAll(vehiclesEntities));
+        daoViewModel.getGetAllVehicles().observe(this, vehiclesEntities ->
+        {
+            if (vehiclesEntities != null) {
+                this.vehiclesEntities.addAll(vehiclesEntities);
+            }
+        });
+
 
         userViewModel.getMgetDrivers().observe(this, drivers ->{
-            Log.d("Adverse String",drivers.size() + "A");
             users.addAll(drivers);
         });
 
@@ -676,7 +701,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         recreate();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     private void onClickVisiblityCanAndSaveBtn() {
         Button save = findViewById(R.id.idSaveStatus);
         Button cancel = findViewById(R.id.idCancelStatus);
@@ -690,14 +714,15 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             latitude = gpsTracker.getLatitude();
             Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
             try {
+                if (latitude != 0 && longtitude != 0){
                 List<Address> addresses = geocoder.getFromLocation(latitude, longtitude, 1);
                 Address obj = addresses.get(0);
                 String add = obj.getCountryName();
                 add = add + ", " + obj.getSubAdminArea();
-                Log.d("Adverse Diving",add);
 
                 editLocation.setText(add);
                 editLocation.setClickable(false);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
                 Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -742,44 +767,44 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                 if (current_status == EnumsConstants.STATUS_OFF){
 
                     eldJsonViewModel.postStatus(new Status("OFF",new Point("Point",arrayList)
-                            ,note.getText().toString(),Calendar.getInstance().getTime().toInstant().toString()));
+                            ,note.getText().toString(),dateFormat.format(Calendar.getInstance().getTime())));
 
                 }else if (current_status == EnumsConstants.STATUS_SB){
 
                     eldJsonViewModel.postStatus(new Status("SB",new Point("Point",arrayList)
-                            ,note.getText().toString(),Calendar.getInstance().getTime().toInstant().toString()));
+                            ,note.getText().toString(),dateFormat.format(Calendar.getInstance().getTime())));
 
                 }else if (current_status == EnumsConstants.STATUS_DR){
 
                     eldJsonViewModel.postStatus(new Status("D",new Point("Point",arrayList)
-                            ,note.getText().toString(),Calendar.getInstance().getTime().toInstant().toString()));
+                            ,note.getText().toString(),dateFormat.format(Calendar.getInstance().getTime())));
 
                 }else if (current_status == EnumsConstants.STATUS_ON){
 
                     eldJsonViewModel.postStatus(new Status("ON",new Point("Point",arrayList)
-                            ,note.getText().toString(),Calendar.getInstance().getTime().toInstant().toString()));
+                            ,note.getText().toString(),dateFormat.format(Calendar.getInstance().getTime())));
 
                 }
             }else {
                 if (current_status == EnumsConstants.STATUS_OFF){
 
                     eldJsonViewModel.postStatus(new Status("OFF",null
-                            ,note.getText().toString(),Calendar.getInstance().getTime().toInstant().toString()));
+                            ,note.getText().toString(),dateFormat.format(Calendar.getInstance().getTime())));
 
                 }else if (current_status == EnumsConstants.STATUS_SB){
 
                     eldJsonViewModel.postStatus(new Status("SB",null
-                            ,note.getText().toString(),Calendar.getInstance().getTime().toInstant().toString()));
+                            ,note.getText().toString(),dateFormat.format(Calendar.getInstance().getTime())));
 
                 }else if (current_status == EnumsConstants.STATUS_DR){
 
                     eldJsonViewModel.postStatus(new Status("D",null
-                            ,note.getText().toString(),Calendar.getInstance().getTime().toInstant().toString()));
+                            ,note.getText().toString(),dateFormat.format(Calendar.getInstance().getTime())));
 
                 }else if (current_status == EnumsConstants.STATUS_ON){
 
                     eldJsonViewModel.postStatus(new Status("ON",null
-                            ,note.getText().toString(),Calendar.getInstance().getTime().toInstant().toString()));
+                            ,note.getText().toString(),dateFormat.format(Calendar.getInstance().getTime())));
 
                 }
             }
@@ -971,19 +996,19 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                 // Go to the previous fragment
                 getSupportFragmentManager().popBackStack();
             }
-            else {
-                // Exit the app
-                if (exit) {
-                    mEldManager.DisconnectEld();
-                    finish(); // finish activity
-                } else {
-                    Toast.makeText(this, "Press Back again to Exit.", Toast.LENGTH_SHORT).show();
-                    exit = true;
-                    new Handler().postDelayed(() -> exit = false, 3 * 1000);
-                }
-                super.onBackPressed();
+//            else {
+//                // Exit the app
+//                if (exit) {
+//                    mEldManager.DisconnectEld();
+//                    finish(); // finish activity
+//                } else {
+//                    Toast.makeText(this, "Press Back again to Exit.", Toast.LENGTH_SHORT).show();
+//                    exit = true;
+//                    new Handler().postDelayed(() -> exit = false, 3 * 1000);
+//                }
+//                super.onBackPressed();
+////            }
 //            }
-            }
         }
     }
 
@@ -993,16 +1018,18 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         final SearchEldDeviceDialog searchEldDeviceDialog = new SearchEldDeviceDialog(MainActivity.this);
         searchEldDeviceDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-            final ConnectToEldDialog dialog = new ConnectToEldDialog(this,eldConnectionState);
+            final ConnectToEldDialog dialog = new ConnectToEldDialog(this,eldState,engineState);
             dialog.setCancelable(false);
 
         dialog.setAlerrtDialogItemClickInterface(() -> {
-            if (!eldConnectionState.equals("Conncected to Eld")){
+            if (eldState.equals("CONNECTED")){
                 dialog.cancel();
-                ScanForEld();
-                searchEldDeviceDialog.show();
-            }else {
                 mEldManager.DisconnectEld();
+                eldState = "DISCONNECTED";
+            }else {
+                ScanForEld();
+                dialog.cancel();
+                searchEldDeviceDialog.show();
             }
         });
 
@@ -1059,7 +1086,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     };
 
     private final EldBleDataCallback bleDataCallback = new EldBleDataCallback() {
-        @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         public void OnDataRecord(final EldBroadcast dataRec, final EldBroadcastTypes RecordType) {
 
@@ -1067,159 +1093,61 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             subscribedRecords.add(EldBroadcastTypes.ELD_BUFFER_RECORD);
             subscribedRecords.add(EldBroadcastTypes.ELD_ENGINE_PARAMETERS_RECORD);
             subscribedRecords.add(EldBroadcastTypes.ELD_FUEL_RECORD);
-            subscribedRecords.add(EldBroadcastTypes.ELD_CACHED_RECORD);
 
             mEldManager.EnableFuelData();
             mEldManager.UpdateSubscribedRecordTypes(subscribedRecords);
-            if (RecordType != EldBroadcastTypes.ELD_DATA_RECORD){
 
-                if (dataRec instanceof EldCachedMotionStartRecord){
-                    latitude = ((EldCachedMotionStartRecord) dataRec).getLatitude();
-                    longtitude = ((EldCachedMotionStartRecord) dataRec).getLongitude();
+            dateFormat=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-                    ArrayList<Double> arrayList = new ArrayList<>();
-                    arrayList.add(((EldCachedMotionStartRecord) dataRec).getLongitude());
-                    arrayList.add(((EldCachedMotionStartRecord) dataRec).getLatitude());
-                    if (last_status != EnumsConstants.STATUS_DR){
-                        if (isConnected){
-                            eldJsonViewModel.postStatus(new Status("D",new Point("Point",arrayList),"Driving",
-                                    ((EldCachedMotionStartRecord) dataRec).getGpsDateTime().toInstant().toString()));
-                        }
-                        statusDaoViewModel.insertStatus(new LogEntity(last_status,EnumsConstants.STATUS_DR,null,"Driving",null,
-                                ((EldCachedMotionStartRecord) dataRec).getGpsDateTime().toInstant().toString(),getCurrentSeconds()));
-                    }
-                }else if (dataRec instanceof EldCachedMotionStopRecord){
-                    ArrayList<Double> arrayList = new ArrayList<>();
-                    arrayList.add(((EldCachedMotionStopRecord) dataRec).getLongitude());
-                    arrayList.add(((EldCachedMotionStopRecord) dataRec).getLatitude());
-                    Timer t = new Timer();
-                    if (last_status == EnumsConstants.STATUS_DR) {
-                        final int[] count = {60};
-                        Dialog dialog = new Dialog(MainActivity.this);
-                        dialog.setContentView(R.layout.custom_confirmation_layout);
-                        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                        TextView textView = dialog.findViewById(R.id.idConfirmationTitle);
-                        Button stay = dialog.findViewById(R.id.idDialogStayDriving);
-                        Button go = dialog.findViewById(R.id.idDialogChangeStatus);
-                        t.scheduleAtFixedRate(new TimerTask() {
-                            @Override
-                            public void run() {
-                                count[0]--;
-                                runOnUiThread(()->{
-                                    if (count[0] > 0){
-                                        textView.setText(count[0] + " sec");
-                                    }else {
-                                        if (isConnected){
-                                            eldJsonViewModel.postStatus(new Status("ON",new Point("Point",arrayList),"on",
-                                                    ((EldCachedMotionStopRecord) dataRec).getGpsDateTime().toInstant().toString()));
-                                        }
-                                        current_status = EnumsConstants.STATUS_ON;
-                                        statusDaoViewModel.insertStatus(new LogEntity(last_status, current_status, null, "on", null, ((EldCachedMotionStopRecord) dataRec).getGpsDateTime().toInstant().toString(), getCurrentSeconds()));
-                                        t.cancel();
-                                        dialog.dismiss();
-                                    }
-                                });
-                            }
-                        },1000,1000);
+            if (dataRec instanceof EldBufferRecord){
 
-                        stay.setOnClickListener(view -> {
-                            dialog.dismiss();
-                            t.cancel();
-                        });
+            }else if (RecordType != EldBroadcastTypes.ELD_DATA_RECORD){
 
-                        go.setOnClickListener(view -> {
-                            dialog.dismiss();
-                            t.cancel();
-                            current_status = EnumsConstants.STATUS_OFF;
-                            if (isConnected){
-                                eldJsonViewModel.postStatus(new Status("OFF",new Point("Point",arrayList),"off",
-                                        ((EldCachedMotionStopRecord) dataRec).getGpsDateTime().toInstant().toString()));
-                            }
-                            statusDaoViewModel.insertStatus(new LogEntity(last_status, current_status, null, "off", null, ((EldCachedMotionStopRecord) dataRec).getGpsDateTime().toInstant().toString(), getCurrentSeconds()));
-                        });
-                        dialog.show();
-                    }
-
-                }
             }else {
-                if (dataRec instanceof EldDataRecord){
-                    if (((EldDataRecord) dataRec).getSpeed() != 0.0 && speed  == 0.0){
-                        speed = ((EldDataRecord) dataRec).getSpeed();
-                    }else if (((EldDataRecord) dataRec).getSpeed() == 0.0 && speed  != 0.0){
-                        speed = 0.0;
-                    }
-                    Runnable r = () -> {
+                runOnUiThread(()->{
+                    engineState = ((EldDataRecord)dataRec).getEngineState().name();
+                });
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                currentMinute = calendar.get(Calendar.MINUTE);
 
-                        if (isConnected){
-                            latitude = ((EldDataRecord) dataRec).getLatitude();
-                            longtitude = ((EldDataRecord) dataRec).getLongitude();
+                if (((EldDataRecord)dataRec).getSpeed() > 5 && speed < 5){
+                    ArrayList<Double> arrayList = new ArrayList<>();
+                    arrayList.add(((EldDataRecord) dataRec).getLatitude());
+                    arrayList.add(((EldDataRecord) dataRec).getLongitude());
+                    speed = ((EldDataRecord) dataRec).getSpeed();
+                    mutableLiveData.postValue(speed);
+                    statusDaoViewModel.insertStatus(new LogEntity(last_status,EnumsConstants.STATUS_DR,null,"Driving",null,today,getCurrentSeconds()));
+                    eldJsonViewModel.postStatus(new Status("D",new Point("Point",arrayList),"Driving",dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime())));
+                }else if (((EldDataRecord)dataRec).getSpeed() == 0.0 && speed > 5){
+                    speed = ((EldDataRecord) dataRec).getSpeed();
+                    mutableLiveData.postValue(speed);
+                }
 
-                            ArrayList<Double> arrayList = new ArrayList<>();
-                            arrayList.add(((EldDataRecord) dataRec).getLongitude());
-                            arrayList.add(((EldDataRecord) dataRec).getLatitude());
-
-                            Boolean b = null;
-                            if(((EldDataRecord) dataRec).getEngineState() == EldEngineStates.ENGINE_OFF){
-                                b = false;
-                            }else if(((EldDataRecord) dataRec).getEngineState() == EldEngineStates.ENGINE_ON){
-                                b = true;
-                            }
-                            eldJsonViewModel.sendLive(new LiveDataRecord(
-                                    b,
-                                    ((EldDataRecord) dataRec).getVin(),
-                                    ((EldDataRecord) dataRec).getSpeed(),
-                                    ((EldDataRecord) dataRec).getOdometer(),
-                                    ((EldDataRecord) dataRec).getTripDistance(),
-                                    ((EldDataRecord) dataRec).getEngineHours(),
-                                    ((EldDataRecord) dataRec).getTripHours(),
-                                    ((EldDataRecord) dataRec).getVoltage(),
-                                    ((EldDataRecord) dataRec).getGpsDateTime().toInstant().toString(),
-                                    new Point("Point",arrayList),
-                                    ((EldDataRecord) dataRec).getGpsSpeed(),
-                                    ((EldDataRecord) dataRec).getCourse(),
-                                    ((EldDataRecord) dataRec).getNumSats(),
-                                    ((EldDataRecord) dataRec).getMslAlt(),
-                                    ((EldDataRecord) dataRec).getDop(),
-                                    ((EldDataRecord) dataRec).getSequence(),
-                                    ((EldDataRecord) dataRec).getFirmwareVersion()
-                            ));
-                        }else {
-                            latitude = ((EldDataRecord) dataRec).getLatitude();
-                            longtitude = ((EldDataRecord) dataRec).getLongitude();
-
-                            ArrayList<Double> arrayList = new ArrayList<>();
-                            arrayList.add(((EldDataRecord) dataRec).getLongitude());
-                            arrayList.add(((EldDataRecord) dataRec).getLatitude());
-
-                            Boolean b = null;
-                            if (((EldDataRecord) dataRec).getEngineState() == EldEngineStates.ENGINE_OFF) {
-                                b = false;
-                            } else if (((EldDataRecord) dataRec).getEngineState() == EldEngineStates.ENGINE_ON) {
-                                b = true;
-                            }
-                            userViewModel.insertLocalData(new LiveDataRecord(
-                                    b,
-                                    ((EldDataRecord) dataRec).getVin(),
-                                    ((EldDataRecord) dataRec).getSpeed(),
-                                    ((EldDataRecord) dataRec).getOdometer(),
-                                    ((EldDataRecord) dataRec).getTripDistance(),
-                                    ((EldDataRecord) dataRec).getEngineHours(),
-                                    ((EldDataRecord) dataRec).getTripHours(),
-                                    ((EldDataRecord) dataRec).getVoltage(),
-                                    ((EldDataRecord) dataRec).getGpsDateTime().toInstant().toString(),
-                                    new Point("Point",arrayList),
-                                    ((EldDataRecord) dataRec).getGpsSpeed(),
-                                    ((EldDataRecord) dataRec).getCourse(),
-                                    ((EldDataRecord) dataRec).getNumSats(),
-                                    ((EldDataRecord) dataRec).getMslAlt(),
-                                    ((EldDataRecord) dataRec).getDop(),
-                                    ((EldDataRecord) dataRec).getSequence(),
-                                    ((EldDataRecord) dataRec).getFirmwareVersion()
-                            ));
-                        }
-                    };
-                    ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
-                    service.scheduleAtFixedRate(r, 1, 60, TimeUnit.SECONDS);
+                if (currentMinute != lastMinute){
+                    lastMinute = currentMinute;
+                    ArrayList<Double> arrayList = new ArrayList<>();
+                    arrayList.add(((EldDataRecord) dataRec).getLatitude());
+                    arrayList.add(((EldDataRecord) dataRec).getLongitude());
+                    eldJsonViewModel.sendLive(new LiveDataRecord(
+                            true,
+                            ((EldDataRecord) dataRec).getVin(),
+                            ((EldDataRecord) dataRec).getSpeed(),
+                            ((EldDataRecord) dataRec).getOdometer(),
+                            ((EldDataRecord) dataRec).getTripDistance(),
+                            ((EldDataRecord) dataRec).getEngineHours(),
+                            ((EldDataRecord) dataRec).getTripHours(),
+                            ((EldDataRecord) dataRec).getVoltage(),
+                            dateFormat.format(Calendar.getInstance().getTime()),
+                            new Point("Point",arrayList),
+                            ((EldDataRecord) dataRec).getGpsSpeed(),
+                            ((EldDataRecord) dataRec).getCourse(),
+                            ((EldDataRecord) dataRec).getNumSats(),
+                            ((EldDataRecord) dataRec).getMslAlt(),
+                            ((EldDataRecord) dataRec).getDop(),
+                            ((EldDataRecord) dataRec).getSequence(),
+                            ((EldDataRecord) dataRec).getFirmwareVersion()
+                    ));
                 }
             }
         }
@@ -1241,15 +1169,15 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                 EldBleError res = mEldManager.ConnectToEld(bleDataCallback, subscribedRecords, bleConnectionStateChangeCallback);
 
                 if (res != EldBleError.SUCCESS) {
-                    eldConnectionState = "Connection Failed";
+                    eldState = "DISCONNECTED";
                     runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("Connection Failed\n", "")));
                 }else {
-                    eldConnectionState = "Conncected to Eld";
+                    eldState = "CONNECTED";
                     runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("Conncected to Eld\n", "")));
                 }
 
             } else {
-                eldConnectionState = "No ELD found";
+                eldState = "DISCONNECTED";
                 runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("No ELD found\n", "")));
             }
         }
@@ -1269,15 +1197,17 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
                 EldBleError res = mEldManager.ConnectToEld(bleDataCallback, subscribedRecords, bleConnectionStateChangeCallback, strDevice);
                 if (res != EldBleError.SUCCESS) {
-                    eldConnectionState = "Connection Failed";
-                    runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("Connection Failed\n", "")));
+                    runOnUiThread(() ->{
+                        eldState = "DISCONNECTED";
+                        EventBus.getDefault().postSticky(new MessageModel("Connection Failed\n", ""));
+                    });
                 } else {
-                    eldConnectionState = "Conncected to Eld";
+                    eldState = "CONNECTED";
                     runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("Conncected to Eld\n", "")));
                 }
 
             } else {
-                eldConnectionState = "No ELD found";
+                eldState = "DISCONNECTED";
                 runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("No ELD found\n", "")));
             }
         }
@@ -1378,6 +1308,12 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     protected void onPause() {
         super.onPause();
         this.getViewModelStore().clear();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mEldManager.DisconnectEld();
     }
 
     @Override

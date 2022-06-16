@@ -24,10 +24,10 @@ public class CustomLiveRulerChart extends CustomRulerChart {
     private ArrayList<LogEntity> arrayList = new ArrayList();
 
     private final ArrayList<Paint> paintArray = new ArrayList<Paint>() {{
-        add(TableConstants.getOFFPaint());
-        add(TableConstants.getSBPaint());
-        add(TableConstants.getDRPaint());
-        add(TableConstants.getONPaint());
+        add(TableConstants.getOFFPaint(getContext()));
+        add(TableConstants.getSBPaint(getContext()));
+        add(TableConstants.getDRPaint(getContext()));
+        add(TableConstants.getONPaint(getContext()));
     }};
 
     public CustomLiveRulerChart(Context context) {
@@ -120,27 +120,27 @@ public class CustomLiveRulerChart extends CustomRulerChart {
         float CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 8;
         canvas.drawText(
                 getTime(off),
-                START_POINT_X + 25*CUSTOM_TABLE_WIDTH/26+2f,
+                START_POINT_X + 201*CUSTOM_TABLE_WIDTH/208,
                 START_POINT_Y + 5*CUSTOM_TABLE_HEIGHT / 32,
-                TableConstants.getOFFPaint()
+                TableConstants.getOFFPaint(getContext())
         );
         canvas.drawText(
                 getTime(sb),
-                START_POINT_X + 25*CUSTOM_TABLE_WIDTH/26 +2f,
+                START_POINT_X + 201*CUSTOM_TABLE_WIDTH/208,
                 START_POINT_Y + 13 * CUSTOM_TABLE_HEIGHT / 32,
-                TableConstants.getSBPaint()
+                TableConstants.getSBPaint(getContext())
         );
         canvas.drawText(
                 getTime(dr),
-                START_POINT_X + 25*CUSTOM_TABLE_WIDTH/26 +2f,
+                START_POINT_X + 201*CUSTOM_TABLE_WIDTH/208,
                 START_POINT_Y + 21 * CUSTOM_TABLE_HEIGHT / 32,
-                TableConstants.getDRPaint()
+                TableConstants.getDRPaint(getContext())
         );
         canvas.drawText(
                 getTime(on),
-                START_POINT_X + 25*CUSTOM_TABLE_WIDTH/26 +2f,
+                START_POINT_X + 201*CUSTOM_TABLE_WIDTH/208,
                 START_POINT_Y + 29 * CUSTOM_TABLE_HEIGHT / 32,
-                TableConstants.getONPaint()
+                TableConstants.getONPaint(getContext())
         );
 
         invalidate();

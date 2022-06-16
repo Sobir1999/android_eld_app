@@ -20,13 +20,15 @@ import com.iosix.eldblesample.shared_prefs.LastStatusData;
 public class ConnectToEldDialog extends Dialog {
     private LinearLayout vehicleInfo, sendLog;
     private ConstraintLayout undintifiedDriving, faultCode;
-    private TextView connect, cancel,idEldConnection,idIsConnected;
+    private TextView connect, cancel,idEldConnection,idIsConnected,idEngineState;
     private AlertDialogItemClickInterface alerrtDialogItemClickInterface;
-    private String lastStatusData;
+    private final String lastStatusData;
+    private final String engineState;
 
-    public ConnectToEldDialog(@NonNull Context context, String lastStatusData) {
+    public ConnectToEldDialog(@NonNull Context context,String lastStatusData,String engineState) {
         super(context);
         this.lastStatusData = lastStatusData;
+        this.engineState = engineState;
     }
 
     public void setAlerrtDialogItemClickInterface(AlertDialogItemClickInterface alerrtDialogItemClickInterface) {
@@ -44,10 +46,12 @@ public class ConnectToEldDialog extends Dialog {
         undintifiedDriving = findViewById(R.id.idUndefinedDR);
         cancel = findViewById(R.id.idEldDialCancel);
         connect = findViewById(R.id.idEldDialConnect);
+        idEngineState = findViewById(R.id.idEngineState);
 
         idIsConnected.setText(lastStatusData);
+        idEngineState.setText(engineState);
 
-        if (lastStatusData.equals("Conncected to Eld")){
+        if (lastStatusData.equals("CONNECTED")){
             connect.setText(R.string.disconnect);
         }else {
             connect.setText(R.string.connect);

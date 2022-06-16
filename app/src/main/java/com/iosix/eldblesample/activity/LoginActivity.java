@@ -81,7 +81,7 @@ public class LoginActivity extends BaseActivity {
             this.isConnected = isConnected;
         });
 
-        eldJsonViewModel.getResponse(new Student(login.getText().toString(),password.getText().toString())).observe(this,loginResponse -> {
+        eldJsonViewModel.getResponse().observe(this,loginResponse -> {
             if (loginResponse != null){
                 sessionManager.saveAccessToken(loginResponse.getAccessToken());
                 sessionManager.saveToken(loginResponse.getrefreshToken());
@@ -119,7 +119,7 @@ public class LoginActivity extends BaseActivity {
                     mProgress.cancel();
                     Toast.makeText(LoginActivity.this,"Please fill all free spaces!",Toast.LENGTH_SHORT).show();
                 }else {
-                    eldJsonViewModel.getResponse(new Student(login.getText().toString(),password.getText().toString()));
+                    eldJsonViewModel.getLoginResponse(new Student(login.getText().toString(),password.getText().toString()));
                 }
             }else {
                 mProgress.cancel();

@@ -14,8 +14,8 @@ import com.iosix.eldblesample.fragments.LogFragment;
 import java.util.ArrayList;
 
 public class LGDDFragmentAdapter extends FragmentPagerAdapter {
-    private String curr;
-    private String[] tabs = new String[]{"Log", "General", "Signature", "DVIR"};
+    private final String curr;
+    private final String[] tabs = new String[]{"Log", "General", "Signature", "DVIR"};
 
     public LGDDFragmentAdapter(@NonNull FragmentManager fm, int behavior, String curr) {
         super(fm, behavior);
@@ -31,7 +31,6 @@ public class LGDDFragmentAdapter extends FragmentPagerAdapter {
             case 1:
                 return GeneralFragment.newInstance(curr);
             case 2:
-//                DocsFragment doc = new DocsFragment();
                 return DocsFragment.newInstance(curr);
             case 3:
                 return DVIRFragment.newInstance(curr);

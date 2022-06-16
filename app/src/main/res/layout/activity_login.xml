@@ -12,8 +12,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginHorizontal="50dp"
-        android:layout_marginVertical="8dp"
+        android:layout_marginHorizontal="@dimen/activity_padding_size"
+        android:layout_marginVertical="@dimen/half_vertical_margin"
         android:background="@drawable/background_main_view">
 
     <LinearLayout
@@ -22,12 +22,12 @@
         android:orientation="vertical">
 
     <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="@dimen/login_icon_size"
+        android:layout_height="@dimen/login_icon_size"
         android:layout_gravity="center_horizontal"
         android:src="@drawable/ic_lolll"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="@dimen/card_view_corner_radius"
+        android:layout_marginBottom="@dimen/card_view_corner_radius"
         app:tint="@color/colorPrimary" />
 
 
@@ -38,14 +38,15 @@
         android:hint="@string/email"
         android:imeOptions="flagNoExtractUi"
         android:textStyle="bold"
+        android:backgroundTint="@color/colorPrimary"
         android:drawableStart="@drawable/email"
-        android:drawablePadding="10dp"
-        android:textSize="16sp"
+        android:drawablePadding="@dimen/half_vertical_margin"
+        android:textSize="@dimen/card_text_size"
         android:fontFamily="@font/montserrat"
-        android:layout_marginHorizontal="70dp"
+        android:layout_marginHorizontal="@dimen/splash_icon_size"
         android:textColorHint="?attr/customTextHintColor"
         android:textColor="?attr/customTextColor"
-        android:paddingBottom="16dp"
+        android:paddingBottom="@dimen/card_view_corner_radius"
         android:inputType="textEmailAddress" />
 
     <EditText
@@ -54,31 +55,32 @@
         android:layout_height="wrap_content"
         android:hint="@string/password"
         android:textStyle="bold"
+        android:backgroundTint="@color/colorPrimary"
         android:imeOptions="flagNoExtractUi"
-        android:layout_marginHorizontal="70dp"
+        android:layout_marginHorizontal="@dimen/splash_icon_size"
         android:drawableStart="@drawable/lock"
-        android:drawablePadding="10dp"
-        android:textSize="16sp"
+        android:drawablePadding="@dimen/half_vertical_margin"
+        android:textSize="@dimen/card_text_size"
         android:textColor="?attr/customTextColor"
         android:fontFamily="@font/montserrat"
         android:textColorHint="?attr/customTextHintColor"
-        android:layout_marginTop="16dp"
-        android:paddingBottom="16dp"
+        android:layout_marginTop="@dimen/card_view_corner_radius"
+        android:paddingBottom="@dimen/card_view_corner_radius"
         android:inputType="textPassword"/>
 
     <Button
         android:id="@+id/idLoginButton"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_height="@dimen/card_icon_size"
         android:background="@drawable/button_bg"
         android:text="@string/log_in"
-        android:textSize="17sp"
-        android:layout_marginHorizontal="100dp"
+        android:textSize="@dimen/card_text_size"
+        android:layout_marginHorizontal="@dimen/splash_icon_size"
         android:fontFamily="@font/montserrat"
         android:textStyle="bold"
         android:textAllCaps="false"
         android:textColor="@color/colorPrimary"
-        android:layout_marginTop="25dp"/>
+        android:layout_marginTop="@dimen/card_image_size"/>
 
     </LinearLayout>
 

@@ -1,22 +1,13 @@
 package com.iosix.eldblesample.models.eld_records;
 
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.Date;
-
 @Entity(tableName = "local_data_table")
 public class LiveDataRecord {
-
-
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
@@ -181,7 +172,6 @@ public class LiveDataRecord {
         this.battery_voltage = battery_voltage;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public String getDate() {
         return date;
     }

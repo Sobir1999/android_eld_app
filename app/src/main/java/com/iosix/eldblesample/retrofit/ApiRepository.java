@@ -64,7 +64,11 @@ public class ApiRepository {
         });
     }
 
-    public MutableLiveData<LoginResponse> getLoginResponse(Student student){
+    public MutableLiveData<LoginResponse> getResponse(){
+        return studentMutableLiveData;
+    }
+
+    public void getLoginResponse(Student student){
 
         apiInterface.createUser(student).enqueue(new Callback<LoginResponse>() {
             @Override
@@ -81,8 +85,6 @@ public class ApiRepository {
                 studentMutableLiveData.postValue(null);
             }
         });
-
-        return studentMutableLiveData;
     }
 
 

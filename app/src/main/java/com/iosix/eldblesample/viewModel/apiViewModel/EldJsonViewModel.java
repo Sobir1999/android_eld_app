@@ -37,11 +37,13 @@ public class EldJsonViewModel extends AndroidViewModel {
         repository.sendLive(data);
     }
 
-    public MutableLiveData<LoginResponse> getResponse(Student student) {
-        return repository.getLoginResponse(student);
+    public void getLoginResponse(Student student) {
+        repository.getLoginResponse(student);
     }
 
-
+    public MutableLiveData<LoginResponse> getResponse(){
+        return repository.getResponse();
+    }
 
     public MutableLiveData<User> getUser(){
         return repository.getUser();

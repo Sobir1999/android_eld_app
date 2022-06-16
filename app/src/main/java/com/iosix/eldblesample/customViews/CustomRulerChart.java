@@ -29,6 +29,7 @@ public abstract class   CustomRulerChart extends View {
 
     private float CUSTOM_TABLE_HEIGHT;
     private float CUSTOM_TABLE_ROW_WIDTH;
+    private float CUSTOM_TABLE_STROKE_WIDTH;
 
     public CustomRulerChart(Context context) {
         super(context);
@@ -53,6 +54,8 @@ public abstract class   CustomRulerChart extends View {
 
         CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 8;
         CUSTOM_TABLE_ROW_WIDTH = CUSTOM_TABLE_WIDTH / 26;
+
+        CUSTOM_TABLE_STROKE_WIDTH = context.getResources().getDisplayMetrics().density * 1.5f;
     }
 
     @Override
@@ -106,7 +109,7 @@ public abstract class   CustomRulerChart extends View {
             table_paint.setColor(Color.WHITE);
         }
         table_paint.setStyle(Paint.Style.STROKE);
-        table_paint.setStrokeWidth(2f);
+        table_paint.setStrokeWidth(CUSTOM_TABLE_STROKE_WIDTH);
 
         canvas.drawRect(
                 START_POINT_X,
@@ -263,28 +266,28 @@ public abstract class   CustomRulerChart extends View {
                         "OFF",
                         START_POINT_X +CUSTOM_TABLE_ROW_WIDTH/4,
                         START_POINT_Y + 5*CUSTOM_TABLE_HEIGHT / 32,
-                        TableConstants.getOFFPaint()
+                        TableConstants.getOFFPaint(getContext())
                 );
 
                 canvas.drawText(
                         "SB",
                         START_POINT_X +CUSTOM_TABLE_ROW_WIDTH/4,
                         START_POINT_Y + 13 * CUSTOM_TABLE_HEIGHT / 32,
-                        TableConstants.getSBPaint()
+                        TableConstants.getSBPaint(getContext())
                 );
 
                 canvas.drawText(
                         "DR",
                         START_POINT_X +CUSTOM_TABLE_ROW_WIDTH/4,
                         START_POINT_Y + 21 * CUSTOM_TABLE_HEIGHT / 32,
-                        TableConstants.getDRPaint()
+                        TableConstants.getDRPaint(getContext())
                 );
 
                 canvas.drawText(
                         "ON",
                         START_POINT_X +CUSTOM_TABLE_ROW_WIDTH/4,
                         START_POINT_Y + 29 * CUSTOM_TABLE_HEIGHT / 32,
-                        TableConstants.getONPaint()
+                        TableConstants.getONPaint(getContext())
                 );
             }
             else if (i<13){

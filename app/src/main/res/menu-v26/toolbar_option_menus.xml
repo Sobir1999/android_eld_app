@@ -12,6 +12,7 @@
         android:id="@+id/connectMenu"
         android:icon="@drawable/ic_connection"
         app:showAsAction="ifRoom"
+        app:itemIconSize="@dimen/card_icon_size"
         android:title="">
     </item>
 </menu>

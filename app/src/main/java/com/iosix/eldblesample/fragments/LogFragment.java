@@ -42,9 +42,11 @@ public class LogFragment extends Fragment {
     private ChangeDateTimeBroadcast changeDateTimeBroadcast;
     private String time = "" + Calendar.getInstance().getTime();
     private String today = time.split(" ")[1] + " " + time.split(" ")[2];
+    String currDay;
     private RecyclerView recyclerView_log;
     private LogRecyclerViewAdapter logRecyclerViewAdapter;
     private DvirViewModel dvirViewModel;
+    ArrayList<LogEntity> truckStatusEntities = new ArrayList<>();
 
 
     public static LogFragment newInstance(String param1) {
@@ -59,7 +61,7 @@ public class LogFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            String currDay = getArguments().getString("ARG_PARAM1");
+            currDay = getArguments().getString("ARG_PARAM1");
         }
         dvirViewModel = ViewModelProviders.of(requireActivity()).get(DvirViewModel.class);
 
@@ -75,9 +77,6 @@ public class LogFragment extends Fragment {
         recyclerView_log = view.findViewById(R.id.recyclerView_log_page);
 
         statusDaoViewModel = ViewModelProviders.of(this).get(StatusDaoViewModel.class);
-        statusDaoViewModel.getmAllStatus().observe(getViewLifecycleOwner(),trackEntities ->{
-
-        });
 
         changeDateTimeBroadcast = new ChangeDateTimeBroadcast() {
             @Override
@@ -89,7 +88,6 @@ public class LogFragment extends Fragment {
         _context.registerReceiver(changeDateTimeBroadcast, ChangeDateTimeBroadcast.getIntentFilter());
 
         dvirViewModel.getCurrentName().observe(getViewLifecycleOwner(), c ->{
-            ArrayList<LogEntity> truckStatusEntities = new ArrayList<>();
             statusDaoViewModel.getmAllStatus().observe(getViewLifecycleOwner(), truckStatusEntities1 -> {
                 for (LogEntity logEntity: truckStatusEntities1) {
                     if (logEntity.getTime().equalsIgnoreCase(c)) {
