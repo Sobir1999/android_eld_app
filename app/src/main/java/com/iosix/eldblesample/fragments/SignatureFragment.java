@@ -1,5 +1,6 @@
 package com.iosix.eldblesample.fragments;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,11 +10,13 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.iosix.eldblesample.R;
+import com.iosix.eldblesample.interfaces.Communicator;
 import com.iosix.eldblesample.shared_prefs.SessionManager;
 import com.iosix.eldblesample.shared_prefs.SignaturePrefs;
 import com.iosix.eldblesample.viewModel.SignatureViewModel;
@@ -34,9 +37,9 @@ public class SignatureFragment extends Fragment {
     private Bitmap bitmap;
     private RadioButton no_defect, correct_defect, corrected_defect;
     private TextView mechamnicTextView;
-    private SignaturePrefs signaturePrefs;
-    private SessionManager sessionManager;
     private SignatureViewModel signatureViewModel;
+    private SignaturePrefs signaturePrefs;
+    Communicator comm;
 
     public SignatureFragment() {
         // Required empty public constructor
@@ -59,9 +62,8 @@ public class SignatureFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getBoolean(ARG_PARAM1);
         }
-        signaturePrefs = SignaturePrefs.getInstance(requireContext());
-        sessionManager = SessionManager.getInstance(requireContext());
         signatureViewModel = ViewModelProviders.of(requireActivity()).get(SignatureViewModel.class);
+        signaturePrefs = SignaturePrefs.getInstance(requireContext());
 
     }
 
@@ -117,25 +119,27 @@ public class SignatureFragment extends Fragment {
             @Override
             public void onSigned() {
                 clearSignature.setClickable(true);
-                signaturePrefs.saveSignature(signature.getSignatureBitmap());
                 drawSignature.setVisibility(View.GONE);
+                comm.sendBitmap(signature.getSignatureBitmap());
             }
 
             @Override
             public void onClear() {
                 clearSignature.setClickable(false);
                 drawSignature.setVisibility(View.VISIBLE);
+                comm.sendBitmap(null);
             }
         });
 
         clearSignature.setOnClickListener(v -> signature.clear()
         );
 
-
         previousSignature.setOnClickListener(view -> {
-            if (sessionManager.fetchSignature() != null){
-                signature.setSignatureBitmap(sessionManager.fetchSignature());
-            }
+            signatureViewModel.getMgetAllSignatures().observe(getViewLifecycleOwner(),signatureEntities -> {
+                if (signatureEntities.size() != 0){
+                    signature.setSignatureBitmap(signatureEntities.get(signatureEntities.size()-1).getSignatureBitmap());
+                }
+            });
         });
         mechanicSignature.setOnSignedListener(new SignaturePad.OnSignedListener() {
             @Override
@@ -148,19 +152,26 @@ public class SignatureFragment extends Fragment {
             public void onSigned() {
                 mechamnicTextView.setClickable(true);
                 drawMecanicSignature.setVisibility(View.GONE);
-                signaturePrefs.saveMechanicSignature(mechanicSignature.getSignatureBitmap());
+                comm.sendMechanicBitmap(mechanicSignature.getSignatureBitmap());
             }
 
             @Override
             public void onClear() {
                 mechamnicTextView.setClickable(false);
                 drawMecanicSignature.setVisibility(View.VISIBLE);
-                signaturePrefs.clearMechanicSignature();
-
+                comm.sendMechanicBitmap(null);
             }
         });
 
         mechamnicTextView.setOnClickListener(v -> mechanicSignature.clear());
+
+        previousMechanicSignature.setOnClickListener(view -> {
+            signatureViewModel.getMgetAllMechanicSignatures().observe(getViewLifecycleOwner(),mechanicSignatureEntities -> {
+                if (mechanicSignatureEntities.size() > 0){
+                    mechanicSignature.setSignatureBitmap(mechanicSignatureEntities.get(mechanicSignatureEntities.size() - 1).getMechanicSignatureBitmap());
+                }
+            });
+        });
 
     }
 
@@ -171,9 +182,9 @@ public class SignatureFragment extends Fragment {
             no_defect.setClickable(false);
             corrected_defect.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 signaturePrefs.saveDefect(isChecked);
+                comm.sendHasDefect(isChecked);
                 if (isChecked) {
                     mechanicLayout.setVisibility(View.VISIBLE);
-
                 } else {
                     mechanicLayout.setVisibility(View.INVISIBLE);
                 }
@@ -183,6 +194,12 @@ public class SignatureFragment extends Fragment {
             correct_defect.setClickable(false);
             corrected_defect.setClickable(false);
         }
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        comm = (Communicator) context;
     }
 
     @Override

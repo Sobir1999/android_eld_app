@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 31,
-    "identityHash": "34f414d4f172203e05a74c2f1e00f828",
+    "identityHash": "3f7be902d57c129de84625ce3ffb69f6",
     "entities": [
       {
         "tableName": "log_table",
@@ -465,7 +465,7 @@
       },
       {
         "tableName": "signature_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`signature_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `signature` BLOB)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`signature_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `signature` BLOB, `day` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -477,6 +477,12 @@
             "fieldPath": "signatureBitmap",
             "columnName": "signature",
             "affinity": "BLOB",
+            "notNull": false
+          },
+          {
+            "fieldPath": "day",
+            "columnName": "day",
+            "affinity": "TEXT",
             "notNull": false
           }
         ],
@@ -491,7 +497,7 @@
       },
       {
         "tableName": "mechanic_signature_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `mechanicSignature` BLOB)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `mechanicSignature` BLOB, `day` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -503,6 +509,12 @@
             "fieldPath": "mechanicSignatureBitmap",
             "columnName": "mechanicSignature",
             "affinity": "BLOB",
+            "notNull": false
+          },
+          {
+            "fieldPath": "day",
+            "columnName": "day",
+            "affinity": "TEXT",
             "notNull": false
           }
         ],
@@ -754,43 +766,11 @@
         },
         "indices": [],
         "foreignKeys": []
-      },
-      {
-        "tableName": "status_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`key` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `last_status` INTEGER NOT NULL, `last_status_date` TEXT)",
-        "fields": [
-          {
-            "fieldPath": "key",
-            "columnName": "key",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "last_status",
-            "columnName": "last_status",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "last_status_date",
-            "columnName": "last_status_date",
-            "affinity": "TEXT",
-            "notNull": false
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "key"
-          ],
-          "autoGenerate": true
-        },
-        "indices": [],
-        "foreignKeys": []
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"34f414d4f172203e05a74c2f1e00f828\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"3f7be902d57c129de84625ce3ffb69f6\")"
     ]
   }
 }

@@ -16,8 +16,12 @@ public class MechanicSignatureEntity {
     @ColumnInfo(name = "mechanicSignature")
     Bitmap mechanicSignatureBitmap;
 
-    public MechanicSignatureEntity(Bitmap mechanicSignatureBitmap){
+    @ColumnInfo(name = "day")
+    String day;
+
+    public MechanicSignatureEntity(Bitmap mechanicSignatureBitmap,String day){
         this.mechanicSignatureBitmap = mechanicSignatureBitmap;
+        this.day = day;
     }
 
     public void setMechanicSignatureBitmap(Bitmap mechanicSignatureBitmap){this.mechanicSignatureBitmap = mechanicSignatureBitmap;}
@@ -27,4 +31,12 @@ public class MechanicSignatureEntity {
     public void setId(int id){this.id = id;}
 
     public int getId(){return id;}
+
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
+    }
 }

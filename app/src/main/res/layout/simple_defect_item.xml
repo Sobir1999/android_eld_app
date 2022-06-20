@@ -2,20 +2,20 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="20dp"
-    android:layout_marginTop="12dp"
+    android:layout_marginHorizontal="@dimen/drawer_padding_size"
+    android:layout_marginTop="@dimen/half_vertical_margin"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <CheckedTextView
         android:id="@+id/idRadioDefect"
         android:text="@string/english"
-        android:textSize="16sp"
+        android:textSize="@dimen/card_text_size"
         android:layoutDirection="rtl"
         android:textAlignment="textStart"
         android:layout_gravity="start"
         android:fontFamily="@font/montserrat"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="@dimen/half_vertical_margin"
+        android:layout_marginTop="@dimen/half_vertical_margin"
         android:textColor="@drawable/text_color_selected"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
+        android:layout_height="@dimen/button_stroke_with"
         app:layout_constraintTop_toBottomOf="@id/idRadioDefect"
         android:background="@color/customViewColor"/>
 

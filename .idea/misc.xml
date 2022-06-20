@@ -3,72 +3,104 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/add_defect_text_background.xml" value="0.264" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/background_alert_text.xml" value="0.2175" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/background_main_view.xml" value="0.269" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/background_table_section_button.xml" value="0.219" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/button_bg.xml" value="0.255" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/circle_progress_bar.xml" value="0.248" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/circle_shape.xml" value="0.248" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/defect_settings.xml" value="0.279" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/engine_off.xml" value="0.2175" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/fragment_back.xml" value="0.279" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic__1748117516352401124513.xml" value="0.219" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic__b74e24a497d9fa32d2c7d4acf314b81.xml" value="0.2075" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic__others.xml" value="0.279" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_abstract_user_flat_1.xml" value="0.279" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_access_time_24.xml" value="0.255" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_arrow_back_ios_24.xml" value="0.279" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_arrow_forward_ios_24.xml" value="0.279" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_bluetooth_24.xml" value="0.2175" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_edit_24.xml" value="0.2075" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_gps_fixed_24.xml" value="0.2175" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_info_24.xml" value="0.2175" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_keyboard_arrow_up_24.xml" value="0.25" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_location_on_24.xml" value="0.279" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_logout_24.xml" value="0.2075" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_nightlight_24.xml" value="0.2075" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_password_24.xml" value="0.2075" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_power_settings_new_24.xml" value="0.219" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_baseline_wifi_24.xml" value="0.2175" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_check_document_file_icon_icon_1320196654394535651_0.xml" value="0.25" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_connection.xml" value="0.279" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_delete.xml" value="0.25" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_education_pencil.xml" value="0.25" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_icons8_info__1_.xml" value="0.1755" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_icons8_lock.xml" value="0.248" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_icons8_plus__.xml" value="0.279" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_lolll.xml" value="0.238" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_steering_wheel_car_svgrepo_com.xml" value="0.247" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_steering_wheel_svgrepo_com.xml" value="0.219" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_trailer_svgrepo_com.xml" value="0.279" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_truck.xml" value="0.219" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_truck_blue.xml" value="0.279" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/item_vis_button_background.xml" value="0.25" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/keyboard_bottom_arrow.xml" value="0.279" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/signature_button.xml" value="0.219" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/state_unchacked.xml" value="0.2075" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/text_color_selected.xml" value="0.21" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/trailer_delete.xml" value="0.279" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout-land/main_activity_view.xml" value="0.2" />
-        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_account.xml" value="0.27447916666666666" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_account.xml" value="0.136" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_add_defect.xml" value="0.1829861111111111" />
-        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_add_dvir2.xml" value="0.136" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_add_dvir2.xml" value="0.264" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_ble_connect.xml" value="0.1829861111111111" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_carrier_info.xml" value="0.22530996152201796" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_language.xml" value="0.16885964912280702" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_lgdd.xml" value="0.1829861111111111" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_login.xml" value="0.2" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_main.xml" value="0.1693840579710145" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_main2.xml" value="0.1829861111111111" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_night_mode.xml" value="0.2" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_recap.xml" value="0.152" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_rules.xml" value="0.152" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_setting.xml" value="0.264" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/activity_signature.xml" value="0.16885964912280702" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/add_unit_trailer_dialog_view.xml" value="0.12706270627062707" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/connect_eld_progress_dialog.xml" value="0.1829861111111111" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/content_toolbar.xml" value="0.12706270627062707" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/custom_button_dr_item.xml" value="0.12706270627062707" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/custom_confirmation_layout.xml" value="0.1829861111111111" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/custom_delete_dvir_dialog.xml" value="0.1829861111111111" />
-        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/custom_dialog.xml" value="0.27447916666666666" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/custom_dialog.xml" value="0.152" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/custom_drawer_layout.xml" value="0.1829861111111111" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/custom_general_dialog.xml" value="0.27447916666666666" />
-        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/custom_general_layout.xml" value="0.2" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/custom_general_layout.xml" value="0.152" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/custom_list_dialog.xml" value="0.152" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/custom_notes_dialog.xml" value="0.1829861111111111" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/custom_table_view.xml" value="0.12706270627062707" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/custom_vehicles_dialog.xml" value="0.16" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/dvir_list.xml" value="0.176" />
-        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/eld_custom_dialog_item.xml" value="0.144" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/eld_custom_dialog_item.xml" value="0.4" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/fragment_add_defect.xml" value="0.23731884057971014" />
-        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/fragment_d_v_i_r.xml" value="0.16" />
-        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/fragment_docs.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/fragment_begin_inspection.xml" value="0.12706270627062707" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/fragment_d_v_i_r.xml" value="0.10400000000000001" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/fragment_docs.xml" value="0.12" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/fragment_general.xml" value="0.264" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/fragment_inspection_module.xml" value="0.12706270627062707" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/fragment_language.xml" value="0.22530996152201796" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/fragment_log.xml" value="0.1829861111111111" />
-        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/fragment_signature.xml" value="0.1829861111111111" />
-        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/last_days_recycler_view.xml" value="0.1829861111111111" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/fragment_signature.xml" value="0.136" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/last_days_recycler_view.xml" value="0.3287472845763939" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/log_items.xml" value="0.264" />
-        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/main_activity_view.xml" value="0.2" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/main_activity_view.xml" value="0.264" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/param_popup.xml" value="0.1829861111111111" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/row_nav_drawer.xml" value="0.1829861111111111" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/simple_defect_item.xml" value="0.23731884057971014" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/simple_list_item.xml" value="0.23731884057971014" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/simple_vehicle_item.xml" value="0.1829861111111111" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/spinner_item.xml" value="0.1829861111111111" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/time_popup.xml" value="0.22530996152201796" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/trailer_base_dialog.xml" value="0.22530996152201796" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/trailer_item_recycler.xml" value="0.23731884057971014" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/unit_item.xml" value="0.23731884057971014" />

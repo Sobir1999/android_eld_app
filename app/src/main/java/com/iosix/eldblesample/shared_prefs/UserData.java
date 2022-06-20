@@ -55,4 +55,14 @@ public class UserData {
         return userPref.getBoolean("isDark",false);
     }
 
+    public void saveAutoSwitch(boolean isAutoSwitch){
+        editor = userPref.edit();
+        editor.putBoolean("isAutoSwitch", isAutoSwitch);
+        editor.apply();
+    }
+
+    public boolean getAutoSwitch(){
+        return userPref.getBoolean("isAutoSwitch",false);
+    }
+
 }

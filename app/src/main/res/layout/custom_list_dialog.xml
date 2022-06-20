@@ -5,61 +5,89 @@
     android:id="@+id/idAddContainer"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
-        android:layout_width="400dp"
-        android:layout_height="300dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="@dimen/custom_dialog_width"
+        android:layout_height="@dimen/drawer_width"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:background="@drawable/background_main_view"
-        android:orientation="vertical">
+        android:background="@drawable/background_main_view">
 
         <TextView
             android:id="@+id/idHeaderTv"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:text="@string/select_trailer"
             android:textColor="@color/colorPrimary"
-            android:textSize="18sp"
+            android:textSize="@dimen/title_text_size"
             android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
             android:fontFamily="@font/montserrat"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginVertical="15dp"/>
+            android:layout_marginHorizontal="@dimen/drawer_padding_size"
+            android:layout_marginVertical="@dimen/card_view_corner_radius"/>
+
+        <TextView
+            android:id="@+id/idGeneralTrailerText"
+            style="@style/TextAppearance.AppCompat.Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:fontFamily="@font/montserrat"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:text="New"
+            android:layout_marginVertical="@dimen/card_view_corner_radius"
+            android:layout_marginHorizontal="@dimen/drawer_padding_size"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/card_text_size"
+            app:drawableStartCompat="@drawable/ic_icons8_plus__" />
 
         <View
             android:layout_width="match_parent"
+            android:id="@+id/idTrailerView"
+            app:layout_constraintTop_toBottomOf="@+id/idHeaderTv"
             android:layout_height="0.8dp"
             android:background="@color/customViewColor"/>
 
         <androidx.recyclerview.widget.RecyclerView
+            app:layout_constraintTop_toBottomOf="@+id/idTrailerView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="9"
+            app:layout_constraintBottom_toTopOf="@+id/idTrailerView2"
             android:id="@+id/idRecyclerViewUnit"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
         <View
             android:layout_width="match_parent"
+            android:id="@+id/idTrailerView2"
+            app:layout_constraintTop_toBottomOf="@+id/idRecyclerViewUnit"
+            app:layout_constraintBottom_toTopOf="@+id/idDialogCancel"
             android:layout_height="0.8dp"
             android:background="@color/customViewColor"/>
 
         <TextView
             android:id="@+id/idDialogCancel"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:text="@string/cancel"
-            android:textSize="17sp"
+            android:textSize="@dimen/card_text_size"
             android:textStyle="bold"
             android:textAllCaps="true"
             android:gravity="center"
             android:layout_gravity="center"
-            android:layout_marginVertical="15dp"
+            app:layout_constraintTop_toBottomOf="@+id/idTrailerView2"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginVertical="@dimen/half_vertical_margin"
             android:fontFamily="@font/montserrat"
             android:textColor="@color/colorPrimary"/>
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

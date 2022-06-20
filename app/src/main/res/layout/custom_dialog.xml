@@ -5,8 +5,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
-        android:layout_width="400dp"
-        android:layout_height="200dp"
+        android:layout_width="@dimen/custom_dialog_width"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -20,21 +20,21 @@
             android:layout_height="wrap_content"
             android:text="@string/add_trailer"
             android:textColor="@color/colorPrimary"
-            android:textSize="17sp"
+            android:textSize="@dimen/card_text_size"
             android:textStyle="bold"
             android:fontFamily="@font/montserrat"
-            android:paddingHorizontal="15dp"
-            android:layout_marginTop="20dp"/>
+            android:paddingHorizontal="@dimen/card_view_corner_radius"
+            android:layout_marginTop="@dimen/drawer_padding_size"/>
 
         <EditText
             android:id="@+id/idDialogEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="15dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginHorizontal="@dimen/card_view_corner_radius"
+            android:layout_marginTop="@dimen/card_image_size"
             android:hint="@string/create_trailer"
-            android:textSize="15sp"
-            android:paddingBottom="15dp"
+            android:textSize="@dimen/normal_text_size"
+            android:paddingBottom="@dimen/card_view_corner_radius"
             android:fontFamily="@font/montserrat"
             android:textColor="?attr/customTextHintColor"
             android:backgroundTint="?attr/customTextHintColor"
@@ -53,16 +53,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/cancel"
-                android:textSize="16sp"
+                android:textSize="@dimen/card_text_size"
                 android:textStyle="bold"
-                android:paddingVertical="10dp"
+                android:paddingVertical="@dimen/half_vertical_margin"
                 android:fontFamily="@font/montserrat"
                 android:gravity="center"
                 android:textColor="@color/colorPrimary"/>
 
             <View
                 android:layout_width="1dp"
-                android:layout_height="35dp"
+                android:layout_height="@dimen/toolbar_padding_size"
                 android:background="?attr/customTextHintColor"/>
 
             <TextView
@@ -71,8 +71,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/save"
-                android:textSize="16sp"
-                android:paddingVertical="10dp"
+                android:textSize="@dimen/card_text_size"
+                android:paddingVertical="@dimen/half_vertical_margin"
                 android:textStyle="bold"
                 android:fontFamily="@font/montserrat"
                 android:gravity="center"

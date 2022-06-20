@@ -25,7 +25,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="50dp"
+                android:layout_marginHorizontal="@dimen/activity_padding_size"
                 tools:ignore="MissingConstraints">
 
                 <ImageView
@@ -46,7 +46,7 @@
                     android:text="@string/create_edit_dvir"
                     android:textColor="#fff"
                     android:textStyle="bold"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/title_text_size"
                     android:fontFamily="@font/montserrat"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
@@ -60,7 +60,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/next"
                     android:fontFamily="@font/montserrat"
-                    android:textSize="15sp"
+                    android:textSize="@dimen/card_text_size"
                     android:textColor="#fff"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -72,7 +72,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="@dimen/card_image_size"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/idAppbar"
         tools:ignore="MissingConstraints">
@@ -81,9 +81,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/half_vertical_margin"
             android:background="@drawable/background_main_view"
-            android:layout_marginHorizontal="50dp"
+            android:layout_marginHorizontal="@dimen/activity_padding_size"
             tools:ignore="MissingConstraints">
 
             <androidx.cardview.widget.CardView
@@ -93,24 +93,25 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:background="?attr/customBgColor">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="10dp">
+                        android:padding="@dimen/half_vertical_margin">
 
                     <TextView
                         style="@style/TextAppearance.AppCompat.Medium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:drawablePadding="10dp"
+                        android:drawablePadding="@dimen/half_vertical_margin"
                         android:text="@string/unit"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentBottom="true"
                         android:textColor="@color/colorPrimary"
-                        android:textSize="17sp"
+                        android:textSize="@dimen/card_text_size"
                         android:fontFamily="@font/montserrat"
                         android:textStyle="bold"
                         app:drawableStartCompat="@drawable/ic_truck_blue" />
@@ -122,14 +123,14 @@
                         style="@style/TextAppearance.AppCompat"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:drawablePadding="10dp"
+                        android:drawablePadding="@dimen/half_vertical_margin"
                         android:gravity="center_vertical"
                         android:text="@string/select_unit"
-                        android:textSize="15sp"
+                        android:textSize="@dimen/normal_text_size"
                         android:textStyle="bold"
-                        android:paddingBottom="5dp"
+                        android:paddingBottom="@dimen/card_padding_size"
                         android:fontFamily="@font/montserrat"
-                        android:paddingHorizontal="20dp"
+                        android:paddingHorizontal="@dimen/drawer_padding_size"
                         android:textColorHint="?attr/customTextHintColor"
                         android:textColor="?attr/customTextHintColor"
                         app:drawableEndCompat="@drawable/keyboard_bottom_arrow" />
@@ -137,14 +138,14 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_marginHorizontal="20dp"
+                        android:layout_marginHorizontal="@dimen/drawer_padding_size"
                         android:background="?attr/customBgViewColor"/>
 
                     <androidx.constraintlayout.widget.ConstraintLayout
-                        android:padding="5dp"
+                        android:padding="@dimen/card_padding_size"
                         android:visibility="gone"
                         android:id="@+id/idSelectedUnitLayout"
-                        android:layout_marginHorizontal="20dp"
+                        android:layout_marginHorizontal="@dimen/drawer_padding_size"
                         android:background="?attr/customBgColor"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
@@ -154,7 +155,7 @@
                             android:layout_width="0dp"
                             android:gravity="center_vertical"
                             android:textColor="?attr/customTextColor"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/normal_text_size"
                             app:layout_constraintRight_toLeftOf="@id/idSelectedUnitDelete"
                             app:layout_constraintLeft_toLeftOf="parent"
                             android:layout_height="wrap_content"
@@ -187,13 +188,13 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="8dp"
+                android:layout_height="@dimen/half_vertical_margin"
                 android:background="?attr/customBgViewColor"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="@dimen/half_vertical_margin"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -204,7 +205,7 @@
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingHorizontal="10dp">
+                        android:paddingHorizontal="@dimen/half_vertical_margin">
 
                         <TextView
                             style="@style/TextAppearance.AppCompat.Medium"
@@ -213,12 +214,12 @@
                             android:layout_alignParentStart="true"
                             android:layout_alignParentTop="true"
                             android:layout_alignParentBottom="true"
-                            android:drawablePadding="10dp"
+                            android:drawablePadding="@dimen/half_vertical_margin"
                             android:fontFamily="@font/montserrat"
                             android:gravity="center_vertical"
                             android:text="@string/trailers"
                             android:textColor="@color/colorPrimary"
-                            android:textSize="17sp"
+                            android:textSize="@dimen/card_text_size"
                             android:textStyle="bold"
                             app:drawableStartCompat="@drawable/ic_trailer_svgrepo_com" />
 
@@ -227,14 +228,14 @@
                             style="@style/TextAppearance.AppCompat.Medium"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentBottom="true"
                             android:fontFamily="@font/montserrat"
                             android:gravity="center_vertical"
                             android:text="New"
-                            android:layout_alignParentTop="true"
-                            android:layout_alignParentBottom="true"
-                            android:layout_alignParentEnd="true"
                             android:textColor="@color/colorPrimary"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/card_text_size"
                             app:drawableStartCompat="@drawable/ic_icons8_plus__" />
 
                     </RelativeLayout>
@@ -244,11 +245,11 @@
                         style="@style/TextAppearance.AppCompat"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:drawablePadding="10dp"
-                        android:layout_marginHorizontal="20dp"
+                        android:drawablePadding="@dimen/half_vertical_margin"
+                        android:layout_marginHorizontal="@dimen/drawer_padding_size"
                         android:gravity="center_vertical"
                         android:text="Select trailers"
-                        android:textSize="15sp"
+                        android:textSize="@dimen/normal_text_size"
                         android:fontFamily="@font/montserrat"
                         android:textStyle="bold"
                         android:textColor="?attr/customTextHintColor"
@@ -257,7 +258,7 @@
                     <View
                         android:layout_width="wrap_content"
                         android:layout_height="1dp"
-                        android:layout_marginHorizontal="20dp"
+                        android:layout_marginHorizontal="@dimen/drawer_padding_size"
                         android:background="?attr/customBgViewColor" />
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -265,7 +266,7 @@
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="20dp" />
+                        android:layout_marginHorizontal="@dimen/drawer_padding_size" />
 
                     <LinearLayout
                         android:id="@+id/addDefect"
@@ -278,10 +279,10 @@
                             style="@style/TextAppearance.AppCompat.Medium"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="20dp"
-                            android:drawablePadding="10dp"
-                            android:layout_marginTop="8dp"
-                            android:textSize="17sp"
+                            android:layout_marginHorizontal="@dimen/drawer_padding_size"
+                            android:drawablePadding="@dimen/half_vertical_margin"
+                            android:layout_marginTop="@dimen/half_vertical_margin"
+                            android:textSize="@dimen/card_text_size"
                             android:textStyle="bold"
                             android:gravity="center_vertical"
                             android:text="@string/no_defect_detected"
@@ -294,12 +295,12 @@
                             android:id="@+id/idSelectDefect"
                             style="@style/TextAppearance.AppCompat.Large"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="10dp"
+                            android:layout_height="@dimen/drawer_avatar_size"
+                            android:layout_margin="@dimen/half_vertical_margin"
                             android:background="@drawable/add_defect_text_background"
                             android:gravity="center"
-                            android:layout_marginHorizontal="20dp"
-                            android:textSize="15sp"
+                            android:layout_marginHorizontal="@dimen/drawer_padding_size"
+                            android:textSize="@dimen/normal_text_size"
                             android:fontFamily="@font/montserrat"
                             android:text="@string/click_here_to_add_defects"
                             android:textColor="#D28FFD" />
@@ -310,11 +311,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="10dp"
+                        android:padding="@dimen/half_vertical_margin"
                         android:visibility="gone">
 
                         <TextView
                             android:id="@+id/unitDefectsTitle"
+                            android:textSize="@dimen/normal_text_size"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/unit_defects"
@@ -323,6 +325,7 @@
 
                         <TextView
                             android:id="@+id/unitDefects"
+                            android:textSize="@dimen/normal_text_size"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/quarter_vertical_margin"
@@ -330,6 +333,7 @@
 
                         <TextView
                             android:id="@+id/trailerDefectsTitle"
+                            android:textSize="@dimen/normal_text_size"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -339,12 +343,14 @@
 
                         <TextView
                             android:id="@+id/trailerDefects"
+                            android:textSize="@dimen/normal_text_size"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/quarter_vertical_margin"
                             android:textColor="?attr/customTextColor" />
 
                         <TextView
+                            android:textSize="@dimen/normal_text_size"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -354,6 +360,7 @@
 
                         <TextView
                             android:id="@+id/notes"
+                            android:textSize="@dimen/normal_text_size"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/quarter_vertical_margin"
@@ -364,8 +371,8 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="20dp"
-                        android:layout_marginTop="8dp">
+                        android:layout_marginHorizontal="@dimen/drawer_padding_size"
+                        android:layout_marginTop="@dimen/half_vertical_margin">
 
                         <TextView
                             style="@style/TextAppearance.AppCompat.Small"
@@ -373,19 +380,19 @@
                             android:layout_height="wrap_content"
                             android:text="@string/time"
                             android:textColor="?attr/customTextHintColor"
-                            android:textSize="16sp" />
+                            android:textSize="@dimen/card_text_size" />
 
                         <TextView
                             android:id="@+id/idDefectTimeText"
                             style="@style/TextAppearance.AppCompat.Small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/nobile"
+                            android:fontFamily="@font/montserrat"
                             android:hint="Create time"
-                            android:textAlignment="viewEnd"
+                            android:gravity="center"
                             android:textColor="@color/colorPrimary"
                             android:textColorHint="@color/colorPrimary"
-                            android:textSize="17sp"
+                            android:textSize="@dimen/card_text_size"
                             android:textStyle="bold"
                             app:drawableEndCompat="@drawable/keyboard_bottom_arrow"
                             app:layout_constraintRight_toRightOf="parent"
@@ -400,8 +407,8 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginHorizontal="20dp">
+                        android:layout_marginTop="@dimen/half_vertical_margin"
+                        android:layout_marginHorizontal="@dimen/drawer_padding_size">
 
                         <TextView
                             android:id="@+id/idLocationT"
@@ -410,7 +417,7 @@
                             android:layout_height="wrap_content"
                             android:text="Location"
                             android:textColor="?attr/customTextHintColor"
-                            android:textSize="16sp"
+                            android:textSize="@dimen/card_text_size"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintRight_toLeftOf="@id/idDefectLocationEdit"
@@ -423,11 +430,11 @@
                             android:background="@android:color/transparent"
                             android:hint="Your Location"
                             android:inputType="text"
-                            android:textSize="17sp"
+                            android:textSize="@dimen/card_text_size"
                             android:imeOptions="flagNoExtractUi"
                             android:textAlignment="viewEnd"
                             android:textStyle="bold"
-                            android:fontFamily="@font/nobile"
+                            android:fontFamily="@font/montserrat"
                             android:textColor="@color/colorPrimary"
                             android:textColorHint="@color/colorPrimary"
                             android:backgroundTint="?attr/customTextHintColor"
@@ -442,7 +449,7 @@
                         android:id="@+id/idview"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_marginBottom="10dp"
+                        android:layout_marginBottom="@dimen/half_vertical_margin"
                         android:background="?attr/customBgViewColor" />
                 </LinearLayout>
             </LinearLayout>

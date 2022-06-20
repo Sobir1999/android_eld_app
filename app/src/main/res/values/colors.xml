@@ -6,7 +6,7 @@
 
     <color name="colorBackgroundMainView">#E3E3E3</color>
 
-    <color name="colorButtonNormal">#231E1E</color>
+    <color name="colorButtonNormal">#0B0B0B</color>
 
     <color name="colorStatusOFF">#E9E9E9</color>
     <color name="colorStatusOFFBold">#8C8C8C</color>
@@ -19,7 +19,7 @@
     <color name="colorStatusONBold">#851DC6</color>
 
     <color name="colorActionText">#08ACF6</color>
-    <color name="alertColor">#EC3434</color>
+    <color name="alertColor">#FF0000</color>
 
     <color name="RecapColor">#4B4C3F3F</color>
 
@@ -28,10 +28,11 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="customBgViewColor">#F0F4F9</color>
-    <color name="customBgViewColorNightmode">#FC202020</color>
+    <color name="customBgViewColorNightmode">#0B0B0B</color>
     <color name="customTextHintColor">#828282</color>
-    <color name="customTableColor">#CECCCC</color>
+    <color name="customTableColor">#A6EBEBEB</color>
     <color name="customViewColor">#C4C4C4</color>
+    <color name="customTableColorLight">#A3999999</color>
 
     <color name="SignatureColorDefault">#9953BFED</color>
     <color name="SignatureColorWhenClicked">#08ACF6</color>

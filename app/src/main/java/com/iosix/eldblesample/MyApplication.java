@@ -15,12 +15,15 @@ import com.iosix.eldblesample.shared_prefs.TinyDB;
 import com.iosix.eldblesample.shared_prefs.UserData;
 
 import java.security.Security;
+import java.util.Calendar;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import static com.iosix.eldblesample.shared_prefs.SharedPrefs.callUserPrefs;
 import static com.iosix.eldblesample.utils.Constants.CHANNEL_ID;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.os.HandlerCompat;
 
 public class MyApplication extends Application {
@@ -28,7 +31,7 @@ public class MyApplication extends Application {
     public static Context context;
     public static UserData userData;
     public static SharedPreferences sharedPreferences;
-
+    public static ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
     @Override
     public void onCreate() {
         super.onCreate();

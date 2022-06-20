@@ -29,16 +29,6 @@ public class SignaturePrefs {
         sharedPreferences = context.getSharedPreferences(context.getString(R.string.app_name),Context.MODE_PRIVATE);
     }
 
-    public void saveImageName(String name){
-        editor = sharedPreferences.edit();
-        editor.putString("image",name);
-        editor.apply();
-    }
-
-    public String fetchImageName(){
-        return sharedPreferences.getString("image", null);
-    }
-
 
     public void saveSignature(Bitmap signature){
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -89,15 +79,4 @@ public class SignaturePrefs {
         return null;
     }
 
-    public void clearSignature(){
-        sharedPreferences.edit().remove("keyStoredSignature").commit();
-    }
-
-    public void clearMechanicSignature(){
-        sharedPreferences.edit().remove("keyStoredMechanicSignature").commit();
-    }
-
-    public void clearDefect(){
-        sharedPreferences.edit().remove("Defect").commit();
-    }
 }

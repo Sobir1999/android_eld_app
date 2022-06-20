@@ -8,8 +8,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
-        android:layout_width="400dp"
-        android:layout_height="170dp"
+        android:layout_width="@dimen/custom_dialog_width"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -24,27 +24,27 @@
             android:layout_height="wrap_content"
             android:text="@string/add_a_note_to_your_defect"
             android:textColor="@color/colorPrimary"
-            android:textSize="17sp"
+            android:textSize="@dimen/card_text_size"
             android:textStyle="bold"
             android:fontFamily="@font/montserrat"
-            android:paddingHorizontal="15dp"
-            android:layout_marginTop="20dp"/>
+            android:paddingHorizontal="@dimen/card_view_corner_radius"
+            android:layout_marginTop="@dimen/drawer_padding_size"/>
 
         <EditText
             android:id="@+id/idNotesDialogEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="15dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="@dimen/card_image_size"
             android:hint="@string/add_note_here"
             android:imeOptions="flagNoExtractUi"
             android:backgroundTint="?attr/customTextHintColor"
             android:fontFamily="@font/montserrat"
             android:inputType="text"
-            android:paddingBottom="15dp"
+            android:paddingBottom="@dimen/card_view_corner_radius"
             android:textColor="@color/colorPrimary"
             android:textColorHint="?attr/customTextHintColor"
-            android:textSize="15sp"
+            android:textSize="@dimen/normal_text_size"
             tools:ignore="LabelFor,SpeakableTextPresentCheck" />
 
         <LinearLayout
@@ -52,7 +52,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="bottom"
             android:gravity="end"
-            android:layout_marginHorizontal="15dp"
+            android:layout_marginHorizontal="@dimen/card_view_corner_radius"
             android:orientation="horizontal">
 
             <TextView
@@ -61,9 +61,9 @@
                 android:layout_height="wrap_content"
                 android:text="@string/cancel"
                 android:textAllCaps="true"
-                android:textSize="16sp"
+                android:textSize="@dimen/card_text_size"
                 android:textStyle="bold"
-                android:paddingVertical="10dp"
+                android:paddingVertical="@dimen/half_vertical_margin"
                 android:fontFamily="@font/montserrat"
                 android:gravity="center"
                 android:textColor="@color/colorPrimary"/>
@@ -73,10 +73,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ok"
-                android:textSize="16sp"
+                android:textSize="@dimen/card_text_size"
                 android:textAllCaps="true"
-                android:layout_marginStart="20dp"
-                android:paddingVertical="10dp"
+                android:layout_marginStart="@dimen/drawer_padding_size"
+                android:paddingVertical="@dimen/half_vertical_margin"
                 android:textStyle="bold"
                 android:fontFamily="@font/montserrat"
                 android:gravity="center"

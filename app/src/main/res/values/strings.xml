@@ -190,4 +190,11 @@
     <string name="connected">Connected</string>
     <string name="not_connected">Not Connected</string>
     <string name="current_location">Current Location</string>
+    <string name="auto_switch">Auto Switch</string>
+    <string name="start_time">Start Time</string>
+    <string name="end_time">End Time</string>
+    <string name="name">Name</string>
+    <string name="main_office_address">Main Office Address</string>
+    <string name="city">City</string>
+    <string name="texas">Texas</string>
 </resources>

@@ -17,4 +17,7 @@
     <attr name="customTextColor" format="reference" />
     <attr name="customBgViewColor" format="reference"/>
     <attr name="customTextHintColor" format="reference"/>
+    <attr name="customTableTime" format="reference"/>
+    <attr name="customTableTimeText" format="reference"/>
+    <attr name="customPaint" format="reference"/>
 </resources>

@@ -35,7 +35,7 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<VehiclesListAdapte
     @NonNull
     @Override
     public VehiclesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.simple_vehicle_item,parent,false);
+        View view = LayoutInflater.from(context).inflate(R.layout.unit_item,parent,false);
         return new VehiclesViewHolder(view);
     }
 
@@ -53,7 +53,7 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<VehiclesListAdapte
 
         public VehiclesViewHolder(@NonNull View itemView) {
             super(itemView);
-            textView = itemView.findViewById(R.id.idVehicleItem);
+            textView = itemView.findViewById(R.id.idUnitItem);
         }
 
         void onBind(int i){

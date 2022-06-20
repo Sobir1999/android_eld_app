@@ -28,6 +28,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.color.MaterialColors;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.adapters.TrailerListAdapter;
 import com.iosix.eldblesample.adapters.TrailerRecyclerAdapter;
@@ -171,6 +172,8 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
             TextView unitText = dialog.findViewById(R.id.idHeaderTv);
             RecyclerView recyclerView = dialog.findViewById(R.id.idRecyclerViewUnit);
             TextView cancel = dialog.findViewById(R.id.idDialogCancel);
+            TextView idGeneralTrailerText = dialog.findViewById(R.id.idGeneralTrailerText);
+            idGeneralTrailerText.setVisibility(View.GONE);
 
             daoViewModel.getGetAllVehicles().observe(this,vehiclesEntities -> {
                 UnitListAdapter unitListAdapter = new UnitListAdapter(this,vehiclesEntities);
@@ -211,6 +214,8 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
             TextView unitText = dialog.findViewById(R.id.idHeaderTv);
             RecyclerView recyclerView = dialog.findViewById(R.id.idRecyclerViewUnit);
             TextView cancel = dialog.findViewById(R.id.idDialogCancel);
+            TextView idGeneralTrailerText = dialog.findViewById(R.id.idGeneralTrailerText);
+            idGeneralTrailerText.setVisibility(View.GONE);
 
             daoViewModel.getGetAllTrailers().observe(this,trailersEntities -> {
                 TrailerListAdapter trailerListAdapter = new TrailerListAdapter(this,trailersEntities);

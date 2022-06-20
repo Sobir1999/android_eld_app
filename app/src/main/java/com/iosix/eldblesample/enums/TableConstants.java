@@ -1,8 +1,12 @@
 package com.iosix.eldblesample.enums;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
+
+import com.google.android.material.color.MaterialColors;
+import com.iosix.eldblesample.R;
 
 public class TableConstants {
     public static float START_POINT_X = 25.0f;
@@ -14,36 +18,36 @@ public class TableConstants {
     public static Paint getOFFPaint(Context context) {
         CUSTOM_WIDTH = context.getResources().getDisplayMetrics().scaledDensity;
         paint = new Paint();
-        paint.setColor(Color.parseColor("#8C8C8C"));
-        paint.setStrokeWidth(CUSTOM_WIDTH*1.5f);
-        paint.setTextSize(CUSTOM_WIDTH*10f);
+        paint.setColor(MaterialColors.getColor(context,R.attr.customPaint,Color.BLACK));
+        paint.setStrokeWidth(context.getResources().getDimension(R.dimen.table_stroke_with));
+        paint.setTextSize(context.getResources().getDimension(R.dimen.custom_table_text_size));
         return paint;
     }
 
     public static Paint getSBPaint(Context context) {
         CUSTOM_WIDTH = context.getResources().getDisplayMetrics().scaledDensity;
         paint = new Paint();
-        paint.setStrokeWidth(CUSTOM_WIDTH*1.5f);
+        paint.setStrokeWidth(context.getResources().getDimension(R.dimen.table_stroke_with));
         paint.setColor(Color.parseColor("#DD8C12"));
-        paint.setTextSize(CUSTOM_WIDTH*10f);
+        paint.setTextSize(context.getResources().getDimension(R.dimen.custom_table_text_size));
         return paint;
     }
 
     public static Paint getDRPaint(Context context) {
         CUSTOM_WIDTH = context.getResources().getDisplayMetrics().scaledDensity;
         paint = new Paint();
-        paint.setStrokeWidth(CUSTOM_WIDTH*1.5f);
+        paint.setStrokeWidth(context.getResources().getDimension(R.dimen.table_stroke_with));
         paint.setColor(Color.parseColor("#63A83D"));
-        paint.setTextSize(CUSTOM_WIDTH*10f);
+        paint.setTextSize(context.getResources().getDimension(R.dimen.custom_table_text_size));
         return paint;
     }
 
     public static Paint getONPaint(Context context) {
         CUSTOM_WIDTH = context.getResources().getDisplayMetrics().scaledDensity;
         paint = new Paint();
-        paint.setStrokeWidth(CUSTOM_WIDTH*1.5f);
+        paint.setStrokeWidth(context.getResources().getDimension(R.dimen.table_stroke_with));
         paint.setColor(Color.parseColor("#851DC6"));
-        paint.setTextSize(CUSTOM_WIDTH*10f);
+        paint.setTextSize(context.getResources().getDimension(R.dimen.custom_table_text_size));
         return paint;
     }
 }

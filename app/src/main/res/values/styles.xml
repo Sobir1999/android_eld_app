@@ -15,6 +15,9 @@
         <item name="customTextColor">@color/black</item>
         <item name="customBgViewColor">@color/customBgViewColor</item>
         <item name="customTextHintColor">@color/customTextHintColor</item>
+        <item name="customTableTime">@color/customTableColorLight</item>
+        <item name="customTableTimeText">@color/colorPrimary</item>
+        <item name="customPaint">@color/colorStatusOFFBold</item>
 
 
 
@@ -49,11 +52,23 @@
         <item name="colorControlActivated">@color/colorActionText</item>
         <item name="colorControlHighlight">@color/colorActionText</item>
     </style>
+
+    <style name="MyDialogTheme" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="android:background">?attr/customBgColor</item>
+        <item name="colorOnSurface">@color/colorPrimary</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+    </style>
+
+    <style name="PositiveButtonStyle" parent="@style/Widget.MaterialComponents.Button">
+        <!-- text color for the button -->
+        <item name="android:textColor">@color/colorPrimary</item>
+        <!-- Background tint for the button -->
+    </style>
     
     <style name="textfontstyle" parent="TextAppearance.AppCompat.Small">
         <item name="fontFamily">@font/montserrat</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/card_text_size</item>
     </style>
 
 </resources>

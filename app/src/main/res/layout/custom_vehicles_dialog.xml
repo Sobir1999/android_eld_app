@@ -4,12 +4,11 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
-        android:layout_width="400dp"
-        android:layout_height="300dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="@dimen/custom_dialog_width"
+        android:layout_height="@dimen/drawer_width"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:orientation="vertical"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         style="@style/MaterialAlertDialog_rounded"
@@ -18,17 +17,24 @@
         <TextView
             android:id="@+id/idVehicleHeaderTv"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:text="@string/select_unit"
             android:textColor="@color/colorPrimary"
-            android:textSize="17sp"
+            android:textSize="@dimen/card_text_size"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/idVehicleRecyclerview"
             android:fontFamily="@font/montserrat"
-            android:paddingHorizontal="15dp"
-            android:layout_marginTop="20dp"/>
+            android:paddingHorizontal="@dimen/card_view_corner_radius"
+            android:layout_marginTop="@dimen/drawer_padding_size"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:id="@+id/idTrailerView"
+            app:layout_constraintTop_toBottomOf="@+id/idVehicleHeaderTv"
+            android:layout_height="0.8dp"
+            android:background="@color/customViewColor"/>
 
         <androidx.recyclerview.widget.RecyclerView
             app:layout_constraintTop_toBottomOf="@id/idVehicleHeaderTv"
@@ -36,35 +42,35 @@
             app:layout_constraintBottom_toTopOf="@id/idcustomView"
             android:id="@+id/idVehicleRecyclerview"
             android:layout_width="match_parent"
-            android:layout_marginHorizontal="15dp"
+            android:layout_marginHorizontal="@dimen/card_view_corner_radius"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:layout_height="0dp"
-            android:layout_weight="8"
-            android:layout_marginVertical="10dp"/>
+            android:layout_marginVertical="@dimen/half_vertical_margin"/>
 
         <View
             android:id="@+id/idcustomView"
+            app:layout_constraintTop_toBottomOf="@id/idVehicleRecyclerview"
             android:layout_width="match_parent"
             android:layout_height="0.8dp"
             android:background="?attr/customTextHintColor"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="@dimen/half_vertical_margin"
             app:layout_constraintBottom_toTopOf="@id/idVehicleCancel"/>
 
         <TextView
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/idcustomView"
             android:id="@+id/idVehicleCancel"
             android:layout_width="wrap_content"
             android:layout_gravity="center"
-            android:layout_height="0dp"
-            android:layout_weight="1.5"
+            android:layout_height="wrap_content"
             android:text="@string/cancel"
             android:textAllCaps="true"
             android:textColor="@color/colorPrimary"
-            android:textSize="17sp"
-            android:layout_marginBottom="5dp"/>
+            android:textSize="@dimen/card_text_size"
+            android:layout_marginVertical="@dimen/half_vertical_margin"/>
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

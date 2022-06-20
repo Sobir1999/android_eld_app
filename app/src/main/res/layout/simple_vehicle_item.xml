@@ -9,7 +9,7 @@
         android:id="@+id/idVehicleItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
+        android:textSize="@dimen/card_text_size"
         android:textColor="?attr/customTextHintColor"
         android:textStyle="bold"
         android:fontFamily="@font/montserrat"

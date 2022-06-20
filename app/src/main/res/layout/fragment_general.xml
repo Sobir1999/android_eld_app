@@ -13,16 +13,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginEnd="50dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginTop="@dimen/half_vertical_margin"
+        android:layout_marginStart="@dimen/activity_padding_size"
+        android:layout_marginEnd="@dimen/activity_padding_size"
+        android:layout_marginBottom="@dimen/card_image_size"
         android:background="@drawable/background_main_view">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="15dp">
+            android:paddingTop="@dimen/card_view_corner_radius">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -31,17 +31,17 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 android:src="@drawable/ic_icons8_info__1_"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="@dimen/card_view_corner_radius"
                 android:id="@+id/imageView_info"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
+                android:layout_marginStart="@dimen/card_padding_size"
                 android:text="@string/main_info"
                 android:textStyle="bold"
                 android:textColor="@color/colorPrimary"
-                android:textSize="18sp"
+                android:textSize="@dimen/title_text_size"
                 android:fontFamily="@font/montserrat"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/imageView_info"
@@ -59,7 +59,7 @@
             android:id="@+id/idDriverNameCons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="@dimen/mini_margin_size"
             android:orientation="vertical">
 
             <LinearLayout
@@ -72,12 +72,12 @@
                 android:id="@+id/idDriverNameText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="@dimen/card_view_corner_radius"
                 android:imeOptions="flagNoExtractUi"
                 android:fontFamily="@font/montserrat"
                 android:text="@string/driver_name"
                 android:textStyle="bold"
-                android:textSize="15sp"
+                android:textSize="@dimen/normal_text_size"
                 android:textColor="?attr/customTextHintColor"
                  />
 
@@ -85,11 +85,11 @@
                 android:id="@+id/tv_driver_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
+                android:layout_marginEnd="@dimen/card_view_corner_radius"
                 android:fontFamily="@font/montserrat"
                 android:text="@string/murad_baratov"
                 android:textStyle="bold"
-                android:textSize="15sp"
+                android:textSize="@dimen/normal_text_size"
                 android:visibility="visible"
                 android:textColor="@color/colorPrimary"
                 android:gravity="end" />
@@ -102,15 +102,15 @@
             android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
+            android:layout_marginStart="@dimen/card_view_corner_radius"
+            android:layout_marginEnd="@dimen/card_view_corner_radius"
             tools:ignore="MissingConstraints" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="@dimen/mini_margin_size">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -121,10 +121,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="@dimen/card_view_corner_radius"
                 android:fontFamily="@font/montserrat"
                 android:text="@string/distance"
-                android:textSize="15sp"
+                android:textSize="@dimen/normal_text_size"
                 android:textColor="?attr/customTextHintColor"
                 android:textStyle="bold" />
 
@@ -132,11 +132,11 @@
                 android:id="@+id/tv_distance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
+                android:layout_marginEnd="@dimen/card_view_corner_radius"
                 android:fontFamily="@font/montserrat"
                 android:text="@string/_0_0"
                 android:textStyle="bold"
-                android:textSize="15sp"
+                android:textSize="@dimen/normal_text_size"
                 android:textColor="@color/colorPrimary"
                 android:gravity="end"/>
 
@@ -148,15 +148,15 @@
             android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
+            android:layout_marginStart="@dimen/card_view_corner_radius"
+            android:layout_marginEnd="@dimen/card_view_corner_radius"
             tools:ignore="MissingConstraints" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="@dimen/mini_margin_size">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -166,11 +166,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="@dimen/card_view_corner_radius"
                 android:fontFamily="@font/montserrat"
                 android:text="@string/shipping_docs"
                 android:textStyle="bold"
-                android:textSize="15sp"
+                android:textSize="@dimen/normal_text_size"
                 android:textColor="?attr/customTextHintColor" />
 
             <TextView
@@ -178,15 +178,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorPrimary"
-                android:textSize="15sp"
+                android:textSize="@dimen/normal_text_size"
                 android:gravity="end"
-                android:layout_marginEnd="15dp"
+                android:layout_marginEnd="@dimen/card_view_corner_radius"
                 app:drawableRightCompat="@drawable/ic_icons8_plus__" />
 
             </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:padding="5dp"
+                android:padding="@dimen/card_padding_size"
                 android:visibility="gone"
                 android:id="@+id/shipping_docs_layout"
                 android:layout_marginHorizontal="15dp"
@@ -200,7 +200,7 @@
                     android:text="@string/uzbek"
                     android:gravity="center_vertical"
                     android:textColor="?attr/customTextColor"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/normal_text_size"
                     app:layout_constraintRight_toLeftOf="@id/idShippingClear"
                     app:layout_constraintLeft_toLeftOf="parent"
                     android:layout_height="wrap_content"
@@ -232,15 +232,15 @@
             android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
+            android:layout_marginStart="@dimen/card_view_corner_radius"
+            android:layout_marginEnd="@dimen/card_view_corner_radius"
             tools:ignore="MissingConstraints" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="@dimen/mini_margin_size">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -251,19 +251,19 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
+                    android:layout_marginStart="@dimen/card_view_corner_radius"
                     android:fontFamily="@font/montserrat"
                     android:text="@string/vehicles"
                     android:textStyle="bold"
-                    android:textSize="15sp"
+                    android:textSize="@dimen/normal_text_size"
                     android:textColor="?attr/customTextHintColor" />
 
                 <TextView
                     android:id="@+id/tv_veicles"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="15dp"
-                    android:textSize="17sp"
+                    android:layout_marginEnd="@dimen/card_view_corner_radius"
+                    android:textSize="@dimen/card_text_size"
                     android:textColor="#03A9F4"
                     android:textStyle="bold"
                     android:gravity="end"
@@ -272,10 +272,10 @@
             </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:padding="5dp"
+                android:padding="@dimen/card_padding_size"
                 android:visibility="gone"
                 android:id="@+id/idVehiclesLayout"
-                android:layout_marginHorizontal="15dp"
+                android:layout_marginHorizontal="@dimen/card_view_corner_radius"
                 android:background="?attr/customBgColor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -286,7 +286,7 @@
                     android:text="@string/uzbek"
                     android:gravity="center_vertical"
                     android:textColor="?attr/customTextColor"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/normal_text_size"
                     app:layout_constraintRight_toLeftOf="@id/idVehiclesClear"
                     app:layout_constraintLeft_toLeftOf="parent"
                     android:layout_height="wrap_content"
@@ -318,8 +318,8 @@
             android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
+            android:layout_marginStart="@dimen/card_view_corner_radius"
+            android:layout_marginEnd="@dimen/card_view_corner_radius"
             tools:ignore="MissingConstraints" />
 
 
@@ -327,7 +327,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="@dimen/mini_margin_size">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -338,19 +338,19 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
+                    android:layout_marginStart="@dimen/card_view_corner_radius"
                     android:fontFamily="@font/montserrat"
                     android:text="@string/trailers"
                     android:textStyle="bold"
-                    android:textSize="15sp"
+                    android:textSize="@dimen/normal_text_size"
                     android:textColor="?attr/customTextHintColor" />
 
                 <TextView
                     android:id="@+id/tv_trailers"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="15dp"
-                    android:textSize="17sp"
+                    android:layout_marginEnd="@dimen/card_view_corner_radius"
+                    android:textSize="@dimen/card_text_size"
                     android:textStyle="bold"
                     android:gravity="end"
                     app:drawableRightCompat="@drawable/ic_icons8_plus__" />
@@ -360,7 +360,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="@dimen/card_view_corner_radius"
                 android:orientation="horizontal"
                 android:visibility="gone"
                 android:background="?attr/customBgColor"
@@ -370,8 +370,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="10"
-                    android:textSize="14sp"
-                    android:paddingBottom="10dp"
+                    android:textSize="@dimen/normal_text_size"
+                    android:paddingBottom="@dimen/half_vertical_margin"
                     android:textColor="?attr/customTextColor"
                     android:textColorHint="?attr/customTextHintColor"
                     android:backgroundTint="?attr/customTextHintColor"
@@ -381,7 +381,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="@dimen/card_padding_size"
                     android:src="@drawable/ic_baseline_clear_24"
                     android:id="@+id/idTrailersClear"/>
 
@@ -393,14 +393,14 @@
                 android:layout_height="wrap_content"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:background="?attr/customBgColor"
-                android:layout_marginHorizontal="15dp"
+                android:layout_marginHorizontal="@dimen/card_view_corner_radius"
                 />
 
             <View
                 android:background="?attr/customBgViewColor"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="@dimen/mini_margin_size"
                 tools:ignore="MissingConstraints" />
 
         </LinearLayout>
@@ -408,33 +408,33 @@
         <View
             android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
-            android:layout_height="10dp"
+            android:layout_height="@dimen/half_vertical_margin"
             tools:ignore="MissingConstraints" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="@dimen/mini_margin_size">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="@dimen/drawer_padding_size"
+                android:layout_height="@dimen/drawer_padding_size"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 android:src="@drawable/ic_carrier"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="@dimen/card_view_corner_radius"
                 android:id="@+id/imageView_carrier" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="@dimen/half_vertical_margin"
                 android:text="@string/carrier"
                 android:textStyle="bold"
                 android:fontFamily="@font/montserrat"
                 android:textColor="@color/colorPrimary"
-                android:textSize="17sp"
+                android:textSize="@dimen/title_text_size"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/imageView_carrier"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -453,7 +453,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="@dimen/mini_margin_size">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -464,21 +464,21 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
+                    android:layout_marginStart="@dimen/card_view_corner_radius"
                     android:fontFamily="@font/montserrat"
                     android:text="@string/carrier"
                     android:textStyle="bold"
-                    android:textSize="15sp"
+                    android:textSize="@dimen/normal_text_size"
                     android:textColor="?attr/customTextHintColor" />
 
                 <TextView
                     android:id="@+id/tv_carrier"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="15dp"
+                    android:layout_marginEnd="@dimen/card_view_corner_radius"
                     android:fontFamily="@font/montserrat"
                     android:text="@string/suncoast_transportation_ilc"
-                    android:textSize="15sp"
+                    android:textSize="@dimen/normal_text_size"
                     android:textStyle="bold"
                     android:textColor="@color/colorPrimary"
                     android:gravity="end"/>
@@ -492,23 +492,23 @@
             android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
+            android:layout_marginStart="@dimen/card_view_corner_radius"
+            android:layout_marginEnd="@dimen/card_view_corner_radius"
             tools:ignore="MissingConstraints" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="@dimen/mini_margin_size"
             android:id="@+id/idMainOffice">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="@dimen/card_view_corner_radius"
                 android:fontFamily="@font/montserrat"
                 android:text="@string/main_office"
-                android:textSize="15sp"
+                android:textSize="@dimen/normal_text_size"
                 android:textStyle="bold"
                 android:textColor="?attr/customTextHintColor"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -519,10 +519,10 @@
                 android:id="@+id/tv_main_office"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
+                android:layout_marginEnd="@dimen/card_view_corner_radius"
                 android:fontFamily="@font/montserrat"
                 android:text="@string/_500_houston_texas_77091"
-                android:textSize="15sp"
+                android:textSize="@dimen/normal_text_size"
                 android:textStyle="bold"
                 android:textColor="@color/colorPrimary"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -535,22 +535,22 @@
             android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
+            android:layout_marginStart="@dimen/card_view_corner_radius"
+            android:layout_marginEnd="@dimen/card_view_corner_radius"
             tools:ignore="MissingConstraints" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="@dimen/mini_margin_size">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="@dimen/card_view_corner_radius"
                 android:fontFamily="@font/montserrat"
                 android:text="@string/home_terminal_address"
-                android:textSize="15sp"
+                android:textSize="@dimen/normal_text_size"
                 android:textStyle="bold"
                 android:textColor="?attr/customTextHintColor"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -561,10 +561,10 @@
                 android:id="@+id/tv_terminal_address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
+                android:layout_marginEnd="@dimen/card_view_corner_radius"
                 android:fontFamily="@font/montserrat"
                 android:text="@string/_500_houston_texas"
-                android:textSize="15sp"
+                android:textSize="@dimen/normal_text_size"
                 android:textStyle="bold"
                 android:textColor="@color/colorPrimary"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -576,32 +576,32 @@
         <View
             android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
-            android:layout_height="10dp"
+            android:layout_height="@dimen/half_vertical_margin"
             tools:ignore="MissingConstraints" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="@dimen/mini_margin_size">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="@dimen/drawer_padding_size"
+                android:layout_height="@dimen/drawer_padding_size"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 android:src="@drawable/ic_icons8_opened_folder"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="@dimen/card_view_corner_radius"
                 android:id="@+id/imageView_folder" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="@dimen/half_vertical_margin"
                 android:text="@string/others"
                 android:textStyle="bold"
                 android:textColor="@color/colorPrimary"
-                android:textSize="17sp"
+                android:textSize="@dimen/title_text_size"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/imageView_folder"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -617,16 +617,16 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="@dimen/mini_margin_size"
             android:id="@+id/tv_co_driver_container">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="@dimen/card_view_corner_radius"
                 android:fontFamily="@font/montserrat"
                 android:text="@string/co_drivers"
-                android:textSize="15sp"
+                android:textSize="@dimen/normal_text_size"
                 android:textStyle="bold"
                 android:textColor="?attr/customTextHintColor"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -637,9 +637,9 @@
                 android:id="@+id/tv_co_drivers"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
+                android:layout_marginEnd="@dimen/card_view_corner_radius"
                 android:fontFamily="@font/montserrat"
-                android:textSize="15sp"
+                android:textSize="@dimen/normal_text_size"
                 android:textStyle="bold"
                 android:textColor="@color/colorPrimary"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -653,15 +653,15 @@
             android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
+            android:layout_marginStart="@dimen/card_view_corner_radius"
+            android:layout_marginEnd="@dimen/card_view_corner_radius"
             tools:ignore="MissingConstraints" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="@dimen/mini_text_size">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -672,11 +672,11 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
+                    android:layout_marginStart="@dimen/card_view_corner_radius"
                     android:fontFamily="@font/montserrat"
                     android:text="@string/from"
                     android:textStyle="bold"
-                    android:textSize="15sp"
+                    android:textSize="@dimen/normal_text_size"
                     android:textColor="?attr/customTextHintColor"
                      />
 
@@ -684,11 +684,11 @@
                     android:id="@+id/tv_from_destination"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="15dp"
+                    android:layout_marginEnd="@dimen/card_view_corner_radius"
                     android:fontFamily="@font/montserrat"
                     android:text="@string/enter_information"
                     android:textStyle="bold"
-                    android:textSize="15sp"
+                    android:textSize="@dimen/normal_text_size"
                     android:textColor="@color/colorPrimary"
                     android:gravity="end"/>
 
@@ -698,16 +698,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/idfromLayout"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="@dimen/card_view_corner_radius"
                 android:visibility="gone">
 
                 <EditText
                     android:id="@+id/idfromEdit"
                     android:hint="@string/enter_information"
-                    android:textSize="14sp"
-                    android:inputType="textAutoCorrect"
+                    android:textSize="@dimen/normal_text_size"
+                    android:inputType="text"
                     android:imeOptions="flagNoExtractUi"
-                    android:paddingBottom="12dp"
+                    android:paddingBottom="@dimen/mini_text_size"
                     android:textColor="?attr/customTextColor"
                     android:textColorHint="?attr/customTextHintColor"
                     android:backgroundTint="?attr/customTextHintColor"
@@ -722,15 +722,15 @@
             android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
+            android:layout_marginStart="@dimen/card_view_corner_radius"
+            android:layout_marginEnd="@dimen/card_view_corner_radius"
             tools:ignore="MissingConstraints" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="@dimen/mini_text_size">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -741,11 +741,11 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
+                    android:layout_marginStart="@dimen/card_view_corner_radius"
                     android:fontFamily="@font/montserrat"
                     android:text="@string/to"
                     android:textStyle="bold"
-                    android:textSize="15sp"
+                    android:textSize="@dimen/normal_text_size"
                     android:textColor="?attr/customTextHintColor"
                      />
 
@@ -753,10 +753,10 @@
                     android:id="@+id/tv_to_destination"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="15dp"
+                    android:layout_marginEnd="@dimen/card_view_corner_radius"
                     android:fontFamily="@font/montserrat"
                     android:text="@string/enter_information"
-                    android:textSize="15sp"
+                    android:textSize="@dimen/normal_text_size"
                     android:textStyle="bold"
                     android:textColor="@color/colorPrimary"
                     android:gravity="end"/>
@@ -767,16 +767,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/idtoLayout"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="@dimen/card_view_corner_radius"
                 android:visibility="gone">
 
                 <EditText
                     android:id="@+id/idtoEdit"
                     android:hint="@string/enter_information"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/normal_text_size"
                     android:inputType="text"
                     android:imeOptions="flagNoExtractUi"
-                    android:paddingBottom="12dp"
+                    android:paddingBottom="@dimen/mini_text_size"
                     android:textColor="?attr/customTextColor"
                     android:textColorHint="?attr/customTextHintColor"
                     android:backgroundTint="?attr/customTextHintColor"
@@ -790,15 +790,15 @@
             android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
+            android:layout_marginStart="@dimen/card_view_corner_radius"
+            android:layout_marginEnd="@dimen/card_view_corner_radius"
             tools:ignore="MissingConstraints" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="@dimen/mini_text_size">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -809,11 +809,11 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
+                    android:layout_marginStart="@dimen/card_view_corner_radius"
                     android:fontFamily="@font/montserrat"
                     android:text="@string/notes"
                     android:textStyle="bold"
-                    android:textSize="15sp"
+                    android:textSize="@dimen/normal_text_size"
                     android:textColor="?attr/customTextHintColor"
                     />
 
@@ -821,11 +821,11 @@
                     android:id="@+id/tv_notes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="15dp"
+                    android:layout_marginEnd="@dimen/card_view_corner_radius"
                     android:fontFamily="@font/montserrat"
                     android:text="@string/loads"
                     android:textStyle="bold"
-                    android:textSize="15sp"
+                    android:textSize="@dimen/normal_text_size"
                     android:textColor="@color/colorPrimary"
                     android:gravity="end"/>
 
@@ -835,14 +835,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/idNotesLayout"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="@dimen/card_view_corner_radius"
                 android:visibility="gone">
 
                 <EditText
                     android:id="@+id/idNotesEdit"
                     android:hint="@string/enter_notes"
-                    android:textSize="14sp"
-                    android:paddingBottom="8dp"
+                    android:textSize="@dimen/normal_text_size"
+                    android:paddingBottom="@dimen/half_vertical_margin"
                     android:imeOptions="flagNoExtractUi"
                     android:inputType="text"
                     android:textColor="?attr/customTextColor"
@@ -859,29 +859,30 @@
             android:background="?attr/customBgViewColor"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
+            android:layout_marginStart="@dimen/card_view_corner_radius"
+            android:layout_marginEnd="@dimen/card_view_corner_radius"
             tools:ignore="MissingConstraints" />
 
         <Button
-            android:layout_width="200dp"
+            android:layout_width="wrap_content"
+            android:paddingHorizontal="@dimen/activity_padding_size"
             android:layout_height="wrap_content"
             android:id="@+id/idSaveGeneral"
             android:text="@string/save"
             android:fontFamily="@font/montserrat"
             android:gravity="center"
-            android:textSize="14sp"
+            android:textSize="@dimen/normal_text_size"
             android:textStyle="bold"
             android:layout_gravity="center"
-            android:layout_marginTop="40dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginTop="@dimen/card_icon_size"
+            android:layout_marginBottom="@dimen/drawer_padding_size"
             android:background="@drawable/general_button"
             android:textColor="@color/colorPrimary"/>
 
         <View
             android:background="@color/colorBackgroundMainView"
             android:layout_width="match_parent"
-            android:layout_height="10dp"
+            android:layout_height="@dimen/half_vertical_margin"
             tools:ignore="MissingConstraints" />
 
     </LinearLayout>

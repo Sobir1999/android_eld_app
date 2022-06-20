@@ -9,34 +9,26 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
-
-import android.os.Environment;
-import android.os.FileUtils;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.iosix.eldblesample.R;
-import com.iosix.eldblesample.models.Data;
 import com.iosix.eldblesample.models.ExampleSMSModel;
-import com.iosix.eldblesample.retrofit.APIInterface;
-import com.iosix.eldblesample.retrofit.ApiClient;
 import com.iosix.eldblesample.roomDatabase.entities.SignatureEntity;
 import com.iosix.eldblesample.shared_prefs.SessionManager;
 import com.iosix.eldblesample.shared_prefs.SignaturePrefs;
 import com.iosix.eldblesample.utils.UploadRequestBody;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
+import com.iosix.eldblesample.viewModel.SignatureViewModel;
 import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
 
 import org.greenrobot.eventbus.EventBus;
@@ -45,22 +37,16 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 
-import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class DocsFragment extends Fragment implements UploadRequestBody.UploadCallback {
-    private String mParam1;
+    private String day;
     private TextView idDrawSignature;
     private SignaturePad idSignature;
     private Button idClearSignature,idSubmitSignature;
@@ -68,6 +54,7 @@ public class DocsFragment extends Fragment implements UploadRequestBody.UploadCa
     private SessionManager sessionManager;
     private SignaturePrefs signaturePrefs;
     private EldJsonViewModel eldJsonViewModel;
+    private SignatureViewModel signatureViewModel;
 
     public static DocsFragment newInstance(String param1) {
         DocsFragment fragment = new DocsFragment();
@@ -81,11 +68,13 @@ public class DocsFragment extends Fragment implements UploadRequestBody.UploadCa
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString("ARG_PARAM1");
+            day = getArguments().getString("ARG_PARAM1");
         }
         eldJsonViewModel = ViewModelProviders.of(requireActivity()).get(EldJsonViewModel.class);
 
         dvirViewModel = ViewModelProviders.of(requireActivity()).get(DvirViewModel.class);
+
+        signatureViewModel = ViewModelProviders.of(requireActivity()).get(SignatureViewModel.class);
 
         sessionManager = new SessionManager(requireContext());
         signaturePrefs = new SignaturePrefs(requireContext());
@@ -102,10 +91,6 @@ public class DocsFragment extends Fragment implements UploadRequestBody.UploadCa
         idSubmitSignature = v.findViewById(R.id.idSubmitSignature);
 
         verifyStoragePermissions(requireActivity());
-
-        if (sessionManager.fetchSignature() != null){
-        idSignature.setSignatureBitmap(sessionManager.fetchSignature());
-        }
 
         idSignature.setOnSignedListener(new SignaturePad.OnSignedListener() {
             @Override
@@ -124,13 +109,20 @@ public class DocsFragment extends Fragment implements UploadRequestBody.UploadCa
             }
         });
 
-        dvirViewModel.getIsUploadImage().observe(getViewLifecycleOwner(),isUploaded ->{
-            if (isUploaded){
-                Uri uri = getImageUri(getActivity().getApplicationContext(),idSignature.getSignatureBitmap());
-                File file = new File(getPathFromURI(uri));
-                RequestBody body = new UploadRequestBody(file,"image",this);
-                eldJsonViewModel.sendSignature(MultipartBody.Part.createFormData("sign",file.getName(),body));
-            }
+        dvirViewModel.getCurrentName().observe(getViewLifecycleOwner(),currDay ->{
+            day = currDay;
+            signatureViewModel.getMgetAllSignatures().observe(getViewLifecycleOwner(),signatureEntities -> {
+                ArrayList<SignatureEntity> arrayList= new ArrayList<>();
+                for (int i = 0; i < signatureEntities.size(); i++) {
+                    if (signatureEntities.get(i).getDay().equals(currDay)){
+                        arrayList.add(signatureEntities.get(i));
+                    }
+                }if (arrayList.size() != 0){
+                    idSignature.setSignatureBitmap(arrayList.get(arrayList.size()-1).getSignatureBitmap());
+                }else {
+                    idSignature.clear();
+                }
+            });
         });
 
         idClearSignature.setOnClickListener(v1 -> {
@@ -142,23 +134,22 @@ public class DocsFragment extends Fragment implements UploadRequestBody.UploadCa
                 String fileName = "DriverSignature" + new Date().getTime() + ".png";
                 OutputStream outputStream;
                 try {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-                        ContentResolver resolver = getContext().getContentResolver();
-                        ContentValues values = new ContentValues();
-                        values.put(MediaStore.MediaColumns.DISPLAY_NAME,fileName);
-                        values.put(MediaStore.MediaColumns.MIME_TYPE,"image/png");
-                        Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values);
-                        outputStream = resolver.openOutputStream(Objects.requireNonNull(imageUri));
-                        idSignature.getSignatureBitmap().compress(Bitmap.CompressFormat.PNG,100,outputStream);
-                        dvirViewModel.getIsUploadImage().postValue(true);
-                        Objects.requireNonNull(outputStream);
-                        signaturePrefs.saveImageName(fileName);
-                    }
+                    ContentResolver resolver = getContext().getContentResolver();
+                    ContentValues values = new ContentValues();
+                    values.put(MediaStore.MediaColumns.DISPLAY_NAME,fileName);
+                    values.put(MediaStore.MediaColumns.MIME_TYPE,"image/png");
+                    Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values);
+                    outputStream = resolver.openOutputStream(Objects.requireNonNull(imageUri));
+                    idSignature.getSignatureBitmap().compress(Bitmap.CompressFormat.PNG,100,outputStream);
+                    Uri uri = getImageUri(getActivity().getApplicationContext(),idSignature.getSignatureBitmap());
+                    File file = new File(getPathFromURI(uri));
+                    RequestBody body = new UploadRequestBody(file,"image",this);
+                    eldJsonViewModel.sendSignature(MultipartBody.Part.createFormData("sign",file.getName(),body));
+                    Objects.requireNonNull(outputStream);
+
+                    signatureViewModel.insertSignature(new SignatureEntity(idSignature.getSignatureBitmap(),day));
                 }catch (Exception e){
                 }
-
-                sessionManager.saveSignature(idSignature.getSignatureBitmap());
-
 
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(requireContext());
                 alertDialog.setTitle("Signature Submitted")

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PersistableBundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProviders;
@@ -71,6 +72,7 @@ public class SplashActivity extends BaseActivity {
                 }
                 truckEntities.add(statusEntites.get(i));
             }
+
 
 
         });

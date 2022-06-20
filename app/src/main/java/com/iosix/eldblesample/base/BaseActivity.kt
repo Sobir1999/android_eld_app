@@ -13,9 +13,13 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
+import com.iosix.eldblesample.MyApplication
+import com.iosix.eldblesample.MyApplication.executorService
 import com.iosix.eldblesample.R
 import com.iosix.eldblesample.shared_prefs.UserData
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 @Suppress("DEPRECATION")
 abstract class BaseActivity : AppCompatActivity() {
@@ -31,11 +35,7 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 //        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         userData = UserData(applicationContext)
-        if(userData!!.mode){
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        }else{
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        }
+
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         appContext = applicationContext
         setContentView(layoutId)
@@ -43,6 +43,29 @@ abstract class BaseActivity : AppCompatActivity() {
         setupToolbar()
         initView()
         statusBar()
+
+        val runnable = Runnable {
+            if (userData!!.autoSwitch) {
+                if (userData!!.mode){
+                    if (Calendar.getInstance().time
+                            .hours >= 22 || Calendar.getInstance().time
+                            .hours <= 6
+                    ) {
+                        runOnUiThread { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES) }
+                    } else {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    }
+                }else{
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                }
+            }else if (userData!!.mode) {
+                runOnUiThread { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES) }
+            } else {
+                runOnUiThread { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO) }
+            }
+        }
+
+        executorService.scheduleAtFixedRate(runnable,0,1,TimeUnit.SECONDS)
     }
 
     override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {

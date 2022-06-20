@@ -27,14 +27,17 @@ import com.iosix.eldblelib.EldBleScanCallback;
 import com.iosix.eldblelib.EldBroadcast;
 import com.iosix.eldblelib.EldBroadcastTypes;
 import com.iosix.eldblelib.EldBufferRecord;
+import com.iosix.eldblelib.EldCachedMotionStartRecord;
 import com.iosix.eldblelib.EldCachedNewTimeRecord;
 import com.iosix.eldblelib.EldCachedNewVinRecord;
 import com.iosix.eldblelib.EldCachedPeriodicRecord;
 import com.iosix.eldblelib.EldCachedPoweronRecord;
+import com.iosix.eldblelib.EldDataRecord;
 import com.iosix.eldblelib.EldDriverBehaviorRecord;
 import com.iosix.eldblelib.EldDtcCallback;
 import com.iosix.eldblelib.EldEmissionsRecord;
 import com.iosix.eldblelib.EldEngineRecord;
+import com.iosix.eldblelib.EldEngineStates;
 import com.iosix.eldblelib.EldFirmwareUpdateCallback;
 import com.iosix.eldblelib.EldFuelRecord;
 import com.iosix.eldblelib.EldManager;
@@ -43,8 +46,12 @@ import com.iosix.eldblelib.EldScanObject;
 import com.iosix.eldblelib.EldTransmissionRecord;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.base.BaseActivity;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -594,8 +601,6 @@ public class BleConnect extends BaseActivity {
                             Log.d("TESTING", "Unix Time " + ((EldCachedPeriodicRecord) (dataRec)).getUnixTime());
                             Log.d("TESTING", "Sequence Number " + ((EldCachedPeriodicRecord) (dataRec)).getSeqNum());
 
-                            // mDataView.append("CACHED REC"+((EldCachedPeriodicRecord)(dataRec)).getBroadcastString());
-
                         } else if (dataRec instanceof EldCachedNewTimeRecord) {
                             ((EldCachedNewTimeRecord) (dataRec)).getEngineHours();
                             ((EldCachedNewTimeRecord) (dataRec)).getNewUnixTime();
@@ -632,25 +637,23 @@ public class BleConnect extends BaseActivity {
                         EldEngineRecord rec = (EldEngineRecord) dataRec;
                         engineEnabled = true;
 
-    //                        mStatusView.append("" + rec.getOilPressure_kpa() + " ");
-    //                        mStatusView.append("" + rec.getTurboBoost_kpa() + " ");
-    //                        mStatusView.append("" + rec.getIntakePressure_kpa() + " ");
-    //                        mStatusView.append("" + rec.getFuelPressure_kpa() + " ");
-    //                        mStatusView.append("" + rec.getCrankCasePressure_kpa() + " ");
-    //                        mStatusView.append("" + rec.getLoad_pct() + " ");
-    //                        mStatusView.append("" + rec.getMassAirFlow_galPerSec() + " ");
-    //                        mStatusView.append("" + rec.getTurboRpm() + " ");
-    //                        mStatusView.append("" + rec.getIntakeTemp_c() + " ");
-    //                        mStatusView.append("" + rec.getEngineCoolantTemp_c() + " ");
-    //                        mStatusView.append("" + rec.getEngineOilTemp_c() + " ");
-    //                        mStatusView.append("" + rec.getFuelTemp_c() + " ");
-    //                        mStatusView.append("" + rec.getChargeCoolerTemp_c() + " ");
-    //                        mStatusView.append("" + rec.getTorgue_Nm() + " ");
-    //                        mStatusView.append("" + rec.getEngineOilLevel_pct() + " ");
-    //                        mStatusView.append("" + rec.getEngineCoolandLevel_pct() + " ");
-    //                        mStatusView.append("" + rec.getTripFuel_L() + " ");
-    //                        mStatusView.append("" + rec.getDrivingFuelEconomy_LPerKm() + " ");
-    //                        mStatusView.append("\n");
+                            mStatusView.append("" + rec.getOilPressure_kpa() + " ");
+                            mStatusView.append("" + rec.getTurboBoost_kpa() + " ");
+                            mStatusView.append("" + rec.getIntakePressure_kpa() + " ");
+                            mStatusView.append("" + rec.getFuelPressure_kpa() + " ");
+                            mStatusView.append("" + rec.getCrankCasePressure_kpa() + " ");
+                            mStatusView.append("" + rec.getLoad_pct() + " ");
+                            mStatusView.append("" + rec.getMassAirFlow_galPerSec() + " ");
+                            mStatusView.append("" + rec.getTurboRpm() + " ");
+                            mStatusView.append("" + rec.getIntakeTemp_c() + " ");
+                            mStatusView.append("" + rec.getEngineCoolantTemp_c() + " ");
+                            mStatusView.append("" + rec.getEngineOilTemp_c() + " ");
+                            mStatusView.append("" + rec.getFuelTemp_c() + " ");
+                            mStatusView.append("" + rec.getChargeCoolerTemp_c() + " ");
+                            mStatusView.append("" + rec.getEngineOilLevel_pct() + " ");
+                            mStatusView.append("" + rec.getTripFuel_L() + " ");
+                            mStatusView.append("" + rec.getDrivingFuelEconomy_LPerKm() + " ");
+                            mStatusView.append("\n");
 
                         //mDataView.append("Engine Rec was sent" + ((EldEngineRecord) (rec)).getBroadcastString());
 
@@ -659,53 +662,53 @@ public class BleConnect extends BaseActivity {
                         EldEmissionsRecord rec = (EldEmissionsRecord) dataRec;
                         emissionsEnabled = true;
 
-    //                        mStatusView.append("" + rec.getNOxInlet() + " ");
-    //                        mStatusView.append("" + rec.getNOxOutlet() + " ");
-    //                        mStatusView.append("" + rec.getAshLoad() + " ");
-    //                        mStatusView.append("" + rec.getDpfSootLoad() + " ");
-    //                        mStatusView.append("" + rec.getDpfRegenStatus() + " ");
-    //                        mStatusView.append("" + rec.getDpfDifferentialPressure() + " ");
-    //                        mStatusView.append("" + rec.getEgrValvePosition() + " ");
-    //                        mStatusView.append("" + rec.getAfterTreatmentFuelPressure() + " ");
-    //                        mStatusView.append("" + rec.getEngineExhaustTemperature() + " ");
-    //                        mStatusView.append("" + rec.getExhaustTemperature1() + " ");
-    //                        mStatusView.append("" + rec.getExhaustTemperature2() + " ");
-    //                        mStatusView.append("" + rec.getExhaustTemperature3() + " ");
-    //                        mStatusView.append("" + rec.getDefFluidLevel() + " ");
-    //                        mStatusView.append("" + rec.getDefTankTemperature() + " ");
-    //                        mStatusView.append("" + rec.getScrInducementFaultStatus() + " ");
-    //                        mStatusView.append("\n");
+                            mStatusView.append("" + rec.getNOxInlet() + " ");
+                            mStatusView.append("" + rec.getNOxOutlet() + " ");
+                            mStatusView.append("" + rec.getAshLoad() + " ");
+                            mStatusView.append("" + rec.getDpfSootLoad() + " ");
+                            mStatusView.append("" + rec.getDpfRegenStatus() + " ");
+                            mStatusView.append("" + rec.getDpfDifferentialPressure() + " ");
+                            mStatusView.append("" + rec.getEgrValvePosition() + " ");
+                            mStatusView.append("" + rec.getAfterTreatmentFuelPressure() + " ");
+                            mStatusView.append("" + rec.getEngineExhaustTemperature() + " ");
+                            mStatusView.append("" + rec.getExhaustTemperature1() + " ");
+                            mStatusView.append("" + rec.getExhaustTemperature2() + " ");
+                            mStatusView.append("" + rec.getExhaustTemperature3() + " ");
+                            mStatusView.append("" + rec.getDefFluidLevel() + " ");
+                            mStatusView.append("" + rec.getDefTankTemperature() + " ");
+                            mStatusView.append("" + rec.getScrInducementFaultStatus() + " ");
+                            mStatusView.append("\n");
 
 
                     } else if (RecordType == EldBroadcastTypes.ELD_TRANSMISSION_PARAMETERS_RECORD) {
                         EldTransmissionRecord rec = (EldTransmissionRecord) dataRec;
                         transmissionEnabled = true;
 
-    //                        mStatusView.append("" + rec.getOutputShaftRpm() + " ");
-    //                        mStatusView.append("" + rec.getGearStatus() + " ");
-    //                        mStatusView.append("" + rec.getRequestGearStatus() + " ");
-    //                        mStatusView.append("" + rec.getTransmissionOilTemp_c() + " ");
-    //                        mStatusView.append("" + rec.getTorqueConverterLockupStatus() + " ");
-    //                        mStatusView.append("" + rec.getTorqueConverterOilOutletTemp_c() + " ");
-    //                        mStatusView.append("\n");
+                            mStatusView.append("" + rec.getOutputShaftRpm() + " ");
+                            mStatusView.append("" + rec.getGearStatus() + " ");
+                            mStatusView.append("" + rec.getRequestGearStatus() + " ");
+                            mStatusView.append("" + rec.getTransmissionOilTemp_c() + " ");
+                            mStatusView.append("" + rec.getTorqueConverterLockupStatus() + " ");
+                            mStatusView.append("" + rec.getTorqueConverterOilOutletTemp_c() + " ");
+                            mStatusView.append("\n");
 
                     } else if (RecordType == EldBroadcastTypes.ELD_FUEL_RECORD) {
                         EldFuelRecord rec = (EldFuelRecord) dataRec;
                         fuelEnabled = true;
 
-    //                        mStatusView.append("" + rec.getFuelLevelPercent() + " ");
-    //                        mStatusView.append("" + rec.getFuelIntegratedLiters() + " ");
-    //                        mStatusView.append("" + rec.getTotalFuelConsumedLiters() + " ");
-    //                        mStatusView.append("" + rec.getFuelRateLitersPerHours() + " ");
-    //                        mStatusView.append("" + rec.getIdleFuelConsumedLiters() + " ");
-    //                        mStatusView.append("" + rec.getIdleTimeHours() + " ");
-    //                        mStatusView.append("" + rec.getStateHighRPM() + " ");
-    //                        mStatusView.append("" + rec.getStateUnsteady() + " ");
-    //                        mStatusView.append("" + rec.getStateEnginePower() + " ");
-    //                        mStatusView.append("" + rec.getStateAccel() + " ");
-    //                        mStatusView.append("" + rec.getStateEco() + " ");
-    //                        mStatusView.append("" + rec.getStateAnticipate() + " ");
-    //                        mStatusView.append("\n");
+                            mStatusView.append("" + rec.getFuelLevelPercent() + " ");
+                            mStatusView.append("" + rec.getFuelIntegratedLiters() + " ");
+                            mStatusView.append("" + rec.getTotalFuelConsumedLiters() + " ");
+                            mStatusView.append("" + rec.getFuelRateLitersPerHours() + " ");
+                            mStatusView.append("" + rec.getIdleFuelConsumedLiters() + " ");
+                            mStatusView.append("" + rec.getIdleTimeHours() + " ");
+                            mStatusView.append("" + rec.getStateHighRPM() + " ");
+                            mStatusView.append("" + rec.getStateUnsteady() + " ");
+                            mStatusView.append("" + rec.getStateEnginePower() + " ");
+                            mStatusView.append("" + rec.getStateAccel() + " ");
+                            mStatusView.append("" + rec.getStateEco() + " ");
+                            mStatusView.append("" + rec.getStateAnticipate() + " ");
+                            mStatusView.append("\n");
 
                     } else if (RecordType == EldBroadcastTypes.ELD_DIAGNOSTIC_RECORD) {
                         diagnosticEnabled = true;

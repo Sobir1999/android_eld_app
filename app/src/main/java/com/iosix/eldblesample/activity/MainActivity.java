@@ -11,6 +11,7 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -27,6 +28,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -39,8 +41,8 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
@@ -55,6 +57,15 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.iosix.eldblelib.EldBleConnectionStateChangeCallback;
 import com.iosix.eldblelib.EldBleDataCallback;
 import com.iosix.eldblelib.EldBleError;
@@ -63,6 +74,7 @@ import com.iosix.eldblelib.EldBroadcast;
 import com.iosix.eldblelib.EldBroadcastTypes;
 import com.iosix.eldblelib.EldBufferRecord;
 import com.iosix.eldblelib.EldDataRecord;
+import com.iosix.eldblelib.EldEngineStates;
 import com.iosix.eldblelib.EldManager;
 import com.iosix.eldblelib.EldScanObject;
 import com.iosix.eldblesample.BuildConfig;
@@ -79,6 +91,7 @@ import com.iosix.eldblesample.enums.Day;
 import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.enums.GPSTracker;
 import com.iosix.eldblesample.fragments.InspectionModuleFragment;
+import com.iosix.eldblesample.interfaces.AlertDialogItemClickInterface;
 import com.iosix.eldblesample.models.ApkVersion;
 import com.iosix.eldblesample.models.MessageModel;
 import com.iosix.eldblesample.models.Status;
@@ -116,7 +129,12 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends BaseActivity implements TimePickerDialog.OnTimeSetListener {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class MainActivity extends BaseActivity implements TimePickerDialog.OnTimeSetListener, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     private DrawerLayout drawerLayout;
     private Toolbar activity_main_toolbar;
@@ -153,9 +171,14 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     int lastMinute = 0;
     int lastSecond = -1;
     double speed = -1;
+    int startseq, endseq;
     String eldState = "DISCONNECTED";
     String engineState = "ENGINE_INVALID";
     MutableLiveData<Double> mutableLiveData = new MutableLiveData<>();
+    LocationRequest mLocationRequest;
+    GoogleApiClient mGoogleApiClient;
+    PendingResult<LocationSettingsResult> result;
+    final static int REQUEST_LOCATION = 199;
 
 
     private double latitude;
@@ -260,20 +283,39 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         update();
 
         getAllDrivers();
-        sendLocalData();
+
+//        sendLocalData();
 //        manageStatusState();
         dateFormat=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
         mutableLiveData.observe(this,mutableLiveData ->{
             Handler handler = new Handler();
-            Runnable runnable = () -> manageStatusState();
+            Runnable runnable = this::manageStatusState;
             if (mutableLiveData == 0.0){
                 handler.postDelayed(runnable,10000);
             }else {
                 handler.removeCallbacks(runnable);
             }
         });
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+        mGoogleApiClient.connect();
+
     }
+
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            onUserInteraction();
+        }
+        if (getWindow().superDispatchTouchEvent(ev)) {
+        }
+        return onTouchEvent(ev);
+    }
+
 
     private void manageStatusState(){
 
@@ -357,7 +399,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                         trip_hours.add(liveDataRecords.get(i).getTrip_hours());
                         battery_voltage.add(liveDataRecords.get(i).getBattery_voltage());
                         point.add(liveDataRecords.get(i).getPoint());
-                        date.add(liveDataRecords.get(i).getDate());
+//                        date.add(liveDataRecords.get(i).getDate());
                         gps_speed.add(liveDataRecords.get(i).getGps_speed());
                         course.add(liveDataRecords.get(i).getCourse());
                         number_of_satellites.add(liveDataRecords.get(i).getNumber_of_satellites());
@@ -712,13 +754,13 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             GPSTracker gpsTracker = new GPSTracker(this);
             longtitude = gpsTracker.getLongitude();
             latitude = gpsTracker.getLatitude();
+            Log.d("Adverse Diving",latitude + "," + longtitude);
             Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
             try {
                 if (latitude != 0 && longtitude != 0){
                 List<Address> addresses = geocoder.getFromLocation(latitude, longtitude, 1);
                 Address obj = addresses.get(0);
-                String add = obj.getCountryName();
-                add = add + ", " + obj.getSubAdminArea();
+                String add = obj.getLocality() + "," + obj.getSubLocality();
 
                 editLocation.setText(add);
                 editLocation.setClickable(false);
@@ -937,10 +979,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         checkNightModeActivated();
         nightModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 userData.saveMode(true);
             } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 userData.saveMode(false);
             }
         });
@@ -950,10 +990,8 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     private void checkNightModeActivated() {
         if (userData.getMode()) {
             nightModeSwitch.setChecked(true);
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {
             nightModeSwitch.setChecked(false);
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
     }
 
@@ -1021,15 +1059,18 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             final ConnectToEldDialog dialog = new ConnectToEldDialog(this,eldState,engineState);
             dialog.setCancelable(false);
 
-        dialog.setAlerrtDialogItemClickInterface(() -> {
-            if (eldState.equals("CONNECTED")){
-                dialog.cancel();
-                mEldManager.DisconnectEld();
-                eldState = "DISCONNECTED";
-            }else {
+        dialog.setAlerrtDialogItemClickInterface(new AlertDialogItemClickInterface() {
+            @Override
+            public void onClickConnect() {
                 ScanForEld();
                 dialog.cancel();
                 searchEldDeviceDialog.show();
+            }
+
+            @Override
+            public void onClickDisCocnnect() {
+                mEldManager.DisconnectEld();
+                dialog.cancel();
             }
         });
 
@@ -1092,45 +1133,29 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             subscribedRecords.add(EldBroadcastTypes.ELD_DATA_RECORD);
             subscribedRecords.add(EldBroadcastTypes.ELD_BUFFER_RECORD);
             subscribedRecords.add(EldBroadcastTypes.ELD_ENGINE_PARAMETERS_RECORD);
-            subscribedRecords.add(EldBroadcastTypes.ELD_FUEL_RECORD);
 
             mEldManager.EnableFuelData();
             mEldManager.UpdateSubscribedRecordTypes(subscribedRecords);
 
-            dateFormat=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+            runOnUiThread(() ->{
+                if (dataRec instanceof EldBufferRecord){
+                    startseq = ((EldBufferRecord) dataRec).getStartSeqNo();
+                    endseq = ((EldBufferRecord) dataRec).getEndSeqNo();
+                } else if (RecordType != EldBroadcastTypes.ELD_DATA_RECORD){
 
-            if (dataRec instanceof EldBufferRecord){
-
-            }else if (RecordType != EldBroadcastTypes.ELD_DATA_RECORD){
-
-            }else {
-                runOnUiThread(()->{
-                    engineState = ((EldDataRecord)dataRec).getEngineState().name();
-                });
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(System.currentTimeMillis());
-                currentMinute = calendar.get(Calendar.MINUTE);
-
-                if (((EldDataRecord)dataRec).getSpeed() > 5 && speed < 5){
+                }else {
+                    DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ",Locale.getDefault());
+                    Boolean b = null;
+                    if(((EldDataRecord) dataRec).getEngineState() == EldEngineStates.ENGINE_OFF){
+                        b = false;
+                    }else if(((EldDataRecord) dataRec).getEngineState() == EldEngineStates.ENGINE_ON){
+                        b = true;
+                    }
                     ArrayList<Double> arrayList = new ArrayList<>();
-                    arrayList.add(((EldDataRecord) dataRec).getLatitude());
                     arrayList.add(((EldDataRecord) dataRec).getLongitude());
-                    speed = ((EldDataRecord) dataRec).getSpeed();
-                    mutableLiveData.postValue(speed);
-                    statusDaoViewModel.insertStatus(new LogEntity(last_status,EnumsConstants.STATUS_DR,null,"Driving",null,today,getCurrentSeconds()));
-                    eldJsonViewModel.postStatus(new Status("D",new Point("Point",arrayList),"Driving",dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime())));
-                }else if (((EldDataRecord)dataRec).getSpeed() == 0.0 && speed > 5){
-                    speed = ((EldDataRecord) dataRec).getSpeed();
-                    mutableLiveData.postValue(speed);
-                }
-
-                if (currentMinute != lastMinute){
-                    lastMinute = currentMinute;
-                    ArrayList<Double> arrayList = new ArrayList<>();
                     arrayList.add(((EldDataRecord) dataRec).getLatitude());
-                    arrayList.add(((EldDataRecord) dataRec).getLongitude());
-                    eldJsonViewModel.sendLive(new LiveDataRecord(
-                            true,
+                    apiInterface.sendLive(new LiveDataRecord(
+                            b,
                             ((EldDataRecord) dataRec).getVin(),
                             ((EldDataRecord) dataRec).getSpeed(),
                             ((EldDataRecord) dataRec).getOdometer(),
@@ -1138,7 +1163,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                             ((EldDataRecord) dataRec).getEngineHours(),
                             ((EldDataRecord) dataRec).getTripHours(),
                             ((EldDataRecord) dataRec).getVoltage(),
-                            dateFormat.format(Calendar.getInstance().getTime()),
+                            dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime()),
                             new Point("Point",arrayList),
                             ((EldDataRecord) dataRec).getGpsSpeed(),
                             ((EldDataRecord) dataRec).getCourse(),
@@ -1147,9 +1172,34 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                             ((EldDataRecord) dataRec).getDop(),
                             ((EldDataRecord) dataRec).getSequence(),
                             ((EldDataRecord) dataRec).getFirmwareVersion()
-                    ));
+                    )).enqueue(new Callback<LiveDataRecord>() {
+                        @Override
+                        public void onResponse(Call<LiveDataRecord> call, Response<LiveDataRecord> response) {
+                            if (!response.isSuccessful()){
+                                try {
+                                    Toast.makeText(MainActivity.this,response.errorBody().string(),Toast.LENGTH_LONG).show();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }else {
+                                Toast.makeText(MainActivity.this,"Response is Successfull",Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<LiveDataRecord> call, Throwable t) {
+                            Toast.makeText(MainActivity.this,t.getMessage(),Toast.LENGTH_LONG).show();
+                        }
+                    });
+
+//                    try {
+//                        sleep(10000);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+
                 }
-            }
+            });
         }
     };
 
@@ -1313,7 +1363,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     @Override
     protected void onStop() {
         super.onStop();
-        mEldManager.DisconnectEld();
     }
 
     @Override
@@ -1322,5 +1371,62 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         this.getViewModelStore().clear();
         this.unregisterReceiver(changeDateTimeBroadcast);
         mEldManager.DisconnectEld();
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(30 * 1000);
+        mLocationRequest.setFastestInterval(5 * 1000);
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(mLocationRequest);
+        builder.setAlwaysShow(true);
+
+        result = LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
+
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+            @Override
+            public void onResult(LocationSettingsResult result) {
+                final com.google.android.gms.common.api.Status status = result.getStatus();
+                //final LocationSettingsStates state = result.getLocationSettingsStates();
+                switch (status.getStatusCode()) {
+                    case LocationSettingsStatusCodes.SUCCESS:
+                        // All location settings are satisfied. The client can initialize location
+                        // requests here.
+                        //...
+                        break;
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        // Location settings are not satisfied. But could be fixed by showing the user
+                        // a dialog.
+                        try {
+                            // Show the dialog by calling startResolutionForResult(),
+                            // and check the result in onActivityResult().
+                            status.startResolutionForResult(
+                                    MainActivity.this,
+                                    REQUEST_LOCATION);
+                        } catch (IntentSender.SendIntentException e) {
+                            // Ignore the error.
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        // Location settings are not satisfied. However, we have no way to fix the
+                        // settings so we won't show the dialog.
+                        //...
+                        break;
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 }

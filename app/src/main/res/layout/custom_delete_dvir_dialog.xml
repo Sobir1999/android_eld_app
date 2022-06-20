@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
-        android:layout_width="400dp"
+        android:layout_width="@dimen/custom_dialog_width"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -21,18 +21,18 @@
             android:fontFamily="@font/montserrat"
             android:textStyle="bold"
             android:textColor="@color/colorPrimary"
-            android:textSize="17sp"
-            android:layout_marginTop="16dp"
-            android:layout_marginHorizontal="15dp"
+            android:textSize="@dimen/card_text_size"
+            android:layout_marginTop="@dimen/card_view_corner_radius"
+            android:layout_marginHorizontal="@dimen/card_view_corner_radius"
             android:id="@+id/idDvirHeader"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/do_you_want_to_delete_dvir"
-            android:layout_marginTop="8dp"
-            android:layout_marginHorizontal="15dp"
-            android:textSize="16sp"
+            android:layout_marginTop="@dimen/half_vertical_margin"
+            android:layout_marginHorizontal="@dimen/card_view_corner_radius"
+            android:textSize="@dimen/normal_text_size"
             android:fontFamily="@font/montserrat"
             android:textColor="?attr/customTextHintColor"
             android:textStyle="bold"
@@ -43,8 +43,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="end"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="@dimen/card_image_size"
+            android:layout_marginBottom="@dimen/half_vertical_margin"
             android:gravity="end">
 
             <TextView
@@ -53,10 +53,10 @@
                 android:text="@string/yes"
                 android:textStyle="bold"
                 android:textColor="@color/colorPrimary"
-                android:textSize="17sp"
+                android:textSize="@dimen/card_text_size"
                 android:textAllCaps="true"
                 app:font = "@font/montserrat"
-                android:layout_marginEnd="25dp"
+                android:layout_marginEnd="@dimen/drawer_icon_size"
                 android:fontFamily="@font/montserrat"
                 android:id="@+id/idDvirYes"/>
 
@@ -66,10 +66,10 @@
                 android:text="@string/no"
                 android:textStyle="bold"
                 android:textColor="@color/colorPrimary"
-                android:textSize="17sp"
+                android:textSize="@dimen/card_text_size"
                 app:font = "@font/montserrat"
                 android:textAllCaps="true"
-                android:layout_marginEnd="25dp"
+                android:layout_marginEnd="@dimen/drawer_icon_size"
                 android:fontFamily="@font/montserrat"
                 android:id="@+id/idDvirNo"/>
 

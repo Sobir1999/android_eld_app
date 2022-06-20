@@ -28,6 +28,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.base.BaseActivity;
 import com.iosix.eldblesample.fragments.SignatureFragment;
+import com.iosix.eldblesample.interfaces.Communicator;
 import com.iosix.eldblesample.models.SendDvir;
 import com.iosix.eldblesample.retrofit.APIInterface;
 import com.iosix.eldblesample.retrofit.ApiClient;
@@ -58,7 +59,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SignatureActivity extends BaseActivity {
+public class SignatureActivity extends BaseActivity implements Communicator {
 
     private ArrayList<String> mParams;
     private ArrayList<String> selectedTrailers;
@@ -68,9 +69,10 @@ public class SignatureActivity extends BaseActivity {
     private DvirViewModel dvirViewModel;
     private SignatureViewModel signatureViewModel;
     private SignaturePrefs signaturePrefs;
-    private SessionManager sessionManager;
     private EldJsonViewModel eldJsonViewModel;
     private ResultReceiver resultReceiver;
+    private Bitmap bitmap,mechanicBitmap;
+    private boolean isChecked;
 
     @Override
     protected int getLayoutId() {
@@ -98,7 +100,6 @@ public class SignatureActivity extends BaseActivity {
         resultReceiver = getIntent().getParcelableExtra("finisher");
         day = getIntent().getStringExtra("day");
         signaturePrefs = new SignaturePrefs(this);
-        sessionManager = new SessionManager(this);
 
         eldJsonViewModel = ViewModelProviders.of(this).get(EldJsonViewModel.class);
 
@@ -120,8 +121,8 @@ public class SignatureActivity extends BaseActivity {
         });
 
         save.setOnClickListener(v -> {
-            if(signaturePrefs.fetchDefect()){
-                if (signaturePrefs.fetchSignature() == null){
+            if(isChecked){
+                if (bitmap == null){
                     if (signaturePrefs.fetchMechanicSignature() == null){
                         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
                         alertDialog.setTitle("Signature missed")
@@ -138,7 +139,7 @@ public class SignatureActivity extends BaseActivity {
                         alert.show();
                     }
                 }else{
-                    if (signaturePrefs.fetchMechanicSignature() == null){
+                    if (mechanicBitmap == null){
                         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
                         alertDialog.setTitle("Signature missed")
                                 .setMessage("Mechanic must sign")
@@ -147,21 +148,17 @@ public class SignatureActivity extends BaseActivity {
                         alert.show();
 
                     }else {
-                        SignatureEntity signatureEntity = new SignatureEntity(signaturePrefs.fetchSignature());
                         try {
-                            signatureViewModel.insertSignature(signatureEntity);
+                            signatureViewModel.insertSignature(new SignatureEntity(bitmap,day));
                         } catch (ExecutionException | InterruptedException e) {
                             e.printStackTrace();
                         }
 
-                        MechanicSignatureEntity mechanicSignatureEntity = new MechanicSignatureEntity(signaturePrefs.fetchMechanicSignature());
                         try {
-                            signatureViewModel.insertMechanicSignature(mechanicSignatureEntity);
+                            signatureViewModel.insertMechanicSignature(new MechanicSignatureEntity(mechanicBitmap,day));
                         } catch (ExecutionException | InterruptedException e) {
                             e.printStackTrace();
                         }
-                        saveTempBitmap(signaturePrefs.fetchSignature());
-                        saveTempBitmap(signaturePrefs.fetchMechanicSignature());
                         String currDay;
                         currDay = mParams.get(4);
                         try {
@@ -175,8 +172,6 @@ public class SignatureActivity extends BaseActivity {
                             startActivity(intent);
                             finish();
                             resultReceiver.send(2,new Bundle());
-
-                            sessionManager.saveSignature(signaturePrefs.fetchSignature());
 
                             if (unitDefects.size() == 0 && trailerDefects.size() == 0){
                                 if (selectedTrailers.size() == 0){
@@ -199,7 +194,7 @@ public class SignatureActivity extends BaseActivity {
                     }
                 }
             }else{
-                if (signaturePrefs.fetchSignature() == null){
+                if (bitmap == null){
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
                     alertDialog.setTitle("Signature missed")
                             .setMessage("Sign or take your saved signatures")
@@ -207,13 +202,11 @@ public class SignatureActivity extends BaseActivity {
                     AlertDialog alert = alertDialog.create();
                     alert.show();
                 }else{
-                    SignatureEntity signatureEntity = new SignatureEntity(signaturePrefs.fetchSignature());
                     try {
-                        signatureViewModel.insertSignature(signatureEntity);
+                        signatureViewModel.insertSignature(new SignatureEntity(bitmap,day));
                     } catch (ExecutionException | InterruptedException e) {
                         e.printStackTrace();
                     }
-                    saveTempBitmap(signaturePrefs.fetchSignature());
                     String currDay;
                     currDay = mParams.get(4);
                     try {
@@ -228,7 +221,6 @@ public class SignatureActivity extends BaseActivity {
                             startActivity(intent);
                             finish();
                             resultReceiver.send(2,new Bundle());
-                            sessionManager.saveSignature(signaturePrefs.fetchSignature());
 
                             if (unitDefects.size() == 0 && trailerDefects.size() == 0){
                                 if (selectedTrailers.size() == 0){
@@ -256,9 +248,6 @@ public class SignatureActivity extends BaseActivity {
                             startActivity(intent);
                             finish();
                             resultReceiver.send(2,new Bundle());
-
-                            sessionManager.saveSignature(signaturePrefs.fetchSignature());
-
 
                             if (unitDefects.size() == 0 && trailerDefects.size() == 0){
                                 if (selectedTrailers.size() == 0){
@@ -351,6 +340,21 @@ public class SignatureActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         this.getViewModelStore().clear();
+    }
+
+    @Override
+    public void sendBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
+    }
+
+    @Override
+    public void sendMechanicBitmap(Bitmap bitmap) {
+        this.mechanicBitmap = bitmap;
+    }
+
+    @Override
+    public void sendHasDefect(Boolean b) {
+        isChecked = b;
     }
 }
 

@@ -11,6 +11,8 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
 import androidx.annotation.Nullable;
+
+import com.google.android.material.color.MaterialColors;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.enums.TableConstants;
 
@@ -50,12 +52,12 @@ public abstract class   CustomRulerChart extends View {
 
         CUSTOM_WIDTH = context.getResources().getDisplayMetrics().widthPixels;
 
-        CUSTOM_TABLE_WIDTH = CUSTOM_WIDTH - 2f * START_POINT_X - 100f*context.getResources().getDisplayMetrics().density;
+        CUSTOM_TABLE_WIDTH = CUSTOM_WIDTH - 2f * START_POINT_X - 2f*context.getResources().getDimension(R.dimen.activity_padding_size);
 
         CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 8;
         CUSTOM_TABLE_ROW_WIDTH = CUSTOM_TABLE_WIDTH / 26;
 
-        CUSTOM_TABLE_STROKE_WIDTH = context.getResources().getDisplayMetrics().density * 1.5f;
+        CUSTOM_TABLE_STROKE_WIDTH = context.getResources().getDisplayMetrics().density*1.5f;
     }
 
     @Override
@@ -103,11 +105,7 @@ public abstract class   CustomRulerChart extends View {
     }
 
     private void onDrawTable(Canvas canvas) {
-        if (!userData.getMode()){
-            table_paint.setColor(getResources().getColor(R.color.customTableColor));
-        }else {
-            table_paint.setColor(Color.WHITE);
-        }
+        table_paint.setColor(MaterialColors.getColor(getContext(),R.attr.customTableTime,Color.BLACK));
         table_paint.setStyle(Paint.Style.STROKE);
         table_paint.setStrokeWidth(CUSTOM_TABLE_STROKE_WIDTH);
 
@@ -232,21 +230,20 @@ public abstract class   CustomRulerChart extends View {
 
     private void onDrawText(Canvas canvas) {
 
-        float time_size = 20f;
-        table_time_paint.setTextSize(time_size);
-
-        table_time_paint.setColor(getResources().getColor(R.color.colorPrimary));
-        table_time_paint_tex.setColor(getResources().getColor(R.color.colorPrimary));
+        float time_size = 17f;
+        table_time_paint.setTextSize(getContext().getResources().getDimension(R.dimen.custom_table_time_size));
+        table_time_paint.setColor(MaterialColors.getColor(getContext(),R.attr.customTableTimeText,Color.BLACK));
+        table_time_paint_tex.setColor(MaterialColors.getColor(getContext(),R.attr.customTableTimeText,Color.BLACK));
         table_time_paint.setTypeface(Typeface.DEFAULT_BOLD);
         table_time_paint_tex.setTypeface(Typeface.DEFAULT_BOLD);
 
-        table_time_paint_tex.setTextSize(time_size);
+        table_time_paint_tex.setTextSize(getContext().getResources().getDimension(R.dimen.custom_table_time_size));
 
         table_text_paint.setColor(Color.BLACK);
         table_text_paint.setTextSize(26f);
         table_text_paint.setStrokeWidth(3f);
 
-        for (int i = 0; i <= 26; i++) {
+        for (int i = 0; i < 26; i++) {
             if (i == 1 || i == 25) {
                 canvas.drawText(
                         "M",

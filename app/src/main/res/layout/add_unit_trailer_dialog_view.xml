@@ -8,10 +8,11 @@
 
     <EditText
         android:id="@+id/idAddUnitTrailerEdit"
-        android:layout_marginHorizontal="20dp"
+        android:layout_marginHorizontal="@dimen/drawer_padding_size"
         android:textColorHint="@color/colorPrimary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="@dimen/normal_text_size"
         tools:ignore="LabelFor,MissingConstraints"
         android:inputType="text" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -27,8 +27,8 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingVertical="5dp"
-                android:layout_marginHorizontal="50dp"
+                android:paddingVertical="@dimen/card_padding_size"
+                android:layout_marginHorizontal="@dimen/activity_padding_size"
                 tools:ignore="MissingConstraints">
 
                 <ImageView
@@ -45,6 +45,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/inspection_mode"
+                    android:textSize="@dimen/title_text_size"
+                    android:fontFamily="@font/montserrat"
                     android:textColor="#fff"
                     app:layout_constraintBottom_toBottomOf="parent"
                     style="@style/TextAppearance.AppCompat.Widget.ActionMode.Title"
@@ -70,8 +72,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/background_main_view"
-        android:layout_marginHorizontal="50dp"
-        android:layout_marginVertical="8dp"
+        android:layout_marginHorizontal="@dimen/activity_padding_size"
+        android:layout_marginVertical="@dimen/half_vertical_margin"
         android:orientation="vertical">
 
         <TextView
@@ -82,7 +84,7 @@
             android:text="@string/review_logs_for_previous_7_days_today"
             android:textColor="@color/colorPrimary"
             android:fontFamily="@font/montserrat"
-            android:textSize="15sp"/>
+            android:textSize="@dimen/normal_text_size"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -92,15 +94,14 @@
             android:fontFamily="@font/montserrat"
             android:text="@string/tap_begin_inspection_and_hand_your_deviceto_the_officer"
             android:textColor="?attr/customTextHintColor"
-            android:textSize="13sp"/>
+            android:textSize="@dimen/mini_text_size"/>
 
         <Button
-            android:layout_width="220dp"
-            android:layout_height="40dp"
-            android:layout_marginHorizontal="60dp"
+            android:layout_width="@dimen/signature_margin_size"
+            android:layout_height="@dimen/card_icon_size"
             android:id="@+id/idBeginInspection"
             android:layout_gravity="center"
-            android:textSize="15sp"
+            android:textSize="@dimen/card_text_size"
             android:fontFamily="@font/montserrat"
             android:textStyle="bold"
             android:text="@string/begin_inspection"
@@ -113,7 +114,7 @@
             android:layout_width="match_parent"
             android:layout_height="0.8dp"
             android:background="?attr/customBgViewColor"
-            android:layout_marginTop="12dp"/>
+            android:layout_marginTop="@dimen/mini_margin_size"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -121,16 +122,15 @@
             android:layout_gravity="center"
             android:text="@string/send_logs_for_previous_7_days_today"
             android:textColor="@color/colorPrimary"
-            android:textSize="15sp"
-            android:layout_marginTop="12dp"/>
+            android:textSize="@dimen/normal_text_size"
+            android:layout_marginTop="@dimen/mini_margin_size"/>
 
         <Button
-            android:layout_width="220dp"
-            android:layout_height="40dp"
-            android:layout_marginHorizontal="60dp"
+            android:layout_width="@dimen/signature_margin_size"
+            android:layout_height="@dimen/card_icon_size"
             android:id="@+id/idSendLogs"
             android:layout_gravity="center"
-            android:textSize="15sp"
+            android:textSize="@dimen/card_text_size"
             android:textStyle="bold"
             android:textAllCaps="false"
             android:fontFamily="@font/montserrat"
@@ -152,23 +152,22 @@
             android:text="@string/send_eld_output_file_to_dot"
             android:textColor="@color/colorPrimary"
             android:fontFamily="@font/montserrat"
-            android:textSize="15sp"
-            android:layout_marginTop="12dp"/>
+            android:textSize="@dimen/normal_text_size"
+            android:layout_marginTop="@dimen/mini_margin_size"/>
 
         <Button
-            android:layout_width="220dp"
-            android:layout_height="40dp"
-            android:layout_marginHorizontal="60dp"
+            android:layout_width="@dimen/signature_margin_size"
+            android:layout_height="@dimen/card_icon_size"
             android:id="@+id/idSendELDFile"
             android:layout_gravity="center"
-            android:textSize="15sp"
+            android:textSize="@dimen/card_text_size"
             android:fontFamily="@font/montserrat"
             android:textAllCaps="false"
             android:textStyle="bold"
             android:text="@string/send_eld_output_file_to_dot"
             android:textColor="@color/colorPrimary"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginTop="@dimen/mini_margin_size"
+            android:layout_marginBottom="@dimen/mini_margin_size"
             android:background="@drawable/button_bg"/>
 
     </LinearLayout>

@@ -16,12 +16,15 @@ public class SignatureEntity {
     @ColumnInfo(name = "signature_id")
     private int id;
 
-    @SerializedName("sign")
     @ColumnInfo(name = "signature")
     Bitmap signatureBitmap;
 
-    public SignatureEntity(Bitmap signatureBitmap){
+    @ColumnInfo(name = "day")
+    String day;
+
+    public SignatureEntity(Bitmap signatureBitmap,String day){
         this.signatureBitmap = signatureBitmap;
+        this.day = day;
     }
 
     public void setSignatureBitmap(Bitmap signatureBitmap){this.signatureBitmap = signatureBitmap;}
@@ -31,4 +34,12 @@ public class SignatureEntity {
     public void setId(int id){this.id = id;}
 
     public int getId(){return id;}
+
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
+    }
 }

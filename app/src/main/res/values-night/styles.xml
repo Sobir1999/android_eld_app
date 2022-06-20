@@ -1,7 +1,7 @@
 <resources>
     <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">#E8231E1E</item>
+        <item name="colorPrimary">#0B0B0B</item>
         <item name="colorPrimaryDark">#070707</item>
         <item name="colorAccent">#417C83</item>
 
@@ -9,7 +9,9 @@
         <item name="customTextColor">@color/white</item>
         <item name="customBgViewColor">@color/customBgViewColorNightmode</item>
         <item name="customTextHintColor">@color/customBgViewColor</item>
-
+        <item name="customTableTime">@color/customTableColor</item>
+        <item name="customTableTimeText">@color/white</item>
+        <item name="customPaint">@color/alertColor</item>
 
 
 

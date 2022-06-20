@@ -33,6 +33,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class LogFragment extends Fragment {
     private StatusDaoViewModel statusDaoViewModel;
@@ -46,7 +47,8 @@ public class LogFragment extends Fragment {
     private RecyclerView recyclerView_log;
     private LogRecyclerViewAdapter logRecyclerViewAdapter;
     private DvirViewModel dvirViewModel;
-    ArrayList<LogEntity> truckStatusEntities = new ArrayList<>();
+    List<LogEntity> truckStatusEntities = new ArrayList<>();
+    ArrayList<LogEntity> truckStatusEntitiesCurr = new ArrayList<>();
 
 
     public static LogFragment newInstance(String param1) {
@@ -63,6 +65,7 @@ public class LogFragment extends Fragment {
         if (getArguments() != null) {
             currDay = getArguments().getString("ARG_PARAM1");
         }
+        statusDaoViewModel = ViewModelProviders.of(requireActivity()).get(StatusDaoViewModel.class);
         dvirViewModel = ViewModelProviders.of(requireActivity()).get(DvirViewModel.class);
 
     }
@@ -76,40 +79,39 @@ public class LogFragment extends Fragment {
         idCustomChartLive = view.findViewById(R.id.idCustomChartLive);
         recyclerView_log = view.findViewById(R.id.recyclerView_log_page);
 
-        statusDaoViewModel = ViewModelProviders.of(this).get(StatusDaoViewModel.class);
+        statusDaoViewModel.getmAllStatus().observe(getViewLifecycleOwner(),logEntities -> {
+            truckStatusEntities = logEntities;
+        });
 
         changeDateTimeBroadcast = new ChangeDateTimeBroadcast() {
             @Override
             public void onDayChanged() {
                 time = "" + Calendar.getInstance().getTime();
                 today = time.split(" ")[1] + " " + time.split(" ")[2];
+                dvirViewModel.getCurrentName().postValue(today);
             }
         };
         _context.registerReceiver(changeDateTimeBroadcast, ChangeDateTimeBroadcast.getIntentFilter());
 
         dvirViewModel.getCurrentName().observe(getViewLifecycleOwner(), c ->{
-            statusDaoViewModel.getmAllStatus().observe(getViewLifecycleOwner(), truckStatusEntities1 -> {
-                for (LogEntity logEntity: truckStatusEntities1) {
-                    if (logEntity.getTime().equalsIgnoreCase(c)) {
-                        truckStatusEntities.add(logEntity);
-                    }
-                }
-
+                truckStatusEntitiesCurr.clear();
                 logRecyclerViewAdapter = new LogRecyclerViewAdapter(requireContext().getApplicationContext(),truckStatusEntities,c);
                 recyclerView_log.setAdapter(logRecyclerViewAdapter);
-            });
-            if(c.equals(today)){
-                idCustomChart.setVisibility(View.INVISIBLE);
-                idCustomChartLive.setVisibility(View.VISIBLE);
-                idCustomChartLive.setArrayList(truckStatusEntities);
-            }else {
-                idCustomChartLive.setVisibility(View.INVISIBLE);
-                idCustomChart.setVisibility(View.VISIBLE);
-                idCustomChart.setArrayList(truckStatusEntities);
-            }
+                for (int i = 0; i < truckStatusEntities.size(); i++) {
+                    if (truckStatusEntities.get(i).getTime().equals(c)){
+                        truckStatusEntitiesCurr.add(truckStatusEntities.get(i));
+                    }
+                }
+                if(c.equals(today)){
+                    idCustomChart.setVisibility(View.INVISIBLE);
+                    idCustomChartLive.setVisibility(View.VISIBLE);
+                    idCustomChartLive.setArrayList(truckStatusEntitiesCurr);
+                }else {
+                    idCustomChartLive.setVisibility(View.INVISIBLE);
+                    idCustomChart.setVisibility(View.VISIBLE);
+                    idCustomChart.setArrayList(truckStatusEntitiesCurr);
+                }
         });
-
-
         return view;
     }
 

@@ -20,8 +20,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/background_main_view"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="8dp">
+            android:paddingHorizontal="@dimen/half_vertical_margin"
+            android:paddingVertical="@dimen/half_vertical_margin">
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -31,7 +31,7 @@
                 android:nestedScrollingEnabled="true"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginHorizontal="8dp"
+                android:layout_marginHorizontal="@dimen/half_vertical_margin"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="MissingConstraints">
 
@@ -65,7 +65,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/off"
-                                android:textSize="@dimen/card_text_size"
+                                android:fontFamily="@font/montserrat"
+                                android:textSize="@dimen/normal_text_size"
                                 android:textColor="@color/colorStatusOFFBold"
                                 android:textStyle="bold" />
 
@@ -117,7 +118,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/sb"
-                                android:textSize="@dimen/card_text_size"
+                                android:fontFamily="@font/montserrat"
+                                android:textSize="@dimen/normal_text_size"
                                 android:textColor="@color/colorStatusSBBold"
                                 android:textStyle="bold" />
 
@@ -170,7 +172,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/dr"
-                                android:textSize="@dimen/card_text_size"
+                                android:fontFamily="@font/montserrat"
+                                android:textSize="@dimen/normal_text_size"
                                 android:textColor="@color/colorStatusDRBold"
                                 android:textStyle="bold" />
 
@@ -222,7 +225,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/on"
-                                android:textSize="@dimen/card_text_size"
+                                android:fontFamily="@font/montserrat"
+                                android:textSize="@dimen/normal_text_size"
                                 android:textColor="@color/colorStatusONBold"
                                 android:textStyle="bold" />
 
@@ -263,7 +267,7 @@
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingHorizontal="16dp"
+                            android:paddingHorizontal="@dimen/half_vertical_margin"
                             android:layout_gravity="center_vertical">
 
                             <TextView
@@ -273,7 +277,7 @@
                                 android:fontFamily="@font/montserrat"
                                 android:text="@string/current_status"
                                 android:textColor="@color/colorPrimary"
-                                android:textSize="@dimen/card_text_size"
+                                android:textSize="@dimen/normal_text_size"
                                 android:textStyle="bold" />
 
                             <ImageView
@@ -293,8 +297,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
                                 android:text="@string/off"
+                                android:fontFamily="@font/montserrat"
                                 android:textStyle="bold"
-                                android:textSize="@dimen/card_text_size"
+                                android:textSize="@dimen/normal_text_size"
                                 android:textColor="@color/colorStatusONBold"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintLeft_toRightOf="@id/idStatusImage"
@@ -306,8 +311,9 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="00:00:00"
+                                android:fontFamily="@font/montserrat"
                                 android:textSize="@dimen/big_text_size"
-                                android:textColor="@color/colorPrimary"
+                                android:textColor="@color/black"
                                 android:textStyle="bold"
                                 android:layout_marginEnd="8dp"
                                 app:layout_constraintBottom_toBottomOf="parent"
@@ -331,9 +337,9 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
+                    android:layout_weight="2.5"
                     android:orientation="vertical"
-                    android:padding="10dp">
+                    android:padding="@dimen/half_vertical_margin">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -350,7 +356,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/location"
                                 android:textColor="?attr/customTextColor"
-                                android:textSize="16sp"
+                                android:textSize="@dimen/card_text_size"
                                 android:textStyle="bold"
                                 android:fontFamily="@font/montserrat"/>
 
@@ -361,7 +367,7 @@
                                 android:hint="@string/current_location"
                                 android:textColorHint="?attr/customTextColor"
                                 android:background="@null"
-                                android:textSize="15sp"
+                                android:textSize="@dimen/mini_text_size"
                                 android:inputType="textNoSuggestions"
                                 android:fontFamily="@font/montserrat"
                                 android:textColor="?attr/customTextColor"/>
@@ -376,7 +382,7 @@
                             android:gravity="end"
                             android:text="@string/your_location"
                             android:textColor="@color/colorPrimary"
-                            android:textSize="15sp"
+                            android:textSize="@dimen/mini_text_size"
                             android:fontFamily="@font/montserrat"
                             android:drawablePadding="10dp"
                             app:drawableRightCompat="@drawable/ic_baseline_location_on_24" />
@@ -403,7 +409,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/notes"
                                 android:textColor="?attr/customTextColor"
-                                android:textSize="16sp"
+                                android:textSize="@dimen/card_text_size"
                                 android:textStyle="bold"
                                 android:fontFamily="@font/montserrat"/>
 
@@ -414,7 +420,7 @@
                                 android:hint="@string/enter_notes"
                                 android:textColorHint="?attr/customTextColor"
                                 android:background="@null"
-                                android:textSize="15sp"
+                                android:textSize="@dimen/mini_text_size"
                                 android:fontFamily="@font/montserrat"
                                 android:textColor="?attr/customTextColor"
                                 android:inputType="textNoSuggestions" />
@@ -428,10 +434,10 @@
                             android:gravity="end"
                             android:text="@string/add_notes"
                             android:textColor="@color/colorPrimary"
-                            android:textSize="15sp"
-                            android:layout_marginEnd="30dp"
+                            android:textSize="@dimen/mini_text_size"
+                            android:layout_marginEnd="@dimen/drawer_padding_size"
                             android:fontFamily="@font/montserrat"
-                            android:drawablePadding="10dp"/>
+                            android:drawablePadding="@dimen/half_vertical_margin"/>
 
                     </LinearLayout>
 
@@ -444,7 +450,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginTop="12dp">
+                        android:layout_marginTop="@dimen/mini_margin_size">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -456,7 +462,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/document"
                                 android:textColor="?attr/customTextColor"
-                                android:textSize="16sp"
+                                android:textSize="@dimen/card_text_size"
                                 android:textStyle="bold"
                                 android:fontFamily="@font/montserrat"/>
 
@@ -470,9 +476,9 @@
                             android:gravity="end"
                             android:text="@string/attach"
                             android:textColor="@color/colorPrimary"
-                            android:textSize="15sp"
+                            android:textSize="@dimen/mini_text_size"
                             android:fontFamily="@font/montserrat"
-                            android:drawablePadding="10dp"
+                            android:drawablePadding="@dimen/half_vertical_margin"
                             app:drawableRightCompat="@drawable/ic_attachment" />
 
                     </LinearLayout>
@@ -490,16 +496,18 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:layout_marginHorizontal="10dp"
-                    android:layout_marginVertical="20dp">
+                    android:layout_marginHorizontal="@dimen/half_vertical_margin"
+                    android:layout_marginVertical="@dimen/drawer_padding_size">
 
                     <Button
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/item_vis_button_background"
                         android:text="@string/save"
+                        android:paddingVertical="@dimen/half_vertical_margin"
+                        android:fontFamily="@font/montserrat"
                         android:textAllCaps="false"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/card_text_size"
                         android:textColor="@color/colorPrimary"
                         android:id="@+id/idSaveStatus"/>
 
@@ -508,11 +516,13 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/item_vis_button_background"
                         android:text="@string/cancel"
-                        android:textSize="16sp"
+                        android:paddingVertical="@dimen/half_vertical_margin"
+                        android:fontFamily="@font/montserrat"
+                        android:textSize="@dimen/card_text_size"
                         android:textAllCaps="false"
                         android:textColor="@color/colorPrimary"
                         android:id="@+id/idCancelStatus"
-                        android:layout_marginTop="20dp"/>
+                        android:layout_marginTop="@dimen/drawer_padding_size"/>
 
                 </LinearLayout>
 
@@ -551,7 +561,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingVertical="10dp"
-                android:paddingHorizontal="40dp"
+                android:paddingHorizontal="30dp"
                 tools:ignore="MissingConstraints">
 
                 <Button
@@ -574,7 +584,6 @@
                     android:id="@+id/idTableBtnGeneral"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/button_weight_size"
-                    android:layout_margin="@dimen/button_horizontal_margin"
                     android:background="@drawable/background_table_section_button"
                     android:text="General"
                     android:textStyle="bold"
@@ -595,8 +604,8 @@
                     android:textStyle="bold"
                     android:fontFamily="@font/montserrat"
                     android:textSize="@dimen/card_text_size"
+                    android:layout_marginLeft="@dimen/button_horizontal_margin"
                     android:textAllCaps="false"
-                    android:layout_margin="@dimen/button_horizontal_margin"
                     android:textColor="@color/colorPrimary"
                     app:layout_constraintLeft_toRightOf="@id/idTableBtnGeneral"
                     app:layout_constraintRight_toLeftOf="@id/idTableBtnDVIR"

@@ -54,7 +54,7 @@ public class LGDDActivity extends BaseActivity{
 
         dayDaoViewModel.getMgetAllDays().observe(this, dayEntities -> {
             LGDDActivity.this.dayEntities = dayEntities;
-            dvirViewModel.getCurrentName().setValue(mParams);
+            dvirViewModel.getCurrentName().postValue(mParams);
             for (int i = 0; i < dayEntities.size(); i++) {
                 if (dayEntities.get(i).getDay().equals(mParams)){
                      index = i;
@@ -111,7 +111,7 @@ public class LGDDActivity extends BaseActivity{
                 index--;
                 currDay = dayEntities.get(index).getDay();
                 textFrag.setText(currDay);
-                dvirViewModel.getCurrentName().setValue(currDay);
+                dvirViewModel.getCurrentName().postValue(currDay);
                 EventBus.getDefault().postSticky(new ExampleSMSModel(currDay));
 
             }
@@ -122,7 +122,7 @@ public class LGDDActivity extends BaseActivity{
                 index++;
                 currDay = dayEntities.get(index).getDay();
                 textFrag.setText(currDay);
-                dvirViewModel.getCurrentName().setValue(currDay);
+                dvirViewModel.getCurrentName().postValue(currDay);
                 EventBus.getDefault().postSticky(new ExampleSMSModel(currDay));
             }
         });

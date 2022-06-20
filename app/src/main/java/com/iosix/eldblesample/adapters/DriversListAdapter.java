@@ -36,7 +36,7 @@ public class DriversListAdapter extends RecyclerView.Adapter<DriversListAdapter.
     @NonNull
     @Override
     public DriversViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.simple_vehicle_item,parent,false);
+        View view = LayoutInflater.from(context).inflate(R.layout.unit_item,parent,false);
         return new DriversViewHolder(view);
     }
 
@@ -54,7 +54,7 @@ public class DriversListAdapter extends RecyclerView.Adapter<DriversListAdapter.
 
         public DriversViewHolder(@NonNull View itemView) {
             super(itemView);
-            textView = itemView.findViewById(R.id.idVehicleItem);
+            textView = itemView.findViewById(R.id.idUnitItem);
         }
 
         void onBind(int i){

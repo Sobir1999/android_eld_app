@@ -63,32 +63,12 @@ public class SessionManager {
         return sharedPreferences.getString("Password","");
     }
 
-    public void saveSignature(Bitmap signature){
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        signature.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-
-        byte[] compressImage = baos.toByteArray();
-        String sEncodedImage = Base64.encodeToString(compressImage, Base64.DEFAULT);
-
-        sharedPreferences.edit().putString("keyStoredSignature",sEncodedImage).apply();
-    }
-
     public String fetchAccessToken(){
         return sharedPreferences.getString(USER_ACCESS_TOKEN, null);
     }
 
     public String fetchToken(){
         return sharedPreferences.getString(USER_TOKEN, null);
-    }
-
-    public Bitmap fetchSignature(){
-
-        String encodedImage = sharedPreferences.getString("keyStoredSignature",null);
-        if (encodedImage != null){
-            byte[] b = Base64.decode(encodedImage, Base64.DEFAULT);
-            return BitmapFactory.decodeByteArray(b, 0, b.length);
-        }
-        return null;
     }
 
     public void clearAccessToken(){
@@ -101,10 +81,6 @@ public class SessionManager {
         editor = sharedPreferences.edit();
         editor.remove(USER_TOKEN);
         editor.commit();
-    }
-
-    public void clearSignature(){
-        sharedPreferences.edit().remove("keyStoredSignature").commit();
     }
 
 }

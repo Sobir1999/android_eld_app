@@ -3,11 +3,10 @@ package com.iosix.eldblesample.adapters;
 import static com.iosix.eldblesample.enums.Day.getCurrentSeconds;
 
 import android.content.Context;
-import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,27 +21,36 @@ import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 import com.iosix.eldblesample.shared_prefs.DriverSharedPrefs;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.logging.LogRecord;
 
 public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerViewAdapter.LogViewHolder> {
 
-    private Context context;
-    private List<LogEntity> logEntities;
+    private final Context context;
+    private final List<LogEntity> logEntities;
+    private final ArrayList<LogEntity> logEntitiesCurr = new ArrayList<>();
     private TextView tv_log_id,tv_time_log,tv_timer_log,tv_location_log,tv_driving_log,dr_text;
     private ImageView im_more_icon,im_less_icon;
     private CardView dr_button;
     private ConstraintLayout idStatusContainer;
     private ConstraintLayout idLocationContainer;
     private DriverSharedPrefs driverSharedPrefs;
-    private String day;
+    private final String day;
     String time = "" + Calendar.getInstance().getTime();
     String today = time.split(" ")[1] + " " + time.split(" ")[2];
 
     public LogRecyclerViewAdapter(Context context, List<LogEntity> logEntities,String day){
         this.context = context;
         this.logEntities = logEntities;
+        logEntitiesCurr.clear();
+        for (int i = 0; i < logEntities.size(); i++) {
+            if (logEntities.get(i).getTime().equals(day)){
+                logEntitiesCurr.add(logEntities.get(i));
+            }
+            Log.d("Adverse Diving",logEntitiesCurr.size() + "");
+            Log.d("Adverse Diving",day + "11");
+        }
         this.day = day;
         driverSharedPrefs = DriverSharedPrefs.getInstance(context);
     }
@@ -62,12 +70,12 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
 
         int time = 0;
         if (day.equals(today)){
-            if (position < logEntities.size() - 1){
-                time = logEntities.get(position + 1).getSeconds()-logEntities.get(position).getSeconds();
+            if (position < logEntitiesCurr.size() - 1){
+                time = logEntitiesCurr.get(position + 1).getSeconds()-logEntitiesCurr.get(position).getSeconds();
 
-                holder.onBind(logEntities.get(position + 1));
+                holder.onBind(logEntitiesCurr.get(position + 1));
             }else {
-                switch (logEntities.get(logEntities.size()-1).getTo_status()){
+                switch (logEntitiesCurr.get(logEntitiesCurr.size()-1).getTo_status()){
                     case EnumsConstants.STATUS_OFF :
                         dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusOFF));
                         dr_text.setText(R.string.off);
@@ -92,26 +100,26 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
                         dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusONBold));
                         break;
                 }
-                if (logEntities.size() == 0){
+                if (logEntitiesCurr.size() == 0){
                     time = getCurrentSeconds();
                 }else {
                     time = getCurrentSeconds() - logEntities.get(position).getSeconds();
                 }
             }
         }else {
-            if (logEntities.size() == 0){
+            if (logEntitiesCurr.size() == 0){
                 dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusOFF));
                 dr_text.setText(R.string.off);
                 dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusOFFBold));
                 time = 86400;
 
             }else {
-                if (position < logEntities.size() - 1){
-                    time = logEntities.get(position + 1).getSeconds()-logEntities.get(position).getSeconds();
+                if (position < logEntitiesCurr.size() - 1){
+                    time = logEntitiesCurr.get(position + 1).getSeconds()-logEntitiesCurr.get(position).getSeconds();
 
-                    holder.onBind(logEntities.get(position + 1));
+                    holder.onBind(logEntitiesCurr.get(position + 1));
                 }else {
-                    switch (logEntities.get(position).getTo_status()){
+                    switch (logEntitiesCurr.get(position).getTo_status()){
                         case EnumsConstants.STATUS_OFF :
                             dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusOFF));
                             dr_text.setText(R.string.off);
@@ -136,10 +144,10 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
                             dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusONBold));
                             break;
                     }
-                    if (logEntities.size() == 1){
+                    if (logEntitiesCurr.size() == 1){
                         time = 86400;
                     }else {
-                        time = 86400 - logEntities.get(position).getSeconds();
+                        time = 86400 - logEntitiesCurr.get(position).getSeconds();
                     }
                 }
             }
@@ -163,10 +171,10 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
 
     @Override
     public int getItemCount() {
-        if (logEntities.size() == 0){
-            return logEntities.size() + 1;
+        if (logEntitiesCurr.size() == 0){
+            return 1;
         }else
-        return logEntities.size();
+        return logEntitiesCurr.size();
     }
 
     class LogViewHolder extends RecyclerView.ViewHolder {
@@ -183,15 +191,6 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
         }
 
         void onBind(LogEntity logEntity){
-            if (logEntity.getLocation() != null){
-                tv_location_log.setText(logEntity.getLocation());
-            }else {
-                tv_location_log.setText(driverSharedPrefs.getMainOffice());
-            }
-//            im_more_icon.setOnClickListener(view -> {
-//                idLocationContainer.setVisibility(View.VISIBLE);
-//            });
-//            tv_timer_log.setText(String.format("%s:%s", hour, minut));
             switch (logEntity.getFrom_status()){
                 case EnumsConstants.STATUS_OFF :
                     dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusOFF));

@@ -22,7 +22,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="50dp"
+                android:layout_marginHorizontal="@dimen/activity_padding_size"
                 tools:ignore="MissingConstraints">
 
                 <ImageView
@@ -43,7 +43,7 @@
                     android:text="@string/account"
                     android:textColor="#fff"
                     android:textStyle="bold"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/title_text_size"
                     android:fontFamily="@font/montserrat"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
@@ -60,8 +60,8 @@
         app:layout_constraintTop_toBottomOf="@id/idAppbar"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginHorizontal="50dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="@dimen/activity_padding_size"
+        android:layout_marginTop="@dimen/half_vertical_margin"
         android:background="@drawable/background_main_view"
         android:orientation="vertical">
 
@@ -70,10 +70,10 @@
             android:layout_height="wrap_content"
             android:text="@string/account"
             android:textStyle="bold"
-            android:textSize="19sp"
-            android:drawablePadding="8dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="12dp"
+            android:textSize="@dimen/title_text_size"
+            android:drawablePadding="@dimen/half_vertical_margin"
+            android:layout_marginStart="@dimen/card_view_corner_radius"
+            android:layout_marginTop="@dimen/mini_margin_size"
             android:fontFamily="@font/montserrat"
             android:textColor="?attr/customTextHintColor"
             app:drawableLeftCompat="@drawable/ic_abstract_user_flat_1" />
@@ -82,27 +82,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="16dp">
+            android:layout_marginHorizontal="@dimen/card_view_corner_radius"
+            android:layout_marginTop="@dimen/card_view_corner_radius">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/first_name"
-                android:textStyle="bold"
                 android:textColor="?attr/customTextHintColor"
                 android:fontFamily="@font/montserrat"
-                android:textSize="16sp"/>
+                android:textSize="@dimen/card_text_size"/>
 
             <TextView
                 android:id="@+id/idAccountFirstName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Axror"
-                android:textSize="16sp"
+                android:textSize="@dimen/card_text_size"
                 android:textColor="@color/colorPrimary"
                 android:fontFamily="@font/montserrat"
-                android:textStyle="bold"
                 android:layout_gravity="end"
                 android:gravity="end"/>
 
@@ -111,7 +109,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="0.8dp"
-            android:layout_marginHorizontal="16dp"
+            android:layout_marginHorizontal="@dimen/card_view_corner_radius"
             android:layout_marginTop="2dp"
             android:layout_marginBottom="4dp"
             android:background="?attr/customTextHintColor"/>
@@ -120,27 +118,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="16dp">
+            android:layout_marginHorizontal="@dimen/card_view_corner_radius"
+            android:layout_marginTop="@dimen/card_view_corner_radius">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/last_name"
-                android:textStyle="bold"
                 android:textColor="?attr/customTextHintColor"
                 android:fontFamily="@font/montserrat"
-                android:textSize="16sp"/>
+                android:textSize="@dimen/card_text_size"/>
 
             <TextView
                 android:id="@+id/idAccountLastName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Jo'rayev"
-                android:textSize="16sp"
+                android:textSize="@dimen/card_text_size"
                 android:textColor="@color/colorPrimary"
                 android:fontFamily="@font/montserrat"
-                android:textStyle="bold"
                 android:layout_gravity="end"
                 android:gravity="end"/>
 
@@ -149,7 +145,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="0.8dp"
-            android:layout_marginHorizontal="16dp"
+            android:layout_marginHorizontal="@dimen/card_view_corner_radius"
             android:layout_marginTop="2dp"
             android:layout_marginBottom="4dp"
             android:background="?attr/customTextHintColor"/>
@@ -158,27 +154,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="16dp">
+            android:layout_marginHorizontal="@dimen/card_view_corner_radius"
+            android:layout_marginTop="@dimen/card_view_corner_radius">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/phone_number"
-                android:textStyle="bold"
                 android:textColor="?attr/customTextHintColor"
                 android:fontFamily="@font/montserrat"
-                android:textSize="16sp"/>
+                android:textSize="@dimen/card_text_size"/>
 
             <TextView
                 android:id="@+id/idAccountPhoneNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="+998949495199"
-                android:textSize="16sp"
+                android:textSize="@dimen/card_text_size"
                 android:textColor="@color/colorPrimary"
                 android:fontFamily="@font/montserrat"
-                android:textStyle="bold"
                 android:layout_gravity="end"
                 android:gravity="end"/>
 
@@ -187,10 +181,10 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="0.8dp"
-            android:layout_marginHorizontal="16dp"
+            android:layout_marginHorizontal="@dimen/card_view_corner_radius"
             android:layout_marginTop="2dp"
             android:background="?attr/customTextHintColor"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="@dimen/card_view_corner_radius"/>
 
     </LinearLayout>
 

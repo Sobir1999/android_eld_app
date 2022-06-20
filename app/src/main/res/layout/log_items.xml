@@ -23,20 +23,20 @@
             android:text="@string/_1"
             android:fontFamily="@font/montserrat"
             android:textStyle="bold"
-            android:textSize="13sp"
+            android:textSize="@dimen/mini_text_size"
             android:textColor="?attr/customTextHintColor"/>
 
 
         <androidx.cardview.widget.CardView
             android:id="@+id/dr_button"
-            android:layout_width="40dp"
-            android:layout_height="20dp"
+            android:layout_width="@dimen/card_icon_size"
+            android:layout_height="@dimen/drawer_padding_size"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@id/tv_log_id"
             app:cardBackgroundColor="@color/colorStatusDR"
-            app:cardCornerRadius="8dp"
-            android:layout_marginStart="10dp">
+            app:cardCornerRadius="@dimen/half_vertical_margin"
+            android:layout_marginStart="@dimen/half_vertical_margin">
 
            <TextView
                android:id="@+id/dr_text"
@@ -44,8 +44,8 @@
                android:layout_height="wrap_content"
                android:text="@string/dr"
                android:fontFamily="@font/montserrat"
-               android:textSize="11sp"
-               android:layout_marginHorizontal="5dp"
+               android:textSize="@dimen/mini_text_size"
+               android:layout_marginHorizontal="@dimen/card_padding_size"
                android:layout_gravity="center"
                android:textColor="#117815"/>
 
@@ -63,8 +63,8 @@
             android:textColor="?attr/customTextColor"
             android:textStyle="bold"
             android:fontFamily="@font/montserrat"
-            android:layout_marginStart="10dp"
-            android:textSize="12sp"/>
+            android:layout_marginStart="@dimen/half_vertical_margin"
+            android:textSize="@dimen/mini_text_size"/>
 
         <TextView
             android:id="@+id/tv_space"
@@ -75,10 +75,10 @@
             app:layout_constraintLeft_toRightOf="@id/tv_time_log"
             android:text="@string/space"
             android:textColor="?attr/customTextHintColor"
-            android:textSize="12sp"
+            android:textSize="@dimen/mini_text_size"
             android:fontFamily="@font/montserrat"
             android:textStyle="bold"
-            android:layout_marginStart="5dp"/>
+            android:layout_marginStart="@dimen/card_padding_size"/>
 
         <TextView
             android:id="@+id/tv_timer_log"
@@ -88,14 +88,15 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@id/tv_space"
             android:text="@string/_5h_45m"
+            android:fontFamily="@font/montserrat"
             android:textColor="?attr/customTextHintColor"
-            android:textSize="13sp"
+            android:textSize="@dimen/mini_text_size"
             android:layout_marginStart="5dp"/>
 
         <ImageView
             android:id="@+id/idLogBottomArrow"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="@dimen/drawer_icon_size"
+            android:layout_height="@dimen/drawer_icon_size"
             android:src="@drawable/keyboard_bottom_arrow"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -113,13 +114,13 @@
 
         <ImageView
             android:id="@+id/iv_location"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="@dimen/drawer_padding_size"
+            android:layout_height="@dimen/drawer_padding_size"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:src="@drawable/location_blue"
-            android:layout_marginStart="15dp" />
+            android:layout_marginStart="@dimen/card_view_corner_radius" />
 
         <TextView
             android:id="@+id/tv_location_log"
@@ -130,8 +131,8 @@
             app:layout_constraintLeft_toRightOf="@id/iv_location"
             android:text="@string/_20mi_e_grass_valley_ca"
             android:textColor="?attr/customTextHintColor"
-            android:layout_marginStart="15dp"
-            android:textSize="13sp"/>
+            android:layout_marginStart="@dimen/card_view_corner_radius"
+            android:textSize="@dimen/mini_text_size"/>
 
         <View
             android:background="@color/colorBackgroundMainView"
@@ -140,7 +141,7 @@
             app:layout_constraintTop_toBottomOf="@id/tv_location_log"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="@dimen/quarter_vertical_margin"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

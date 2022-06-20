@@ -129,7 +129,6 @@ public class DVIRFragment extends Fragment {
 
 
         dvirViewModel.getCurrentName().observe(getViewLifecycleOwner(), s -> {
-
                 dvirViewModel.getMgetDvirs().observe(getViewLifecycleOwner(),dvirEntities1 -> {
                     adapter = new DvirlistAdapter(requireContext(),dvirEntities1,s);
                     dvir_recyclerview.setAdapter(adapter);
