@@ -2,8 +2,6 @@ package com.iosix.eldblesample.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LifecycleRegistry;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.iosix.eldblesample.R;
@@ -31,7 +23,6 @@ import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLastAdapter.ViewHolder> {
     private List<DayEntity> dayEntities;

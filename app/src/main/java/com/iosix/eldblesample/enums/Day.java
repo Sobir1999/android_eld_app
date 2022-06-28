@@ -45,4 +45,18 @@ public class Day {
         formatter.setTimeZone(TimeZone.getDefault());
         return formatter.parse(s + " " + Calendar.getInstance().get(Calendar.YEAR)).toInstant().atZone(ZoneId.systemDefault()).toString();
     }
+
+    public static String intToTime(int i){
+        int hour = i/3600;
+        int minut = (i - hour*3600)/60;
+        if (hour < 10 && minut < 10){
+            return "0" + hour + ":" + "0" + minut;
+        }else if (hour < 10){
+            return "0" + hour + ":" + minut;
+        }else if (minut < 10){
+            return hour + ":" + "0" + minut;
+        }else {
+            return hour + ":" + minut;
+        }
+    }
 }

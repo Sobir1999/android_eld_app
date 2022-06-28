@@ -55,6 +55,26 @@ public class UserData {
         return userPref.getBoolean("isDark",false);
     }
 
+    public void saveStartTime(int startTime){
+        editor = userPref.edit();
+        editor.putInt("startTime", startTime);
+        editor.apply();
+    }
+
+    public int getStartTime(){
+        return userPref.getInt("startTime",10);
+    }
+
+    public void saveEndTime(int endTime){
+        editor = userPref.edit();
+        editor.putInt("endTime", endTime);
+        editor.apply();
+    }
+
+    public int getEndTime(){
+        return userPref.getInt("endTime",6);
+    }
+
     public void saveAutoSwitch(boolean isAutoSwitch){
         editor = userPref.edit();
         editor.putBoolean("isAutoSwitch", isAutoSwitch);

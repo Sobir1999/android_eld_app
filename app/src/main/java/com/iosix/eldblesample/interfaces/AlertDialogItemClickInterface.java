@@ -4,4 +4,6 @@ public interface AlertDialogItemClickInterface {
     void onClickConnect();
 
     void onClickDisCocnnect();
+
+    void onClickCancel();
 }

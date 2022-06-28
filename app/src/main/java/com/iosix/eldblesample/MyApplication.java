@@ -31,7 +31,7 @@ public class MyApplication extends Application {
     public static Context context;
     public static UserData userData;
     public static SharedPreferences sharedPreferences;
-    public static ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+    public static ScheduledExecutorService executorService = Executors.newScheduledThreadPool(4);
     @Override
     public void onCreate() {
         super.onCreate();

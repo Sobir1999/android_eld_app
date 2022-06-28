@@ -1,5 +1,10 @@
 package com.iosix.eldblesample.customViews;
 
+import static com.iosix.eldblesample.MyApplication.userData;
+import static com.iosix.eldblesample.activity.RecapActivity.drTime;
+import static com.iosix.eldblesample.activity.RecapActivity.offTime;
+import static com.iosix.eldblesample.activity.RecapActivity.onTime;
+import static com.iosix.eldblesample.activity.RecapActivity.sbTime;
 import static com.iosix.eldblesample.enums.Day.getCurrentSeconds;
 
 import android.annotation.SuppressLint;
@@ -7,6 +12,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -65,6 +71,7 @@ public class CustomLiveRulerChart extends CustomRulerChart {
         int off = 0, sb = 0, dr = 0, on = 0;
 
         int start = 0;
+
 
         for (int i = 0; i < arrayList.size(); i++) {
             startY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * arrayList.get(i).getFrom_status()) / 4;
@@ -163,4 +170,5 @@ public class CustomLiveRulerChart extends CustomRulerChart {
         s = String.format("%02dh %02dm", hour, min);
         return s;
     }
+
 }

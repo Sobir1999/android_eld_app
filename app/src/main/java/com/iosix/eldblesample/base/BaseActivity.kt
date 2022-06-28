@@ -29,7 +29,7 @@ abstract class BaseActivity : AppCompatActivity() {
     var toolbar: Toolbar? = null
         private set
     private var bundle: Bundle? = null
-    private var userData: UserData? = null
+    var userData: UserData? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,8 +48,8 @@ abstract class BaseActivity : AppCompatActivity() {
             if (userData!!.autoSwitch) {
                 if (userData!!.mode){
                     if (Calendar.getInstance().time
-                            .hours >= 22 || Calendar.getInstance().time
-                            .hours <= 6
+                            .hours >= userData!!.startTime || Calendar.getInstance().time
+                            .hours <= userData!!.endTime
                     ) {
                         runOnUiThread { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES) }
                     } else {

@@ -52,24 +52,33 @@ public class ConnectToEldDialog extends Dialog {
         idIsConnected.setText(lastStatusData);
         idEngineState.setText(engineState);
 
-        if (lastStatusData.equals("CONNECTED")){
-            connect.setText(R.string.disconnect);
-        }else {
-            connect.setText(R.string.connect);
+        if (lastStatusData.equals("DISCONNECTED")){
+
+            disconnect.setClickable(false);
+            connect.setClickable(true);
+            disconnect.setTextColor(getContext().getResources().getColor(R.color.colorStatusON));
+            connect.setTextColor(getContext().getResources().getColor(R.color.colorStatusONBold));
+            connect.setOnClickListener(v -> {
+                if (alerrtDialogItemClickInterface != null) {
+                    alerrtDialogItemClickInterface.onClickConnect();
+                }
+            });
+        }else if (lastStatusData.equals("CONNECTED")){
+            disconnect.setClickable(true);
+            connect.setClickable(false);
+            connect.setTextColor(getContext().getResources().getColor(R.color.colorStatusON));
+            disconnect.setTextColor(getContext().getResources().getColor(R.color.colorStatusONBold));
+            disconnect.setOnClickListener(v -> {
+                if (alerrtDialogItemClickInterface != null) {
+                    alerrtDialogItemClickInterface.onClickDisCocnnect();
+                }
+            });
         }
 
-        connect.setOnClickListener(v -> {
+        cancel.setOnClickListener(v -> {
             if (alerrtDialogItemClickInterface != null) {
-                alerrtDialogItemClickInterface.onClickConnect();
+                alerrtDialogItemClickInterface.onClickCancel();
             }
         });
-
-        disconnect.setOnClickListener(v -> {
-            if (alerrtDialogItemClickInterface != null) {
-                alerrtDialogItemClickInterface.onClickDisCocnnect();
-            }
-        });
-
-        cancel.setOnClickListener(v -> cancel());
     }
 }

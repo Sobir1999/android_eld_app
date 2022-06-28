@@ -1,6 +1,7 @@
 package com.iosix.eldblesample.activity;
 
 import static androidx.lifecycle.ProcessLifecycleOwner.get;
+import static com.iosix.eldblesample.MyApplication.executorService;
 import static com.iosix.eldblesample.MyApplication.userData;
 import static com.iosix.eldblesample.enums.Day.getCurrentSeconds;
 
@@ -23,7 +24,6 @@ import android.location.Geocoder;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
@@ -35,6 +35,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -52,7 +53,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -128,6 +128,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -166,15 +167,13 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     private DriverSharedPrefs driverSharedPrefs;
     private NetworkConnectionLiveData networkConnectionLiveData;
     private APIInterface apiInterface;
-    int currentMinute;
-    int currentSecond;
-    int lastMinute = 0;
-    int lastSecond = -1;
     double speed = -1;
-    int startseq, endseq;
+    int aliveTime = 0;
+    boolean isPaused;
+    boolean isDriving = true;
+    int startseq, endseq = 31;
     String eldState = "DISCONNECTED";
     String engineState = "ENGINE_INVALID";
-    MutableLiveData<Double> mutableLiveData = new MutableLiveData<>();
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
     PendingResult<LocationSettingsResult> result;
@@ -212,7 +211,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.clear();
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -283,20 +281,13 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         update();
 
         getAllDrivers();
+        getUiAliveTime();
+
+
 
 //        sendLocalData();
-//        manageStatusState();
+        manageStatusState();
         dateFormat=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-
-        mutableLiveData.observe(this,mutableLiveData ->{
-            Handler handler = new Handler();
-            Runnable runnable = this::manageStatusState;
-            if (mutableLiveData == 0.0){
-                handler.postDelayed(runnable,10000);
-            }else {
-                handler.removeCallbacks(runnable);
-            }
-        });
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
@@ -310,19 +301,58 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             onUserInteraction();
+            aliveTime = 0;
         }
         if (getWindow().superDispatchTouchEvent(ev)) {
         }
         return onTouchEvent(ev);
     }
 
+    private void getUiAliveTime(){
+        Runnable runnable = () -> {
+            if (!isPaused){
+                if (aliveTime != 600){
+                    aliveTime++;
+                }else {
+                    runOnUiThread(() -> {
+                        aliveTime = 0;
+                        Intent intent = new Intent(MainActivity.this,RecapActivity.class);
+                        intent.putExtra("currStatus",last_status);
+                        startActivity(intent);
+                    });
+                }
+            }
+        };
+        executorService.scheduleAtFixedRate(runnable,1,1,TimeUnit.SECONDS);
+    }
 
     private void manageStatusState(){
 
-        Dialog dialog = new ManageStatusDialog(MainActivity.this,eldJsonViewModel,statusDaoViewModel,latitude,longtitude);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.show();
+        Runnable runnable = () -> {
+            dateFormat=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+            if (last_status == EnumsConstants.STATUS_DR && speed == 0.0 && !isDriving){
+                isDriving = true;
+                Log.d("Adverse Diving",last_status + "A");
+                runOnUiThread(() ->{
+                    Toast.makeText(MainActivity.this, speed + "",Toast.LENGTH_LONG).show();
+                    Dialog dialog = new ManageStatusDialog(MainActivity.this,eldJsonViewModel,statusDaoViewModel,latitude,longtitude);
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialog.show();
+                });
+            }else if (last_status != EnumsConstants.STATUS_DR && speed > 3 && isDriving){
+                isDriving = false;
+                runOnUiThread(() -> {
+                    Toast.makeText(MainActivity.this, speed + "",Toast.LENGTH_LONG).show();
+                });
+                eldJsonViewModel.postStatus(new Status("DR",new Point("Point",null)
+                        ,"dr", dateFormat.format(Calendar.getInstance().getTime())));
 
+                statusDaoViewModel.insertStatus(new LogEntity(last_status, EnumsConstants.STATUS_DR,null,
+                        "dr", null, dateFormat.format(Calendar.getInstance().getTime()), getCurrentSeconds()));
+            }
+        };
+
+        executorService.scheduleAtFixedRate(runnable,2,10,TimeUnit.SECONDS);
     }
 
     private void sendApkVersion() {
@@ -965,6 +995,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                 Toast.makeText(this, "Share" + daysArray.size(), Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.connectMenu:
+                isPaused = false;
                 connectToEld();
                 return true;
             default:
@@ -1000,6 +1031,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
+                isPaused = true;
                 try {
                     InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
@@ -1011,6 +1043,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+                isPaused = false;
                 try {
                     InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
@@ -1070,6 +1103,12 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             @Override
             public void onClickDisCocnnect() {
                 mEldManager.DisconnectEld();
+                eldState = "DISCONNECTED";
+                dialog.cancel();
+            }
+
+            @Override
+            public void onClickCancel() {
                 dialog.cancel();
             }
         });
@@ -1137,13 +1176,14 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
             mEldManager.EnableFuelData();
             mEldManager.UpdateSubscribedRecordTypes(subscribedRecords);
 
-            runOnUiThread(() ->{
-                if (dataRec instanceof EldBufferRecord){
-                    startseq = ((EldBufferRecord) dataRec).getStartSeqNo();
-                    endseq = ((EldBufferRecord) dataRec).getEndSeqNo();
-                } else if (RecordType != EldBroadcastTypes.ELD_DATA_RECORD){
 
-                }else {
+            if (dataRec instanceof EldBufferRecord){
+                startseq = ((EldBufferRecord) dataRec).getStartSeqNo();
+                endseq = ((EldBufferRecord) dataRec).getEndSeqNo();
+            } else if (RecordType != EldBroadcastTypes.ELD_DATA_RECORD){
+
+            }else {
+                if (((EldDataRecord)dataRec).getSequence() % 30 == 1){
                     DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ",Locale.getDefault());
                     Boolean b = null;
                     if(((EldDataRecord) dataRec).getEngineState() == EldEngineStates.ENGINE_OFF){
@@ -1175,31 +1215,16 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                     )).enqueue(new Callback<LiveDataRecord>() {
                         @Override
                         public void onResponse(Call<LiveDataRecord> call, Response<LiveDataRecord> response) {
-                            if (!response.isSuccessful()){
-                                try {
-                                    Toast.makeText(MainActivity.this,response.errorBody().string(),Toast.LENGTH_LONG).show();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }else {
-                                Toast.makeText(MainActivity.this,"Response is Successfull",Toast.LENGTH_LONG).show();
-                            }
+
                         }
 
                         @Override
                         public void onFailure(Call<LiveDataRecord> call, Throwable t) {
-                            Toast.makeText(MainActivity.this,t.getMessage(),Toast.LENGTH_LONG).show();
+
                         }
                     });
-
-//                    try {
-//                        sleep(10000);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-
                 }
-            });
+            }
         }
     };
 
@@ -1355,14 +1380,23 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        isPaused = false;
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
+        isPaused = true;
         this.getViewModelStore().clear();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        isPaused = true;
+        this.getViewModelStore().clear();
     }
 
     @Override

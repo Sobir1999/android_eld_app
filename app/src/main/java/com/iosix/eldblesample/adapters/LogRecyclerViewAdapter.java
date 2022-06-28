@@ -48,8 +48,6 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
             if (logEntities.get(i).getTime().equals(day)){
                 logEntitiesCurr.add(logEntities.get(i));
             }
-            Log.d("Adverse Diving",logEntitiesCurr.size() + "");
-            Log.d("Adverse Diving",day + "11");
         }
         this.day = day;
         driverSharedPrefs = DriverSharedPrefs.getInstance(context);
@@ -69,6 +67,7 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
         tv_log_id.setText(String.valueOf(position+1));
 
         int time = 0;
+
         if (day.equals(today)){
             if (position < logEntitiesCurr.size() - 1){
                 time = logEntitiesCurr.get(position + 1).getSeconds()-logEntitiesCurr.get(position).getSeconds();
@@ -152,6 +151,7 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
                 }
             }
         }
+
         int hour = time/3600;
         int minut = (time - hour*3600)/60;
         if (hour<10){

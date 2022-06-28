@@ -34,7 +34,7 @@ public class ForegroundService extends Service {
 
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(
-                this, 0, notificationIntent, 0);
+                this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         // You must create the channel to show the notification on Android 8.0 and higher versions
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
