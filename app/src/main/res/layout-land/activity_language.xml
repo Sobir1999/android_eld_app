@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?attr/customBgViewColor"
+    android:fitsSystemWindows="true"
+    tools:context=".activity.LanguageActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        style="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:id="@+id/idAppbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints">
+
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="@dimen/card_padding_size"
+                android:layout_marginHorizontal="@dimen/activity_padding_size"
+                tools:ignore="MissingConstraints">
+
+                <ImageView
+                    android:id="@+id/idImageBack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/fragment_back"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/idTextFrag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/montserrat"
+                    android:textSize="@dimen/title_text_size"
+                    android:text="@string/languages"
+                    android:textColor="#fff"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    style="@style/TextAppearance.AppCompat.Widget.ActionMode.Title"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/idSaveLanguage"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:textColor="#fff"
+                    android:fontFamily="@font/montserrat"
+                    android:textSize="@dimen/card_text_size"
+                    android:drawablePadding="@dimen/card_padding_size"
+                    style="@style/TextAppearance.AppCompat.Menu"
+                    android:text="@string/save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/half_vertical_margin"
+        android:layout_marginHorizontal="@dimen/activity_padding_size"
+        android:padding="@dimen/card_view_corner_radius"
+        android:background="@drawable/language_layout_bg">
+
+        <RadioGroup
+            android:id="@+id/idLangRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/idRadioEnglish"
+                android:text="@string/english"
+                android:textSize="@dimen/card_text_size"
+                android:layoutDirection="rtl"
+                android:textAlignment="textStart"
+                android:layout_gravity="start"
+                android:textStyle="bold"
+                android:fontFamily="@font/montserrat"
+                android:theme="@style/MyRadioButton"
+                android:textColor="?attr/customTextHintColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.8dp"
+                android:layout_marginBottom="@dimen/card_padding_size"
+                android:background="?attr/customBgViewColor"/>
+
+            <RadioButton
+                android:id="@+id/idRadioFrench"
+                android:text="@string/french"
+                android:textSize="@dimen/card_text_size"
+                android:layoutDirection="rtl"
+                android:textAlignment="textStart"
+                android:layout_gravity="start"
+                android:textStyle="bold"
+                android:fontFamily="@font/montserrat"
+                android:theme="@style/MyRadioButton"
+                android:textColor="?attr/customTextHintColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.8dp"
+                android:layout_marginBottom="@dimen/card_padding_size"
+                android:background="?attr/customBgViewColor"/>
+
+            <RadioButton
+                android:id="@+id/idRadioSpain"
+                android:text="@string/spanish"
+                android:textSize="@dimen/card_text_size"
+                android:layoutDirection="rtl"
+                android:textAlignment="textStart"
+                android:layout_gravity="start"
+                android:textStyle="bold"
+                android:fontFamily="@font/montserrat"
+                android:theme="@style/MyRadioButton"
+                android:textColor="?attr/customTextHintColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.8dp"
+                android:layout_marginBottom="@dimen/card_padding_size"
+                android:background="?attr/customBgViewColor"/>
+
+            <RadioButton
+                android:id="@+id/idRadioRussian"
+                android:text="@string/russian"
+                android:textSize="@dimen/card_text_size"
+                android:layoutDirection="rtl"
+                android:textAlignment="textStart"
+                android:layout_gravity="start"
+                android:textStyle="bold"
+                android:fontFamily="@font/montserrat"
+                android:theme="@style/MyRadioButton"
+                android:textColor="?attr/customTextHintColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.8dp"
+                android:layout_marginBottom="@dimen/card_padding_size"
+                android:background="?attr/customBgViewColor"/>
+
+            <RadioButton
+                android:id="@+id/idRadioUzbek"
+                android:text="@string/uzbek"
+                android:textSize="@dimen/card_text_size"
+                android:layoutDirection="rtl"
+                android:textAlignment="textStart"
+                android:layout_gravity="start"
+                android:textStyle="bold"
+                android:fontFamily="@font/montserrat"
+                android:theme="@style/MyRadioButton"
+                android:textColor="?attr/customTextHintColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.8dp"
+                android:layout_marginBottom="@dimen/card_padding_size"
+                android:background="?attr/customBgViewColor"/>
+        </RadioGroup>
+
+    </LinearLayout>
+
+</LinearLayout>
