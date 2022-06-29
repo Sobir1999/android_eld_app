@@ -22,13 +22,11 @@ public class ConnectToEldDialog extends Dialog {
     private ConstraintLayout undintifiedDriving, faultCode;
     private TextView connect, cancel,idEldConnection,idIsConnected,idEngineState,disconnect;
     private AlertDialogItemClickInterface alerrtDialogItemClickInterface;
-    private final String lastStatusData;
-    private final String engineState;
+    private final int eldConnectionState;
 
-    public ConnectToEldDialog(@NonNull Context context,String lastStatusData,String engineState) {
+    public ConnectToEldDialog(@NonNull Context context,int eldConnectionState) {
         super(context);
-        this.lastStatusData = lastStatusData;
-        this.engineState = engineState;
+        this.eldConnectionState = eldConnectionState;
     }
 
     public void setAlerrtDialogItemClickInterface(AlertDialogItemClickInterface alerrtDialogItemClickInterface) {
@@ -49,11 +47,10 @@ public class ConnectToEldDialog extends Dialog {
         idEngineState = findViewById(R.id.idEngineState);
         disconnect = findViewById(R.id.idEldDialDisconnect);
 
-        idIsConnected.setText(lastStatusData);
-        idEngineState.setText(engineState);
 
-        if (lastStatusData.equals("DISCONNECTED")){
 
+        if (eldConnectionState == 0){
+            idIsConnected.setText("DISCONNECTED");
             disconnect.setClickable(false);
             connect.setClickable(true);
             disconnect.setTextColor(getContext().getResources().getColor(R.color.colorStatusON));
@@ -63,7 +60,8 @@ public class ConnectToEldDialog extends Dialog {
                     alerrtDialogItemClickInterface.onClickConnect();
                 }
             });
-        }else if (lastStatusData.equals("CONNECTED")){
+        }else if (eldConnectionState == 2){
+            idIsConnected.setText("CONNECTED");
             disconnect.setClickable(true);
             connect.setClickable(false);
             connect.setTextColor(getContext().getResources().getColor(R.color.colorStatusON));

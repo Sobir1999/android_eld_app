@@ -58,6 +58,7 @@
             app:layout_constraintTop_toBottomOf="@+id/idTrailerView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:padding="5dp"
             app:layout_constraintBottom_toTopOf="@+id/idTrailerView2"
             android:id="@+id/idRecyclerViewUnit"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>

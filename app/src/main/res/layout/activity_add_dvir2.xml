@@ -25,7 +25,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/activity_padding_size"
+                android:layout_marginEnd="20dp"
                 tools:ignore="MissingConstraints">
 
                 <ImageView
@@ -83,7 +83,7 @@
             android:orientation="vertical"
             android:layout_marginTop="@dimen/half_vertical_margin"
             android:background="@drawable/background_main_view"
-            android:layout_marginHorizontal="@dimen/activity_padding_size"
+            android:layout_marginHorizontal="10dp"
             tools:ignore="MissingConstraints">
 
             <androidx.cardview.widget.CardView

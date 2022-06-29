@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -24,6 +25,7 @@ import android.location.Geocoder;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
@@ -35,7 +37,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -137,6 +138,7 @@ import retrofit2.Response;
 public class MainActivity extends BaseActivity implements TimePickerDialog.OnTimeSetListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
+    int i =0;
     private DrawerLayout drawerLayout;
     private Toolbar activity_main_toolbar;
     private CardView off, sb, dr, on;
@@ -172,8 +174,6 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
     boolean isPaused;
     boolean isDriving = true;
     int startseq, endseq = 31;
-    String eldState = "DISCONNECTED";
-    String engineState = "ENGINE_INVALID";
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
     PendingResult<LocationSettingsResult> result;
@@ -236,6 +236,41 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         drawerLayout = findViewById(R.id.drawer_layout);
         RecyclerView last_recycler_view = findViewById(R.id.idRecyclerView);
         customRulerChart = findViewById(R.id.idCustomLiveChart);
+
+        int orientations = this.getResources().getConfiguration().orientation;
+//        btn = findViewById(R.id.idFABAddDvir);
+//        btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (orientations == Configuration.ORIENTATION_PORTRAIT) {
+//                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//                } else if (orientations == Configuration.ORIENTATION_LANDSCAPE) {
+//                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//                }
+//            }
+//        });
+
+        customRulerChart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                i++;
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (i == 2) {
+                            if (orientations == Configuration.ORIENTATION_PORTRAIT) {
+                                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                            } else if (orientations == Configuration.ORIENTATION_LANDSCAPE) {
+                                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                            }
+                        }
+                        i=0;
+                    }
+                }, 500);
+            }
+        });
+
 
         daoViewModel.getMgetAllDays().observe(this, dayEntities -> {
 
@@ -1089,32 +1124,32 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         final SearchEldDeviceDialog searchEldDeviceDialog = new SearchEldDeviceDialog(MainActivity.this);
         searchEldDeviceDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-            final ConnectToEldDialog dialog = new ConnectToEldDialog(this,eldState,engineState);
+        dvirViewModel.getEldConnectionState().observe(MainActivity.this,getEldConnectionState ->{
+            final ConnectToEldDialog dialog = new ConnectToEldDialog(this,getEldConnectionState);
             dialog.setCancelable(false);
 
-        dialog.setAlerrtDialogItemClickInterface(new AlertDialogItemClickInterface() {
-            @Override
-            public void onClickConnect() {
-                ScanForEld();
-                dialog.cancel();
-                searchEldDeviceDialog.show();
-            }
+            dialog.setAlerrtDialogItemClickInterface(new AlertDialogItemClickInterface() {
+                @Override
+                public void onClickConnect() {
+                    ScanForEld();
+                    dialog.cancel();
+                    searchEldDeviceDialog.show();
+                }
 
-            @Override
-            public void onClickDisCocnnect() {
-                mEldManager.DisconnectEld();
-                eldState = "DISCONNECTED";
-                dialog.cancel();
-            }
+                @Override
+                public void onClickDisCocnnect() {
+                    mEldManager.DisconnectEld();
+                    dialog.cancel();
+                }
 
-            @Override
-            public void onClickCancel() {
-                dialog.cancel();
-            }
+                @Override
+                public void onClickCancel() {
+                    dialog.cancel();
+                }
+            });
+
+            dialog.show();
         });
-
-        dialog.show();
-
     }
 
     /**
@@ -1159,6 +1194,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
         @Override
         public void onConnectionStateChange(final int newState) {
             runOnUiThread(() -> {
+                dvirViewModel.getEldConnectionState().postValue(newState);
                 //todo mDataView.append("New State of connection" + Integer.toString(newState, 10) + "\n");
                 EventBus.getDefault().postSticky(new MessageModel(newState + "", ""));
             });
@@ -1244,15 +1280,12 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                 EldBleError res = mEldManager.ConnectToEld(bleDataCallback, subscribedRecords, bleConnectionStateChangeCallback);
 
                 if (res != EldBleError.SUCCESS) {
-                    eldState = "DISCONNECTED";
                     runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("Connection Failed\n", "")));
                 }else {
-                    eldState = "CONNECTED";
                     runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("Conncected to Eld\n", "")));
                 }
 
             } else {
-                eldState = "DISCONNECTED";
                 runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("No ELD found\n", "")));
             }
         }
@@ -1273,16 +1306,13 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                 EldBleError res = mEldManager.ConnectToEld(bleDataCallback, subscribedRecords, bleConnectionStateChangeCallback, strDevice);
                 if (res != EldBleError.SUCCESS) {
                     runOnUiThread(() ->{
-                        eldState = "DISCONNECTED";
                         EventBus.getDefault().postSticky(new MessageModel("Connection Failed\n", ""));
                     });
                 } else {
-                    eldState = "CONNECTED";
                     runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("Conncected to Eld\n", "")));
                 }
 
             } else {
-                eldState = "DISCONNECTED";
                 runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("No ELD found\n", "")));
             }
         }

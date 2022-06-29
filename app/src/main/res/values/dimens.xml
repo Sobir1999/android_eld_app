@@ -20,6 +20,7 @@
     <dimen name="card_image_size">32dp</dimen>
     <dimen name="toolbar_padding_size">34dp</dimen>
     <dimen name="activity_padding_size">50dp</dimen>
+    <dimen name="activity_padding_size_land">10dp</dimen>
     <dimen name="normal_text_size">14sp</dimen>
     <dimen name="mini_text_size">12sp</dimen>
     <dimen name="mini_margin_size">12dp</dimen>
@@ -36,6 +37,10 @@
     <dimen name="signature_height_size">140dp</dimen>
     <dimen name="custom_dialog_width">400dp</dimen>
     <dimen name="dvir_margin_size">70dp</dimen>
-    <dimen name="custom_table_text_size">6.7dsp</dimen>
-    <dimen name="custom_table_time_size">6dsp</dimen>
+    <dimen name="custom_table_text_size">4.5dsp</dimen>
+    <dimen name="custom_table_time_size">4dsp</dimen>
+    <dimen name="custom_table_text_size_land">9dsp</dimen>
+    <dimen name="custom_table_time_size_land">8dsp</dimen>
+    <dimen name="layout_progress_bar_size">120dp</dimen>
+    <dimen name="progress_bar_text_size">17sp</dimen>
 </resources>

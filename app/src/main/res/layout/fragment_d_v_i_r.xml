@@ -14,7 +14,7 @@
         android:id="@+id/idDVIRContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginHorizontal="@dimen/activity_padding_size"
+        android:layout_marginHorizontal="10dp"
         android:layout_marginVertical="@dimen/mini_margin_size"
         android:background="@drawable/background_main_view"
         app:layout_constraintEnd_toEndOf="parent"
@@ -30,9 +30,11 @@
             android:orientation="vertical"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -56,13 +58,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:paddingHorizontal="@dimen/card_icon_size"
                 android:layout_marginTop="@dimen/half_vertical_margin"
-                android:paddingVertical="@dimen/half_vertical_margin"
-                android:textSize="@dimen/card_text_size"
                 android:background="@drawable/button_bg"
+                android:paddingHorizontal="@dimen/card_icon_size"
+                android:paddingVertical="@dimen/half_vertical_margin"
                 android:text="@string/create"
-                android:textColor="@color/colorPrimary" />
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/card_text_size" />
 
         </LinearLayout>
 
@@ -83,8 +85,8 @@
         android:id="@+id/idFABAddDvir"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/dvir_margin_size"
-        android:layout_marginBottom="@dimen/card_image_size"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="25dp"
         android:backgroundTint="?attr/customBgColor"
         android:contentDescription="TODO"
         android:src="@drawable/ic_icons8_plus__"

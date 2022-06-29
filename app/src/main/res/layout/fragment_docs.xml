@@ -17,7 +17,7 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="@dimen/mini_margin_size"
         android:layout_marginBottom="@dimen/mini_margin_size"
-        android:layout_marginHorizontal="@dimen/activity_padding_size"
+        android:layout_marginHorizontal="12dp"
         android:background="@drawable/background_main_view">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="@dimen/mini_margin_size"
-        android:layout_marginHorizontal="@dimen/dvir_margin_size"
+        android:layout_marginHorizontal="5dp"
         android:background="@color/customBgViewColor"
         android:layout_marginTop="@dimen/mini_margin_size"
         app:layout_constraintEnd_toEndOf="parent"
@@ -73,7 +73,7 @@
             android:layout_weight="1"
             android:id="@+id/idClearSignature"
             android:layout_height="@dimen/card_icon_size"
-            android:layout_marginTop="@dimen/card_view_corner_radius"
+            android:layout_marginBottom="10dp"
             android:layout_marginEnd="@dimen/card_view_corner_radius"
             android:background="@drawable/signature_button"
             android:text="@string/clear"
@@ -90,7 +90,6 @@
             android:layout_height="@dimen/card_icon_size"
             android:id="@+id/idSubmitSignature"
             android:layout_weight="1"
-            android:layout_marginTop="@dimen/card_view_corner_radius"
             android:layout_marginStart="@dimen/card_view_corner_radius"
             android:background="@drawable/signature_button"
             android:text="@string/submit"

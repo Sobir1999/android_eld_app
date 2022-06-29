@@ -46,61 +46,51 @@
             android:name=".activity.CarrierInfoActivity"
             android:configChanges="orientation"
             android:exported="true"
-            android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activity.NightModeActivity"
             android:configChanges="orientation"
             android:exported="true"
-            android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activity.RecapActivity"
             android:configChanges="orientation"
             android:exported="true"
-            android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activity.LanguageActivity"
             android:configChanges="orientation"
             android:exported="true"
-            android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activity.SettingActivity"
             android:configChanges="orientation"
             android:exported="true"
-            android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activity.AccountActivity"
             android:configChanges="orientation"
             android:exported="true"
-            android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activity.RulesActivity"
             android:configChanges="orientation"
             android:exported="false"
-            android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activity.AddDvirActivity"
             android:configChanges="orientation"
             android:exported="true"
-            android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activity.LGDDActivity"
             android:configChanges="orientation"
             android:exported="true"
-            android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activity.SignatureActivity"
             android:configChanges="orientation"
             android:exported="true"
-            android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="adjustResize" />
 
         <service
@@ -116,19 +106,16 @@
             android:name=".activity.LoginActivity"
             android:configChanges="orientation"
             android:exported="true"
-            android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activity.AddDefectActivity"
             android:configChanges="orientation"
             android:exported="true"
-            android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activity.SplashActivity"
             android:configChanges="orientation"
-            android:exported="true"
-            android:screenOrientation="sensorLandscape">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -138,8 +125,7 @@
         <activity
             android:name=".activity.MainActivity"
             android:configChanges="orientation"
-            android:exported="true"
-            android:screenOrientation="sensorLandscape" />
+            android:exported="true" />
         <activity
             android:name=".activity.BleConnect"
             android:label="@string/app_name" />

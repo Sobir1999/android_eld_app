@@ -28,7 +28,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingVertical="@dimen/card_padding_size"
-                android:layout_marginHorizontal="@dimen/activity_padding_size"
                 tools:ignore="MissingConstraints">
 
                 <ImageView
@@ -72,7 +71,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/background_main_view"
-        android:layout_marginHorizontal="@dimen/activity_padding_size"
+        android:layout_marginHorizontal="5dp"
         android:layout_marginVertical="@dimen/half_vertical_margin"
         android:orientation="vertical">
 

@@ -10,7 +10,7 @@
 
     <ListView
         android:id="@+id/listView"
-        android:layout_marginHorizontal="@dimen/activity_padding_size"
+        android:layout_marginHorizontal="10dp"
         android:layout_marginVertical="@dimen/half_vertical_margin"
         android:background="@drawable/background_main_view"
         android:layout_width="match_parent"

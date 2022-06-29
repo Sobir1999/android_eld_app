@@ -4,6 +4,7 @@ import static com.iosix.eldblesample.MyApplication.userData;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -52,7 +53,7 @@ public abstract class   CustomRulerChart extends View {
 
         CUSTOM_WIDTH = context.getResources().getDisplayMetrics().widthPixels;
 
-        CUSTOM_TABLE_WIDTH = CUSTOM_WIDTH - 2f * START_POINT_X - 2f*context.getResources().getDimension(R.dimen.activity_padding_size);
+        CUSTOM_TABLE_WIDTH = CUSTOM_WIDTH - 2f * START_POINT_X - 2f*context.getResources().getDimension(R.dimen.activity_padding_size_land);
 
         CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 8;
         CUSTOM_TABLE_ROW_WIDTH = CUSTOM_TABLE_WIDTH / 26;
@@ -237,11 +238,21 @@ public abstract class   CustomRulerChart extends View {
         table_time_paint.setTypeface(Typeface.DEFAULT_BOLD);
         table_time_paint_tex.setTypeface(Typeface.DEFAULT_BOLD);
 
-        table_time_paint_tex.setTextSize(getContext().getResources().getDimension(R.dimen.custom_table_time_size));
 
         table_text_paint.setColor(Color.BLACK);
         table_text_paint.setTextSize(26f);
         table_text_paint.setStrokeWidth(3f);
+
+        int orientations = this.getResources().getConfiguration().orientation;
+
+        if (orientations == Configuration.ORIENTATION_PORTRAIT){
+            table_time_paint.setTextSize(getContext().getResources().getDimension(R.dimen.custom_table_time_size));
+            table_time_paint_tex.setTextSize(getContext().getResources().getDimension(R.dimen.custom_table_time_size));
+        }else if (orientations == Configuration.ORIENTATION_LANDSCAPE){
+            table_time_paint.setTextSize(getContext().getResources().getDimension(R.dimen.custom_table_time_size_land));
+            table_time_paint_tex.setTextSize(getContext().getResources().getDimension(R.dimen.custom_table_time_size_land));
+
+        }
 
         for (int i = 0; i < 26; i++) {
             if (i == 1 || i == 25) {
