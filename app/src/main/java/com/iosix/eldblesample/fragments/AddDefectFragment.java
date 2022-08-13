@@ -15,10 +15,7 @@ import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.shared_prefs.TinyDB;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import static com.iosix.eldblesample.MyApplication.context;
-import static com.iosix.eldblesample.MyApplication.userData;
 import static com.iosix.eldblesample.utils.Constants.trailerDefects;
 import static com.iosix.eldblesample.utils.Constants.unitDefects;
 

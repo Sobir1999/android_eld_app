@@ -55,14 +55,6 @@
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <!--                <ImageView-->
-                    <!--                    android:id="@+id/idImagelogo"-->
-                    <!--                    android:layout_width="50dp"-->
-                    <!--                    android:layout_height="50dp"-->
-                    <!--                    android:src="@drawable/logo"-->
-                    <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-                    <!--                    app:layout_constraintRight_toRightOf="parent"-->
-                    <!--                    app:layout_constraintTop_toTopOf="parent" />-->
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.AppBarLayout>
@@ -71,7 +63,7 @@
             android:id="@+id/idCicleLog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="@dimen/button_weight_size"
+            android:paddingHorizontal="@dimen/button_radius"
             android:paddingVertical="@dimen/half_vertical_margin"
             android:background="?attr/customBgViewColor"
             app:layout_constraintTop_toBottomOf="@id/idAppbar"
@@ -101,25 +93,26 @@
                 app:drawableRightCompat="@drawable/ic_baseline_arrow_forward_ios_24" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tab_layout"
-            android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            android:background="?attr/customBgColor"
-            android:layout_marginHorizontal="@dimen/activity_padding_size"
-            android:elevation="6dp"
-            app:tabMode="fixed"
-            app:tabMaxWidth="0dp"
-            app:tabGravity="fill"
-            app:tabTextAppearance="@style/textfontstyle"
-            app:tabIndicatorColor="@color/colorPrimary"
-            app:tabTextColor="?attr/customTextHintColor"
-            app:tabSelectedTextColor="@color/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:layout_constraintTop_toBottomOf="@id/idCicleLog"
-            tools:ignore="MissingConstraints" />
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:layout_marginHorizontal="@dimen/mini_margin_size"
+        android:background="?attr/customBgColor"
+        android:elevation="6dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintTop_toBottomOf="@id/idCicleLog"
+        app:tabGravity="fill"
+        app:tabIndicatorColor="@color/colorPrimary"
+        app:tabMaxWidth="0dp"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="@color/colorPrimary"
+        app:tabTextAppearance="@style/textfontstyle"
+        app:tabTextColor="?attr/customTextHintColor"
+        tools:ignore="MissingConstraints,SpeakableTextPresentCheck"
+        tools:layout_editor_absoluteX="12dp" />
 
-        <androidx.viewpager.widget.ViewPager
+        <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/pager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -130,18 +123,5 @@
             tools:ignore="MissingConstraints"
             tools:layout_editor_absoluteX="0dp" />
 
-<!--        <TextView-->
-<!--            android:id="@+id/idAddFrag"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="20dp"-->
-<!--            android:background="@drawable/fragment_add_button"-->
-<!--            android:gravity="center"-->
-<!--            android:text="+"-->
-<!--            android:textColor="#fff"-->
-<!--            android:textSize="32sp"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintRight_toRightOf="parent"-->
-<!--            tools:ignore="MissingConstraints" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

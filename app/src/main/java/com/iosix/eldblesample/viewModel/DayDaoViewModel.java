@@ -18,22 +18,11 @@ import java.util.concurrent.ExecutionException;
 public class DayDaoViewModel extends AndroidViewModel {
     private final DayDaoRepository repository;
     private final LiveData<List<DayEntity>> mgetAllDays;
-    private final LiveData<List<VehiclesEntity>> getAllVehicles;
-    private final LiveData<List<TrailersEntity>> getAllTrailers;
-    private LiveData<List<LogEntity>> mAllStatus;
-
 
     public DayDaoViewModel(@NonNull Application application) {
         super(application);
         repository = new DayDaoRepository(application);
         mgetAllDays = repository.getGetAllDays();
-        getAllVehicles = repository.getGetAllVehicles();
-        getAllTrailers = repository.getGetAllTrailers();
-        mAllStatus = repository.getmAllStatus();
-    }
-
-    public LiveData<List<TrailersEntity>> getGetAllTrailers() {
-        return getAllTrailers;
     }
 
     public LiveData<List<DayEntity>> getMgetAllDays() {
@@ -51,21 +40,5 @@ public class DayDaoViewModel extends AndroidViewModel {
         repository.deleteAllDays();
     }
 
-    public void insertVehicle(VehiclesEntity vehiclesEntity) {
-        repository.insertVehicle(vehiclesEntity);
-    }
 
-    public LiveData<List<VehiclesEntity>> getGetAllVehicles() {return getAllVehicles;}
-
-    public void insertTrailer(TrailersEntity entity) throws ExecutionException, InterruptedException {
-        repository.insertTrailer(entity);
-    }
-
-    public LiveData<List<LogEntity>> getmAllStatus() {
-        return mAllStatus;
-    }
-
-    public void insertStatus(LogEntity statusEntity) throws ExecutionException, InterruptedException {
-        repository.insertStatus(statusEntity);
-    }
 }

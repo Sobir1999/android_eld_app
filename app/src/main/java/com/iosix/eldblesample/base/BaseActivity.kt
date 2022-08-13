@@ -7,16 +7,20 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.ViewModelProviders
 import com.iosix.eldblesample.MyApplication
 import com.iosix.eldblesample.MyApplication.executorService
 import com.iosix.eldblesample.R
+import com.iosix.eldblesample.enums.EnumsConstants
 import com.iosix.eldblesample.shared_prefs.UserData
+import com.iosix.eldblesample.viewModel.StatusDaoViewModel
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -33,7 +37,6 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
         userData = UserData(applicationContext)
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -92,11 +95,6 @@ abstract class BaseActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
             false
         )
-//        window.statusBarColor = Color.TRANSPARENT
-//            window.navigationBarColor = getColors(
-////                R.color.colorBackground,
-//                appContext
-//            )
     }
 
     /**
@@ -111,21 +109,16 @@ abstract class BaseActivity : AppCompatActivity() {
      * layout this will be configured
      */
     private fun setupToolbar() {
-        toolbar = findViewById(R.id.toolbar)
-        if (toolbar != null) {
-            setSupportActionBar(toolbar)
-        }
+//        toolbar = findViewById(R.id.toolbar)
+//        if (toolbar != null) {
+//            setSupportActionBar(toolbar)
+//        }
     }
 
     /**
      * Use this method to initialize view components. This method is called after [ ][BaseActivity.onCreate]
      */
     open fun initView() {}
-
-    fun setToolbarTitle(title_activity: Int) {
-        val title = findViewById<TextView>(R.id.toolbarTitle)
-        title.setText(title_activity)
-    }
 
     /**
      * @return Content layout

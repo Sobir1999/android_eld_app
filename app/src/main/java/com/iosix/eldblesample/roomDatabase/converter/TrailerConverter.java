@@ -15,17 +15,6 @@ import java.util.List;
 public class TrailerConverter {
 
     @TypeConverter
-    public static ArrayList<TrailerId> toTrailnumber(String value){
-        if (value == null) {
-            return (null);
-        }
-        Gson gson = new Gson();
-        Type type = new TypeToken<List<TrailerId>>() {
-        }.getType();
-        return gson.fromJson(value,type);
-    }
-
-    @TypeConverter
     public static String toString(ArrayList<TrailerId> value){
         if (value== null) {
             return (null);
@@ -55,26 +44,4 @@ public class TrailerConverter {
         Type type = new TypeToken<Point>() {}.getType();
         return gson.toJson(value,type);
     }
-
-    @TypeConverter
-    public static ArrayList<TrailersEntity> toTrailersEntity(String value){
-        if (value == null) {
-            return (null);
-        }
-        Gson gson = new Gson();
-        Type type = new TypeToken<List<TrailersEntity>>() {
-        }.getType();
-        return gson.fromJson(value,type);
-    }
-
-    @TypeConverter
-    public static String toStringFromTrailersEntity(ArrayList<TrailersEntity> value){
-        if (value== null) {
-            return (null);
-        }
-        Gson gson = new Gson();
-        Type type = new TypeToken<ArrayList<TrailersEntity>>() {}.getType();
-        return gson.toJson(value,type);
-    }
-
 }

@@ -1,17 +1,24 @@
 package com.iosix.eldblesample.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.adapters.LGDDFragmentAdapter;
 import com.iosix.eldblesample.base.BaseActivity;
+import com.iosix.eldblesample.fragments.DVIRFragment;
+import com.iosix.eldblesample.fragments.DocsFragment;
+import com.iosix.eldblesample.fragments.GeneralFragment;
+import com.iosix.eldblesample.fragments.LogFragment;
 import com.iosix.eldblesample.models.ExampleSMSModel;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
@@ -31,6 +38,7 @@ public class LGDDActivity extends BaseActivity{
     private String currDay;
     private String mParams;
     private DayDaoViewModel dayDaoViewModel;
+    ViewPager2 viewPager;
 
 
     @Override
@@ -63,37 +71,51 @@ public class LGDDActivity extends BaseActivity{
             textFrag.setText(currDay);
         });
 
-        int pos = getIntent().getIntExtra("position", 0);
+        int pos = getIntent().getIntExtra("position", 4);
             mParams = getIntent().getStringExtra("currDay");
             currDay = mParams;
 
         findViewById(R.id.idImageBack).setOnClickListener(v -> onBackPressed());
 
         textFrag = findViewById(R.id.idTextFrag);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        LGDDFragmentAdapter adapter = new LGDDFragmentAdapter(fragmentManager, 4, mParams);
+        LGDDFragmentAdapter adapter = new LGDDFragmentAdapter(getSupportFragmentManager(),getLifecycle());
+        int limit = (adapter.getItemCount() > 1 ? adapter.getItemCount() - 1 : 1);
 
         TabLayout tabLayout = findViewById(R.id.tab_layout);
-        ViewPager viewPager = findViewById(R.id.pager);
+        tabLayout.addTab(tabLayout.newTab().setText("Log"));
+        tabLayout.addTab(tabLayout.newTab().setText("General"));
+        tabLayout.addTab(tabLayout.newTab().setText("Sign"));
+        tabLayout.addTab(tabLayout.newTab().setText("Dvir"));
 
+        viewPager = findViewById(R.id.pager);
         viewPager.setAdapter(adapter);
-        viewPager.setCurrentItem(pos);
-        tabLayout.setupWithViewPager(viewPager);
+        viewPager.setOffscreenPageLimit(limit);
+        viewPager.setCurrentItem(pos,false);
+        tabLayout.selectTab(tabLayout.getTabAt(pos));
 
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+                dvirViewModel.getCurrentName().postValue(currDay);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
 
             }
 
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
-                EventBus.getDefault().postSticky(new ExampleSMSModel(currDay));
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
+                tabLayout.selectTab(tabLayout.getTabAt(position));
+                dvirViewModel.getCurrentName().postValue(currDay);
             }
         });
 
@@ -112,7 +134,6 @@ public class LGDDActivity extends BaseActivity{
                 currDay = dayEntities.get(index).getDay();
                 textFrag.setText(currDay);
                 dvirViewModel.getCurrentName().postValue(currDay);
-                EventBus.getDefault().postSticky(new ExampleSMSModel(currDay));
 
             }
         });
@@ -123,7 +144,6 @@ public class LGDDActivity extends BaseActivity{
                 currDay = dayEntities.get(index).getDay();
                 textFrag.setText(currDay);
                 dvirViewModel.getCurrentName().postValue(currDay);
-                EventBus.getDefault().postSticky(new ExampleSMSModel(currDay));
             }
         });
     }

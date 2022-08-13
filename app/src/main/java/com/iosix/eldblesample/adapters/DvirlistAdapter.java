@@ -30,14 +30,9 @@ public class DvirlistAdapter extends RecyclerView.Adapter<DvirlistAdapter.Dvirli
     private DvirlistAdapterItemClickListener listener;
 
 
-    public DvirlistAdapter(Context context, List<DvirEntity> dvirEntities1,String currday) {
+    public DvirlistAdapter(Context context, List<DvirEntity> dvirEntities1) {
         ctx = context;
-        for (int i = 0; i < dvirEntities1.size() ; i++) {
-            if (dvirEntities1.get(i).getDay().equals(currday)){
-                dvirEntities.add(dvirEntities1.get(i));
-            }
-        }
-
+        dvirEntities.addAll(dvirEntities1);
     }
 
     @NonNull
@@ -114,7 +109,11 @@ public class DvirlistAdapter extends RecyclerView.Adapter<DvirlistAdapter.Dvirli
                     }
                 });
 
-                vehicleName.setText(dvirEntity.getUnit());
+                if (dvirEntity.getUnit() == null){
+                    vehicleName.setText("No Unit Selected");
+                }else {
+                    vehicleName.setText(dvirEntity.getUnit());
+                }
                 if (dvirEntity.getTrailer().equals("")){
                     trailerName.setVisibility(View.GONE);
                     TvTrailer.setVisibility(View.GONE);

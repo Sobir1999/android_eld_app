@@ -1,17 +1,9 @@
 package com.iosix.eldblesample.activity;
 
-import static com.iosix.eldblesample.MyApplication.userData;
-
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -19,14 +11,14 @@ import android.widget.TextView;
 
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.base.BaseActivity;
+import com.iosix.eldblesample.shared_prefs.UserData;
 
 import java.util.Locale;
 
 public class LanguageActivity extends BaseActivity {
 
     private RadioButton eng, es, fr, ru, uz;
-    private Context context;
-    private ImageView imageView;
+    private UserData userData;
 
     @Override
     protected int getLayoutId() {
@@ -36,7 +28,7 @@ public class LanguageActivity extends BaseActivity {
     @Override
     public void initView() {
         super.initView();
-
+        userData = new UserData(this);
         loadViews();
         setLocalLang(userData.getLang());
     }
@@ -49,17 +41,15 @@ public class LanguageActivity extends BaseActivity {
         ru = findViewById(R.id.idRadioRussian);
 
         //    private LinearLayout eng_l, es_l, fr_l, ru_l, uz_l;
-        imageView = findViewById(R.id.idImageBack);
+        ImageView imageView = findViewById(R.id.idImageBack);
         TextView saveLang = findViewById(R.id.idSaveLanguage);
 
-        imageView.setOnClickListener(v -> {
-            onBackPressed();
-        });
+        imageView.setOnClickListener(v -> onBackPressed());
 
         saveLang.setOnClickListener(v -> {
             RadioGroup radioGroup = findViewById(R.id.idLangRadioGroup);
             setSelectLang(radioGroup.getCheckedRadioButtonId());
-            Intent intent =  new Intent(context, MainActivity.class);
+            Intent intent =  new Intent(LanguageActivity.this, MainActivity.class);
             startActivityForResult(intent,1);
         });
     }

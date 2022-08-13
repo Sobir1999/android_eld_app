@@ -23,14 +23,13 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/drawer_width"
         android:layout_marginBottom="@dimen/mini_margin_size"
         android:layout_marginHorizontal="5dp"
         android:background="@color/customBgViewColor"
         android:layout_marginTop="@dimen/mini_margin_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/linearContainer"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.github.gcacace.signaturepad.views.SignaturePad
@@ -64,15 +63,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginHorizontal="@dimen/dvir_margin_size"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="@dimen/card_view_corner_radius"
+        android:layout_marginHorizontal="@dimen/card_icon_size"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
 
         <Button
             android:layout_width="0dp"
             android:layout_weight="1"
             android:id="@+id/idClearSignature"
-            android:layout_height="@dimen/card_icon_size"
+            android:layout_height="@dimen/activity_padding_size"
             android:layout_marginBottom="10dp"
             android:layout_marginEnd="@dimen/card_view_corner_radius"
             android:background="@drawable/signature_button"
@@ -87,7 +86,7 @@
 
         <Button
             android:layout_width="0dp"
-            android:layout_height="@dimen/card_icon_size"
+            android:layout_height="@dimen/activity_padding_size"
             android:id="@+id/idSubmitSignature"
             android:layout_weight="1"
             android:layout_marginStart="@dimen/card_view_corner_radius"

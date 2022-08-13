@@ -14,7 +14,7 @@
         android:focusable="true"
         android:orientation="vertical"
         android:paddingVertical="10dp"
-        android:paddingHorizontal="@dimen/activity_padding_size_land">
+        android:paddingHorizontal="@dimen/activity_padding_size">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -31,7 +31,6 @@
                 android:nestedScrollingEnabled="true"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginHorizontal="@dimen/half_vertical_margin"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="MissingConstraints">
 
@@ -40,7 +39,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintDimensionRatio="1:1"
-                    android:padding="@dimen/card_padding_size"
+                    android:padding="@dimen/quarter_vertical_margin"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
                     app:layout_constraintLeft_toLeftOf="parent"
@@ -93,7 +92,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintDimensionRatio="1:1"
-                    android:padding="@dimen/card_padding_size"
+                    android:padding="@dimen/quarter_vertical_margin"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
                     app:layout_constraintLeft_toRightOf="@id/idIncludeOff"
@@ -147,7 +146,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintDimensionRatio="1:1"
-                    android:padding="@dimen/card_padding_size"
+                    android:padding="@dimen/quarter_vertical_margin"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
                     app:layout_constraintLeft_toRightOf="@id/idIncludeSb"
@@ -201,7 +200,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintDimensionRatio="1:1"
-                    android:padding="@dimen/card_padding_size"
+                    android:padding="@dimen/quarter_vertical_margin"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
                     app:layout_constraintLeft_toRightOf="@id/idIncludeDr">
@@ -251,7 +250,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:padding="@dimen/card_padding_size"
+                    android:padding="@dimen/quarter_vertical_margin"
                     app:layout_constraintDimensionRatio="4:1"
                     app:layout_constraintLeft_toRightOf="@id/idIncludeOn"
                     app:layout_constraintRight_toRightOf="parent">
@@ -285,7 +284,7 @@
                                 android:layout_width="@dimen/card_image_size"
                                 android:layout_height="@dimen/card_image_size"
                                 app:tint="@color/colorStatusONBold"
-                                android:src="@drawable/ic_baseline_power_settings_new_24"
+                                android:backgroundTint="@color/colorPrimary"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintLeft_toLeftOf="parent"
                                 app:layout_constraintTop_toBottomOf="@id/tvCurrentStatus" />
@@ -296,7 +295,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="10dp"
-                                android:text="@string/off"
                                 android:fontFamily="@font/montserrat"
                                 android:textStyle="bold"
                                 android:textSize="@dimen/normal_text_size"
@@ -344,12 +342,12 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="vertical">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                            android:orientation="horizontal">
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -360,32 +358,32 @@
                                 android:textStyle="bold"
                                 android:fontFamily="@font/montserrat"/>
 
-                            <EditText
-                                android:id="@+id/idTvCurrentLocation"
-                                android:layout_width="wrap_content"
+                            <TextView
+                                android:id="@+id/idCurrentLocation"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="@string/current_location"
-                                android:textColorHint="?attr/customTextColor"
-                                android:background="@null"
+                                android:layout_gravity="center"
+                                android:gravity="end"
+                                android:text="@string/your_location"
+                                android:textColor="@color/colorPrimary"
                                 android:textSize="@dimen/mini_text_size"
-                                android:inputType="textNoSuggestions"
                                 android:fontFamily="@font/montserrat"
-                                android:textColor="?attr/customTextColor"/>
+                                android:drawablePadding="10dp"
+                                app:drawableRightCompat="@drawable/ic_baseline_location_on_24" />
 
                         </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/idCurrentLocation"
+                        <EditText
+                            android:id="@+id/idTvCurrentLocation"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="end"
-                            android:text="@string/your_location"
-                            android:textColor="@color/colorPrimary"
+                            android:hint="@string/current_location"
+                            android:textColorHint="?attr/customTextColor"
+                            android:background="@null"
                             android:textSize="@dimen/mini_text_size"
+                            android:inputType="textNoSuggestions"
                             android:fontFamily="@font/montserrat"
-                            android:drawablePadding="10dp"
-                            app:drawableRightCompat="@drawable/ic_baseline_location_on_24" />
+                            android:textColor="?attr/customTextColor"/>
 
                     </LinearLayout>
 
@@ -397,12 +395,12 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="vertical">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                            android:orientation="horizontal">
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -413,31 +411,31 @@
                                 android:textStyle="bold"
                                 android:fontFamily="@font/montserrat"/>
 
-                            <EditText
-                                android:id="@+id/idNoteEdit"
-                                android:layout_width="wrap_content"
+                            <TextView
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="@string/enter_notes"
-                                android:textColorHint="?attr/customTextColor"
-                                android:background="@null"
+                                android:layout_gravity="center"
+                                android:gravity="end"
+                                android:text="@string/add_notes"
+                                android:textColor="@color/colorPrimary"
                                 android:textSize="@dimen/mini_text_size"
+                                android:layout_marginEnd="@dimen/drawer_padding_size"
                                 android:fontFamily="@font/montserrat"
-                                android:textColor="?attr/customTextColor"
-                                android:inputType="textNoSuggestions" />
+                                android:drawablePadding="@dimen/half_vertical_margin"/>
 
                         </LinearLayout>
 
-                        <TextView
+                        <EditText
+                            android:id="@+id/idNoteEdit"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="end"
-                            android:text="@string/add_notes"
-                            android:textColor="@color/colorPrimary"
+                            android:hint="@string/enter_notes"
+                            android:textColorHint="?attr/customTextColor"
+                            android:background="@null"
                             android:textSize="@dimen/mini_text_size"
-                            android:layout_marginEnd="@dimen/drawer_padding_size"
                             android:fontFamily="@font/montserrat"
-                            android:drawablePadding="@dimen/half_vertical_margin"/>
+                            android:textColor="?attr/customTextColor"
+                            android:inputType="textNoSuggestions" />
 
                     </LinearLayout>
 
@@ -483,6 +481,88 @@
 
                     </LinearLayout>
 
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/idConstraintPC"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/idPersonalCon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            android:text="@string/personal_conveyance"
+                            android:textColor="?attr/customTextColor"
+                            android:fontFamily="@font/montserrat"
+                            android:textStyle="bold"
+                            android:textSize="@dimen/card_text_size"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintTop_toBottomOf="@id/idPersonalCon"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            android:text="@string/driving_will_be_recorded_as_off_duty"
+                            android:textSize="@dimen/normal_text_size"
+                            android:textColor="?attr/customTextColor"
+                            android:fontFamily="@font/montserrat"/>
+
+                        <RadioButton
+                            android:id="@+id/idRadioPC"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:scaleX="1.2"
+                            android:scaleY="1.2"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            android:buttonTint="@color/colorPrimary"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/idConstraintYM"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/idYardMove"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            android:text="@string/yard_move"
+                            android:textColor="?attr/customTextColor"
+                            android:fontFamily="@font/montserrat"
+                            android:textStyle="bold"
+                            android:textSize="@dimen/card_text_size"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintTop_toBottomOf="@id/idYardMove"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            android:text="@string/driving_will_be_recorded_as_on_duty"
+                            android:textSize="@dimen/normal_text_size"
+                            android:textColor="?attr/customTextColor"
+                            android:fontFamily="@font/montserrat"/>
+
+                        <RadioButton
+                            android:id="@+id/idRadioYM"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:scaleX="1.2"
+                            android:scaleY="1.2"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            android:buttonTint="@color/colorPrimary"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
@@ -496,6 +576,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
+                    android:layout_gravity="center"
                     android:layout_marginHorizontal="@dimen/half_vertical_margin"
                     android:layout_marginVertical="@dimen/drawer_padding_size">
 
@@ -538,17 +619,12 @@
             android:focusable="true"
             android:orientation="vertical">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="?attr/customBgViewColor"
-                tools:ignore="MissingConstraints" />
-
             <com.iosix.eldblesample.customViews.CustomLiveRulerChart
                 android:id="@+id/idCustomLiveChart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="20dp"
                 tools:ignore="MissingConstraints" />
 
             <View
@@ -652,6 +728,7 @@
                     android:text="@string/last_8_days"
                     android:textStyle="bold"
                     android:textSize="@dimen/title_text_size"
+                    android:fontFamily="@font/montserrat"
                     android:textColor="@color/colorPrimary"
                     app:drawableLeftCompat="@drawable/ic_baseline_calendar_today_24"
                     app:layout_constraintLeft_toLeftOf="parent"

@@ -17,6 +17,16 @@
     <color name="colorStatusON">#E4C1FA</color>
     <color name="textSelected">#E4C1FA</color>
     <color name="colorStatusONBold">#851DC6</color>
+    <color name="colorLogin">#A5D6A7</color>
+    <color name="colorLoginBold">#1B5E20</color>
+    <color name="colorLogout">#F8BBD0</color>
+    <color name="colorLogoutBold">#C2185B</color>
+    <color name="colorPowerUp">#C5E1A5</color>
+    <color name="colorPowerUpBold">#33691E</color>
+    <color name="colorPowerDown">#EF9A9A</color>
+    <color name="colorPowerDownBold">#D32F2F</color>
+    <color name="colorCertified">#C8E6C9</color>
+    <color name="colorCertifiedBold">#00C853</color>
 
     <color name="colorActionText">#08ACF6</color>
     <color name="alertColor">#FF0000</color>

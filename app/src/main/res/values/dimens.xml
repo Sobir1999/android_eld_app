@@ -9,12 +9,12 @@
 
     <dimen name="title_text_size">18sp</dimen>
     <dimen name="card_text_size">16sp</dimen>
-    <dimen name="card_icon_size">44dp</dimen>
+    <dimen name="card_icon_size">60dp</dimen>
     <dimen name="big_text_size">20sp</dimen>
     <dimen name="button_weight_size">35dp</dimen>
     <dimen name="button_horizontal_margin">5dp</dimen>
     <dimen name="button_radius">8dp</dimen>
-    <dimen name="button_stroke_with">0.5dp</dimen>
+    <dimen name="button_stroke_with">0.8dp</dimen>
     <dimen name="table_stroke_with">1.5dp</dimen>
     <dimen name="card_padding_size">5dp</dimen>
     <dimen name="card_image_size">32dp</dimen>
@@ -37,10 +37,11 @@
     <dimen name="signature_height_size">140dp</dimen>
     <dimen name="custom_dialog_width">400dp</dimen>
     <dimen name="dvir_margin_size">70dp</dimen>
-    <dimen name="custom_table_text_size">4.5dsp</dimen>
-    <dimen name="custom_table_time_size">4dsp</dimen>
-    <dimen name="custom_table_text_size_land">9dsp</dimen>
+    <dimen name="custom_table_text_size">7dsp</dimen>
+    <dimen name="custom_table_time_size">6dsp</dimen>
+    <dimen name="custom_table_text_size_land">11dsp</dimen>
     <dimen name="custom_table_time_size_land">8dsp</dimen>
-    <dimen name="layout_progress_bar_size">120dp</dimen>
+    <dimen name="layout_progress_bar_size">150dp</dimen>
     <dimen name="progress_bar_text_size">17sp</dimen>
+    <dimen name="recap_text_size">24sp</dimen>
 </resources>

@@ -2,9 +2,10 @@ package com.iosix.eldblesample.roomDatabase.entities;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "dvir_table")
+@Entity(tableName = "dvir_table", indices = {@Index(value = {"day"}, unique = true)})
 public class DvirEntity {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")

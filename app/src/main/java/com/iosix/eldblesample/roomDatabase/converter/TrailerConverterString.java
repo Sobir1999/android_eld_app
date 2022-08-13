@@ -2,62 +2,31 @@ package com.iosix.eldblesample.roomDatabase.converter;
 
 import androidx.room.TypeConverter;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.iosix.eldblesample.models.eld_records.Point;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class TrailerConverterString {
 
     @TypeConverter
-    public ArrayList<String> toTrailnumber(String string){
-        ArrayList<String> arrayList = new ArrayList<>();
-        arrayList.add(string);
-        return arrayList;
-    }
-
-    @TypeConverter
-    public String  toString(ArrayList<String> arrayList){
-        if (arrayList.size()>0){
-            return arrayList.get(0);
-        }else {
-            return null;
+    public static ArrayList<String> toTrailnumber(String value){
+        if (value == null) {
+            return (null);
         }
+        Type listType = new TypeToken<ArrayList<String>>() {}.getType();
+        return new Gson().fromJson(value, listType);
     }
 
     @TypeConverter
-    public ArrayList<Boolean> toEngineState(Boolean value){
-        ArrayList<Boolean> arrayList = new ArrayList<>();
-        arrayList.add(value);
-        return arrayList;
-    }
-
-    @TypeConverter
-    public Boolean toBoolean(ArrayList<Boolean> arrayList){
-        return arrayList.get(0);
-    }
-
-    @TypeConverter
-    public ArrayList<Double> toDoubleArray(Double value){
-        ArrayList<Double> arrayList = new ArrayList<>();
-        arrayList.add(value);
-        return arrayList;
-    }
-
-    @TypeConverter
-    public Double toDouble(ArrayList<Double> arrayList){
-        return arrayList.get(0);
-    }
-
-    @TypeConverter
-    public ArrayList<Integer> toIntArray(int value){
-        ArrayList<Integer> arrayList = new ArrayList<>();
-        arrayList.add(value);
-        return arrayList;
-    }
-
-    @TypeConverter
-    public int toPoint(ArrayList<Integer> arrayList){
-        return arrayList.get(0);
+    public static String  toString(ArrayList<String> arrayList){
+        if (arrayList == null) {
+            return (null);
+        }
+        Gson gson = new Gson();
+        return gson.toJson(arrayList);
     }
 
 }

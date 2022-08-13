@@ -38,16 +38,6 @@ public interface DayDao {
     @Query("DELETE FROM log_table WHERE time = :day")
     void deleteAllTruckStatus(String day);
 
-    @Insert
-    void insertVehicle(VehiclesEntity vehiclesEntity);
 
-    @Query("Select * From vehicles")
-    LiveData<List<VehiclesEntity>> getAllVehicles();
-
-    @Insert (onConflict = OnConflictStrategy.IGNORE)
-    long insertTrailer(TrailersEntity trailers);
-
-    @Query("Select * From trailers")
-    LiveData<List<TrailersEntity>> getAllTrailers();
 
 }

@@ -5,6 +5,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.lifecycle.Lifecycle;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.iosix.eldblesample.fragments.DVIRFragment;
 import com.iosix.eldblesample.fragments.DocsFragment;
@@ -13,46 +16,28 @@ import com.iosix.eldblesample.fragments.LogFragment;
 
 import java.util.ArrayList;
 
-public class LGDDFragmentAdapter extends FragmentPagerAdapter {
-    private final String curr;
-    private final String[] tabs = new String[]{"Log", "General", "Signature", "DVIR"};
+public class LGDDFragmentAdapter extends FragmentStateAdapter {
+    private final String[] tabs = new String[]{"Log", "General", "Sign", "DVIR"};
 
-    public LGDDFragmentAdapter(@NonNull FragmentManager fm, int behavior, String curr) {
-        super(fm, behavior);
-        this.curr = curr;
+    public LGDDFragmentAdapter(@NonNull FragmentManager fm, Lifecycle lifecycle) {
+        super(fm,lifecycle);
     }
 
     @NonNull
     @Override
-    public Fragment getItem(int position) {
-        switch (position) {
-            case 0:
-                return LogFragment.newInstance(curr);
-            case 1:
-                return GeneralFragment.newInstance(curr);
-            case 2:
-                return DocsFragment.newInstance(curr);
-            case 3:
-                return DVIRFragment.newInstance(curr);
-            default:
-                return null;
-        }
-    }
-
-    @Nullable
-    @Override
-    public CharSequence getPageTitle(int position) {
-        return tabs[position];
+    public Fragment createFragment(int position) {
+        if (position == 0)
+            return LogFragment.newInstance();
+        else if (position == 1)
+            return GeneralFragment.newInstance();
+        else if (position == 2)
+            return DocsFragment.newInstance();
+        else
+            return DVIRFragment.newInstance();
     }
 
     @Override
-    public int getCount() {
-        return tabs.length;
+    public int getItemCount() {
+        return 4;
     }
-
-    @Override
-    public int getItemPosition(@NonNull Object object) {
-        return POSITION_NONE;
-    }
-
 }

@@ -1,11 +1,13 @@
 package com.iosix.eldblesample.viewModel.apiViewModel;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
+import com.iosix.eldblesample.enums.StateLiveData;
 import com.iosix.eldblesample.models.ApkVersion;
 import com.iosix.eldblesample.models.Data;
 import com.iosix.eldblesample.models.LoginResponse;
@@ -23,10 +25,14 @@ import com.iosix.eldblesample.roomDatabase.entities.GeneralEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LiveDataEntitiy;
 import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
 
+import java.io.IOException;
+
 import okhttp3.MultipartBody;
+import retrofit2.HttpException;
 
 public class EldJsonViewModel extends AndroidViewModel {
     private final ApiRepository repository;
+    private StateLiveData<LoginResponse> stateLiveData;
 
     public EldJsonViewModel(@NonNull Application application) {
         super(application);
@@ -37,16 +43,16 @@ public class EldJsonViewModel extends AndroidViewModel {
         repository.sendLive(data);
     }
 
-    public void getLoginResponse(Student student) {
+    public void makeLoginRequest(Student student) {
         repository.getLoginResponse(student);
-    }
-
-    public MutableLiveData<LoginResponse> getResponse(){
-        return repository.getResponse();
     }
 
     public MutableLiveData<User> getUser(){
         return repository.getUser();
+    }
+
+    public StateLiveData<LoginResponse> getLoginResponse(){
+        return repository.getLoginState();
     }
 
     public MutableLiveData<Data> getAllDrivers(){

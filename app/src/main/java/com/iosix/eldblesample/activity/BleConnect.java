@@ -46,13 +46,23 @@ import com.iosix.eldblelib.EldScanObject;
 import com.iosix.eldblelib.EldTransmissionRecord;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.base.BaseActivity;
+import com.iosix.eldblesample.models.eld_records.LiveDataRecord;
+import com.iosix.eldblesample.models.eld_records.Point;
+import com.iosix.eldblesample.retrofit.APIInterface;
+import com.iosix.eldblesample.retrofit.ApiClient;
+import com.iosix.eldblesample.utils.Utils;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Set;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Review the following URL https://devzone.nordicsemi.com/blogs/1046/what-to-keep-in-mind-when-developing-your-ble-andr/
@@ -80,6 +90,7 @@ public class BleConnect extends BaseActivity {
     public TextView mStatusView;
     public TextView mDataView;
     public ScrollView mScrollView;
+    APIInterface apiInterface;
 
     private EldManager mEldManager;
     private final Set<EldBroadcastTypes> subscribedRecords = EnumSet.of(EldBroadcastTypes.ELD_BUFFER_RECORD, EldBroadcastTypes.ELD_CACHED_RECORD, EldBroadcastTypes.ELD_FUEL_RECORD, EldBroadcastTypes.ELD_DATA_RECORD, EldBroadcastTypes.ELD_DRIVER_BEHAVIOR_RECORD, EldBroadcastTypes.ELD_EMISSIONS_PARAMETERS_RECORD, EldBroadcastTypes.ELD_ENGINE_PARAMETERS_RECORD, EldBroadcastTypes.ELD_TRANSMISSION_PARAMETERS_RECORD);
@@ -103,6 +114,8 @@ public class BleConnect extends BaseActivity {
         mStatusView = (TextView) findViewById(R.id.statusLog);
         mDataView = (TextView) findViewById(R.id.eldData);
         mScrollView = (ScrollView) findViewById(R.id.scrollView3);
+
+        apiInterface = ApiClient.getClient().create(APIInterface.class);
 
         //Required to allow bluetooth scanning
         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
@@ -714,6 +727,61 @@ public class BleConnect extends BaseActivity {
                         diagnosticEnabled = true;
                     }
                 } else {
+                    DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ",Locale.getDefault());
+
+                    mDataView.append("engine state:" + ((EldDataRecord) dataRec).getEngineState().toString() + ", ");
+                    mDataView.append("speed:" + ((EldDataRecord) dataRec).getSpeed() + ", ");
+                    mDataView.append("Vin:" + Utils.hasVin(((EldDataRecord) dataRec).getVin()) + ", ");
+                    mDataView.append("latitude:" + ((EldDataRecord) dataRec).getLatitude() + ", ");
+                    mDataView.append("longtitude:" + ((EldDataRecord) dataRec).getLongitude() + ", ");
+                    mDataView.append("seqnum:" + ((EldDataRecord) dataRec).getSequence() + ", ");
+                    mDataView.append("seqnum:" + ((EldDataRecord) dataRec).getNumSats() + ", ");
+
+                    ArrayList<Double> arrayList = new ArrayList<>();
+                    arrayList.add(((EldDataRecord) dataRec).getLongitude());
+                    arrayList.add(((EldDataRecord) dataRec).getLatitude());
+
+                    mDataView.append("Cooordinates:" + Utils.hasCoordinates(((EldDataRecord) dataRec).getLongitude(),((EldDataRecord) dataRec).getLatitude()) + "\n");
+                    if (((EldDataRecord)dataRec).getSequence() % 30 == 1){
+
+                        apiInterface.sendLive(new LiveDataRecord(
+                                Utils.engineState(((EldDataRecord) dataRec).getEngineState()),
+                                Utils.hasVin(((EldDataRecord) dataRec).getVin()),
+                                ((EldDataRecord) dataRec).getSpeed(),
+                                ((EldDataRecord) dataRec).getOdometer(),
+                                ((EldDataRecord) dataRec).getTripDistance(),
+                                ((EldDataRecord) dataRec).getEngineHours(),
+                                ((EldDataRecord) dataRec).getTripHours(),
+                                ((EldDataRecord) dataRec).getVoltage(),
+                                dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime()),
+                                new Point("Point",arrayList),
+                                ((EldDataRecord) dataRec).getGpsSpeed(),
+                                ((EldDataRecord) dataRec).getCourse(),
+                                ((EldDataRecord) dataRec).getNumSats(),
+                                ((EldDataRecord) dataRec).getMslAlt(),
+                                ((EldDataRecord) dataRec).getDop(),
+                                ((EldDataRecord) dataRec).getSequence(),
+                                ((EldDataRecord) dataRec).getFirmwareVersion()
+                        )).enqueue(new Callback<LiveDataRecord>() {
+                            @Override
+                            public void onResponse(Call<LiveDataRecord> call, Response<LiveDataRecord> response) {
+                                if (!response.isSuccessful()){
+                                    runOnUiThread(() ->{
+                                        try {
+                                            mDataView.append(response.errorBody().string() + "\n");
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    });
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<LiveDataRecord> call, Throwable t) {
+
+                            }
+                        });
+                    }
 //                        mDataView.append("RPM: " + Double.toString(((EldDataRecord) (dataRec)).getRpm()));
 //                        mDataView.append(" Satellites: " + Double.toString(((EldDataRecord) (dataRec)).getNumSats()));
 //                        mDataView.append(" Latitude: " + Double.toString(((EldDataRecord) (dataRec)).getLatitude()));

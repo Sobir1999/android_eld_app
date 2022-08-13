@@ -15,6 +15,14 @@
         android:layout_height="wrap_content"
         tools:ignore="MissingConstraints">
 
+        <ImageView
+            android:id="@+id/idTableSignature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_education_pencil"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:tint="@color/colorPrimary" />
+
         <TextView
             android:id="@+id/idTableDay"
             android:text="Sun"
@@ -26,15 +34,13 @@
             style="@style/TextAppearance.AppCompat.Menu"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_width="@dimen/drawer_avatar_size"
-            android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints"
-            app:drawableLeftCompat="@drawable/ic_education_pencil" />
+            app:layout_constraintLeft_toRightOf="@id/idTableSignature"
+            android:layout_width="@dimen/card_image_size"
+            android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/idTableMonth"
-            android:text="Apr 11"
-            android:textSize="@dimen/mini_margin_size"
+            android:textSize="@dimen/mini_text_size"
             android:layout_marginStart="@dimen/quarter_vertical_margin"
             android:fontFamily="@font/montserrat"
             android:textColor="?attr/customTextHintColor"

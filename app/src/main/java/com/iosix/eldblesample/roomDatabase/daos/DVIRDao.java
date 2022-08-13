@@ -26,5 +26,4 @@ public interface DVIRDao {
     @Delete
     void deleteDvir(DvirEntity dvirEntity);
 
-
 }

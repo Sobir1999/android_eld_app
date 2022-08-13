@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.iosix.eldblesample.enums.StateLiveData;
 import com.iosix.eldblesample.models.ApkVersion;
 import com.iosix.eldblesample.models.Data;
 import com.iosix.eldblesample.models.LoginResponse;
@@ -30,7 +31,7 @@ import retrofit2.Response;
 
 public class ApiRepository {
     private static APIInterface apiInterface;
-    private MutableLiveData<LoginResponse> studentMutableLiveData = new MutableLiveData<>();
+    private final StateLiveData<LoginResponse> studentMutableLiveData = new StateLiveData<>();
     private final MutableLiveData<LoginResponse> refreshTokenResponse = new MutableLiveData<>();
     private final MutableLiveData<User> getUserInfo = new MutableLiveData<>();
     private final MutableLiveData<Data> getAllUsers = new MutableLiveData<>();
@@ -64,29 +65,28 @@ public class ApiRepository {
         });
     }
 
-    public MutableLiveData<LoginResponse> getResponse(){
-        return studentMutableLiveData;
-    }
-
     public void getLoginResponse(Student student){
-
+        studentMutableLiveData.postLoading();
         apiInterface.createUser(student).enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (response.isSuccessful()){
-                    studentMutableLiveData.postValue(response.body());
-                }if (response.code() == 500){
-                    studentMutableLiveData.postValue(null);
+                    studentMutableLiveData.postSuccess(response.body());
+                }else {
+                    studentMutableLiveData.postStatusCode(response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
-                studentMutableLiveData.postValue(null);
+                studentMutableLiveData.postError(t);
             }
         });
     }
 
+    public StateLiveData<LoginResponse> getLoginState(){
+        return studentMutableLiveData;
+    }
 
     public MutableLiveData<User> getUser(){
         apiInterface.getUser().enqueue(new Callback<User>() {
@@ -237,6 +237,11 @@ public class ApiRepository {
                     getGeneralInfo.postValue(response.body());
                 }else {
                     getGeneralInfo.postValue(null);
+                    try {
+                        Log.d("Adverse Diving",response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
@@ -274,12 +279,7 @@ public class ApiRepository {
                 if (response.isSuccessful()){
                     dvir.postValue(response.body());
                 }else {
-                    dvir.postValue(null);
-                    try {
-                        Log.d("Adverse Diving",response.errorBody().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    
                 }
             }
 

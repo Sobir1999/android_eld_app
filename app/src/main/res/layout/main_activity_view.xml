@@ -17,21 +17,106 @@
         android:paddingVertical="10dp"
         android:paddingHorizontal="@dimen/activity_padding_size_land">
 
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/background_main_view"
             android:paddingVertical="3dp">
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/idCurrStatusCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/card_padding_size"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent">
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/idCardStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:cardBackgroundColor="@color/colorStatusON"
+                        app:cardCornerRadius="@dimen/mini_margin_size"
+                        tools:ignore="MissingConstraints">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/half_vertical_margin"
+                            android:layout_gravity="center_vertical">
+
+                            <TextView
+                                android:id="@+id/tvCurrentStatus"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/montserrat"
+                                android:text="@string/current_status"
+                                android:textColor="@color/colorPrimary"
+                                android:textSize="@dimen/normal_text_size"
+                                android:textStyle="bold" />
+
+                            <ImageView
+                                android:id="@+id/idStatusImage"
+                                android:layout_width="@dimen/card_image_size"
+                                android:layout_height="@dimen/card_image_size"
+                                app:tint="@color/colorStatusONBold"
+                                android:backgroundTint="@color/colorPrimary"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/tvCurrentStatus" />
+
+                            <TextView
+                                android:id="@+id/idStatusText"
+                                style="@style/TextAppearance.AppCompat.Button"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/off"
+                                android:fontFamily="@font/montserrat"
+                                android:textStyle="bold"
+                                android:textSize="@dimen/normal_text_size"
+                                android:layout_marginLeft="@dimen/half_vertical_margin"
+                                android:textColor="@color/colorStatusONBold"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintLeft_toRightOf="@id/idStatusImage"
+                                app:layout_constraintTop_toBottomOf="@id/tvCurrentStatus" />
+
+                            <TextView
+                                android:id="@+id/idStatusTime"
+                                style="@style/TextAppearance.AppCompat.Headline"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="00:00:00"
+                                android:fontFamily="@font/montserrat"
+                                android:textSize="@dimen/title_text_size"
+                                android:textColor="@color/black"
+                                android:textStyle="normal"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/idStatusButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="true"
+                app:layout_constraintTop_toBottomOf="@+id/idCurrStatusCard"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="MissingConstraints">
 
                 <LinearLayout
@@ -39,7 +124,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintDimensionRatio="1:1"
-                    android:padding="@dimen/card_padding_size"
+                    android:padding="@dimen/quarter_vertical_margin"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
                     app:layout_constraintLeft_toLeftOf="parent"
@@ -61,13 +146,11 @@
 
                             <TextView
                                 android:id="@+id/statusOff"
-                                android:layout_width="25dp"
-                                android:layout_height="13dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 android:text="@string/off"
-
                                 android:fontFamily="@font/montserrat"
-                                android:textSize="10dp"
-                                android:layout_marginTop="3dp"
+                                android:textSize="@dimen/normal_text_size"
                                 android:textColor="@color/colorStatusOFFBold"
                                 android:textStyle="bold" />
 
@@ -75,19 +158,11 @@
                                 android:id="@+id/imageOff"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="3dp"
                                 android:src="@drawable/ic_baseline_power_settings_new_24" />
 
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
 
-                    <TextView
-                        android:id="@+id/titleOff"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="@string/off_duty"
-                        android:textColor="?attr/customTextHintColor"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -95,7 +170,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintDimensionRatio="1:1"
-                    android:padding="@dimen/card_padding_size"
+                    android:padding="@dimen/quarter_vertical_margin"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
                     app:layout_constraintLeft_toRightOf="@id/idIncludeOff"
@@ -121,8 +196,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/sb"
                                 android:fontFamily="@font/montserrat"
-                                android:textSize="10dp"
-                                android:layout_marginTop="3dp"
+                                android:textSize="@dimen/normal_text_size"
                                 android:textColor="@color/colorStatusSBBold"
                                 android:textStyle="bold" />
 
@@ -130,19 +204,11 @@
                                 android:id="@+id/imageSB"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="3dp"
                                 android:src="@drawable/ic__1748117516352401124513" />
 
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
 
-                    <TextView
-                        android:id="@+id/titleSB"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="@string/sleeper_berth"
-                        android:textColor="?attr/customTextHintColor"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -151,7 +217,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintDimensionRatio="1:1"
-                    android:padding="@dimen/card_padding_size"
+                    android:padding="@dimen/quarter_vertical_margin"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
                     app:layout_constraintLeft_toRightOf="@id/idIncludeSb"
@@ -177,8 +243,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/dr"
                                 android:fontFamily="@font/montserrat"
-                                android:textSize="10dp"
-                                android:layout_marginTop="3dp"
+                                android:textSize="@dimen/normal_text_size"
                                 android:textColor="@color/colorStatusDRBold"
                                 android:textStyle="bold" />
 
@@ -186,19 +251,11 @@
                                 android:id="@+id/imageDR"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="3dp"
                                 android:src="@drawable/ic_steering_wheel_car_svgrepo_com" />
 
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
 
-                    <TextView
-                        android:id="@+id/titleDR"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="@string/driving"
-                        android:textColor="?attr/customTextHintColor"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -207,10 +264,10 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintDimensionRatio="1:1"
-                    android:padding="@dimen/card_padding_size"
+                    android:padding="@dimen/quarter_vertical_margin"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
-                    app:layout_constraintLeft_toRightOf="@id/idIncludeDr">
+                    app:layout_constraintRight_toRightOf="parent">
 
                     <androidx.cardview.widget.CardView
                         android:id="@+id/cardON"
@@ -231,9 +288,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/on"
-                                android:layout_marginTop="3dp"
                                 android:fontFamily="@font/montserrat"
-                                android:textSize="10dp"
+                                android:textSize="@dimen/normal_text_size"
                                 android:textColor="@color/colorStatusONBold"
                                 android:textStyle="bold" />
 
@@ -241,127 +297,40 @@
                                 android:id="@+id/imageON"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="3dp"
                                 android:src="@drawable/ic_truck" />
 
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
 
-                    <TextView
-                        android:id="@+id/title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="@string/on_duty"
-                        android:textColor="?attr/customTextHintColor"/>
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:padding="@dimen/card_padding_size"
-                    app:layout_constraintDimensionRatio="4:1"
-                    app:layout_constraintLeft_toRightOf="@id/idIncludeOn"
-                    app:layout_constraintRight_toRightOf="parent">
 
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/idCardStatus"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:cardBackgroundColor="@color/colorStatusON"
-                        app:cardCornerRadius="@dimen/card_view_corner_radius"
-                        tools:ignore="MissingConstraints">
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingHorizontal="@dimen/half_vertical_margin"
-                            android:layout_margin="3dp"
-                            android:layout_gravity="center_vertical">
-
-                            <TextView
-                                android:id="@+id/tvCurrentStatus"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/montserrat"
-                                android:text="@string/current_status"
-                                android:textColor="@color/colorPrimary"
-                                android:textSize="10dp"
-                                android:layout_marginTop="5dp"
-                                android:textStyle="bold" />
-
-                            <ImageView
-                                android:id="@+id/idStatusImage"
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:layout_marginBottom="3dp"
-                                android:layout_marginTop="3dp"
-                                app:tint="@color/colorStatusONBold"
-                                android:src="@drawable/ic_baseline_power_settings_new_24"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintLeft_toLeftOf="parent"
-                                app:layout_constraintTop_toBottomOf="@id/tvCurrentStatus" />
-
-                            <TextView
-                                android:id="@+id/idStatusText"
-                                style="@style/TextAppearance.AppCompat.Button"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="15dp"
-                                android:text="@string/off"
-                                android:fontFamily="@font/montserrat"
-                                android:textStyle="bold"
-                                android:textSize="10dp"
-                                android:textColor="@color/colorStatusONBold"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintLeft_toRightOf="@id/idStatusImage"
-                                app:layout_constraintTop_toBottomOf="@id/tvCurrentStatus" />
-
-                            <TextView
-                                android:id="@+id/idStatusTime"
-                                style="@style/TextAppearance.AppCompat.Headline"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="00:00:00"
-                                android:fontFamily="@font/montserrat"
-                                android:textSize="15dp"
-                                android:textColor="@color/black"
-                                android:textStyle="normal"
-                                android:layout_marginEnd="8dp"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintRight_toRightOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-                    </androidx.cardview.widget.CardView>
-
-                </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
                 android:id="@+id/idVisibilityViewCons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@+id/idStatusButton"
                 app:layout_constraintStart_toStartOf="parent">
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2.5"
                     android:orientation="vertical"
                     android:padding="@dimen/half_vertical_margin">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="vertical">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                            android:orientation="horizontal">
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -372,32 +341,33 @@
                                 android:textStyle="bold"
                                 android:fontFamily="@font/montserrat"/>
 
-                            <EditText
-                                android:id="@+id/idTvCurrentLocation"
-                                android:layout_width="wrap_content"
+                            <TextView
+                                android:id="@+id/idCurrentLocation"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="@string/current_location"
-                                android:textColorHint="?attr/customTextColor"
-                                android:background="@null"
+                                android:layout_gravity="center"
+                                android:gravity="end|bottom"
+                                android:text="@string/your_location"
+                                android:textColor="@color/colorPrimary"
                                 android:textSize="@dimen/mini_text_size"
-                                android:inputType="textNoSuggestions"
                                 android:fontFamily="@font/montserrat"
-                                android:textColor="?attr/customTextColor"/>
+                                android:drawablePadding="10dp"
+                                app:drawableRightCompat="@drawable/ic_baseline_location_on_24" />
+
 
                         </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/idCurrentLocation"
+                        <EditText
+                            android:id="@+id/idTvCurrentLocation"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="end"
-                            android:text="@string/your_location"
-                            android:textColor="@color/colorPrimary"
+                            android:hint="@string/current_location"
+                            android:textColorHint="?attr/customTextColor"
+                            android:background="@null"
                             android:textSize="@dimen/mini_text_size"
+                            android:inputType="textNoSuggestions"
                             android:fontFamily="@font/montserrat"
-                            android:drawablePadding="10dp"
-                            app:drawableRightCompat="@drawable/ic_baseline_location_on_24" />
+                            android:textColor="?attr/customTextColor"/>
 
                     </LinearLayout>
 
@@ -409,12 +379,12 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="vertical">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                            android:orientation="horizontal">
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -425,31 +395,32 @@
                                 android:textStyle="bold"
                                 android:fontFamily="@font/montserrat"/>
 
-                            <EditText
-                                android:id="@+id/idNoteEdit"
-                                android:layout_width="wrap_content"
+                            <TextView
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="@string/enter_notes"
-                                android:textColorHint="?attr/customTextColor"
-                                android:background="@null"
+                                android:layout_gravity="center"
+                                android:gravity="end"
+                                android:text="@string/add_notes"
+                                android:textColor="@color/colorPrimary"
                                 android:textSize="@dimen/mini_text_size"
+                                android:layout_marginEnd="@dimen/drawer_padding_size"
                                 android:fontFamily="@font/montserrat"
-                                android:textColor="?attr/customTextColor"
-                                android:inputType="textNoSuggestions" />
+                                android:drawablePadding="@dimen/half_vertical_margin"/>
 
                         </LinearLayout>
 
-                        <TextView
+                        <EditText
+                            android:id="@+id/idNoteEdit"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="end"
-                            android:text="@string/add_notes"
-                            android:textColor="@color/colorPrimary"
+                            android:hint="@string/enter_notes"
+                            android:textColorHint="?attr/customTextColor"
+                            android:background="@null"
                             android:textSize="@dimen/mini_text_size"
-                            android:layout_marginEnd="@dimen/drawer_padding_size"
                             android:fontFamily="@font/montserrat"
-                            android:drawablePadding="@dimen/half_vertical_margin"/>
+                            android:textColor="?attr/customTextColor"
+                            android:inputType="textNoSuggestions" />
+
 
                     </LinearLayout>
 
@@ -495,6 +466,88 @@
 
                     </LinearLayout>
 
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/idConstraintPC"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/idPersonalCon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            android:text="@string/personal_conveyance"
+                            android:textColor="?attr/customTextColor"
+                            android:fontFamily="@font/montserrat"
+                            android:textStyle="bold"
+                            android:textSize="@dimen/normal_text_size"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintTop_toBottomOf="@id/idPersonalCon"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            android:text="@string/driving_will_be_recorded_as_off_duty"
+                            android:textSize="@dimen/mini_text_size"
+                            android:textColor="?attr/customTextColor"
+                            android:fontFamily="@font/montserrat"/>
+
+                        <RadioButton
+                            android:id="@+id/idRadioPC"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:scaleX="1.2"
+                            android:scaleY="1.2"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            android:buttonTint="@color/colorPrimary"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/idConstraintYM"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/idYardMove"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            android:text="@string/yard_move"
+                            android:textColor="?attr/customTextColor"
+                            android:fontFamily="@font/montserrat"
+                            android:textStyle="bold"
+                            android:textSize="@dimen/normal_text_size"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintTop_toBottomOf="@id/idYardMove"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            android:text="@string/driving_will_be_recorded_as_on_duty"
+                            android:textSize="@dimen/mini_text_size"
+                            android:textColor="?attr/customTextColor"
+                            android:fontFamily="@font/montserrat"/>
+
+                        <RadioButton
+                            android:id="@+id/idRadioYM"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:scaleX="1.2"
+                            android:scaleY="1.2"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            android:buttonTint="@color/colorPrimary"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
@@ -504,19 +557,19 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginHorizontal="@dimen/half_vertical_margin"
-                    android:layout_marginVertical="@dimen/drawer_padding_size">
+                    android:orientation="horizontal"
+                    android:layout_marginVertical="@dimen/half_vertical_margin"
+                    android:layout_marginHorizontal="@dimen/half_vertical_margin">
 
                     <Button
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:background="@drawable/item_vis_button_background"
                         android:text="@string/save"
-                        android:paddingVertical="@dimen/half_vertical_margin"
+                        android:layout_marginHorizontal="@dimen/half_vertical_margin"
                         android:fontFamily="@font/montserrat"
                         android:textAllCaps="false"
                         android:textSize="@dimen/card_text_size"
@@ -524,17 +577,17 @@
                         android:id="@+id/idSaveStatus"/>
 
                     <Button
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:background="@drawable/item_vis_button_background"
                         android:text="@string/cancel"
-                        android:paddingVertical="@dimen/half_vertical_margin"
+                        android:layout_marginHorizontal="@dimen/half_vertical_margin"
                         android:fontFamily="@font/montserrat"
                         android:textSize="@dimen/card_text_size"
                         android:textAllCaps="false"
                         android:textColor="@color/colorPrimary"
-                        android:id="@+id/idCancelStatus"
-                        android:layout_marginTop="@dimen/drawer_padding_size"/>
+                        android:id="@+id/idCancelStatus"/>
 
                 </LinearLayout>
 
@@ -560,7 +613,8 @@
                 android:id="@+id/idCustomLiveChart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="20dp"
                 tools:ignore="MissingConstraints" />
 
             <View
@@ -573,7 +627,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingVertical="10dp"
-                android:paddingHorizontal="30dp"
+                android:paddingHorizontal="@dimen/drawer_padding_size"
                 tools:ignore="MissingConstraints">
 
                 <Button
@@ -585,7 +639,7 @@
                     android:text="Log"
                     android:textStyle="bold"
                     android:fontFamily="@font/montserrat"
-                    android:textSize="@dimen/card_text_size"
+                    android:textSize="@dimen/normal_text_size"
                     android:textAllCaps="false"
                     android:textColor="@color/colorPrimary"
                     app:layout_constraintLeft_toLeftOf="parent"
@@ -600,7 +654,7 @@
                     android:text="General"
                     android:textStyle="bold"
                     android:fontFamily="@font/montserrat"
-                    android:textSize="@dimen/card_text_size"
+                    android:textSize="@dimen/normal_text_size"
                     android:textAllCaps="false"
                     android:textColor="@color/colorPrimary"
                     app:layout_constraintLeft_toRightOf="@id/idTableBtnLog"
@@ -615,7 +669,7 @@
                     android:text="Signature"
                     android:textStyle="bold"
                     android:fontFamily="@font/montserrat"
-                    android:textSize="@dimen/card_text_size"
+                    android:textSize="@dimen/normal_text_size"
                     android:layout_marginLeft="@dimen/button_horizontal_margin"
                     android:textAllCaps="false"
                     android:textColor="@color/colorPrimary"
@@ -632,7 +686,7 @@
                     android:text="DVIR"
                     android:textStyle="bold"
                     android:fontFamily="@font/montserrat"
-                    android:textSize="@dimen/card_text_size"
+                    android:textSize="@dimen/normal_text_size"
                     android:textAllCaps="false"
                     android:textColor="@color/colorPrimary"
                     app:layout_constraintLeft_toRightOf="@id/idTableBtnDocs"
@@ -683,6 +737,7 @@
                 android:id="@+id/idRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:paddingVertical="@dimen/button_radius"
                 android:nestedScrollingEnabled="false" />
 
         </LinearLayout>

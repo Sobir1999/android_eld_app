@@ -1,9 +1,5 @@
 package com.iosix.eldblesample.roomDatabase.entities;
 
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
 import com.google.gson.annotations.SerializedName;
 import com.iosix.eldblesample.models.eld_records.Point;
 

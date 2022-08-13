@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
@@ -23,6 +24,7 @@ import com.iosix.eldblesample.customViews.CustomStableRulerChart;
 import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.models.ExampleSMSModel;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
+import com.iosix.eldblesample.shared_prefs.DriverSharedPrefs;
 import com.iosix.eldblesample.shared_prefs.LastStatusData;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
@@ -47,14 +49,15 @@ public class LogFragment extends Fragment {
     private RecyclerView recyclerView_log;
     private LogRecyclerViewAdapter logRecyclerViewAdapter;
     private DvirViewModel dvirViewModel;
+    private DriverSharedPrefs driverSharedPrefs;
     List<LogEntity> truckStatusEntities = new ArrayList<>();
     ArrayList<LogEntity> truckStatusEntitiesCurr = new ArrayList<>();
+    ArrayList<LogEntity> otherStatusEntities = new ArrayList<>();
 
 
-    public static LogFragment newInstance(String param1) {
+    public static LogFragment newInstance() {
         LogFragment fragment = new LogFragment();
         Bundle args = new Bundle();
-        args.putString("ARG_PARAM1", param1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -62,11 +65,60 @@ public class LogFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            currDay = getArguments().getString("ARG_PARAM1");
-        }
         statusDaoViewModel = ViewModelProviders.of(requireActivity()).get(StatusDaoViewModel.class);
         dvirViewModel = ViewModelProviders.of(requireActivity()).get(DvirViewModel.class);
+        driverSharedPrefs = DriverSharedPrefs.getInstance(getContext());
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        changeDateTimeBroadcast = new ChangeDateTimeBroadcast() {
+            @Override
+            public void onDayChanged() {
+                time = "" + Calendar.getInstance().getTime();
+                today = time.split(" ")[1] + " " + time.split(" ")[2];
+                dvirViewModel.getCurrentName().postValue(today);
+            }
+        };
+        _context.registerReceiver(changeDateTimeBroadcast, ChangeDateTimeBroadcast.getIntentFilter());
+
+        statusDaoViewModel.getmAllStatus().observe(getViewLifecycleOwner(),logEntities -> {
+            truckStatusEntities.clear();
+            for (int i = 0; i < logEntities.size(); i++) {
+                if (logEntities.get(i).getDriverId().equals(driverSharedPrefs.getDriverId())){
+                    truckStatusEntities.add(logEntities.get(i));
+                }
+            }
+        });
+
+        dvirViewModel.getCurrentName().observe(getViewLifecycleOwner(), c ->{
+                truckStatusEntitiesCurr.clear();
+                Log.d("adverse Diving",truckStatusEntities.size() + "L");
+                logRecyclerViewAdapter = new LogRecyclerViewAdapter(requireContext().getApplicationContext(),truckStatusEntities,c);
+                recyclerView_log.setAdapter(logRecyclerViewAdapter);
+                truckStatusEntitiesCurr.clear();
+                otherStatusEntities.clear();
+                for (int i = 0; i < truckStatusEntities.size(); i++) {
+                    if (truckStatusEntities.get(i).getTime().equals(c)){
+                        if (truckStatusEntities.get(i).getTo_status() < 6){
+                            truckStatusEntitiesCurr.add(truckStatusEntities.get(i));
+                        }else {
+                            otherStatusEntities.add(truckStatusEntities.get(i));
+                        }
+                    }
+                }
+                if(c.equals(today)){
+                    idCustomChart.setVisibility(View.INVISIBLE);
+                    idCustomChartLive.setVisibility(View.VISIBLE);
+                    idCustomChartLive.setArrayList(truckStatusEntitiesCurr,otherStatusEntities);
+                }else {
+                    idCustomChartLive.setVisibility(View.INVISIBLE);
+                    idCustomChart.setVisibility(View.VISIBLE);
+                    idCustomChart.setArrayList(truckStatusEntitiesCurr,otherStatusEntities);
+                }
+            });
 
     }
 
@@ -79,39 +131,7 @@ public class LogFragment extends Fragment {
         idCustomChartLive = view.findViewById(R.id.idCustomChartLive);
         recyclerView_log = view.findViewById(R.id.recyclerView_log_page);
 
-        statusDaoViewModel.getmAllStatus().observe(getViewLifecycleOwner(),logEntities -> {
-            truckStatusEntities = logEntities;
-        });
 
-        changeDateTimeBroadcast = new ChangeDateTimeBroadcast() {
-            @Override
-            public void onDayChanged() {
-                time = "" + Calendar.getInstance().getTime();
-                today = time.split(" ")[1] + " " + time.split(" ")[2];
-                dvirViewModel.getCurrentName().postValue(today);
-            }
-        };
-        _context.registerReceiver(changeDateTimeBroadcast, ChangeDateTimeBroadcast.getIntentFilter());
-
-        dvirViewModel.getCurrentName().observe(getViewLifecycleOwner(), c ->{
-                truckStatusEntitiesCurr.clear();
-                logRecyclerViewAdapter = new LogRecyclerViewAdapter(requireContext().getApplicationContext(),truckStatusEntities,c);
-                recyclerView_log.setAdapter(logRecyclerViewAdapter);
-                for (int i = 0; i < truckStatusEntities.size(); i++) {
-                    if (truckStatusEntities.get(i).getTime().equals(c)){
-                        truckStatusEntitiesCurr.add(truckStatusEntities.get(i));
-                    }
-                }
-                if(c.equals(today)){
-                    idCustomChart.setVisibility(View.INVISIBLE);
-                    idCustomChartLive.setVisibility(View.VISIBLE);
-                    idCustomChartLive.setArrayList(truckStatusEntitiesCurr);
-                }else {
-                    idCustomChartLive.setVisibility(View.INVISIBLE);
-                    idCustomChart.setVisibility(View.VISIBLE);
-                    idCustomChart.setArrayList(truckStatusEntitiesCurr);
-                }
-        });
         return view;
     }
 
@@ -125,18 +145,13 @@ public class LogFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onStop() {
-        EventBus.getDefault().unregister(this);
         super.onStop();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onSMSHandler(ExampleSMSModel sendModels){
-    }
 
     @Override
     public void onDestroy() {

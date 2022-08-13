@@ -24,14 +24,13 @@ public class GeneralEntity {
     private String distance;
     @SerializedName("shipping_doc")
     @ColumnInfo(name = "shipping_docs")
-    private String shippingDocs;
+    private ArrayList<String> shippingDocs;
     @SerializedName("vehicles")
     @ColumnInfo(name = "vehicles")
-    private String vehicle;
-    @TypeConverters(TrailerConverter.class)
+    private ArrayList<String> vehicle;
     @SerializedName("trailers")
     @ColumnInfo(name = "trailers")
-    private ArrayList<TrailersEntity> trailers;
+    private ArrayList<String> trailers;
     @SerializedName("carrier")
     @ColumnInfo(name = "carrier")
     private String carrier;
@@ -43,7 +42,7 @@ public class GeneralEntity {
     private String homrTerminalAddress;
     @SerializedName("co_driver")
     @ColumnInfo(name = "co_driver")
-    private String co_driver_name;
+    private ArrayList<String> co_driver_name;
     @SerializedName("from_address")
     @ColumnInfo(name = "from_address")
     private String from_info;
@@ -60,7 +59,7 @@ public class GeneralEntity {
 //    private Bitmap signature;
 
 
-    public GeneralEntity(String distance, String shippingDocs, String vehicle, ArrayList<TrailersEntity> trailers, String carrier, String mainOffice, String homrTerminalAddress, String co_driver_name, String from_info, String to_info, String note, String day) {
+    public GeneralEntity(String distance, ArrayList<String> shippingDocs, ArrayList<String> vehicle, ArrayList<String> trailers, String carrier, String mainOffice, String homrTerminalAddress, ArrayList<String> co_driver_name, String from_info, String to_info, String note, String day) {
         this.distance = distance;
         this.shippingDocs = shippingDocs;
         this.vehicle = vehicle;
@@ -91,27 +90,27 @@ public class GeneralEntity {
         this.distance = distance;
     }
 
-    public String getShippingDocs() {
+    public ArrayList<String> getShippingDocs() {
         return shippingDocs;
     }
 
-    public void setShippingDocs(String shippingDocs) {
+    public void setShippingDocs(ArrayList<String> shippingDocs) {
         this.shippingDocs = shippingDocs;
     }
 
-    public String getVehicle() {
+    public ArrayList<String> getVehicle() {
         return vehicle;
     }
 
-    public void setVehicle(String vehicle) {
+    public void setVehicle(ArrayList<String> vehicle) {
         this.vehicle = vehicle;
     }
 
-    public ArrayList<TrailersEntity> getTrailers() {
+    public ArrayList<String> getTrailers() {
         return trailers;
     }
 
-    public void setTrailers(ArrayList<TrailersEntity> trailers) {
+    public void setTrailers(ArrayList<String> trailers) {
         this.trailers = trailers;
     }
 
@@ -139,11 +138,11 @@ public class GeneralEntity {
         this.homrTerminalAddress = homrTerminalAddress;
     }
 
-    public String getCo_driver_name() {
+    public ArrayList<String> getCo_driver_name() {
         return co_driver_name;
     }
 
-    public void setCo_driver_name(String co_driver_name) {
+    public void setCo_driver_name(ArrayList<String> co_driver_name) {
         this.co_driver_name = co_driver_name;
     }
 

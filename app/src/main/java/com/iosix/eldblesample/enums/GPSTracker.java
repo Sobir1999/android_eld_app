@@ -184,10 +184,10 @@ public class GPSTracker extends Service implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         float bestAccuracy = -1f;
-        if (location.getAccuracy() != 0.0f
-                && (location.getAccuracy() < bestAccuracy) || bestAccuracy == -1f) {
-            locationManager.removeUpdates(this);
+        if (location.getAccuracy() != 0.0f) {
+            location.getAccuracy();
         }
+        locationManager.removeUpdates(this);
         bestAccuracy = location.getAccuracy();
     }
 

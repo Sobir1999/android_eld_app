@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="?attr/customBgColor"
+    android:background="?attr/customBgViewColor"
     android:orientation="vertical"
     android:id="@+id/idContainerSendLog"
     tools:context=".fragments.SendLogFragment">
@@ -52,35 +52,45 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:layout_marginHorizontal="10dp"
-        android:background="#ABF4DE99"
-        android:hint="@string/enter_recepient_e_mail"
-        app:hintTextColor="@color/colorPrimary"
-        android:padding="10dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginHorizontal="@dimen/half_vertical_margin"
+        android:layout_marginVertical="@dimen/half_vertical_margin"
+        android:background="@drawable/background_main_view">
 
-        <com.google.android.material.textfield.TextInputEditText
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:backgroundTint="@color/colorPrimary"
-            android:id="@+id/idSendLogEdittext"/>
+            android:layout_marginTop="100dp"
+            android:layout_marginHorizontal="10dp"
+            android:background="#ABF4DE99"
+            android:hint="@string/enter_recepient_e_mail"
+            app:hintTextColor="@color/colorPrimary"
+            android:padding="10dp">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:backgroundTint="@color/colorPrimary"
+                android:id="@+id/idSendLogEdittext"/>
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:id="@+id/idSendLogs"
-        android:layout_gravity="center"
-        android:textSize="15sp"
-        android:text="@string/send_logs"
-        android:textColor="@color/white"
-        android:layout_marginTop="40dp"
-        android:background="@drawable/button_bg_inspection"
-        android:layout_marginHorizontal="10dp"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:id="@+id/idSendLogs"
+            android:layout_gravity="center"
+            android:textSize="15sp"
+            android:text="@string/send_logs"
+            android:textColor="@color/white"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/button_bg_inspection"
+            android:layout_marginHorizontal="10dp"/>
+
+    </LinearLayout>
 
 </LinearLayout>

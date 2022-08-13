@@ -28,9 +28,7 @@ import androidx.core.os.HandlerCompat;
 
 public class MyApplication extends Application {
     public static Application instance;
-    public static Context context;
-    public static UserData userData;
-    public static SharedPreferences sharedPreferences;
+    public Context context;
     public static ScheduledExecutorService executorService = Executors.newScheduledThreadPool(4);
     @Override
     public void onCreate() {
@@ -42,8 +40,6 @@ public class MyApplication extends Application {
 
         instance = this;
         context = getApplicationContext();
-        userData = new UserData(context);
-        sharedPreferences = callUserPrefs(context);
     }
 
     private void createNotificationChannel() {

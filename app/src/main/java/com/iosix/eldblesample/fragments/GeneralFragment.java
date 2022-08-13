@@ -1,18 +1,16 @@
 package com.iosix.eldblesample.fragments;
 
+import static com.iosix.eldblesample.enums.Day.dateToString;
 import static com.iosix.eldblesample.enums.Day.stringToDate;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -20,33 +18,27 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.adapters.DriversListAdapter;
-import com.iosix.eldblesample.adapters.TrailerListAdapter;
-import com.iosix.eldblesample.adapters.TrailerRecyclerAdapter;
+import com.iosix.eldblesample.adapters.GeneralAdapter;
 import com.iosix.eldblesample.adapters.VehiclesListAdapter;
-import com.iosix.eldblesample.models.ExampleSMSModel;
+import com.iosix.eldblesample.enums.GeneralConstants;
 import com.iosix.eldblesample.models.TrailNubmer;
+import com.iosix.eldblesample.models.User;
 import com.iosix.eldblesample.roomDatabase.entities.GeneralEntity;
-import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
+import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 import com.iosix.eldblesample.shared_prefs.DriverSharedPrefs;
-import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
 import com.iosix.eldblesample.viewModel.GeneralViewModel;
 import com.iosix.eldblesample.viewModel.UserViewModel;
 import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -54,442 +46,510 @@ import java.util.concurrent.ExecutionException;
 
 public class GeneralFragment extends Fragment {
 
-    private final ArrayList<TrailersEntity> selectedTrailers = new ArrayList<>();
-    private final ArrayList<String> selectedTrailersNumber = new ArrayList<>();
-    private final ArrayList<GeneralEntity> generalEntities = new ArrayList<>();
-    private DayDaoViewModel daoViewModel;
-    private UserViewModel userViewModel;
-    private GeneralViewModel generalViewModel;
+    private TextView driverName;
+    private TextView distance;
+    private TextView carrierName;
+    private TextView homeTerAdd;
+    private TextView carrierOffice;
+    private TextView idFromText;
+    private TextView idToText;
+    private TextView idNotesText;
+    private LinearLayout addVehicle;
+    private ConstraintLayout addCoDriver;
+    private LinearLayout addTrailer;
+    private LinearLayout addShippingDocs;
+    private LinearLayout addFromDes;
+    private LinearLayout addToDes;
+    private LinearLayout addNotes;
+    private ConstraintLayout fromDes;
+    private ConstraintLayout toDes;
+    private ConstraintLayout notesContainer;
+    private Button save;
+    private ImageView idFromDelete;
+    private ImageView idToDelete;
+    private ImageView idNotesDelete;
+    private RecyclerView vehicleRv;
+    private RecyclerView coDriverRv;
+    private RecyclerView trailerRv;
+    private RecyclerView shippingDocsRv;
     private DriverSharedPrefs driverSharedPrefs;
     private EldJsonViewModel eldJsonViewModel;
     private DvirViewModel dvirViewModel;
-    TrailerRecyclerAdapter adapter;
-    private final String distance = "15";
-    private String day;
+    private GeneralViewModel generalViewModel;
+    private UserViewModel userViewModel;
+    private final ArrayList<String> trailerListSelected = new ArrayList<>();
+    private final ArrayList<String> vehicleListSelected = new ArrayList<>();
+    private final ArrayList<String> coDriversListSelected = new ArrayList<>();
+    private final ArrayList<String> shippingDocsListSelected = new ArrayList<>();
+    private final ArrayList<VehiclesEntity> vehicleList = new ArrayList<>();
+    private String fromDesString = "";
+    private String toDesString = "";
+    private String notesString = "";
+    private final ArrayList<User> driverList = new ArrayList<>();
+    private String currDay;
 
-
-    private Context context;
-    private Button idSaveGeneral;
-    private RecyclerView idTrailersRecyclerView;
-    private ImageView idShippingClear,idTrailersClear,idVehiclesClear;
-    private TextView tvDistance;
-    private TextView tvShippingdocs;
-    private TextView tvTrailers;
-    private TextView shippingDocsEdit;
-    private TextView idVehiclesEdit;
-    private TextView tv_carrier;
-    private TextView tv_terminal_address;
-    private TextView tv_from_destination;
-    private TextView tv_to_destination;
-    private TextView tv_main_office;
-    private TextView tv_notes;
-    private TextView tv_co_drivers;
-    private EditText idTrailersEdit;
-    private EditText idCarrierEdit;
-    private EditText idfromEdit;
-    private EditText idtoEdit;
-    private EditText idNotesEdit;
-    private ConstraintLayout idMainOffice,coDriverContainer;
-    private LinearLayout driverInfo;
-    private LinearLayout distanceContainer;
-    private LinearLayout idDistanceLayout;
-    private LinearLayout trailersLayout;
-    private LinearLayout idTrailersLayout;
-    private LinearLayout vehiclesLayout;
-    private LinearLayout layout_carrier;
-    private LinearLayout from_container;
-    private LinearLayout idfromLayout;
-    private LinearLayout to_container;
-    private LinearLayout idtoLayout;
-    private LinearLayout notes_container;
-    private LinearLayout idNotesLayout;
-    private ConstraintLayout shippingDocsLayout,idVehiclesLayout;
-
-    public static GeneralFragment newInstance(String c) {
+    public static GeneralFragment newInstance() {
         GeneralFragment fragment = new GeneralFragment();
         Bundle args = new Bundle();
+        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null){
-            day = getArguments().getString("currDay");
-        }
+
+        driverSharedPrefs = DriverSharedPrefs.getInstance(getContext());
         eldJsonViewModel = ViewModelProviders.of(requireActivity()).get(EldJsonViewModel.class);
-        userViewModel = ViewModelProviders.of(requireActivity()).get(UserViewModel.class);
         dvirViewModel = ViewModelProviders.of(requireActivity()).get(DvirViewModel.class);
         generalViewModel = ViewModelProviders.of(requireActivity()).get(GeneralViewModel.class);
-
-        driverSharedPrefs = DriverSharedPrefs.getInstance(requireContext().getApplicationContext());
-
-
+        userViewModel = ViewModelProviders.of(requireActivity()).get(UserViewModel.class);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_general, container, false);
-        context = container.getContext();
-
-        TextView driverFullName = view.findViewById(R.id.tv_driver_name);
-        driverInfo = view.findViewById(R.id.idDriverNameCons);
-        distanceContainer = view.findViewById(R.id.distance_container);
-        tvDistance = view.findViewById(R.id.tv_distance);
-        tvShippingdocs = view.findViewById(R.id.idAddShippingDocs);
-        shippingDocsEdit = view.findViewById(R.id.idShippingDocsEdit);
-        shippingDocsLayout = view.findViewById(R.id.shipping_docs_layout);
-        idShippingClear = view.findViewById(R.id.idShippingClear);
-        trailersLayout = view.findViewById(R.id.trailers_layout);
-        tvTrailers = view.findViewById(R.id.tv_trailers);
-        idTrailersRecyclerView = view.findViewById(R.id.idTrailersRecyclerView);
-        idTrailersLayout = view.findViewById(R.id.idTrailersLayout);
-        idTrailersEdit = view.findViewById(R.id.idTrailersEdit);
-        idTrailersClear = view.findViewById(R.id.idTrailersClear);
-        idVehiclesEdit = view.findViewById(R.id.idVehiclesEdit);
-        idVehiclesClear = view.findViewById(R.id.idVehiclesClear);
-        vehiclesLayout = view.findViewById(R.id.vehicles_layout);
-        idVehiclesLayout = view.findViewById(R.id.idVehiclesLayout);
-        layout_carrier = view.findViewById(R.id.layout_carrier);
-        tv_carrier = view.findViewById(R.id.tv_carrier);
-        idMainOffice = view.findViewById(R.id.idMainOffice);
-        tv_terminal_address = view.findViewById(R.id.tv_terminal_address);
-        from_container = view.findViewById(R.id.from_container);
-        tv_from_destination = view.findViewById(R.id.tv_from_destination);
-        idfromLayout = view.findViewById(R.id.idfromLayout);
-        idfromEdit = view.findViewById(R.id.idfromEdit);
-        to_container = view.findViewById(R.id.to_container);
-        tv_to_destination = view.findViewById(R.id.tv_to_destination);
-        idtoLayout = view.findViewById(R.id.idtoLayout);
-        idtoEdit = view.findViewById(R.id.idtoEdit);
-        notes_container = view.findViewById(R.id.notes_container);
-        idNotesLayout = view.findViewById(R.id.idNotesLayout);
-        idNotesEdit = view.findViewById(R.id.idNotesEdit);
-        tv_notes = view.findViewById(R.id.tv_notes);
-        idSaveGeneral = view.findViewById(R.id.idSaveGeneral);
-        tv_main_office = view.findViewById(R.id.tv_main_office);
-        tv_co_drivers = view.findViewById(R.id.tv_co_drivers);
-        coDriverContainer = view.findViewById(R.id.tv_co_driver_container);
-
-        driverFullName.setText(String.format("%s %s",driverSharedPrefs.getFirstname(),driverSharedPrefs.getLastname()));
-        tv_main_office.setText(driverSharedPrefs.getMainOffice());
-        tv_terminal_address.setText(driverSharedPrefs.getHomeTerAdd());
-
-        getGeneralInfo();
-        getDriverInfo();
-
-        dvirViewModel.getCurrentName().observe(getViewLifecycleOwner(),c -> {
-            day = c;
-            generalViewModel.getMgetGenerals().observe(getViewLifecycleOwner(),generalEntities -> {
-                this.generalEntities.clear();
-                for (int i = 0; i < generalEntities.size(); i++) {
-                    if (generalEntities.get(i).getDay().equals(c)){
-                        this.generalEntities.add(generalEntities.get(i));
-                    }
-                }
-                hasGeneral();
-            });
-
-
-            idSaveGeneral.setOnClickListener(v -> {
-                try {
-                    eldJsonViewModel.sendGeneralInfo(new GeneralEntity(distance,shippingDocsEdit.getText().toString(),
-                            idVehiclesEdit.getText().toString(), selectedTrailers,driverSharedPrefs.getCompany(),
-                            driverSharedPrefs.getMainOffice(),"driverSharedPrefs.getHomeTerAdd()",
-                            tv_co_drivers.getText().toString(),tv_from_destination.getText().toString(),
-                            tv_to_destination.getText().toString(),tv_notes.getText().toString(),stringToDate(day))).observe(getViewLifecycleOwner(),generalInfo ->{
-                                if (generalInfo != null){
-                                    Toast.makeText(getContext(),"Successfully saved and send",Toast.LENGTH_SHORT).show();
-                                }
-                    });
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    generalViewModel.insertGeneral(new GeneralEntity(distance,shippingDocsEdit.getText().toString(),
-                            idVehiclesEdit.getText().toString(), selectedTrailers,driverSharedPrefs.getCompany(),
-                            driverSharedPrefs.getMainOffice(),"",
-                            tv_co_drivers.getText().toString(),tv_from_destination.getText().toString(),
-                            tv_to_destination.getText().toString(),tv_notes.getText().toString(),day));
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            });
-        });
-
+        setupViewModelObservers();
+        setupUI(view);
         return view;
     }
 
-    public void hasGeneral(){
-        if (generalEntities.size() != 0){
-            shippingDocsEdit.setText(generalEntities.get(generalEntities.size()-1).getShippingDocs());
-            tvDistance.setText(generalEntities.get(generalEntities.size()-1).getDistance());
-            idVehiclesEdit.setText(generalEntities.get(generalEntities.size()-1).getVehicle());
-            tv_carrier.setText(generalEntities.get(generalEntities.size()-1).getCarrier());
-            tv_main_office.setText(generalEntities.get(generalEntities.size()-1).getMainOffice());
-            tv_terminal_address.setText(generalEntities.get(generalEntities.size()-1).getHomrTerminalAddress());
-            if (generalEntities.get(generalEntities.size()-1).getCo_driver_name().equals("")){
-                tv_co_drivers.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,R.drawable.ic_icons8_plus__,0);
-            }
-            tv_co_drivers.setText(generalEntities.get(generalEntities.size()-1).getCo_driver_name());
-            tv_from_destination.setText(generalEntities.get(generalEntities.size()-1).getFrom_info());
-            tv_to_destination.setText(generalEntities.get(generalEntities.size()-1).getTo_info());
-            tv_notes.setText(generalEntities.get(generalEntities.size()-1).getNote());
+    private void setupUI(View view){
+        driverName = view.findViewById(R.id.tv_driver_name);
+        addVehicle = view.findViewById(R.id.vehicles_layout);
+        addCoDriver = view.findViewById(R.id.tv_co_driver_container);
+        addTrailer = view.findViewById(R.id.trailers_layout);
+        addShippingDocs = view.findViewById(R.id.idShippingDocsContainer);
+        addFromDes = view.findViewById(R.id.from_container);
+        addToDes = view.findViewById(R.id.to_container);
+        distance = view.findViewById(R.id.tv_distance);
+        addNotes = view.findViewById(R.id.notes_container);
+        carrierName = view.findViewById(R.id.tv_carrier);
+        carrierOffice = view.findViewById(R.id.tv_main_office);
+        homeTerAdd = view.findViewById(R.id.tv_terminal_address);
+        save = view.findViewById(R.id.idSaveGeneral);
+        vehicleRv = view.findViewById(R.id.idVehiclessRecyclerView);
+        coDriverRv = view.findViewById(R.id.idCoDriverssRecyclerView);
+        trailerRv = view.findViewById(R.id.idTrailersRecyclerView);
+        shippingDocsRv = view.findViewById(R.id.idShippingDocsRecyclerView);
+        fromDes = view.findViewById(R.id.idfromLayout);
+        toDes = view.findViewById(R.id.idToLayout);
+        idFromText = view.findViewById(R.id.idFromText);
+        idToText = view.findViewById(R.id.idToText);
+        idFromDelete = view.findViewById(R.id.idFromDelete);
+        idToDelete = view.findViewById(R.id.idToDelete);
+        notesContainer = view.findViewById(R.id.idNotesLayout);
+        idNotesDelete = view.findViewById(R.id.idNotesDelete);
+        idNotesText = view.findViewById(R.id.idNotesText);
 
-            shippingDocsLayout.setVisibility(View.VISIBLE);
-            idVehiclesLayout.setVisibility(View.VISIBLE);
+        driverName.setText(String.format("%s %s", driverSharedPrefs.getFirstname(), driverSharedPrefs.getLastname()));
+        carrierName.setText(driverSharedPrefs.getCompany());
+        carrierOffice.setText(driverSharedPrefs.getMainOffice());
+        homeTerAdd.setText(driverSharedPrefs.getHomeTerAdd());
 
-            selectedTrailers.addAll(generalEntities.get(generalEntities.size()-1).getTrailers());
-            dvirViewModel.getSelectedTrailerCount().postValue(selectedTrailers.size());
-        }else {
-            tvDistance.setText("0.0");
-            shippingDocsLayout.setVisibility(View.GONE);
-            idVehiclesLayout.setVisibility(View.GONE);
-            tv_from_destination.setText(R.string.enter_information);
-            tv_to_destination.setText(R.string.enter_information);
-            tv_notes.setText(R.string.loads);
-            tv_co_drivers.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,R.drawable.ic_icons8_plus__,0);
-
-        }
-    }
-
-    private void getDriverInfo(){
-        eldJsonViewModel.getVehicle().observe(getViewLifecycleOwner(),vehicleList -> {
-            if (vehicleList != null){
-                if (vehicleList.getVehicle_id() != null){
-                    idVehiclesEdit.setText(vehicleList.getVehicle_id());
-                    idVehiclesLayout.setVisibility(View.VISIBLE);
+        addVehicle.setOnClickListener(v ->{
+            Dialog dialog = new Dialog(requireContext());
+            dialog.setContentView(R.layout.custom_vehicles_dialog);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            RecyclerView vehicleListRv = dialog.findViewById(R.id.idVehicleRecyclerview);
+            TextView cancel = dialog.findViewById(R.id.idVehicleCancel);
+            VehiclesListAdapter vehiclesListAdapter = new VehiclesListAdapter(requireContext(),vehicleList);
+            vehicleListRv.setAdapter(vehiclesListAdapter);
+            vehiclesListAdapter.setListener(s -> {
+                if (!vehicleListSelected.contains(s)){
+                    vehicleListSelected.add(s);
+                    dvirViewModel.getVehiclesMutableLiveData().postValue(vehicleListSelected.size());
                 }
-            }
+                dialog.dismiss();
+            });
+            cancel.setOnClickListener(view1->{
+                dialog.dismiss();
+            });
+            dialog.show();
         });
 
-        eldJsonViewModel.getCoDriver().observe(getViewLifecycleOwner(),coDriver ->{
-            if (coDriver != null){
-                if (coDriver.getName() != null || coDriver.getLastName() != null){
-                    tv_co_drivers.setText(String.format("%s %s",coDriver.getName(),coDriver.getLastName()));
-                    tv_co_drivers.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,0,0);
+        addCoDriver.setOnClickListener(v ->{
+            Dialog dialog = new Dialog(requireContext());
+            dialog.setContentView(R.layout.custom_vehicles_dialog);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            RecyclerView vehicleListRv = dialog.findViewById(R.id.idVehicleRecyclerview);
+            TextView cancel = dialog.findViewById(R.id.idVehicleCancel);
+            TextView idVehicleHeaderTv = dialog.findViewById(R.id.idVehicleHeaderTv);
+            idVehicleHeaderTv.setText(R.string.select_co_driver);
+            DriversListAdapter driversListAdapter = new DriversListAdapter(requireContext(),driverList);
+            vehicleListRv.setAdapter(driversListAdapter);
+            driversListAdapter.setListener(s -> {
+                if (!coDriversListSelected.contains(s)){
+                    coDriversListSelected.add(s);
+                    dvirViewModel.getCoDriversMutableLiveData().postValue(coDriversListSelected.size());
                 }
-            }
+                dialog.dismiss();
+            });
+            cancel.setOnClickListener(view1->{
+                dialog.dismiss();
+            });
+            dialog.show();
         });
-    }
 
-    private void getGeneralInfo(){
+        addTrailer.setOnClickListener(v ->{
+            Dialog dialog = new Dialog(requireContext());
+            dialog.setContentView(R.layout.custom_dialog);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            EditText createTrailer = dialog.findViewById(R.id.idDialogEdit);
+            TextView cancel = dialog.findViewById(R.id.idDialogCancel);
+            TextView save = dialog.findViewById(R.id.idDialogSave);
 
-        daoViewModel = ViewModelProviders.of(requireActivity()).get(DayDaoViewModel.class);
+            cancel.setOnClickListener(v1 ->{
+                dialog.dismiss();
+            });
 
-        tvShippingdocs.setOnClickListener(v2 -> {
-
-            Dialog shippingDialog = new Dialog(context);
-            shippingDialog.setContentView(R.layout.custom_general_layout);
-            shippingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            EditText shippingDocs = shippingDialog.findViewById(R.id.idGeneralDialogEdit);
-            TextView cancel = shippingDialog.findViewById(R.id.idGeneralDialogCancel);
-            TextView send = shippingDialog.findViewById(R.id.idGeneralDialogSend);
-
-            send.setOnClickListener(view -> {
-                if (!shippingDocs.toString().equals("")){
-                    shippingDocsEdit.setText(shippingDocs.getText());
-                    shippingDocsLayout.setVisibility(View.VISIBLE);
-                    shippingDialog.dismiss();
-                }else {
-                    Toast.makeText(context,"Please create shipping docs!",Toast.LENGTH_SHORT).show();
+            save.setOnClickListener(v1->{
+                if (!createTrailer.getText().toString().equals("")){
+                    trailerListSelected.add(createTrailer.getText().toString());
+                    dvirViewModel.getTrailersMutableLiveData().postValue(trailerListSelected.size());
+                    eldJsonViewModel.sendTrailer(new TrailNubmer(createTrailer.getText().toString()));
+                    dialog.dismiss();
                 }
             });
 
-            cancel.setOnClickListener(view -> shippingDialog.dismiss());
-            shippingDialog.show();
-
+            dialog.show();
         });
 
-        idShippingClear.setOnClickListener(v -> shippingDocsLayout.setVisibility(View.GONE));
+        addShippingDocs.setOnClickListener(v->{
+            Dialog dialog = new Dialog(requireContext());
+            dialog.setContentView(R.layout.custom_general_layout);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            EditText createCoDriver = dialog.findViewById(R.id.idGeneralDialogEdit);
+            TextView cancel = dialog.findViewById(R.id.idGeneralDialogCancel);
+            TextView save = dialog.findViewById(R.id.idGeneralDialogSend);
 
-        trailersLayout.setOnClickListener(v4 -> {
-
-            Dialog selectTrailerDialog = new Dialog(context);
-            selectTrailerDialog.setContentView(R.layout.custom_list_dialog);
-            selectTrailerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-            TextView cancelSelectTrailerDialog = selectTrailerDialog.findViewById(R.id.idDialogCancel);
-            TextView idGeneralTrailerText = selectTrailerDialog.findViewById(R.id.idGeneralTrailerText);
-            RecyclerView recyclerView = selectTrailerDialog.findViewById(R.id.idRecyclerViewUnit);
-
-            idGeneralTrailerText.setOnClickListener(view -> {
-                selectTrailerDialog.dismiss();
-                Dialog trailerDialog = new Dialog(context);
-                trailerDialog.setContentView(R.layout.custom_general_layout);
-                trailerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-                TextView cancel = trailerDialog.findViewById(R.id.idGeneralDialogCancel);
-                TextView send = trailerDialog.findViewById(R.id.idGeneralDialogSend);
-                TextView header = trailerDialog.findViewById(R.id.idGeneralHeaderTv);
-                TextView title = trailerDialog.findViewById(R.id.idGeneralTitleTv);
-                EditText trailer = trailerDialog.findViewById(R.id.idGeneralDialogEdit);
-
-                header.setText(R.string.new_trailer);
-                title.setText(R.string.please_enter_new_trailer);
-                cancel.setOnClickListener(view1 -> {
-                    trailerDialog.dismiss();
-                    selectTrailerDialog.show();
-                });
-
-                send.setOnClickListener(view1 -> {
-                    if (!trailer.getText().toString().equals("")){
-                        trailerDialog.dismiss();
-                        selectTrailerDialog.show();
-                        eldJsonViewModel.sendTrailer(new TrailNubmer(trailer.getText().toString())).observe(getViewLifecycleOwner(),getTrailer ->{
-                            if (getTrailer != null){
-                                try {
-                                    daoViewModel.insertTrailer(new TrailersEntity(getTrailer.getTrailer_id(),getTrailer.getNumber()));
-                                } catch (ExecutionException | InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-                    }else {
-                        Toast.makeText(context,"Please,create trailer number!",Toast.LENGTH_SHORT).show();
-                    }
-                });
-                trailerDialog.show();
+            cancel.setOnClickListener(v1 ->{
+                dialog.dismiss();
             });
 
-            daoViewModel.getGetAllTrailers().observe(getViewLifecycleOwner(),trailersEntities -> {
-                TrailerListAdapter trailerListAdapter = new TrailerListAdapter(context,trailersEntities);
-                recyclerView.setAdapter(trailerListAdapter);
+            save.setOnClickListener(v1->{
+                if (!createCoDriver.getText().toString().equals("")){
+                    shippingDocsListSelected.add(createCoDriver.getText().toString());
+                    dvirViewModel.getShippingDocsMutableLiveData().postValue(shippingDocsListSelected.size());
+                    dialog.dismiss();
+                }
+            });
 
-                trailerListAdapter.setUpdateListener(position ->{
-                    selectTrailerDialog.dismiss();
-                    int n = 0;
-                    for (int i = 0; i < selectedTrailers.size(); i++) {
-                        if (trailersEntities.get(position).equals(selectedTrailers.get(i))){
-                            n++;
+            dialog.show();
+        });
+
+        addFromDes.setOnClickListener( v->{
+            Dialog dialog = new Dialog(requireContext());
+            dialog.setContentView(R.layout.custom_general_layout);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            EditText createCoDriver = dialog.findViewById(R.id.idGeneralDialogEdit);
+            TextView header = dialog.findViewById(R.id.idGeneralHeaderTv);
+            TextView title = dialog.findViewById(R.id.idGeneralTitleTv);
+            TextView cancel = dialog.findViewById(R.id.idGeneralDialogCancel);
+            TextView save = dialog.findViewById(R.id.idGeneralDialogSend);
+
+            header.setText(R.string.add_from_destination);
+            title.setText(R.string.please_enter_from);
+
+            cancel.setOnClickListener(v1 ->{
+                dialog.dismiss();
+            });
+
+            save.setOnClickListener(v1->{
+                if (!createCoDriver.getText().toString().equals("")){
+                    fromDesString = createCoDriver.getText().toString();
+                    dvirViewModel.getStringMutableLiveData().postValue(createCoDriver.getText().toString());
+                    dialog.dismiss();
+                }
+            });
+
+            dialog.show();
+        });
+
+        idFromDelete.setOnClickListener(view1 -> {
+            idFromText.setText("");
+            fromDes.setVisibility(View.GONE);
+        });
+
+        addToDes.setOnClickListener(v->{
+            Dialog dialog = new Dialog(requireContext());
+            dialog.setContentView(R.layout.custom_general_layout);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            TextView header = dialog.findViewById(R.id.idGeneralHeaderTv);
+            TextView title = dialog.findViewById(R.id.idGeneralTitleTv);
+            EditText createCoDriver = dialog.findViewById(R.id.idGeneralDialogEdit);
+            TextView cancel = dialog.findViewById(R.id.idGeneralDialogCancel);
+            TextView save = dialog.findViewById(R.id.idGeneralDialogSend);
+
+            header.setText(R.string.add_to_destination);
+            title.setText(R.string.please_enter_to);
+
+            cancel.setOnClickListener(v1 ->{
+                dialog.dismiss();
+            });
+
+            save.setOnClickListener(v1->{
+                if (!createCoDriver.getText().toString().equals("")){
+                    toDesString = createCoDriver.getText().toString();
+                    dvirViewModel.getStringMutableLiveData().postValue(createCoDriver.getText().toString());
+                    idToText.setText(createCoDriver.getText().toString());
+                    toDes.setVisibility(View.VISIBLE);
+                    dialog.dismiss();
+                }
+            });
+
+            dialog.show();
+        });
+
+        idToDelete.setOnClickListener(view1 -> {
+            idToText.setText("");
+            toDes.setVisibility(View.GONE);
+        });
+
+        addNotes.setOnClickListener(v->{
+            Dialog dialog = new Dialog(requireContext());
+            dialog.setContentView(R.layout.custom_general_layout);
+            TextView header = dialog.findViewById(R.id.idGeneralHeaderTv);
+            TextView title = dialog.findViewById(R.id.idGeneralTitleTv);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            EditText createCoDriver = dialog.findViewById(R.id.idGeneralDialogEdit);
+            TextView cancel = dialog.findViewById(R.id.idGeneralDialogCancel);
+            TextView save = dialog.findViewById(R.id.idGeneralDialogSend);
+
+            header.setText(R.string.add_notes);
+            title.setText(R.string.please_enter_notes);
+
+            cancel.setOnClickListener(v1 ->{
+                dialog.dismiss();
+            });
+
+            save.setOnClickListener(v1->{
+                if (!createCoDriver.getText().toString().equals("")){
+                    notesString = createCoDriver.getText().toString();
+                    dvirViewModel.getStringMutableLiveData().postValue(createCoDriver.getText().toString());
+                    idNotesText.setText(createCoDriver.getText().toString());
+                    notesContainer.setVisibility(View.VISIBLE);
+                    dialog.dismiss();
+                }
+            });
+
+            dialog.show();
+        });
+
+        idNotesDelete.setOnClickListener(view1 -> {
+            idNotesText.setText("");
+            notesContainer.setVisibility(View.GONE);
+        });
+
+        save.setOnClickListener(v ->{
+            if (vehicleListSelected.size() > 0 && shippingDocsListSelected.size() > 0 && trailerListSelected.size() > 0){
+                showDialog();
+                try {
+                    eldJsonViewModel.sendGeneralInfo(new GeneralEntity(
+                            "0",
+                            shippingDocsListSelected,
+                            vehicleListSelected,
+                            trailerListSelected,
+                            driverSharedPrefs.getCompany(),
+                            driverSharedPrefs.getMainOffice(),
+                            "driverSharedPrefs.getHomeTerAdd()",
+                            coDriversListSelected,
+                            idFromText.getText().toString(),
+                            idToText.getText().toString(),
+                            idNotesText.getText().toString(),
+                            stringToDate(currDay))).observe(getViewLifecycleOwner(),general ->{
+                        if (general != null){
+                        }else {
                         }
-                    }
-                    if (n == 0){
-                        selectedTrailers.add(trailersEntities.get(position));
-                        selectedTrailersNumber.add(trailersEntities.get(position).getTrailer_id());
-                        dvirViewModel.getSelectedTrailerCount().postValue(selectedTrailers.size());
-
-                    }
-                });
-            });
-
-            cancelSelectTrailerDialog.setOnClickListener(view1 -> selectTrailerDialog.dismiss());
-
-            selectTrailerDialog.show();
-
-        });
-
-        dvirViewModel.getSelectedTrailerCount().observe(getViewLifecycleOwner(),count ->{
-            idTrailersRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-            adapter = new TrailerRecyclerAdapter(selectedTrailers);
-            idTrailersRecyclerView.setAdapter(adapter);
-            adapter.setDeleteListener(s->{
-                selectedTrailers.remove(s);
-                dvirViewModel.getSelectedTrailerCount().postValue(selectedTrailers.size());
-            });
-        });
+                    });
 
 
-        idTrailersClear.setOnClickListener(view -> idTrailersLayout.setVisibility(View.GONE));
-
-        vehiclesLayout.setOnClickListener(v -> {
-
-            Dialog vehiclesDialog = new Dialog(context);
-            vehiclesDialog.setContentView(R.layout.custom_vehicles_dialog);
-            vehiclesDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-            TextView cancel = vehiclesDialog.findViewById(R.id.idVehicleCancel);
-            TextView header = vehiclesDialog.findViewById(R.id.idVehicleHeaderTv);
-            RecyclerView recyclerView = vehiclesDialog.findViewById(R.id.idVehicleRecyclerview);
-
-            header.setText(R.string.select_unit);
-            daoViewModel.getGetAllVehicles().observe(getViewLifecycleOwner(),vehicleEntities->{
-                VehiclesListAdapter adapter = new VehiclesListAdapter(context,vehicleEntities);
-                recyclerView.setAdapter(adapter);
-
-                adapter.setListener(s -> {
-                    vehiclesDialog.dismiss();
-                    idVehiclesLayout.setVisibility(View.VISIBLE);
-                    idVehiclesEdit.setText(s);
-                });
-            });
-
-            cancel.setOnClickListener(view -> vehiclesDialog.dismiss());
-
-            vehiclesDialog.show();
-
-        });
-
-        idVehiclesClear.setOnClickListener(v -> idVehiclesLayout.setVisibility(View.GONE));
-
-        coDriverContainer.setOnClickListener(view -> {
-
-            Dialog driversDialog = new Dialog(context);
-            driversDialog.setContentView(R.layout.custom_vehicles_dialog);
-            driversDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-            TextView cancel = driversDialog.findViewById(R.id.idVehicleCancel);
-            TextView header = driversDialog.findViewById(R.id.idVehicleHeaderTv);
-            RecyclerView recyclerView = driversDialog.findViewById(R.id.idVehicleRecyclerview);
-
-            header.setText(R.string.select_co_driver);
-
-            userViewModel.getMgetDrivers().observe(getViewLifecycleOwner(),driverEntities->{
-                DriversListAdapter adapter = new DriversListAdapter(context,driverEntities);
-                recyclerView.setAdapter(adapter);
-
-                adapter.setListener(s -> {
-                    driversDialog.dismiss();
-                    tv_co_drivers.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,0,0);
-                    tv_co_drivers.setText(s);
-                });
-            });
-
-            cancel.setOnClickListener(v -> driversDialog.dismiss());
-
-            driversDialog.show();
-
-        });
-
-
-        from_container.setOnClickListener(v -> idfromLayout.setVisibility(View.VISIBLE));
-
-            idfromEdit.setOnEditorActionListener((textView, i, keyEvent) -> {
-                if (i == EditorInfo.IME_ACTION_DONE){
-                    if (!idfromEdit.getText().toString().equals("")){
-                        tv_from_destination.setText(idfromEdit.getText().toString());
-                        idfromLayout.setVisibility(View.GONE);
-                    }else idfromLayout.setVisibility(View.GONE);
+                    generalViewModel.insertGeneral(new GeneralEntity("0",
+                            shippingDocsListSelected,
+                            vehicleListSelected,
+                            trailerListSelected,
+                            driverSharedPrefs.getCompany(),
+                            driverSharedPrefs.getMainOffice(),
+                            "driverSharedPrefs.getHomeTerAdd()",
+                            coDriversListSelected,
+                            idFromText.getText().toString(),
+                            idToText.getText().toString(),
+                            idNotesText.getText().toString(),
+                            stringToDate(currDay)));
+                } catch (ParseException | ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
                 }
-                return false;
-            });
-
-        to_container.setOnClickListener(v -> idtoLayout.setVisibility(View.VISIBLE));
-
-        idtoEdit.setOnEditorActionListener((textView, i, keyEvent) -> {
-            if (i == EditorInfo.IME_ACTION_DONE){
-                if (!idtoEdit.getText().toString().equals("")){
-                    tv_to_destination.setText(idtoEdit.getText().toString());
-                }
-                idtoLayout.setVisibility(View.GONE);
+            }else {
+                Toast.makeText(requireContext(),"Some fields didn't create",Toast.LENGTH_SHORT).show();
             }
-            return false;
         });
 
-        notes_container.setOnClickListener(v -> idNotesLayout.setVisibility(View.VISIBLE));
+    }
 
-            idNotesEdit.setOnEditorActionListener((textView, i, keyEvent) -> {
-                if (i == EditorInfo.IME_ACTION_DONE){
-                    if (!idNotesEdit.getText().toString().equals("")){
-                        tv_notes.setText(idNotesEdit.getText().toString());
+    private void setupViewModelObservers(){
+
+        userViewModel.getGetAllVehicles().observe(getViewLifecycleOwner(),vehiclesEntities -> {
+            if (vehicleList.isEmpty()){
+                vehicleList.addAll(vehiclesEntities);
+            }
+        });
+
+        userViewModel.getMgetDrivers().observe(getViewLifecycleOwner(),users -> {
+            if (driverList.isEmpty()){
+                driverList.addAll(users);
+            }
+        });
+
+        dvirViewModel.getVehiclesMutableLiveData().observe(getViewLifecycleOwner(),size ->{
+            if (size > 0){
+                vehicleRv.setVisibility(View.VISIBLE);
+                GeneralAdapter adapter = new GeneralAdapter(getContext(),vehicleListSelected,GeneralConstants.VEHICLES);
+                vehicleRv.setAdapter(adapter);
+                adapter.setDeleteListener(s1 -> {
+                    vehicleListSelected.remove(s1);
+                    dvirViewModel.getVehiclesMutableLiveData().postValue(vehicleListSelected.size());
+                });
+            }else {
+                vehicleRv.setVisibility(View.GONE);
+            }
+        });
+
+        dvirViewModel.getCoDriversMutableLiveData().observe(getViewLifecycleOwner(),size ->{
+            if (size > 0){
+                coDriverRv.setVisibility(View.VISIBLE);
+                GeneralAdapter adapter = new GeneralAdapter(getContext(),coDriversListSelected,GeneralConstants.CODRIVERS);
+                coDriverRv.setAdapter(adapter);
+                adapter.setDeleteListener(s1 -> {
+                    coDriversListSelected.remove(s1);
+                    dvirViewModel.getCoDriversMutableLiveData().postValue(coDriversListSelected.size());
+                });
+            }else {
+                coDriverRv.setVisibility(View.GONE);
+            }
+        });
+
+        dvirViewModel.getTrailersMutableLiveData().observe(getViewLifecycleOwner(),size ->{
+            if (size > 0){
+                trailerRv.setVisibility(View.VISIBLE);
+                GeneralAdapter adapter = new GeneralAdapter(getContext(),trailerListSelected,GeneralConstants.TRAILERS);
+                trailerRv.setAdapter(adapter);
+                adapter.setDeleteListener(s1 -> {
+                    trailerListSelected.remove(s1);
+                    dvirViewModel.getTrailersMutableLiveData().postValue(trailerListSelected.size());
+                });
+            }else {
+                trailerRv.setVisibility(View.GONE);
+            }
+        });
+
+        dvirViewModel.getShippingDocsMutableLiveData().observe(getViewLifecycleOwner(),size ->{
+            if (size > 0){
+                shippingDocsRv.setVisibility(View.VISIBLE);
+                GeneralAdapter adapter = new GeneralAdapter(getContext(),shippingDocsListSelected,GeneralConstants.SHIPPINGDOCS);
+                shippingDocsRv.setAdapter(adapter);
+                adapter.setDeleteListener(s1 -> {
+                    shippingDocsListSelected.remove(s1);
+                    dvirViewModel.getShippingDocsMutableLiveData().postValue(shippingDocsListSelected.size());
+                });
+            }else {
+                shippingDocsRv.setVisibility(View.GONE);
+            }
+        });
+
+        dvirViewModel.getStringMutableLiveData().observe(getViewLifecycleOwner(),s->{
+
+            if (!fromDesString.equals("")){
+                idFromText.setText(fromDesString);
+                fromDes.setVisibility(View.VISIBLE);
+            }else {
+                fromDes.setVisibility(View.GONE);
+            }
+
+            if (!toDesString.equals("")){
+                idToText.setText(toDesString);
+                toDes.setVisibility(View.VISIBLE);
+            }else {
+                toDes.setVisibility(View.GONE);
+            }
+
+            if (!notesString.equals("")){
+                idNotesText.setText(notesString);
+                notesContainer.setVisibility(View.VISIBLE);
+            }else {
+                notesContainer.setVisibility(View.GONE);
+            }
+        });
+
+        dvirViewModel.getCurrentName().observe(getViewLifecycleOwner(),day ->{
+            currDay = day;
+            generalViewModel.getMgetGenerals().observe(getViewLifecycleOwner(),generalEntities -> {
+                int j = 0;
+                for (int i = generalEntities.size()-1; i >=0; i--) {
+                    try {
+                        if (dateToString(generalEntities.get(i).getDay()).equals(day)){
+                            j++;
+                            vehicleListSelected.clear();
+                            coDriversListSelected.clear();
+                            trailerListSelected.clear();
+                            shippingDocsListSelected.clear();
+                            vehicleListSelected.addAll(generalEntities.get(i).getVehicle());
+                            coDriversListSelected.addAll(generalEntities.get(i).getCo_driver_name());
+                            trailerListSelected.addAll(generalEntities.get(i).getTrailers());
+                            shippingDocsListSelected.addAll(generalEntities.get(i).getShippingDocs());
+                            fromDesString = generalEntities.get(i).getFrom_info();
+                            toDesString = generalEntities.get(i).getTo_info();
+                            notesString = generalEntities.get(i).getNote();
+                            dvirViewModel.getStringMutableLiveData().postValue(day);
+                            dvirViewModel.getVehiclesMutableLiveData().postValue(vehicleListSelected.size());
+                            dvirViewModel.getCoDriversMutableLiveData().postValue(coDriversListSelected.size());
+                            dvirViewModel.getTrailersMutableLiveData().postValue(trailerListSelected.size());
+                            dvirViewModel.getShippingDocsMutableLiveData().postValue(shippingDocsListSelected.size());
+                            break;
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
-                    idNotesLayout.setVisibility(View.GONE);
                 }
-                return false;
+                if (j == 0){
+                    vehicleListSelected.clear();
+                    coDriversListSelected.clear();
+                    trailerListSelected.clear();
+                    shippingDocsListSelected.clear();
+                    fromDesString = "";
+                    toDesString = "";
+                    notesString = "";
+                    dvirViewModel.getStringMutableLiveData().postValue(day);
+                    dvirViewModel.getVehiclesMutableLiveData().postValue(vehicleListSelected.size());
+                    dvirViewModel.getCoDriversMutableLiveData().postValue(coDriversListSelected.size());
+                    dvirViewModel.getTrailersMutableLiveData().postValue(trailerListSelected.size());
+                    dvirViewModel.getShippingDocsMutableLiveData().postValue(shippingDocsListSelected.size());
+                }
             });
+        });
+    }
+
+    private void showDialog(){
+        Dialog dialog = new Dialog(requireContext());
+        dialog.setContentView(R.layout.custom_submitted_dialog);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        TextView ok = dialog.findViewById(R.id.idSubmittedCancel);
+        ok.setOnClickListener(view -> {
+            dialog.dismiss();
+        });
+        dialog.show();
     }
 
     @Override
@@ -500,13 +560,6 @@ public class GeneralFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        requireActivity().getViewModelStore().clear();
-        this.getViewModelStore().clear();
     }
 
     @Override

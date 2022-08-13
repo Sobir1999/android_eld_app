@@ -12,7 +12,7 @@ public class SendDvir {
     @SerializedName("trailer")
     ArrayList<String> trailers;
 
-    @SerializedName("defect")
+    @SerializedName("defact")
     ArrayList<String> defects;
 
     @SerializedName("notes")

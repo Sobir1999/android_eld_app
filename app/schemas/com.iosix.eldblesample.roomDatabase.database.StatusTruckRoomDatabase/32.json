@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 32,
-    "identityHash": "3f7be902d57c129de84625ce3ffb69f6",
+    "identityHash": "5df3cab704fc93cfe8b310144d470820",
     "entities": [
       {
         "tableName": "log_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `from_status` INTEGER NOT NULL, `to_status` INTEGER NOT NULL, `location` TEXT, `note` TEXT, `document` TEXT, `time` TEXT, `seconds` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `last_status` TEXT, `current_status` TEXT, `location` TEXT, `note` TEXT, `document` TEXT, `time` TEXT, `seconds` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -15,16 +15,16 @@
             "notNull": true
           },
           {
-            "fieldPath": "from_status",
-            "columnName": "from_status",
-            "affinity": "INTEGER",
-            "notNull": true
+            "fieldPath": "last_status",
+            "columnName": "last_status",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
-            "fieldPath": "to_status",
-            "columnName": "to_status",
-            "affinity": "INTEGER",
-            "notNull": true
+            "fieldPath": "current_status",
+            "columnName": "current_status",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "location",
@@ -770,7 +770,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"3f7be902d57c129de84625ce3ffb69f6\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"5df3cab704fc93cfe8b310144d470820\")"
     ]
   }
 }

@@ -79,10 +79,9 @@
         android:textColor="@color/colorPrimary"
         android:textSize="@dimen/card_text_size"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="@dimen/card_image_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/idEditTextPassword"
-        app:layout_constraintVertical_bias="0.90" />
+        app:layout_constraintTop_toBottomOf="@+id/idEditTextPassword" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

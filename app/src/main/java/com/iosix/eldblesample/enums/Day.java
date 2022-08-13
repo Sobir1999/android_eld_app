@@ -1,13 +1,8 @@
 package com.iosix.eldblesample.enums;
 
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
-
-import java.sql.Time;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -39,24 +34,68 @@ public class Day {
         return hour * 3600 + minute * 60 + second;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public static String stringToDate(String s) throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("MMM dd yyyy",Locale.getDefault());
-        formatter.setTimeZone(TimeZone.getDefault());
-        return formatter.parse(s + " " + Calendar.getInstance().get(Calendar.YEAR)).toInstant().atZone(ZoneId.systemDefault()).toString();
+        DateFormat shortFormat = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
+        DateFormat mediumFormat = new SimpleDateFormat("yyyy MMM dd",Locale.getDefault());
+        return shortFormat.format(mediumFormat.parse(Calendar.getInstance().get(Calendar.YEAR) + " " + s));
+    }
+
+    public static String dateToString(String s) throws ParseException {
+        DateFormat shortFormat = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
+        DateFormat format = new SimpleDateFormat("MMM dd",Locale.getDefault());
+        return format.format(shortFormat.parse(s));
     }
 
     public static String intToTime(int i){
         int hour = i/3600;
         int minut = (i - hour*3600)/60;
-        if (hour < 10 && minut < 10){
-            return "0" + hour + ":" + "0" + minut;
-        }else if (hour < 10){
-            return "0" + hour + ":" + minut;
-        }else if (minut < 10){
-            return hour + ":" + "0" + minut;
+        if (hour<10){
+            if (minut < 10){
+                return String.format("0%sh 0%sm",hour,minut);
+            }else {
+                return String.format("0%sh %sm",hour,minut);
+            }
         }else {
-            return hour + ":" + minut;
+            if (minut < 10){
+                return String.format("%sh 0%sm",hour,minut);
+            }else {
+                return String.format("%sh %sm",hour,minut);
+            }
+        }
+    }
+
+    public static String getCurrentTime(int seconds){
+        int hour = seconds/3600;
+        int minut = (seconds - hour*3600)/60;
+
+        if (hour > 12){
+            if (hour-12 < 10){
+                if (minut < 10){
+                    return String.format("0%s:0%s",hour-12,minut) + " PM CDT";
+                }else {
+                    return String.format("0%s:%s",hour-12,minut) + " PM CDT";
+                }
+            }else {
+                if (minut < 10){
+                    return String.format("%s:0%s",hour-12,minut) + " PM CDT";
+                }else {
+                    return String.format("%s:%s",hour-12,minut) + " PM CDT";
+                }
+            }
+        }else {
+            if (hour < 10){
+                if (minut < 10){
+                    return String.format("0%s:0%s",hour,minut) + " AM CDT";
+                }else {
+                    return String.format("0%s:%s",hour,minut) + " AM CDT";
+                }
+            }else {
+                if (minut < 10){
+                    return String.format("%s:0%s",hour,minut) + " AM CDT";
+                }else {
+                    return String.format("%s:%s",hour,minut) + " AM CDT";
+                }
+            }
         }
     }
 }

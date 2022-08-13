@@ -19,8 +19,7 @@ public class DayDaoRepository {
     private final DayDao dayDao;
     private final LiveData<List<DayEntity>> getAllDays;
     private final LiveData<List<LogEntity>> mAllStatus;
-    private final LiveData<List<VehiclesEntity>> getAllVehicles;
-    private final LiveData<List<TrailersEntity>> getAllTrailers;
+
 
 
     public DayDaoRepository(Application application) {
@@ -28,21 +27,13 @@ public class DayDaoRepository {
         dayDao = db.dayDao();
         getAllDays = dayDao.getAllDays();
         mAllStatus = dayDao.getAllStatus();
-        getAllVehicles = dayDao.getAllVehicles();
-        getAllTrailers = dayDao.getAllTrailers();
     }
 
     public LiveData<List<DayEntity>> getGetAllDays() {
         return getAllDays;
     }
 
-    public LiveData<List<TrailersEntity>> getGetAllTrailers() {
-        return getAllTrailers;
-    }
 
-    public LiveData<List<VehiclesEntity>> getGetAllVehicles() {
-        return getAllVehicles;
-    }
 
     public LiveData<List<LogEntity>> getmAllStatus() {
         return mAllStatus;
@@ -64,14 +55,6 @@ public class DayDaoRepository {
         new insertStatusAsync(dayDao).execute(entity).get();
     }
 
-    public void insertVehicle(VehiclesEntity entity) {
-        new insertVehicleAsync(dayDao).execute(entity);
-    }
-
-    public Long insertTrailer(TrailersEntity entity) throws ExecutionException, InterruptedException {
-        return new insertTrailerAsycn(dayDao).execute(entity).get();
-    }
-
     @SuppressWarnings("deprecation")
     private static class insertDayAsync extends AsyncTask<DayEntity, Void, Long> {
         private DayDao dao;
@@ -87,33 +70,6 @@ public class DayDaoRepository {
         }
     }
 
-    private static class insertTrailerAsycn extends AsyncTask<TrailersEntity, Void, Long> {
-        private DayDao dayDao;
-
-        insertTrailerAsycn(DayDao dayDao) {
-            this.dayDao = dayDao;
-        }
-
-
-        @Override
-        protected Long doInBackground(TrailersEntity... trailersEntities) {
-            return dayDao.insertTrailer(trailersEntities[0]);
-        }
-    }
-
-    private static class insertVehicleAsync extends AsyncTask<VehiclesEntity, Void, Void> {
-        private DayDao dao;
-
-        insertVehicleAsync(DayDao dayDao) {
-            this.dao = dayDao;
-        }
-
-        @Override
-        protected Void doInBackground(VehiclesEntity... vehiclesEntities) {
-            dao.insertVehicle(vehiclesEntities[0]);
-            return null;
-        }
-    }
 
     private static class deleterDayAsync extends AsyncTask<DayEntity, Void, Long> {
         private DayDao dao;

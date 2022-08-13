@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginStart="@dimen/half_vertical_margin"
+    android:layout_marginEnd="@dimen/drawer_icon_size"
+    android:orientation="horizontal"
+    android:padding="4dp"
+    android:background="@drawable/table_item_border">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:text="@string/numbers"
+        android:id="@+id/idLogNumber"
+        android:textSize="7sp"
+        android:textColor="?attr/customTextColor" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/dr_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/colorStatusDR"
+            app:cardCornerRadius="@dimen/half_vertical_margin">
+
+            <TextView
+                android:id="@+id/dr_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/dr"
+                android:fontFamily="@font/montserrat"
+                android:textSize="7sp"
+                android:layout_marginHorizontal="@dimen/card_padding_size"
+                android:layout_gravity="center"
+                android:textColor="#117815"/>
+
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:text="@string/start_edt"
+        android:id="@+id/idLogStartTime"
+        android:textSize="7sp"
+        android:textColor="@color/black" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:text="@string/duration"
+        android:id="@+id/idLogDuration"
+        android:textSize="7sp"
+        android:textColor="@color/black" />
+
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="2"
+        android:layout_height="wrap_content"
+        android:text="@string/location"
+        android:id="@+id/idLogLocation"
+        android:textSize="7sp"
+        android:textColor="@color/black" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:text="@string/notes"
+        android:id="@+id/idLogNotes"
+        android:textSize="7sp"
+        android:textColor="@color/black" />
+
+</LinearLayout>

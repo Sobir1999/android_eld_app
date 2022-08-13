@@ -5,8 +5,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="@dimen/custom_dialog_width"
-        android:layout_height="@dimen/drawer_width"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/custom_dialog_width"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -26,7 +26,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintBottom_toTopOf="@id/idVehicleRecyclerview"
             android:fontFamily="@font/montserrat"
-            android:paddingHorizontal="@dimen/card_view_corner_radius"
+            android:paddingHorizontal="@dimen/half_vertical_margin"
             android:layout_marginTop="@dimen/drawer_padding_size"/>
 
         <View
@@ -42,7 +42,7 @@
             app:layout_constraintBottom_toTopOf="@id/idcustomView"
             android:id="@+id/idVehicleRecyclerview"
             android:layout_width="match_parent"
-            android:layout_marginHorizontal="@dimen/card_view_corner_radius"
+            android:layout_marginHorizontal="@dimen/half_vertical_margin"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:layout_height="0dp"
             android:layout_marginVertical="@dimen/half_vertical_margin"/>

@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,14 +25,14 @@ import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.base.BaseActivity;
 import com.iosix.eldblesample.fragments.AddDefectFragment;
 import com.iosix.eldblesample.shared_prefs.TinyDB;
-
-import static com.iosix.eldblesample.MyApplication.userData;
+import com.iosix.eldblesample.shared_prefs.UserData;
 
 public class AddDefectActivity extends BaseActivity {
 
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
     private TinyDB tinyDB;
+    private UserData userData;
 
     @Override
     protected int getLayoutId() {
@@ -46,6 +47,7 @@ public class AddDefectActivity extends BaseActivity {
         boolean isUnitSelected = getIntent().getBooleanExtra("isUnitSelected", false);
 
         tinyDB = new TinyDB(this);
+        userData = new UserData(this);
 
         tabLayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.viewpager);
@@ -91,6 +93,7 @@ public class AddDefectActivity extends BaseActivity {
         Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.custom_notes_dialog);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
 
         TextView cancel = dialog.findViewById(R.id.idNotesDialogCancel);
         TextView ok = dialog.findViewById(R.id.idNotesDialogSend);

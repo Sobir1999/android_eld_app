@@ -53,7 +53,7 @@
         <item name="colorControlHighlight">@color/colorActionText</item>
     </style>
 
-    <style name="MyDialogTheme" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+    <style name="MyDialogTheme" parent="@style/ThemeOverlay.MaterialComponents.Dialog.Alert">
         <item name="android:background">?attr/customBgColor</item>
         <item name="colorOnSurface">@color/colorPrimary</item>
         <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
@@ -69,6 +69,15 @@
         <item name="fontFamily">@font/montserrat</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">@dimen/card_text_size</item>
+    </style>
+
+    <style name="AlertDialogTheme" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+    </style>
+
+    <style name="NegativeButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/colorPrimary</item>
     </style>
 
 </resources>

@@ -1,6 +1,7 @@
 package com.iosix.eldblesample.adapters;
 
 import static com.iosix.eldblesample.enums.Day.getCurrentSeconds;
+import static com.iosix.eldblesample.enums.Day.getCurrentTime;
 
 import android.content.Context;
 import android.util.Log;
@@ -67,90 +68,57 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
         tv_log_id.setText(String.valueOf(position+1));
 
         int time = 0;
-
         if (day.equals(today)){
-            if (position < logEntitiesCurr.size() - 1){
-                time = logEntitiesCurr.get(position + 1).getSeconds()-logEntitiesCurr.get(position).getSeconds();
+            if (logEntitiesCurr.size() > 0){
+                holder.onBind(logEntitiesCurr.get(position));
 
-                holder.onBind(logEntitiesCurr.get(position + 1));
-            }else {
-                switch (logEntitiesCurr.get(logEntitiesCurr.size()-1).getTo_status()){
-                    case EnumsConstants.STATUS_OFF :
-                        dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusOFF));
-                        dr_text.setText(R.string.off);
-                        dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusOFFBold));
-                        break;
-
-                    case EnumsConstants.STATUS_SB :
-                        dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusSB));
-                        dr_text.setText(R.string.sb);
-                        dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusSBBold));
-                        break;
-
-                    case EnumsConstants.STATUS_DR :
-                        dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusDR));
-                        dr_text.setText(R.string.dr);
-                        dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusDRBold));
-                        break;
-
-                    case EnumsConstants.STATUS_ON :
-                        dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusON));
-                        dr_text.setText(R.string.on);
-                        dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusONBold));
-                        break;
-                }
-                if (logEntitiesCurr.size() == 0){
-                    time = getCurrentSeconds();
+                if (position == logEntitiesCurr.size()-1){
+                    if (logEntitiesCurr.get(position).getTo_status() <= 5) {
+                        time = getCurrentSeconds() - logEntitiesCurr.get(position).getSeconds();
+                    }
                 }else {
-                    time = getCurrentSeconds() - logEntities.get(position).getSeconds();
+                    if (logEntitiesCurr.get(position).getTo_status() <= 5) {
+                        for (int i = position + 1; i < logEntities.size(); i++) {
+                            if (logEntitiesCurr.get(i).getTo_status() < 6){
+                                time = logEntitiesCurr.get(i).getSeconds() - logEntitiesCurr.get(position).getSeconds();
+                                break;
+                            }if (i == logEntitiesCurr.size() - 1){
+                                time = getCurrentSeconds() - logEntitiesCurr.get(position).getSeconds();
+                                break;
+                            }
+                        }
+                    }
                 }
+            }else {
+                holder.onBind(new LogEntity(driverSharedPrefs.getDriverId(),EnumsConstants.STATUS_OFF,null,null,null,day,0));
             }
         }else {
-            if (logEntitiesCurr.size() == 0){
-                dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusOFF));
-                dr_text.setText(R.string.off);
-                dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusOFFBold));
-                time = 86400;
+            if (logEntitiesCurr.size() > 0){
+                holder.onBind(logEntitiesCurr.get(position));
 
-            }else {
-                if (position < logEntitiesCurr.size() - 1){
-                    time = logEntitiesCurr.get(position + 1).getSeconds()-logEntitiesCurr.get(position).getSeconds();
-
-                    holder.onBind(logEntitiesCurr.get(position + 1));
-                }else {
-                    switch (logEntitiesCurr.get(position).getTo_status()){
-                        case EnumsConstants.STATUS_OFF :
-                            dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusOFF));
-                            dr_text.setText(R.string.off);
-                            dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusOFFBold));
-                            break;
-
-                        case EnumsConstants.STATUS_SB :
-                            dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusSB));
-                            dr_text.setText(R.string.sb);
-                            dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusSBBold));
-                            break;
-
-                        case EnumsConstants.STATUS_DR :
-                            dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusDR));
-                            dr_text.setText(R.string.dr);
-                            dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusDRBold));
-                            break;
-
-                        case EnumsConstants.STATUS_ON :
-                            dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusON));
-                            dr_text.setText(R.string.on);
-                            dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusONBold));
-                            break;
-                    }
-                    if (logEntitiesCurr.size() == 1){
-                        time = 86400;
-                    }else {
+                if (position == logEntitiesCurr.size()-1){
+                    if (logEntitiesCurr.get(position).getTo_status() <= 5) {
                         time = 86400 - logEntitiesCurr.get(position).getSeconds();
                     }
+                }else {
+                    if (logEntitiesCurr.get(position).getTo_status() <= 5) {
+                        for (int i = position + 1; i < logEntities.size(); i++) {
+                            if (logEntitiesCurr.get(i).getTo_status() < 6){
+                                time = logEntitiesCurr.get(i).getSeconds() - logEntitiesCurr.get(position).getSeconds();
+                                break;
+                            }if (i == logEntitiesCurr.size() - 1){
+                                time = 86400 - logEntitiesCurr.get(position).getSeconds();
+                                break;
+                            }
+                        }
+                    }
                 }
+            }else {
+                time = 86400;
+                holder.onBind(new LogEntity(driverSharedPrefs.getDriverId(),EnumsConstants.STATUS_OFF,null,null,null,day,0));
             }
         }
+
 
         int hour = time/3600;
         int minut = (time - hour*3600)/60;
@@ -191,29 +159,72 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
         }
 
         void onBind(LogEntity logEntity){
-            switch (logEntity.getFrom_status()){
+            tv_time_log.setText(getCurrentTime(logEntity.getSeconds()));
+            switch (logEntity.getTo_status()){
                 case EnumsConstants.STATUS_OFF :
                     dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusOFF));
-                    dr_text.setText("OFF");
+                    dr_text.setText(R.string.off);
                     dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusOFFBold));
                     break;
 
                 case EnumsConstants.STATUS_SB :
                     dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusSB));
-                    dr_text.setText("SB");
+                    dr_text.setText(R.string.sb);
                     dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusSBBold));
                     break;
 
                 case EnumsConstants.STATUS_DR :
                     dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusDR));
-                    dr_text.setText("DR");
+                    dr_text.setText(R.string.dr);
                     dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusDRBold));
                     break;
 
                 case EnumsConstants.STATUS_ON :
                     dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusON));
-                    dr_text.setText("ON");
+                    dr_text.setText(R.string.on);
                     dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusONBold));
+                    break;
+
+                case EnumsConstants.STATUS_OF_PC :
+                    dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusOFF));
+                    dr_text.setText(R.string.off_pc);
+                    dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusOFFBold));
+                    break;
+
+                case EnumsConstants.STATUS_ON_YM :
+                    dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusON));
+                    dr_text.setText(R.string.on_ym);
+                    dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusONBold));
+                    break;
+
+                case EnumsConstants.POWER_UP :
+                    dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorPowerUp));
+                    dr_text.setText(R.string.power_up);
+                    dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorPowerUpBold));
+                    break;
+
+                case EnumsConstants.POWER_DOWN :
+                    dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorPowerDown));
+                    dr_text.setText(R.string.power_down);
+                    dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorPowerDownBold));
+                    break;
+
+                case EnumsConstants.LOGIN :
+                    dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorLogin));
+                    dr_text.setText(R.string.login);
+                    dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorLoginBold));
+                    break;
+
+                case EnumsConstants.LOGOUT :
+                    dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorLogout));
+                    dr_text.setText(R.string.logout);
+                    dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorLogoutBold));
+                    break;
+
+                case EnumsConstants.CERTIFIED :
+                    dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorCertified));
+                    dr_text.setText(R.string.certified);
+                    dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorCertifiedBold));
                     break;
             }
         }

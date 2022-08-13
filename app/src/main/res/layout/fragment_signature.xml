@@ -26,10 +26,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_padding_size"
+                android:layout_marginLeft="@dimen/half_vertical_margin"
                 android:layout_marginTop="@dimen/half_vertical_margin"
                 android:layout_marginBottom="@dimen/half_vertical_margin"
-                android:layout_marginRight="@dimen/activity_padding_size"
+                android:layout_marginRight="@dimen/half_vertical_margin"
                 android:background="@drawable/background_main_view"
                 android:orientation="vertical"
                 tools:ignore="MissingConstraints">
@@ -123,14 +123,14 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginHorizontal="@dimen/card_view_corner_radius"
                     android:layout_marginTop="@dimen/card_padding_size">
 
                     <com.github.gcacace.signaturepad.views.SignaturePad
                         android:id="@+id/idSignature"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/signature_height_size"
-                        android:layout_marginHorizontal="@dimen/signature_margin_size"
-                        android:background="@drawable/add_signature_background"
+                        android:background="@drawable/add_defect_text_background"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -147,39 +147,41 @@
                         android:textSize="@dimen/title_text_size"
                         android:fontFamily="@font/montserrat"
                         android:visibility="visible"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintBottom_toBottomOf="@id/idSignature"
+                        app:layout_constraintLeft_toLeftOf="@id/idSignature"
+                        app:layout_constraintRight_toRightOf="@id/idSignature"
+                        app:layout_constraintTop_toTopOf="@id/idSignature" />
 
                     <Button
+                        android:layout_marginTop="@dimen/card_view_corner_radius"
                         android:id="@+id/idTVPreviousSignature"
-                        android:layout_width="@dimen/signature_height_size"
+                        android:layout_width="@dimen/splash_icon_size"
                         android:layout_height="@dimen/card_image_size"
                         android:text="@string/use_previous_signature"
                         android:textSize="@dimen/mini_text_size"
                         android:textStyle="bold"
-                        android:layout_marginStart="@dimen/card_image_size"
                         android:fontFamily="@font/montserrat"
                         android:textColor="@color/colorPrimary"
                         android:textAllCaps="false"
                         android:background="@drawable/button_bg"
+                        app:layout_constraintTop_toBottomOf="@id/idSignature"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"/>
 
 
                     <Button
+                        android:layout_marginTop="@dimen/card_view_corner_radius"
                         android:id="@+id/idTVClearSignature"
-                        android:layout_width="@dimen/signature_height_size"
+                        android:layout_width="@dimen/splash_icon_size"
                         android:layout_height="@dimen/card_image_size"
                         android:text="@string/clear"
                         android:textSize="@dimen/mini_text_size"
                         android:textStyle="bold"
-                        android:layout_marginEnd="@dimen/card_image_size"
                         android:fontFamily="@font/montserrat"
                         android:textColor="@color/colorPrimary"
                         android:textAllCaps="false"
                         android:background="@drawable/button_bg"
+                        app:layout_constraintTop_toBottomOf="@id/idSignature"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"/>
 

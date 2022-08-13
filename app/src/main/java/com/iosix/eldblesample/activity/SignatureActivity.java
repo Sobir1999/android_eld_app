@@ -212,7 +212,7 @@ public class SignatureActivity extends BaseActivity implements Communicator {
                     try {
                         if (!mParams.get(1).equals("No unit selected") || !mParams.get(2).equals("No trailer selected")){
                             dvirViewModel.insertDvir(new DvirEntity(
-                                    mParams.get(0),getString(selectedTrailers),defects(unitDefects),defects(unitDefects),false,
+                                    mParams.get(0),getString(selectedTrailers),defects(unitDefects),defects(trailerDefects),false,
                                     mParams.get(1),mParams.get(2),mParams.get(2), day
                             ));
                             Intent intent = new Intent(this, LGDDActivity.class);
@@ -221,7 +221,6 @@ public class SignatureActivity extends BaseActivity implements Communicator {
                             startActivity(intent);
                             finish();
                             resultReceiver.send(2,new Bundle());
-
                             if (unitDefects.size() == 0 && trailerDefects.size() == 0){
                                 if (selectedTrailers.size() == 0){
                                     eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),null,null,"null",mParams.get(1),null));

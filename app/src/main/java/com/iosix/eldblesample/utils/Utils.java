@@ -1,63 +1,81 @@
 package com.iosix.eldblesample.utils;
 
-import android.app.AlertDialog;
-import android.bluetooth.BluetoothAdapter;
+import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.location.LocationManager;
-import android.net.Uri;
+import android.location.Address;
+import android.location.Geocoder;
 
-import androidx.core.content.ContextCompat;
+import com.iosix.eldblelib.EldEngineStates;
+import com.iosix.eldblesample.activity.MainActivity;
+import com.iosix.eldblesample.enums.EnumsConstants;
+import com.iosix.eldblesample.models.eld_records.Point;
 
-import com.iosix.eldblesample.MyApplication;
-import com.iosix.eldblesample.R;
-
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 
 public class Utils {
 
-    public static void setBluetoothDataEnabled(Context context) {
-        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-        if (!adapter.isEnabled()) {
-            AlertDialogInit.Companion.showDialogOkWithMessage(context,
-                    R.string.bluetooth_not_work, R.string.you_want_to_turn_on,
-                    (dialog, which) -> {
-                switch (which) {
-                    case DialogInterface.BUTTON_POSITIVE:
-                        dialog.dismiss();
-                        adapter.enable();
-                        break;
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        dialog.dismiss();
-                        break;
-                }
-            });
+    public static Point hasCoordinates(Double latitude,Double longtitude){
+        if (latitude == -1 || longtitude == -1 || latitude == 0 || longtitude == 0){
+            return null;
+        }else {
+            ArrayList<Double> arrayList = new ArrayList<>();
+            arrayList.add(longtitude);
+            arrayList.add(latitude);
+            return new Point("Point",arrayList);
         }
     }
 
-    public static void statusCheck() {
-        final LocationManager manager = (LocationManager) MyApplication.context.getSystemService(Context.LOCATION_SERVICE);
-
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            buildAlertMessageNoGps();
-
+    public static String getStatus(int status){
+        if (status == EnumsConstants.STATUS_OFF){
+            return "OFF";
+        }else if (status == EnumsConstants.STATUS_SB){
+            return "SB";
+        }else if (status == EnumsConstants.STATUS_DR){
+            return "D";
+        }else if (status == EnumsConstants.STATUS_ON){
+            return "ON";
+        }
+        else if (status == EnumsConstants.STATUS_OF_PC){
+            return "PC";
+        }
+        else if (status == EnumsConstants.STATUS_ON_YM){
+            return "YM";
+        }
+        else if (status == EnumsConstants.POWER_UP){
+            return "POWERUP";
+        }
+        else if (status == EnumsConstants.POWER_DOWN){
+            return "POWERDOW";
+        }
+        else if (status == EnumsConstants.LOGIN){
+            return "LOGIN";
+        }else if (status == EnumsConstants.LOGOUT){
+            return "LOGOUT";
+        }else {
+            return "CERTIFIED";
         }
     }
 
-    private static void buildAlertMessageNoGps() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(MyApplication.context);
-        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
-                .setCancelable(false)
-                .setPositiveButton("Yes", (dialog, id) -> MyApplication.context.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
-                .setNegativeButton("No", (dialog, id) -> dialog.cancel());
-        final AlertDialog alert = builder.create();
-        alert.show();
+    public static String getDateFormat(Date date){
+        return (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault())).format(date);
+    };
+
+    public static String hasVin(String value){
+        if (value.equals("")){
+            return "vin";
+        }else {
+            return value;
+        }
     }
 
-    public static int getColors(int id) {
-        return ContextCompat.getColor(MyApplication.context, id);
+    public static Boolean engineState(EldEngineStates state){
+        return state == EldEngineStates.ENGINE_ON;
     }
 
     public static String defects(ArrayList<String> selectedList){
@@ -67,4 +85,18 @@ public class Utils {
         }
         return defects.toString();
     }
+
+    public static String pointToString(Context context,Point point) throws IOException {
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        if (point.getArrayList().get(0) != 0 && point.getArrayList().get(1) != 0){
+            List<Address> addresses = geocoder.getFromLocation(point.getArrayList().get(0), point.getArrayList().get(1), 1);
+            Address obj = addresses.get(0);
+            return obj.getAddressLine(0);
+        }else {
+            return "";
+        }
+    }
+
+    public static final String[] BLUETOOTH_PERMISSIONS_S = { Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT} ;
+
 }

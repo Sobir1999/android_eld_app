@@ -53,6 +53,7 @@
                     android:background="?attr/colorPrimary"
                     android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
                     android:weightSum="1"
+                    android:layout_marginHorizontal="@dimen/button_weight_size"
                     app:contentInsetStart="0dp"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 

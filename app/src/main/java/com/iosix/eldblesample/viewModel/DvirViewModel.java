@@ -18,6 +18,11 @@ public class DvirViewModel extends AndroidViewModel {
 
     private DvirRepository dvirRepository;
     private LiveData<List<DvirEntity>> mgetDvirs;
+    private MutableLiveData<String> stringMutableLiveData;
+    private MutableLiveData<Integer> vehiclesMutableLiveData;
+    private MutableLiveData<Integer> coDriversMutableLiveData;
+    private MutableLiveData<Integer> trailersMutableLiveData;
+    private MutableLiveData<Integer> shippingDocsMutableLiveData;
 
     public DvirViewModel(@NonNull Application application) {
         super(application);
@@ -26,10 +31,6 @@ public class DvirViewModel extends AndroidViewModel {
     }
 
     private MutableLiveData<String> currentName;
-    private MutableLiveData<Boolean> isUploadImage;
-    private MutableLiveData<Boolean> truckSpeed;
-    private MutableLiveData<Integer> selectedTrailerCount;
-    private MutableLiveData<Integer> getEldConnectionState;
 
     public MutableLiveData<String> getCurrentName() {
         if (currentName == null) {
@@ -38,28 +39,39 @@ public class DvirViewModel extends AndroidViewModel {
         return currentName;
     }
 
-    public MutableLiveData<Integer> getEldConnectionState() {
-        if (getEldConnectionState == null) {
-            getEldConnectionState = new MutableLiveData<>();
-            getEldConnectionState.postValue(0);
+    public MutableLiveData<String> getStringMutableLiveData() {
+        if (stringMutableLiveData == null) {
+            stringMutableLiveData = new MutableLiveData<String>();
         }
-        return getEldConnectionState;
+        return stringMutableLiveData;
     }
 
-    public MutableLiveData<Integer> getSelectedTrailerCount() {
-        if (selectedTrailerCount == null) {
-            selectedTrailerCount = new MutableLiveData<Integer>();
-            selectedTrailerCount.postValue(0);
+    public MutableLiveData<Integer> getVehiclesMutableLiveData() {
+        if (vehiclesMutableLiveData == null) {
+            vehiclesMutableLiveData = new MutableLiveData<>();
         }
-        return selectedTrailerCount;
+        return vehiclesMutableLiveData;
     }
 
-    public MutableLiveData<Boolean> getTruckSpeed() {
-        if (truckSpeed == null) {
-            truckSpeed = new MutableLiveData<>();
-            truckSpeed.postValue(false);
+    public MutableLiveData<Integer> getCoDriversMutableLiveData() {
+        if (coDriversMutableLiveData == null) {
+            coDriversMutableLiveData = new MutableLiveData<>();
         }
-        return truckSpeed;
+        return coDriversMutableLiveData;
+    }
+
+    public MutableLiveData<Integer> getTrailersMutableLiveData() {
+        if (trailersMutableLiveData == null) {
+            trailersMutableLiveData = new MutableLiveData<>();
+        }
+        return trailersMutableLiveData;
+    }
+
+    public MutableLiveData<Integer> getShippingDocsMutableLiveData() {
+        if (shippingDocsMutableLiveData == null) {
+            shippingDocsMutableLiveData = new MutableLiveData<>();
+        }
+        return shippingDocsMutableLiveData;
     }
 
     public LiveData<List<DvirEntity>> getMgetDvirs() {

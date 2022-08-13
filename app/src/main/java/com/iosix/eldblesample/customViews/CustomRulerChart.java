@@ -1,7 +1,5 @@
 package com.iosix.eldblesample.customViews;
 
-import static com.iosix.eldblesample.MyApplication.userData;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
@@ -53,10 +51,15 @@ public abstract class   CustomRulerChart extends View {
 
         CUSTOM_WIDTH = context.getResources().getDisplayMetrics().widthPixels;
 
-        CUSTOM_TABLE_WIDTH = CUSTOM_WIDTH - 2f * START_POINT_X - 2f*context.getResources().getDimension(R.dimen.activity_padding_size_land);
+        if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+            CUSTOM_TABLE_WIDTH = CUSTOM_WIDTH - 2f * START_POINT_X - 2f*context.getResources().getDimension(R.dimen.activity_padding_size_land);
+            CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 6;
+        }else if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            CUSTOM_TABLE_WIDTH = CUSTOM_WIDTH - 2f * START_POINT_X - 2f*context.getResources().getDimension(R.dimen.activity_padding_size);
+            CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 8;
+        }
 
-        CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 8;
-        CUSTOM_TABLE_ROW_WIDTH = CUSTOM_TABLE_WIDTH / 26;
+        CUSTOM_TABLE_ROW_WIDTH = CUSTOM_TABLE_WIDTH / 28;
 
         CUSTOM_TABLE_STROKE_WIDTH = context.getResources().getDisplayMetrics().density*1.5f;
     }
@@ -118,14 +121,14 @@ public abstract class   CustomRulerChart extends View {
                 table_paint
         );
 
-        for (int i = 1; i <= 26; i++) {
-            canvas.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i,
-                    START_POINT_Y,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i,
-                    START_POINT_Y + CUSTOM_TABLE_HEIGHT,
-                    table_paint
-            );
+        for (int i = 1; i < 26; i++) {
+                canvas.drawLine(
+                        START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1),
+                        START_POINT_Y,
+                        START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1),
+                        START_POINT_Y + CUSTOM_TABLE_HEIGHT,
+                        table_paint
+                );
         }
 
         for (int i = 1; i <= 3; i++) {
@@ -140,89 +143,89 @@ public abstract class   CustomRulerChart extends View {
 
         for (int i = 1; i <= 24; i++) {
             canvas.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + CUSTOM_TABLE_ROW_WIDTH / 4,
                     START_POINT_Y,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + CUSTOM_TABLE_ROW_WIDTH / 4,
                     START_POINT_Y + CUSTOM_TABLE_HEIGHT / 16,
                     table_paint
             );
             canvas.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + CUSTOM_TABLE_ROW_WIDTH / 2,
                     START_POINT_Y,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + CUSTOM_TABLE_ROW_WIDTH / 2,
                     START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8,
                     table_paint
             );
             canvas.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
                     START_POINT_Y,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
                     START_POINT_Y + CUSTOM_TABLE_HEIGHT / 16,
                     table_paint
             );
 
             canvas.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + CUSTOM_TABLE_ROW_WIDTH / 4,
                     START_POINT_Y + CUSTOM_TABLE_HEIGHT / 4,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + CUSTOM_TABLE_ROW_WIDTH / 4,
                     START_POINT_Y + CUSTOM_TABLE_HEIGHT / 4 + CUSTOM_TABLE_HEIGHT / 16,
                     table_paint
             );
             canvas.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + CUSTOM_TABLE_ROW_WIDTH / 2,
                     START_POINT_Y + CUSTOM_TABLE_HEIGHT / 4,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + CUSTOM_TABLE_ROW_WIDTH / 2,
                     START_POINT_Y + CUSTOM_TABLE_HEIGHT / 4 + CUSTOM_TABLE_HEIGHT / 8,
                     table_paint
             );
             canvas.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
                     START_POINT_Y + CUSTOM_TABLE_HEIGHT / 4,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
                     START_POINT_Y + CUSTOM_TABLE_HEIGHT / 4 + CUSTOM_TABLE_HEIGHT / 16,
                     table_paint
             );
 
             canvas.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + CUSTOM_TABLE_ROW_WIDTH / 4,
                     START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 4 - CUSTOM_TABLE_HEIGHT / 16,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + CUSTOM_TABLE_ROW_WIDTH / 4,
                     START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 4,
                     table_paint
             );
             canvas.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + CUSTOM_TABLE_ROW_WIDTH / 2,
                     START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 4 - CUSTOM_TABLE_HEIGHT / 8,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + CUSTOM_TABLE_ROW_WIDTH / 2,
                     START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 4,
                     table_paint
             );
             canvas.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
                     START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 4 - CUSTOM_TABLE_HEIGHT / 16,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
                     START_POINT_Y + 3 * CUSTOM_TABLE_HEIGHT / 4,
                     table_paint
             );
 
             canvas.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + CUSTOM_TABLE_ROW_WIDTH / 4,
                     START_POINT_Y + CUSTOM_TABLE_HEIGHT - CUSTOM_TABLE_HEIGHT / 16,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 4,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + CUSTOM_TABLE_ROW_WIDTH / 4,
                     START_POINT_Y + CUSTOM_TABLE_HEIGHT,
                     table_paint
             );
             canvas.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + CUSTOM_TABLE_ROW_WIDTH / 2,
                     START_POINT_Y + CUSTOM_TABLE_HEIGHT - CUSTOM_TABLE_HEIGHT / 8,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + CUSTOM_TABLE_ROW_WIDTH / 2,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + CUSTOM_TABLE_ROW_WIDTH / 2,
                     START_POINT_Y + CUSTOM_TABLE_HEIGHT,
                     table_paint
             );
             canvas.drawLine(
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
                     START_POINT_Y + CUSTOM_TABLE_HEIGHT - CUSTOM_TABLE_HEIGHT / 16,
-                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * i + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
+                    START_POINT_X + CUSTOM_TABLE_ROW_WIDTH * (i+1) + 3 * CUSTOM_TABLE_ROW_WIDTH / 4,
                     START_POINT_Y + CUSTOM_TABLE_HEIGHT,
                     table_paint
             );
@@ -247,22 +250,22 @@ public abstract class   CustomRulerChart extends View {
 
         if (orientations == Configuration.ORIENTATION_PORTRAIT){
             table_time_paint.setTextSize(getContext().getResources().getDimension(R.dimen.custom_table_time_size));
-            table_time_paint_tex.setTextSize(getContext().getResources().getDimension(R.dimen.custom_table_time_size));
+            table_time_paint_tex.setTextSize(getContext().getResources().getDimension(R.dimen.custom_table_time_size_land));
         }else if (orientations == Configuration.ORIENTATION_LANDSCAPE){
             table_time_paint.setTextSize(getContext().getResources().getDimension(R.dimen.custom_table_time_size_land));
-            table_time_paint_tex.setTextSize(getContext().getResources().getDimension(R.dimen.custom_table_time_size_land));
+            table_time_paint_tex.setTextSize(getContext().getResources().getDimension(R.dimen.custom_table_text_size_land));
 
         }
 
-        for (int i = 0; i < 26; i++) {
-            if (i == 1 || i == 25) {
+        for (int i = 0; i < 28; i++) {
+            if (i == 2 || i == 26) {
                 canvas.drawText(
                         "M",
                         START_POINT_X - time_size / 2 + CUSTOM_TABLE_ROW_WIDTH * i,
                         START_POINT_Y - 10f,
                         table_time_paint_tex
                 );
-            } else if (i == 13) {
+            } else if (i == 14) {
                 canvas.drawText(
                         "N",
                         START_POINT_X - time_size / 2 + CUSTOM_TABLE_ROW_WIDTH * i,
@@ -298,16 +301,16 @@ public abstract class   CustomRulerChart extends View {
                         TableConstants.getONPaint(getContext())
                 );
             }
-            else if (i<13){
+            else if (i > 2 && i < 14){
                 canvas.drawText(
-                        "" + ((i % 13)-1),
+                        "" + ((i % 14)-2),
                         START_POINT_X - time_size / 2 + CUSTOM_TABLE_ROW_WIDTH * i,
                         START_POINT_Y - 10f,
                         table_time_paint
                 );
-            }else {
+            }else if (i > 14 && i < 26){
                 canvas.drawText(
-                        "" + i % 13,
+                        "" + ((i % 13)-1),
                         START_POINT_X - time_size / 2 + CUSTOM_TABLE_ROW_WIDTH * i,
                         START_POINT_Y - 10f,
                         table_time_paint

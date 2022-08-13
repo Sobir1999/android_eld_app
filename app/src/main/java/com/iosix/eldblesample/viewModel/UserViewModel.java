@@ -9,10 +9,12 @@ import com.iosix.eldblesample.models.User;
 import com.iosix.eldblesample.models.eld_records.LiveDataRecord;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LiveDataEntitiy;
+import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
 import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 import com.iosix.eldblesample.roomDatabase.repository.UserRepository;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class UserViewModel extends AndroidViewModel {
 
@@ -20,12 +22,16 @@ public class UserViewModel extends AndroidViewModel {
     private final LiveData<User> mgetUser;
     private final LiveData<List<User>> mgetDrivers;
     private final LiveData<List<LiveDataRecord>> mgetLocalDatas;
+    private final LiveData<List<VehiclesEntity>> getAllVehicles;
+    private final LiveData<List<TrailersEntity>> getAllTrailers;
 
     public UserViewModel(Application application) {
         super(application);
         repository = new UserRepository(application);
         mgetUser = repository.getUser();
         mgetDrivers = repository.getDrivers();
+        getAllVehicles = repository.getGetAllVehicles();
+        getAllTrailers = repository.getGetAllTrailers();
         mgetLocalDatas = repository.getLocalDatas();
     }
 
@@ -49,4 +55,14 @@ public class UserViewModel extends AndroidViewModel {
     }
 
     public void deleteLocalData(){repository.deleteLocalData();}
+
+    public void insertVehicle(VehiclesEntity vehiclesEntity) {
+        repository.insertVehicle(vehiclesEntity);
+    }
+
+    public LiveData<List<VehiclesEntity>> getGetAllVehicles() {return getAllVehicles;}
+
+    public void insertTrailer(TrailersEntity entity) throws ExecutionException, InterruptedException {
+        repository.insertTrailer(entity);
+    }
 }

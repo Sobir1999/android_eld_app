@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 import com.iosix.eldblesample.roomDatabase.repository.StatusTableRepositories;
@@ -27,9 +28,5 @@ public class StatusDaoViewModel extends AndroidViewModel implements Serializable
 
     public void insertStatus(LogEntity statusEntity) {
         repository.insertStatus(statusEntity);
-    }
-
-    public void deleteALlStatus() {
-//        repository
     }
 }

@@ -22,18 +22,18 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="50dp"
+                android:layout_marginHorizontal="@dimen/activity_padding_size"
                 tools:ignore="MissingConstraints">
 
                 <TextView
-                    android:id="@+id/idTextFrag"
+                    android:id="@+id/idImageBack"
                     style="@style/TextAppearance.AppCompat.Large"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/in_motion"
                     android:textColor="#fff"
+                    android:text="@string/in_motion"
                     android:textStyle="bold"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/title_text_size"
                     android:fontFamily="@font/montserrat"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
@@ -44,7 +44,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/day"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/title_text_size"
                     android:textColor="#fff"
                     android:fontFamily="@font/montserrat"
                     app:layout_constraintTop_toTopOf="parent"
@@ -74,7 +74,7 @@
         app:layout_constraintTop_toBottomOf="@id/idLockRecap"
         android:text="@string/time"
         android:textStyle="bold"
-        android:textSize="24sp"
+        android:textSize="@dimen/recap_text_size"
         android:fontFamily="@font/montserrat"
         android:textColor="@color/colorPrimary"/>
 
@@ -85,7 +85,7 @@
         app:layout_constraintTop_toBottomOf="@id/idTimeRecap"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginHorizontal="100dp">
+        android:layout_marginHorizontal="@dimen/login_icon_size">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/idConstraintBreak"
@@ -103,7 +103,7 @@
             android:layout_height="match_parent"
             android:indeterminate="false"
             android:max="100"
-            android:progress="90"
+            android:progress="100"
             android:background="@drawable/circle_shape"
             android:progressDrawable="@drawable/circle_progress_bar"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -118,7 +118,7 @@
                 android:fontFamily="@font/montserrat"
                 android:text="@string/time"
                 android:textColor="@color/colorPrimary"
-                android:textSize="22sp"
+                android:textSize="@dimen/big_text_size"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/idProgressbarBreak"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -135,7 +135,7 @@
                 app:layout_constraintLeft_toLeftOf="@id/idProgressbarBreak"
                 app:layout_constraintRight_toRightOf="@id/idProgressbarBreak"
                 android:textColor="@color/colorPrimary"
-                android:textSize="16sp"
+                android:textSize="@dimen/card_text_size"
                 android:textStyle="bold"
                 android:fontFamily="@font/montserrat"/>
 
@@ -157,7 +157,7 @@
             android:layout_height="match_parent"
             android:indeterminate="false"
             android:max="100"
-            android:progress="65"
+            android:progress="100"
             android:background="@drawable/circle_shape"
             android:progressDrawable="@drawable/circle_progress_bar"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -172,7 +172,7 @@
                 android:fontFamily="@font/montserrat"
                 android:text="@string/time"
                 android:textColor="@color/colorPrimary"
-                android:textSize="22sp"
+                android:textSize="@dimen/big_text_size"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/idProgressbarDriving"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -189,7 +189,7 @@
                 app:layout_constraintLeft_toLeftOf="@id/idProgressbarDriving"
                 app:layout_constraintRight_toRightOf="@id/idProgressbarDriving"
                 android:textColor="@color/colorPrimary"
-                android:textSize="16sp"
+                android:textSize="@dimen/card_text_size"
                 android:textStyle="bold"
                 android:fontFamily="@font/montserrat"/>
 
@@ -212,7 +212,7 @@
             android:indeterminate="false"
             style="?android:attr/progressBarStyleHorizontal"
             android:max="100"
-            android:progress="65"
+            android:progress="100"
             android:background="@drawable/circle_shape"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -226,7 +226,7 @@
                 android:fontFamily="@font/montserrat"
                 android:text="@string/time"
                 android:textColor="@color/colorPrimary"
-                android:textSize="22sp"
+                android:textSize="@dimen/big_text_size"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/idProgressbarShift"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -243,7 +243,7 @@
                 app:layout_constraintLeft_toLeftOf="@id/idProgressbarShift"
                 app:layout_constraintRight_toRightOf="@id/idProgressbarShift"
                 android:textColor="@color/colorPrimary"
-                android:textSize="16sp"
+                android:textSize="@dimen/card_text_size"
                 android:textStyle="bold"
                 android:fontFamily="@font/montserrat"/>
 
@@ -266,7 +266,7 @@
             android:indeterminate="false"
             style="?android:attr/progressBarStyleHorizontal"
             android:max="100"
-            android:progress="90"
+            android:progress="100"
             android:background="@drawable/circle_shape"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -283,7 +283,7 @@
             app:layout_constraintLeft_toLeftOf="@id/idProgressbarCycle"
             app:layout_constraintRight_toRightOf="@id/idProgressbarCycle"
             android:textColor="@color/colorPrimary"
-            android:textSize="22sp"
+            android:textSize="@dimen/big_text_size"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintVertical_bias="0.4"
             android:fontFamily="@font/montserrat"
@@ -297,7 +297,7 @@
                 app:layout_constraintLeft_toLeftOf="@id/idProgressbarCycle"
                 app:layout_constraintRight_toRightOf="@id/idProgressbarCycle"
                 android:textColor="@color/colorPrimary"
-                android:textSize="16sp"
+                android:textSize="@dimen/card_text_size"
                 android:textStyle="bold"
                 android:fontFamily="@font/montserrat"/>
 
@@ -307,14 +307,14 @@
 
     <Button
         android:id="@+id/idStatusRecap"
-        android:layout_width="240dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="@dimen/drawer_width"
+        android:layout_height="@dimen/activity_padding_size"
+        android:layout_marginTop="@dimen/card_view_corner_radius"
         app:layout_constraintTop_toBottomOf="@id/idParent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:text="@string/driving"
-        android:textSize="18sp"
+        android:textSize="@dimen/title_text_size"
         android:fontFamily="@font/montserrat"
         android:textColor="@color/colorPrimary"
         android:textStyle="bold"

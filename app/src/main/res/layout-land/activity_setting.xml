@@ -97,7 +97,14 @@
                     android:text="@string/edit_profile"
                     android:textSize="@dimen/card_text_size"
                     android:fontFamily="@font/montserrat"
-                    android:textColor="?attr/customTextHintColor"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"
+                    android:layout_marginTop="@dimen/half_vertical_margin"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/table_stroke_with"
+                    android:background="?attr/customBgViewColor"
                     android:layout_marginTop="@dimen/half_vertical_margin"/>
 
                 <TextView
@@ -107,7 +114,14 @@
                     android:text="@string/carrier"
                     android:textSize="@dimen/card_text_size"
                     android:fontFamily="@font/montserrat"
-                    android:textColor="?attr/customTextHintColor"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"
+                    android:layout_marginTop="@dimen/half_vertical_margin"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/table_stroke_with"
+                    android:background="?attr/customBgViewColor"
                     android:layout_marginTop="@dimen/half_vertical_margin"/>
 
                 <TextView
@@ -117,7 +131,14 @@
                     android:text="@string/carrier_connect"
                     android:textSize="@dimen/card_text_size"
                     android:fontFamily="@font/montserrat"
-                    android:textColor="?attr/customTextHintColor"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"
+                    android:layout_marginTop="@dimen/half_vertical_margin"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/table_stroke_with"
+                    android:background="?attr/customBgViewColor"
                     android:layout_marginTop="@dimen/half_vertical_margin"/>
             </LinearLayout>
 
@@ -151,7 +172,14 @@
                     android:text="@string/inspection_mode_lock"
                     android:textSize="@dimen/card_text_size"
                     android:fontFamily="@font/montserrat"
-                    android:textColor="?attr/customTextHintColor"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"
+                    android:layout_marginTop="@dimen/half_vertical_margin"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/table_stroke_with"
+                    android:background="?attr/customBgViewColor"
                     android:layout_marginTop="@dimen/half_vertical_margin"/>
 
                 <TextView
@@ -161,7 +189,14 @@
                     android:text="@string/night_mode"
                     android:textSize="@dimen/card_text_size"
                     android:fontFamily="@font/montserrat"
-                    android:textColor="?attr/customTextHintColor"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"
+                    android:layout_marginTop="@dimen/half_vertical_margin"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/table_stroke_with"
+                    android:background="?attr/customBgViewColor"
                     android:layout_marginTop="@dimen/half_vertical_margin"/>
 
                 <TextView
@@ -171,7 +206,14 @@
                     android:text="@string/languages"
                     android:textSize="@dimen/card_text_size"
                     android:fontFamily="@font/montserrat"
-                    android:textColor="?attr/customTextHintColor"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"
+                    android:layout_marginTop="@dimen/half_vertical_margin"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/table_stroke_with"
+                    android:background="?attr/customBgViewColor"
                     android:layout_marginTop="@dimen/half_vertical_margin"/>
 
                 <TextView
@@ -181,7 +223,14 @@
                     android:text="@string/privacy"
                     android:textSize="@dimen/card_text_size"
                     android:fontFamily="@font/montserrat"
-                    android:textColor="?attr/customTextHintColor"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"
+                    android:layout_marginTop="@dimen/half_vertical_margin"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/table_stroke_with"
+                    android:background="?attr/customBgViewColor"
                     android:layout_marginTop="@dimen/half_vertical_margin"/>
             </LinearLayout>
 

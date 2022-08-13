@@ -8,17 +8,19 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.iosix.eldblesample.models.eld_records.Point;
+
 @Entity (tableName = "log_table")
 public class LogEntity {
     @PrimaryKey(autoGenerate = true)
     private int id;
-    @ColumnInfo(name = "from_status")
-    private int from_status = 0;
+    @ColumnInfo(name = "driver_id")
+    private String driverId;
     @ColumnInfo(name = "to_status")
     private int to_status = 0;
     @ColumnInfo(name = "location")
     @Nullable
-    private String location;
+    private Point location;
     @ColumnInfo(name = "note")
     @Nullable
     private String note;
@@ -30,8 +32,8 @@ public class LogEntity {
     @ColumnInfo(name = "seconds")
     private int seconds;
 
-    public LogEntity(int from_status, int to_status, @Nullable String location, @Nullable String note, @Nullable String document, @NonNull String time, int seconds) {
-        this.from_status = from_status;
+    public LogEntity(String driverId,int to_status, @Nullable Point location, @Nullable String note, @Nullable String document, @NonNull String time, int seconds) {
+        this.driverId = driverId;
         this.to_status = to_status;
         this.location = location;
         this.note = note;
@@ -40,19 +42,12 @@ public class LogEntity {
         this.seconds = seconds;
     }
 
-    @Ignore
-    public LogEntity(int from_status, int to_status, int seconds) {
-        this.from_status = from_status;
-        this.to_status = to_status;
-        this.seconds = seconds;
+    public String getDriverId() {
+        return driverId;
     }
 
-    public int getFrom_status() {
-        return from_status;
-    }
-
-    public void setFrom_status(int from_status) {
-        this.from_status = from_status;
+    public void setDriverId(String driverId) {
+        this.driverId = driverId;
     }
 
     public int getTo_status() {
@@ -80,11 +75,11 @@ public class LogEntity {
     }
 
     @Nullable
-    public String getLocation() {
+    public Point getLocation() {
         return location;
     }
 
-    public void setLocation(@Nullable String location) {
+    public void setLocation(@Nullable Point location) {
         this.location = location;
     }
 

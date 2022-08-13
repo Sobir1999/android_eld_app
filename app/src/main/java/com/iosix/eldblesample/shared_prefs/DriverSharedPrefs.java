@@ -30,6 +30,12 @@ public class DriverSharedPrefs {
         editor.apply();
     }
 
+    public void saveLastDriverId(String driverId){
+        editor = userPref.edit();
+        editor.putString("driverid",driverId);
+        editor.apply();
+    }
+
     public void saveLastSurname(String surName){
         editor = userPref.edit();
         editor.putString("surName",surName);
@@ -72,8 +78,22 @@ public class DriverSharedPrefs {
         editor.apply();
     }
 
+    public void saveWorkingHours(String key,int workingHours){
+        editor = userPref.edit();
+        editor.putInt(key,workingHours);
+        editor.apply();
+    }
+
+    public int getWorkingHours(String key){
+        return userPref.getInt(key,0);
+    }
+
     public String getFirstname(){
         return userPref.getString("firstName","");
+    }
+
+    public String getDriverId(){
+        return userPref.getString("driverid","");
     }
 
     public String getLastname(){

@@ -1,5 +1,8 @@
 package com.iosix.eldblesample.adapters;
 
+import static com.iosix.eldblesample.enums.Day.intToTime;
+import static com.iosix.eldblesample.enums.HOSConstants.mCycle;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -14,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.customViews.CustomStableRulerChart;
+import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.DvirEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
@@ -27,11 +31,11 @@ import java.util.List;
 public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLastAdapter.ViewHolder> {
     private List<DayEntity> dayEntities;
     private List<DvirEntity> dvirEntities;
-    private List<DayEntity> selectedDays = new ArrayList<>();
     private List<LogEntity> truckStatusEntities;
     private LastDaysRecyclerViewItemClickListener listener;
     private Context ctx;
     private boolean isSelected = false;
+    private TextView workedTime;
 
     public void setSelected(boolean selected) {
         isSelected = selected;
@@ -50,6 +54,7 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
         dvirEntities = new ArrayList<>();
         truckStatusEntities = new ArrayList<>();
         ctx = context;
+        mCycle = 0;
 
         daoViewModel.getMgetAllDays().observe((LifecycleOwner) ctx, dayEntities -> RecyclerViewLastAdapter.this.dayEntities = dayEntities);
         dvirViewModel.getMgetDvirs().observe((LifecycleOwner) ctx, dvirEntities -> RecyclerViewLastAdapter.this.dvirEntities = dvirEntities);
@@ -78,7 +83,7 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
         TextView day, day_week, no_dvir;
         View clickable;
         CustomStableRulerChart customRulerChart;
-        ImageView imageView;
+        ImageView imageView,idTableSignature;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -88,16 +93,41 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
             customRulerChart = itemView.findViewById(R.id.idLastDaysTable);
             imageView = itemView.findViewById(R.id.idTableRadioBtn);
             no_dvir = itemView.findViewById(R.id.idTableDvir);
+            idTableSignature = itemView.findViewById(R.id.idTableSignature);
+            workedTime = itemView.findViewById(R.id.idTableTime);
             itemsClicked();
         }
 
         @SuppressLint("UseCompatLoadingForDrawables")
         void onBind(DayEntity dayEntity) {
 
+            int workingTime = 0;
             ArrayList<DvirEntity> dvirEntity = new ArrayList<>();
             day.setText(dayEntity.getDay_name());
             day_week.setText(dayEntity.getDay());
-            customRulerChart.setArrayList(getDayTruckEntity(dayEntity.getDay()));
+            ArrayList<LogEntity> entities = new ArrayList<>();
+            ArrayList<LogEntity> entities1 = new ArrayList<>();
+            for (int i = 0; i < truckStatusEntities.size(); i++) {
+                if (truckStatusEntities.get(i).getTime().equalsIgnoreCase(dayEntity.getDay())) {
+                    if (truckStatusEntities.get(i).getTo_status() < 6){
+                        entities.add(truckStatusEntities.get(i));
+                    }else {
+                        entities1.add(truckStatusEntities.get(i));
+                    }
+                }
+            }
+            for (int i = 0; i < entities.size(); i++) {
+                if (entities.get(i).getTo_status() == EnumsConstants.STATUS_DR || entities.get(i).getTo_status() == EnumsConstants.STATUS_ON){
+                    if (i != entities.size()-1){
+                        workingTime += entities.get(i+1).getSeconds() - entities.get(i).getSeconds();
+                    }else {
+                        workingTime += 86400 - entities.get(i).getSeconds();
+                    }
+                }
+            }
+            mCycle += workingTime;
+            customRulerChart.setArrayList(entities,entities1);
+            workedTime.setText(intToTime(workingTime));
 
             if (dvirEntities.size() != 0){
                 for (int i = 0; i < dvirEntities.size(); i++) {
@@ -112,6 +142,12 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
                 imageView.setImageResource(imageView.getDrawable().getConstantState().equals(imageView.getContext().getDrawable(R.drawable.state_checked).getConstantState()) ? R.drawable.state_unchacked : R.drawable.state_checked);
                 if (listener != null) {
                     listener.onclickItem(dayEntity.getDay());
+                }
+            });
+
+            idTableSignature.setOnClickListener(view -> {
+                if (listener != null){
+                    listener.onclickSignature(dayEntity.getDay());
                 }
             });
 
@@ -133,20 +169,12 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
         }
     }
 
-    private ArrayList<LogEntity> getDayTruckEntity(String day) {
-        ArrayList<LogEntity> entities = new ArrayList<>();
-        for (int i = 0; i < truckStatusEntities.size(); i++) {
-            if (truckStatusEntities.get(i).getTime().equalsIgnoreCase(day)) {
-                entities.add(truckStatusEntities.get(i));
-            }
-        }
-        return entities;
-    }
-
     public interface LastDaysRecyclerViewItemClickListener {
         void onclickItem(String s);
 
         void onclickDvir(String s,ArrayList<DvirEntity> dvirEntity);
+
+        void onclickSignature(String s);
     }
 
 }

@@ -8,6 +8,8 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.util.Log;
@@ -34,6 +36,7 @@ import com.iosix.eldblesample.adapters.TrailerListAdapter;
 import com.iosix.eldblesample.adapters.TrailerRecyclerAdapter;
 import com.iosix.eldblesample.adapters.UnitListAdapter;
 import com.iosix.eldblesample.base.BaseActivity;
+import com.iosix.eldblesample.enums.GPSTracker;
 import com.iosix.eldblesample.fragments.TimePickerFragment;
 import com.iosix.eldblesample.models.TrailNubmer;
 import com.iosix.eldblesample.retrofit.APIInterface;
@@ -41,8 +44,12 @@ import com.iosix.eldblesample.retrofit.ApiClient;
 import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
+import com.iosix.eldblesample.viewModel.UserViewModel;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -59,6 +66,7 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
     private TextView unitDefects, trailerDefects, unitDefectsTitle, trailerDefectsTitle;
     private TextView addTime;
     private TextView notes;
+    private TextView idDefectLocationText;
     private ImageView backView,idSelectedUnitDelete;
     private EditText locationEditText;
     String time,location,mNotes;
@@ -75,6 +83,7 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
     private APIInterface apiInterface;
     private DvirViewModel dvirViewModel;
     RecyclerView selectedTrailersRecyclerView;
+    private UserViewModel userViewModel;
 
     @Override
     protected int getLayoutId() {
@@ -109,6 +118,7 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
         backView = findViewById(R.id.idImageBack);
         nextText = findViewById(R.id.idAddDvirNext);
         locationEditText = findViewById(R.id.idDefectLocationEdit);
+        idDefectLocationText = findViewById(R.id.idDefectLocationText);
         selectedTrailersRecyclerView = findViewById(R.id.idTrailersRecyclerView);
 
 
@@ -118,7 +128,10 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
 
         daoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
 
+        userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
+
         buttonClicks(getWindow().getDecorView().findViewById(R.id.fragment_container_add_dvir));
+        getCurrentLocation();
 
     }
 
@@ -175,7 +188,7 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
             TextView idGeneralTrailerText = dialog.findViewById(R.id.idGeneralTrailerText);
             idGeneralTrailerText.setVisibility(View.GONE);
 
-            daoViewModel.getGetAllVehicles().observe(this,vehiclesEntities -> {
+            userViewModel.getGetAllVehicles().observe(this,vehiclesEntities -> {
                 UnitListAdapter unitListAdapter = new UnitListAdapter(this,vehiclesEntities);
                 recyclerView.setAdapter(unitListAdapter);
                 unitListAdapter.setListener(s -> {
@@ -185,7 +198,7 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
                 });
             });
 
-            unitText.setText("Add Unit");
+            unitText.setText("Add Vehicle");
             cancel.setOnClickListener(view -> {
                 dialog.dismiss();
             });
@@ -217,23 +230,22 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
             TextView idGeneralTrailerText = dialog.findViewById(R.id.idGeneralTrailerText);
             idGeneralTrailerText.setVisibility(View.GONE);
 
-            daoViewModel.getGetAllTrailers().observe(this,trailersEntities -> {
-                TrailerListAdapter trailerListAdapter = new TrailerListAdapter(this,trailersEntities);
-                recyclerView.setAdapter(trailerListAdapter);
-                trailerListAdapter.setUpdateListener(position ->{
-                    dialog.dismiss();
-                    int n = 0;
-                    for (int i = 0; i < selectedTrailers.size(); i++) {
-                        if (trailersEntities.get(position).equals(selectedTrailers.get(i))){
-                            n++;
-                        }
-                    }
-                    if (n == 0){
-                        selectedTrailers.add(trailersEntities.get(position));
-                        dvirViewModel.getSelectedTrailerCount().postValue(selectedTrailers.size());
-                    }
-                });
-            });
+//            userViewModel.getGetAllTrailers().observe(this,trailersEntities -> {
+//                TrailerListAdapter trailerListAdapter = new TrailerListAdapter(this,trailersEntities);
+//                recyclerView.setAdapter(trailerListAdapter);
+//                trailerListAdapter.setUpdateListener(position ->{
+//                    dialog.dismiss();
+//                    int n = 0;
+//                    for (int i = 0; i < selectedTrailers.size(); i++) {
+//                        if (trailersEntities.get(position).equals(selectedTrailers.get(i))){
+//                            n++;
+//                        }
+//                    }
+//                    if (n == 0){
+//                        selectedTrailers.add(trailersEntities.get(position));
+//                    }
+//                });
+//            });
 
             unitText.setText("Add Trailer");
             cancel.setOnClickListener(view -> {
@@ -241,16 +253,6 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
             });
 
             dialog.show();
-        });
-
-        dvirViewModel.getSelectedTrailerCount().observe(this,count ->{
-            selectedTrailersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            adapter = new TrailerRecyclerAdapter(selectedTrailers);
-            selectedTrailersRecyclerView.setAdapter(adapter);
-            adapter.setDeleteListener(s->{
-                selectedTrailers.remove(s);
-                dvirViewModel.getSelectedTrailerCount().postValue(selectedTrailers.size());
-            });
         });
 
         backView.setOnClickListener(v -> onBackPressed());
@@ -263,7 +265,7 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
                         .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
                 AlertDialog alert = alertDialog.create();
                 alert.show();
-            }else if (locationEditText.getText().toString().equals("")){
+            }else if (getCurrentLocation().equals("")){
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
                 alertDialog.setTitle("Location missed")
                         .setMessage("Location not created!")
@@ -272,7 +274,7 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
                 alert.show();
             }else{
                 time = addTime.getText().toString() + " CDT";
-                location = locationEditText.getText().toString();
+                location = getCurrentLocation();
                 mNotes = notes.getText().toString();
 
                 arrayList = new ArrayList<>();
@@ -327,8 +329,8 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
         defects.setOnClickListener(v1 -> {
             if (idSelectedUnitText.getText().equals("") && selectedTrailers.isEmpty()){
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-                alertDialog.setTitle("Unit not created")
-                        .setMessage("Select unit or create manually!")
+                alertDialog.setTitle("Vehicle not created")
+                        .setMessage("Select vehicle!")
                         .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
                 AlertDialog alert = alertDialog.create();
                 alert.show();
@@ -363,7 +365,7 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
                     public void onResponse(Call<TrailersEntity> call, Response<TrailersEntity> response) {
                         if (response.isSuccessful()){
                             try {
-                                daoViewModel.insertTrailer(new TrailersEntity(response.body().getTrailer_id(),response.body().getNumber()));
+                                userViewModel.insertTrailer(new TrailersEntity(response.body().getTrailer_id(),response.body().getNumber()));
                             } catch (ExecutionException | InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -383,10 +385,44 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
 
     }
 
+    private String getCurrentLocation(){
+        if (true){
+            locationEditText.setVisibility(View.GONE);
+            idDefectLocationText.setVisibility(View.VISIBLE);
+            idDefectLocationText.setOnClickListener(view -> {
+                GPSTracker gpsTracker = new GPSTracker(this);
+                double longtitude = gpsTracker.getLongitude();
+                double latitude = gpsTracker.getLatitude();
+                Geocoder geocoder = new Geocoder(AddDvirActivity.this, Locale.getDefault());
+                try {
+                    if (latitude != 0 && longtitude != 0){
+                        List<Address> addresses = geocoder.getFromLocation(latitude, longtitude, 1);
+                        Address obj = addresses.get(0);
+                        String add = obj.getAddressLine(0);
+
+                        idDefectLocationText.setText(add);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(AddDvirActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+            return idDefectLocationText.getText().toString();
+        }else {
+            locationEditText.setVisibility(View.VISIBLE);
+            idDefectLocationText.setVisibility(View.GONE);
+            return locationEditText.getText().toString();
+        }
+    }
+
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         addTime = findViewById(R.id.idDefectTimeText);
-        addTime.setText(String.format("%s:%s", timeString(hourOfDay), timeString(minute)));
+        if (hourOfDay > 12){
+            addTime.setText(String.format("%s:%s %s", timeString(hourOfDay-12), timeString(minute),"PM"));
+        }else {
+            addTime.setText(String.format("%s:%s %s", timeString(hourOfDay), timeString(minute),"AM"));
+        }
     }
 
     private String timeString(int digit) {

@@ -1,35 +1,29 @@
 package com.iosix.eldblesample.activity;
 
-import static com.iosix.eldblesample.MyApplication.userData;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.widget.SwitchCompat;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.base.BaseActivity;
 import com.iosix.eldblesample.dialogs.CustomTimePickerDialog;
-import com.iosix.eldblesample.viewModel.DvirViewModel;
+import com.iosix.eldblesample.shared_prefs.UserData;
 
 import java.util.Calendar;
 
 public class NightModeActivity extends BaseActivity {
 
     private SwitchCompat idSwitchCompat;
-    private ImageView imageView;
     private TextView idTvStart;
     private TextView idTvEnd;
+    private UserData userData;
     Calendar mcurrentTime = Calendar.getInstance();
     int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
     int minute = mcurrentTime.get(Calendar.MINUTE);
@@ -48,57 +42,41 @@ public class NightModeActivity extends BaseActivity {
     public void initView() {
         super.initView();
         idSwitchCompat = findViewById(R.id.idSwitchCompat);
-        imageView = findViewById(R.id.idImageBack);
+        ImageView imageView = findViewById(R.id.idImageBack);
         idTvStart = findViewById(R.id.idTvStart);
         idTvEnd = findViewById(R.id.idTvEnd);
         imageView.setOnClickListener(view -> onBackPressed());
+        userData = new UserData(this);
 
         if (userData.getStartTime()>12){
-            if ((userData.getStartTime()-12) > 9){
-                idTvStart.setText((userData.getStartTime()-12) + ":" + "00" + " PM");
-            }else {
-                idTvStart.setText("0" + (userData.getStartTime()-12) + ":" + "00" + " PM");
-            }
+            if ((userData.getStartTime()-12) > 9)
+                idTvStart.setText((userData.getStartTime() - 12) + ":" + "00" + " PM");
+            else idTvStart.setText("0" + (userData.getStartTime() - 12) + ":" + "00" + " PM");
         }else {
-            if (userData.getStartTime()>9){
+            if (userData.getStartTime()>9)
                 idTvStart.setText(userData.getStartTime() + ":" + "00" + " AM");
-            }else {
-                idTvStart.setText("0" + userData.getStartTime() + ":" + "00" + " AM");
-            }
+            else idTvStart.setText("0" + userData.getStartTime() + ":" + "00" + " AM");
         }
 
         if (userData.getEndTime()>12){
-            if ((userData.getEndTime()-12) > 9){
-                idTvEnd.setText((userData.getEndTime()-12) + ":" + "00" + " PM");
-            }else {
-                idTvEnd.setText("0" + (userData.getEndTime()-12) + ":" + "00" + " PM");
-            }
+            if ((userData.getEndTime()-12) > 9)
+                idTvEnd.setText((userData.getEndTime() - 12) + ":" + "00" + " PM");
+            else idTvEnd.setText("0" + (userData.getEndTime() - 12) + ":" + "00" + " PM");
         }else {
-            if (userData.getEndTime()>9){
+            if (userData.getEndTime()>9)
                 idTvEnd.setText(userData.getEndTime() + ":" + "00" + " AM");
-            }else {
-                idTvEnd.setText("0" + userData.getEndTime() + ":" + "00" + " AM");
-            }
+            else idTvEnd.setText("0" + userData.getEndTime() + ":" + "00" + " AM");
         }
 
         idTvStart.setOnClickListener(view -> {
-            CustomTimePickerDialog pickerDialog = new CustomTimePickerDialog(this, 2, new TimePickerDialog.OnTimeSetListener() {
-                @Override
-                public void onTimeSet(TimePicker timePicker, int i, int i1) {
-                    userData.saveStartTime(i);
-                    if (i>12){
-                        if ((i-12) > 9){
-                            idTvStart.setText((i-12) + ":" + "00" + " PM");
-                        }else {
-                            idTvStart.setText("0" + (i-12) + ":" + "00" + " PM");
-                        }
-                    }else {
-                        if (i>9){
-                            idTvStart.setText(i + ":" + "00" + " AM");
-                        }else {
-                            idTvStart.setText("0" + i + ":" + "00" + " AM");
-                        }
-                    }
+            CustomTimePickerDialog pickerDialog = new CustomTimePickerDialog(this, 2, (timePicker, i, i1) -> {
+                userData.saveStartTime(i);
+                if (i>12){
+                    if ((i-12) > 9) idTvStart.setText((i - 12) + ":" + "00" + " PM");
+                    else idTvStart.setText("0" + (i - 12) + ":" + "00" + " PM");
+                }else {
+                    if (i>9) idTvStart.setText(i + ":" + "00" + " AM");
+                    else idTvStart.setText("0" + i + ":" + "00" + " AM");
                 }
             },hour,minute,false);
             pickerDialog.setTitle("Select Time");
@@ -106,23 +84,14 @@ public class NightModeActivity extends BaseActivity {
         });
 
         idTvEnd.setOnClickListener(view -> {
-            CustomTimePickerDialog pickerDialog = new CustomTimePickerDialog(this, 2, new TimePickerDialog.OnTimeSetListener() {
-                @Override
-                public void onTimeSet(TimePicker timePicker, int i, int i1) {
-                    userData.saveEndTime(i);
-                    if (i>12){
-                        if ((i-12) > 9){
-                            idTvEnd.setText((i-12) + ":" + "00" + " PM");
-                        }else {
-                            idTvEnd.setText("0" + (i-12) + ":" + "00" + " PM");
-                        }
-                    }else {
-                        if (i>9){
-                            idTvEnd.setText(i + ":" + "00" + " AM");
-                        }else {
-                            idTvEnd.setText("0" + i + ":" + "00" + " AM");
-                        }
-                    }
+            CustomTimePickerDialog pickerDialog = new CustomTimePickerDialog(this, 2, (timePicker, i, i1) -> {
+                userData.saveEndTime(i);
+                if (i>12){
+                    if ((i-12) > 9) idTvEnd.setText((i - 12) + ":" + "00" + " PM");
+                    else idTvEnd.setText("0" + (i - 12) + ":" + "00" + " PM");
+                }else {
+                    if (i>9) idTvEnd.setText(i + ":" + "00" + " AM");
+                    else idTvEnd.setText("0" + i + ":" + "00" + " AM");
                 }
             },hour,minute,false);
             pickerDialog.setTitle("Select Time");
