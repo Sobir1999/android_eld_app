@@ -10,6 +10,7 @@ import com.iosix.eldblesample.models.ApkVersion;
 import com.iosix.eldblesample.models.Data;
 import com.iosix.eldblesample.models.LoginResponse;
 import com.iosix.eldblesample.models.SendDvir;
+import com.iosix.eldblesample.models.SendPdf;
 import com.iosix.eldblesample.models.Status;
 import com.iosix.eldblesample.models.Student;
 import com.iosix.eldblesample.models.TrailNubmer;
@@ -25,6 +26,7 @@ import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
 import java.io.IOException;
 
 import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -47,32 +49,53 @@ public class ApiRepository {
     private final MutableLiveData<LiveDataEntitiy> liveDataEntitiyMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<ApkVersion> apkVersionMutableLiveData = new MutableLiveData<>();
 
-    public ApiRepository(){
+    public ApiRepository() {
         apiInterface = ApiClient.getClient().create(APIInterface.class);
     }
 
-    public void sendLive(LiveDataRecord record){
+    public void sendLive(LiveDataRecord record) {
         apiInterface.sendLive(record).enqueue(new Callback<LiveDataRecord>() {
             @Override
             public void onResponse(Call<LiveDataRecord> call, Response<LiveDataRecord> response) {
-
             }
 
             @Override
             public void onFailure(Call<LiveDataRecord> call, Throwable t) {
-
             }
         });
     }
 
-    public void getLoginResponse(Student student){
+    public void sendPdf(RequestBody mail, MultipartBody.Part pdf) {
+        apiInterface.sendPdf(mail, pdf).enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (!response.isSuccessful()) {
+                    try {
+                        Log.d("Adverse Diving", response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Log.d("Adverse Diving", response.body().toString());
+                    Log.d("Adverse Diving", "response is successfull");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d("Adverse Diving", t.getMessage());
+            }
+        });
+    }
+
+    public void getLoginResponse(Student student) {
         studentMutableLiveData.postLoading();
         apiInterface.createUser(student).enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     studentMutableLiveData.postSuccess(response.body());
-                }else {
+                } else {
                     studentMutableLiveData.postStatusCode(response.code());
                 }
             }
@@ -84,17 +107,17 @@ public class ApiRepository {
         });
     }
 
-    public StateLiveData<LoginResponse> getLoginState(){
+    public StateLiveData<LoginResponse> getLoginState() {
         return studentMutableLiveData;
     }
 
-    public MutableLiveData<User> getUser(){
+    public MutableLiveData<User> getUser() {
         apiInterface.getUser().enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     getUserInfo.postValue(response.body());
-                }else {
+                } else {
                     getUserInfo.postValue(null);
                 }
             }
@@ -107,14 +130,14 @@ public class ApiRepository {
         return getUserInfo;
     }
 
-    public MutableLiveData<Data> getAllDrivers(){
+    public MutableLiveData<Data> getAllDrivers() {
 
         apiInterface.getAllDrivers().enqueue(new Callback<Data>() {
             @Override
             public void onResponse(Call<Data> call, Response<Data> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     getAllUsers.postValue(response.body());
-                }else {
+                } else {
                     getAllUsers.postValue(null);
                 }
             }
@@ -128,13 +151,13 @@ public class ApiRepository {
     }
 
 
-    public MutableLiveData<VehicleData> getAllVehicles(){
+    public MutableLiveData<VehicleData> getAllVehicles() {
         apiInterface.getAllVehicles().enqueue(new Callback<VehicleData>() {
             @Override
             public void onResponse(Call<VehicleData> call, Response<VehicleData> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     getAllVehicles.postValue(response.body());
-                }else {
+                } else {
                     getAllVehicles.postValue(null);
                 }
             }
@@ -147,13 +170,13 @@ public class ApiRepository {
         return getAllVehicles;
     }
 
-    public MutableLiveData<LoginResponse> refreshToken(String refreshToken){
+    public MutableLiveData<LoginResponse> refreshToken(String refreshToken) {
         apiInterface.refreshToken(refreshToken).enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     refreshTokenResponse.postValue(response.body());
-                }else refreshTokenResponse.postValue(null);
+                } else refreshTokenResponse.postValue(null);
             }
 
             @Override
@@ -164,13 +187,13 @@ public class ApiRepository {
         return refreshTokenResponse;
     }
 
-    public MutableLiveData<Status> postStatus(Status status){
+    public MutableLiveData<Status> postStatus(Status status) {
         apiInterface.postStatus(status).enqueue(new Callback<Status>() {
             @Override
             public void onResponse(Call<Status> call, Response<Status> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     getStatus.postValue(response.body());
-                }else {
+                } else {
                     getStatus.postValue(null);
                 }
             }
@@ -183,17 +206,17 @@ public class ApiRepository {
         return getStatus;
     }
 
-    public MutableLiveData<VehicleList> getVehicle(){
+    public MutableLiveData<VehicleList> getVehicle() {
         apiInterface.getVehicle().enqueue(new Callback<VehicleList>() {
             @Override
             public void onResponse(Call<VehicleList> call, Response<VehicleList> response) {
-                if (response.isSuccessful()){
-                    if (response.body() != null){
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
                         getVehicle.postValue(response.body());
-                    }else {
+                    } else {
                         getCoDriver.postValue(null);
                     }
-                }else {
+                } else {
                     getVehicle.postValue(null);
                 }
             }
@@ -206,17 +229,17 @@ public class ApiRepository {
         return getVehicle;
     }
 
-    public MutableLiveData<User> getCoDriver(){
+    public MutableLiveData<User> getCoDriver() {
         apiInterface.getCoDriver().enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                if (response.isSuccessful()){
-                    if (response.body() != null){
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
                         getCoDriver.postValue(response.body());
-                    }else {
+                    } else {
                         getCoDriver.postValue(null);
                     }
-                }else {
+                } else {
                     getCoDriver.postValue(null);
                 }
             }
@@ -229,16 +252,16 @@ public class ApiRepository {
         return getCoDriver;
     }
 
-    public MutableLiveData<GeneralEntity> sendGenerelInfo(GeneralEntity entity){
+    public MutableLiveData<GeneralEntity> sendGenerelInfo(GeneralEntity entity) {
         apiInterface.sendGeneralInfo(entity).enqueue(new Callback<GeneralEntity>() {
             @Override
             public void onResponse(Call<GeneralEntity> call, Response<GeneralEntity> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     getGeneralInfo.postValue(response.body());
-                }else {
+                } else {
                     getGeneralInfo.postValue(null);
                     try {
-                        Log.d("Adverse Diving",response.errorBody().string());
+                        Log.d("Adverse Diving", response.errorBody().string());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -253,33 +276,33 @@ public class ApiRepository {
         return getGeneralInfo;
     }
 
-    public MutableLiveData<TrailersEntity> sendTrailer(TrailNubmer trailNubmer){
-       apiInterface.sendTrailer(trailNubmer).enqueue(new Callback<TrailersEntity>() {
-           @Override
-           public void onResponse(Call<TrailersEntity> call, Response<TrailersEntity> response) {
-               if (response.isSuccessful()){
+    public MutableLiveData<TrailersEntity> sendTrailer(TrailNubmer trailNubmer) {
+        apiInterface.sendTrailer(trailNubmer).enqueue(new Callback<TrailersEntity>() {
+            @Override
+            public void onResponse(Call<TrailersEntity> call, Response<TrailersEntity> response) {
+                if (response.isSuccessful()) {
                     getTrailer.postValue(response.body());
-               }else {
-                   getTrailer.postValue(null);
-               }
-           }
+                } else {
+                    getTrailer.postValue(null);
+                }
+            }
 
-           @Override
-           public void onFailure(Call<TrailersEntity> call, Throwable t) {
+            @Override
+            public void onFailure(Call<TrailersEntity> call, Throwable t) {
                 getTrailer.postValue(null);
-           }
-       });
-       return getTrailer;
+            }
+        });
+        return getTrailer;
     }
 
-    public MutableLiveData<SendDvir> sendDvir(SendDvir sendDvir){
+    public MutableLiveData<SendDvir> sendDvir(SendDvir sendDvir) {
         apiInterface.sendDvir(sendDvir).enqueue(new Callback<SendDvir>() {
             @Override
             public void onResponse(Call<SendDvir> call, Response<SendDvir> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     dvir.postValue(response.body());
-                }else {
-                    
+                } else {
+
                 }
             }
 
@@ -291,13 +314,13 @@ public class ApiRepository {
         return dvir;
     }
 
-    public MutableLiveData<MultipartBody.Part> sendSignature(MultipartBody.Part body){
+    public MutableLiveData<MultipartBody.Part> sendSignature(MultipartBody.Part body) {
         apiInterface.sendSignature(body).enqueue(new Callback<MultipartBody.Part>() {
             @Override
             public void onResponse(Call<MultipartBody.Part> call, Response<MultipartBody.Part> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     signature.postValue(response.body());
-                }else {
+                } else {
                     signature.postValue(null);
                 }
             }
@@ -310,13 +333,13 @@ public class ApiRepository {
         return signature;
     }
 
-    public MutableLiveData<Eld> sendEldNum(Eld eld){
+    public MutableLiveData<Eld> sendEldNum(Eld eld) {
         apiInterface.sendEldNum(eld).enqueue(new Callback<Eld>() {
             @Override
             public void onResponse(Call<Eld> call, Response<Eld> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     eldMutableLiveData.postValue(response.body());
-                }else eldMutableLiveData.postValue(null);
+                } else eldMutableLiveData.postValue(null);
             }
 
             @Override
@@ -328,13 +351,13 @@ public class ApiRepository {
     }
 
 
-    public MutableLiveData<LiveDataEntitiy> sendLocalData(LiveDataEntitiy liveDataEntitiy){
+    public MutableLiveData<LiveDataEntitiy> sendLocalData(LiveDataEntitiy liveDataEntitiy) {
         apiInterface.sendLocalData(liveDataEntitiy).enqueue(new Callback<LiveDataEntitiy>() {
             @Override
             public void onResponse(Call<LiveDataEntitiy> call, Response<LiveDataEntitiy> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     liveDataEntitiyMutableLiveData.postValue(response.body());
-                }else liveDataEntitiyMutableLiveData.postValue(null);
+                } else liveDataEntitiyMutableLiveData.postValue(null);
             }
 
             @Override
@@ -345,13 +368,13 @@ public class ApiRepository {
         return liveDataEntitiyMutableLiveData;
     }
 
-    public MutableLiveData<ApkVersion> sendApkVersion(ApkVersion apkVersion){
+    public MutableLiveData<ApkVersion> sendApkVersion(ApkVersion apkVersion) {
         apiInterface.sendApkVersion(apkVersion).enqueue(new Callback<ApkVersion>() {
             @Override
             public void onResponse(Call<ApkVersion> call, Response<ApkVersion> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     apkVersionMutableLiveData.postValue(response.body());
-                }else apkVersionMutableLiveData.postValue(null);
+                } else apkVersionMutableLiveData.postValue(null);
             }
 
             @Override

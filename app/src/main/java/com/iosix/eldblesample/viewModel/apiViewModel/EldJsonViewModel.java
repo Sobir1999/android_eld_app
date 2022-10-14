@@ -12,6 +12,7 @@ import com.iosix.eldblesample.models.ApkVersion;
 import com.iosix.eldblesample.models.Data;
 import com.iosix.eldblesample.models.LoginResponse;
 import com.iosix.eldblesample.models.SendDvir;
+import com.iosix.eldblesample.models.SendPdf;
 import com.iosix.eldblesample.models.Status;
 import com.iosix.eldblesample.models.Student;
 import com.iosix.eldblesample.models.TrailNubmer;
@@ -28,6 +29,7 @@ import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
 import java.io.IOException;
 
 import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.HttpException;
 
 public class EldJsonViewModel extends AndroidViewModel {
@@ -105,5 +107,9 @@ public class EldJsonViewModel extends AndroidViewModel {
 
     public MutableLiveData<ApkVersion> sendApkVersion(ApkVersion apkVersion){
         return repository.sendApkVersion(apkVersion);
+    }
+
+    public void sendPdf(RequestBody mail,MultipartBody.Part pdf){
+        repository.sendPdf(mail,pdf);
     }
 }

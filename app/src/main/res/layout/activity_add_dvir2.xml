@@ -150,24 +150,40 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
+                        <ImageView
+                            android:id="@+id/idVehicleImage"
+                            android:src="@drawable/ic_truck"
+                            android:layout_width="@dimen/drawer_padding_size"
+                            android:layout_height="@dimen/drawer_padding_size"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            android:layout_marginEnd="@dimen/quarter_vertical_margin"
+                            app:layout_constraintTop_toTopOf="@id/idSelectedUnitText"
+                            app:layout_constraintBottom_toBottomOf="@+id/idSelectedUnitText"
+                            app:layout_constraintRight_toLeftOf="@+id/idSelectedUnitText"
+                            android:backgroundTint="?attr/customTextColor"
+                            app:tint="?attr/customTextColor" />
+
                         <TextView
                             android:id="@+id/idSelectedUnitText"
                             android:layout_width="0dp"
-                            android:gravity="center_vertical"
-                            android:textColor="?attr/customTextColor"
-                            android:textSize="@dimen/normal_text_size"
-                            app:layout_constraintRight_toLeftOf="@id/idSelectedUnitDelete"
-                            app:layout_constraintLeft_toLeftOf="parent"
                             android:layout_height="wrap_content"
-                            tools:ignore="MissingConstraints" />
+                            android:fontFamily="@font/charm_bold"
+                            android:gravity="center_vertical"
+                            android:text="@string/uzbek"
+                            android:textColor="?attr/customTextColor"
+                            android:textSize="@dimen/title_text_size"
+                            app:layout_constraintLeft_toRightOf="@+id/idVehicleImage"
+                            app:layout_constraintRight_toLeftOf="@id/idSelectedUnitDelete"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <View
                             app:layout_constraintTop_toBottomOf="@id/idSelectedUnitDelete"
                             app:layout_constraintLeft_toLeftOf="@id/idSelectedUnitText"
                             app:layout_constraintRight_toRightOf="@id/idSelectedUnitText"
-                            android:background="@color/design_default_color_primary_dark"
+                            android:background="?attr/customTextColor"
                             android:layout_width="0dp"
                             android:layout_height="1dp"
+                            android:layout_marginTop="@dimen/quarter_vertical_margin"
                             tools:ignore="MissingConstraints" />
 
                         <ImageView
@@ -178,7 +194,8 @@
                             android:layout_width="wrap_content"
                             android:src="@drawable/trailer_delete"
                             android:layout_height="wrap_content"
-                            tools:ignore="MissingConstraints" />
+                            app:tint="@color/colorPrimary" />
+
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -240,32 +257,33 @@
 
                     </RelativeLayout>
 
-                    <TextView
-                        android:id="@+id/idAddDvirTrailerNumberText"
-                        style="@style/TextAppearance.AppCompat"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:drawablePadding="@dimen/half_vertical_margin"
-                        android:layout_marginHorizontal="@dimen/drawer_padding_size"
-                        android:gravity="center_vertical"
-                        android:text="Select trailers"
-                        android:textSize="@dimen/normal_text_size"
-                        android:fontFamily="@font/montserrat"
-                        android:textStyle="bold"
-                        android:textColor="?attr/customTextHintColor"
-                        app:drawableEndCompat="@drawable/keyboard_bottom_arrow" />
+<!--                    <TextView-->
+<!--                        android:id="@+id/idAddDvirTrailerNumberText"-->
+<!--                        style="@style/TextAppearance.AppCompat"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:drawablePadding="@dimen/half_vertical_margin"-->
+<!--                        android:layout_marginHorizontal="@dimen/drawer_padding_size"-->
+<!--                        android:gravity="center_vertical"-->
+<!--                        android:text="Select trailers"-->
+<!--                        android:textSize="@dimen/normal_text_size"-->
+<!--                        android:fontFamily="@font/montserrat"-->
+<!--                        android:textStyle="bold"-->
+<!--                        android:textColor="?attr/customTextHintColor"-->
+<!--                        app:drawableEndCompat="@drawable/keyboard_bottom_arrow" />-->
 
-                    <View
-                        android:layout_width="wrap_content"
-                        android:layout_height="1dp"
-                        android:layout_marginHorizontal="@dimen/drawer_padding_size"
-                        android:background="?attr/customBgViewColor" />
+<!--                    <View-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="1dp"-->
+<!--                        android:layout_marginHorizontal="@dimen/drawer_padding_size"-->
+<!--                        android:background="?attr/customBgViewColor" />-->
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/idTrailersRecyclerView"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         android:layout_marginHorizontal="@dimen/drawer_padding_size" />
 
                     <LinearLayout

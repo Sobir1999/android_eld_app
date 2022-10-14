@@ -1,18 +1,27 @@
 package com.iosix.eldblesample.fragments;
 
 import static com.iosix.eldblesample.enums.Day.dateToString;
+import static com.iosix.eldblesample.enums.Day.getCurrentSeconds;
+import static com.iosix.eldblesample.utils.Utils.getDateFormat;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.pdf.PdfDocument;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,26 +35,39 @@ import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.adapters.InspectionLogAdapter;
 import com.iosix.eldblesample.customViews.CustomLiveRulerChart;
 import com.iosix.eldblesample.customViews.CustomStableRulerChart;
+import com.iosix.eldblesample.enums.EnumsConstants;
+import com.iosix.eldblesample.models.Status;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.GeneralEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
+import com.iosix.eldblesample.roomDatabase.entities.SignatureEntity;
 import com.iosix.eldblesample.shared_prefs.DriverSharedPrefs;
+import com.iosix.eldblesample.utils.UploadRequestBody;
+import com.iosix.eldblesample.utils.Utils;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
 import com.iosix.eldblesample.viewModel.GeneralViewModel;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
-import com.iosix.eldblesample.viewModel.UserViewModel;
+import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.TimeZone;
 
-public class SendLogFragment extends Fragment {
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+
+public class SendLogFragment extends Fragment implements UploadRequestBody.UploadCallback {
 
     ImageView img;
     TextInputEditText textInputEditText;
@@ -56,6 +78,7 @@ public class SendLogFragment extends Fragment {
     private DayDaoViewModel dayDaoViewModel;
     private DriverSharedPrefs driverSharedPrefs;
     private StatusDaoViewModel statusDaoViewModel;
+    private EldJsonViewModel eldJsonViewModel;
 
     private String time = "" + Calendar.getInstance().getTime();
     public String today = time.split(" ")[1] + " " + time.split(" ")[2];
@@ -100,6 +123,7 @@ public class SendLogFragment extends Fragment {
         dayDaoViewModel = ViewModelProviders.of(requireActivity()).get(DayDaoViewModel.class);
         driverSharedPrefs = DriverSharedPrefs.getInstance(requireContext());
         statusDaoViewModel = ViewModelProviders.of(requireActivity()).get(StatusDaoViewModel.class);
+        eldJsonViewModel = ViewModelProviders.of(requireActivity()).get(EldJsonViewModel.class);
     }
 
     @Override
@@ -124,7 +148,7 @@ public class SendLogFragment extends Fragment {
         button.setOnClickListener(v -> {
             if (!textInputEditText.getText().toString().equals("")){
                 try {
-                    inflateXmltoView();
+                    inflateXmltoView(textInputEditText.getText().toString());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -132,7 +156,7 @@ public class SendLogFragment extends Fragment {
         });
     }
 
-    private void inflateXmltoView() throws IOException {
+    private void inflateXmltoView(String email) throws IOException {
 
         LayoutInflater inflater = LayoutInflater.from(context);
         view1 = inflater.inflate(R.layout.view_to_pdf,null);
@@ -181,7 +205,7 @@ public class SendLogFragment extends Fragment {
                             idTrailerID.setText(getString(generalEntities.get(n).getTrailers()));
                             idShippingID.setText(getString(generalEntities.get(n).getShippingDocs()));
                             idCoDriver.setText(getString(generalEntities.get(n).getCo_driver_name()));
-                            idTruckTracktorId.setText(getString(generalEntities.get(n).getTrailers()));
+                            idTruckTracktorId.setText(getString(generalEntities.get(n).getVehicle()));
                             idFrom.setText(generalEntities.get(n).getFrom_info());
                             idTo.setText(generalEntities.get(n).getTo_info());
                             idNotes.setText(generalEntities.get(n).getNote());
@@ -229,7 +253,7 @@ public class SendLogFragment extends Fragment {
             createBitmap();
             attachBitmapToPdf(i+1);
         }
-        savePdfToFile();
+        savePdfToFile(email);
     }
 
     private void setUpViewModels(){
@@ -283,12 +307,33 @@ public class SendLogFragment extends Fragment {
         pdfDocument.finishPage(page);
     }
 
-    private void savePdfToFile() throws IOException {
-        filePath = new File(context.getExternalFilesDir(null),"logReports.pdf");
-        pdfDocument.writeTo(new FileOutputStream(filePath));
+    private void savePdfToFile(String email) throws IOException {
+        String fileName = "LogReports" + new Date().getTime() + ".pdf";
+        File path = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOCUMENTS);
+        File filepath = new File(path, "logReports.pdf");
+        pdfDocument.writeTo(new FileOutputStream(filepath));
         pdfDocument.close();
-        Log.d("Adverse Diving",filePath.getAbsolutePath());
+        Log.d("Adverse Diving",filepath.getAbsolutePath());
+//        File file = new File(getPathFromURI(Uri.parse(filepath.getAbsolutePath())));
+        RequestBody requestFile = RequestBody.create(MediaType.parse("*/*"), filepath);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("pdf_file", filepath.getName(), requestFile);
+        RequestBody mail = RequestBody.create(MediaType.parse("text/plain"), email);
+        eldJsonViewModel.sendPdf(mail,body);
 
+    }
+
+    public String getPathFromURI(Uri contentUri) {
+        String res = null;
+        String[] proj = {MediaStore.Files.FileColumns.DISPLAY_NAME};
+        Cursor cursor = getContext().getContentResolver().query(contentUri, proj, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME);
+            res = cursor.getString(column_index);
+            cursor.close();
+        }
+
+        return res;
     }
 
     private String getString(ArrayList<String> arrayList){
@@ -299,5 +344,10 @@ public class SendLogFragment extends Fragment {
             }
             return stringBuilder.toString();
         }else return "";
+    }
+
+    @Override
+    public void onProgressUpdate(int percentage) {
+
     }
 }
