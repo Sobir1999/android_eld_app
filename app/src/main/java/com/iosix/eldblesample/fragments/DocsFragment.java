@@ -13,13 +13,13 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -73,14 +73,20 @@ public class DocsFragment extends Fragment implements UploadRequestBody.UploadCa
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        eldJsonViewModel = ViewModelProviders.of(requireActivity()).get(EldJsonViewModel.class);
+
         dvirViewModel = ViewModelProviders.of(requireActivity()).get(DvirViewModel.class);
+        eldJsonViewModel = ViewModelProviders.of(requireActivity()).get(EldJsonViewModel.class);
         signatureViewModel = ViewModelProviders.of(requireActivity()).get(SignatureViewModel.class);
         statusDaoViewModel = ViewModelProviders.of(requireActivity()).get(StatusDaoViewModel.class);
+    }
 
-        sessionManager = new SessionManager(requireContext());
-        signaturePrefs = new SignaturePrefs(requireContext());
-        driverSharedPrefs = DriverSharedPrefs.getInstance(getContext());
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        signaturePrefs = new SignaturePrefs(context.getApplicationContext());
+        sessionManager = SessionManager.getInstance(context.getApplicationContext());
+        driverSharedPrefs = DriverSharedPrefs.getInstance(context.getApplicationContext());
     }
 
     @Override

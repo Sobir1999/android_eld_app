@@ -62,8 +62,9 @@ public class SplashActivity extends BaseActivity {
         dayEntities = new ArrayList<>();
         logEntitiesCurr = new ArrayList<>();
         logEntitiesLastDays = new ArrayList<>();
-        lastStopSharedPrefs = new LastStopSharedPrefs(this);
+
         driverSharedPrefs = DriverSharedPrefs.getInstance(this);
+        lastStopSharedPrefs = LastStopSharedPrefs.getInstance(this.getApplicationContext());
 
         daoViewModel.deleteAllDays();
         for (int i = 7; i >= 0; i--) {

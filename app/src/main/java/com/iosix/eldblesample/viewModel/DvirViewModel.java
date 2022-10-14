@@ -16,8 +16,8 @@ import java.util.concurrent.ExecutionException;
 
 public class DvirViewModel extends AndroidViewModel {
 
-    private DvirRepository dvirRepository;
-    private LiveData<List<DvirEntity>> mgetDvirs;
+    private final DvirRepository dvirRepository;
+    private final LiveData<List<DvirEntity>> mgetDvirs;
     private MutableLiveData<String> stringMutableLiveData;
     private MutableLiveData<Integer> vehiclesMutableLiveData;
     private MutableLiveData<Integer> coDriversMutableLiveData;

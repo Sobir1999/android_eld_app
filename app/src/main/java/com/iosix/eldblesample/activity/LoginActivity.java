@@ -90,7 +90,7 @@ public class LoginActivity extends BaseActivity {
 
         driverSharedPrefs = DriverSharedPrefs.getInstance(getApplicationContext());
 
-        lastStopSharedPrefs = new LastStopSharedPrefs(this);
+        lastStopSharedPrefs =  LastStopSharedPrefs.getInstance(this.getApplicationContext());
         networkConnectionLiveData = new NetworkConnectionLiveData(this);
         dateFormat=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
 
