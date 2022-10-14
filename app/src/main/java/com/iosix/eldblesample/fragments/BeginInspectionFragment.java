@@ -166,7 +166,7 @@ public class BeginInspectionFragment extends Fragment {
                             idTrailerID.setText(getString(generalEntities.get(i).getTrailers()));
                             idShippingID.setText(getString(generalEntities.get(i).getShippingDocs()));
                             idCoDriver.setText(getString(generalEntities.get(i).getCo_driver_name()));
-                            idTruckTracktorId.setText(getString(generalEntities.get(i).getTrailers()));
+                            idTruckTracktorId.setText(getString(generalEntities.get(i).getVehicle()));
                             idFrom.setText(generalEntities.get(i).getFrom_info());
                             idTo.setText(generalEntities.get(i).getTo_info());
                             idNotes.setText(generalEntities.get(i).getNote());

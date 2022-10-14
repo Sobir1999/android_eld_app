@@ -19,9 +19,10 @@
             android:id="@+id/idTableSignature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_education_pencil"
+            android:src="@drawable/ic_ediucation_pencil_com"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:tint="@color/colorPrimary" />
+            app:tint="@color/colorPrimary"
+            app:layout_constraintEnd_toStartOf="@id/idTableDay"/>
 
         <TextView
             android:id="@+id/idTableDay"
@@ -36,6 +37,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@id/idTableSignature"
             android:layout_width="@dimen/card_image_size"
+            android:layout_marginStart="@dimen/card_padding_size"
             android:layout_height="wrap_content"/>
 
         <TextView
@@ -77,21 +79,11 @@
             style="@style/TextAppearance.AppCompat.Subhead"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/idTableRadioBtn"
+            app:layout_constraintRight_toRightOf="parent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:ignore="MissingConstraints"
             app:drawableLeftCompat="@drawable/ic__b74e24a497d9fa32d2c7d4acf314b81" />
-
-        <ImageView
-            android:id="@+id/idTableRadioBtn"
-            android:src="@drawable/state_unchacked"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints" />
 
         <View
             android:id="@+id/idCLickableView"

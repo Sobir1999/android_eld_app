@@ -91,7 +91,7 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
             day_week = itemView.findViewById(R.id.idTableMonth);
             clickable = itemView.findViewById(R.id.idCLickableView);
             customRulerChart = itemView.findViewById(R.id.idLastDaysTable);
-            imageView = itemView.findViewById(R.id.idTableRadioBtn);
+//            imageView = itemView.findViewById(R.id.idTableRadioBtn);
             no_dvir = itemView.findViewById(R.id.idTableDvir);
             idTableSignature = itemView.findViewById(R.id.idTableSignature);
             workedTime = itemView.findViewById(R.id.idTableTime);
@@ -138,12 +138,12 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
                 }
             }
 
-            imageView.setOnClickListener(v -> {
-                imageView.setImageResource(imageView.getDrawable().getConstantState().equals(imageView.getContext().getDrawable(R.drawable.state_checked).getConstantState()) ? R.drawable.state_unchacked : R.drawable.state_checked);
-                if (listener != null) {
-                    listener.onclickItem(dayEntity.getDay());
-                }
-            });
+//            imageView.setOnClickListener(v -> {
+//                imageView.setImageResource(imageView.getDrawable().getConstantState().equals(imageView.getContext().getDrawable(R.drawable.state_checked).getConstantState()) ? R.drawable.state_unchacked : R.drawable.state_checked);
+//                if (listener != null) {
+//                    listener.onclickItem(dayEntity.getDay());
+//                }
+//            });
 
             idTableSignature.setOnClickListener(view -> {
                 if (listener != null){
@@ -157,11 +157,11 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
                 }
             });
 
-            if (isSelected) {
-                imageView.setImageResource(R.drawable.state_checked);
-            } else {
-                imageView.setImageResource(R.drawable.state_unchacked);
-            }
+//            if (isSelected) {
+//                imageView.setImageResource(R.drawable.state_checked);
+//            } else {
+//                imageView.setImageResource(R.drawable.state_unchacked);
+//            }
         }
 
         private void itemsClicked() {

@@ -36,6 +36,7 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_check_document_file_icon_icon_1320196654394535651_0.xml" value="0.25" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_connection.xml" value="0.279" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_delete.xml" value="0.25" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_ediucation_pencil_com.xml" value="0.1645" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_education_pencil.xml" value="0.25" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_icons8_info__1_.xml" value="0.1755" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/drawable/ic_icons8_lock.xml" value="0.248" />
@@ -128,7 +129,7 @@
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/general_fragment_adapter_item.xml" value="0.1829861111111111" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/home_terminal_diolog.xml" value="0.1829861111111111" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/inspection_log_item.xml" value="0.2439814814814815" />
-        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/last_days_recycler_view.xml" value="0.4" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/last_days_recycler_view.xml" value="0.264" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/log_items.xml" value="0.264" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/log_pager_adapter_view.xml" value="0.1829861111111111" />
         <entry key="..\:/Users/User/AndroidStudioProjects/android_eld_app/app/src/main/res/layout/main_activity_view.xml" value="0.24615384615384617" />

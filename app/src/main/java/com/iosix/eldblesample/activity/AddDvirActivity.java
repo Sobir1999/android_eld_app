@@ -32,19 +32,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.color.MaterialColors;
 import com.iosix.eldblesample.R;
+import com.iosix.eldblesample.adapters.GeneralAdapter;
 import com.iosix.eldblesample.adapters.TrailerListAdapter;
 import com.iosix.eldblesample.adapters.TrailerRecyclerAdapter;
 import com.iosix.eldblesample.adapters.UnitListAdapter;
+import com.iosix.eldblesample.adapters.VehiclesListAdapter;
 import com.iosix.eldblesample.base.BaseActivity;
 import com.iosix.eldblesample.enums.GPSTracker;
+import com.iosix.eldblesample.enums.GeneralConstants;
 import com.iosix.eldblesample.fragments.TimePickerFragment;
 import com.iosix.eldblesample.models.TrailNubmer;
 import com.iosix.eldblesample.retrofit.APIInterface;
 import com.iosix.eldblesample.retrofit.ApiClient;
 import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
+import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
 import com.iosix.eldblesample.viewModel.UserViewModel;
+import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,21 +72,25 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
     private TextView addTime;
     private TextView notes;
     private TextView idDefectLocationText;
-    private ImageView backView,idSelectedUnitDelete;
+    private ImageView backView,idVehicleImage,idSelectedUnitDelete;
     private EditText locationEditText;
+    private ConstraintLayout idSelectedUnitLayout;
     String time,location,mNotes;
     private LinearLayout defects, addDefect;
-    private ConstraintLayout idSelectedUnitLayout;
     private DayDaoViewModel daoViewModel;
     private final String selectedUnit = "No Unit Selected";
     private ArrayList<TrailersEntity> selectedTrailers;
     private TrailerRecyclerAdapter adapter;
     private ArrayList<String> unitDefectsString = new ArrayList<>();
     private ArrayList<String> trailerDefectsString = new ArrayList<>();
+    private final ArrayList<String> trailerListSelected = new ArrayList<>();
+    private final ArrayList<String> vehicleListSelected = new ArrayList<>();;
+    private final ArrayList<VehiclesEntity> vehicleList = new ArrayList<>();
     private ArrayList<String> arrayList;
     private String day;
     private APIInterface apiInterface;
     private DvirViewModel dvirViewModel;
+    private EldJsonViewModel eldJsonViewModel;
     RecyclerView selectedTrailersRecyclerView;
     private UserViewModel userViewModel;
 
@@ -103,10 +112,7 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
 //        addUnit = findViewById(R.id.idAddDvirUnitText);
         units = findViewById(R.id.idAddDvirUnitNumberText);
         idSelectedUnitText = findViewById(R.id.idSelectedUnitText);
-        idSelectedUnitDelete = findViewById(R.id.idSelectedUnitDelete);
-        idSelectedUnitLayout = findViewById(R.id.idSelectedUnitLayout);
         addTrailer = findViewById(R.id.idAddDvirTrailerText);
-        trailers = findViewById(R.id.idAddDvirTrailerNumberText);
         unitDefects = findViewById(R.id.unitDefects);
         trailerDefects = findViewById(R.id.trailerDefects);
         unitDefectsTitle = findViewById(R.id.unitDefectsTitle);
@@ -120,6 +126,10 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
         locationEditText = findViewById(R.id.idDefectLocationEdit);
         idDefectLocationText = findViewById(R.id.idDefectLocationText);
         selectedTrailersRecyclerView = findViewById(R.id.idTrailersRecyclerView);
+        idSelectedUnitText = findViewById(R.id.idSelectedUnitText);
+        idVehicleImage = findViewById(R.id.idVehicleImage);
+        idSelectedUnitDelete = findViewById(R.id.idSelectedUnitDelete);
+        idSelectedUnitLayout = findViewById(R.id.idSelectedUnitLayout);
 
 
         day = getIntent().getStringExtra("currDay");
@@ -130,8 +140,30 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
 
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
 
+        eldJsonViewModel = ViewModelProviders.of(this).get(EldJsonViewModel.class);
+
         buttonClicks(getWindow().getDecorView().findViewById(R.id.fragment_container_add_dvir));
         getCurrentLocation();
+
+        userViewModel.getGetAllVehicles().observe(this,vehiclesEntities -> {
+            if (vehicleList.isEmpty()){
+                vehicleList.addAll(vehiclesEntities);
+            }
+        });
+
+        dvirViewModel.getTrailersMutableLiveData().observe(this,size ->{
+            if (size > 0){
+                selectedTrailersRecyclerView.setVisibility(View.VISIBLE);
+                GeneralAdapter adapter = new GeneralAdapter(this,trailerListSelected,GeneralConstants.TRAILERS);
+                selectedTrailersRecyclerView.setAdapter(adapter);
+                adapter.setDeleteListener(s1 -> {
+                    trailerListSelected.remove(s1);
+                    dvirViewModel.getTrailersMutableLiveData().postValue(trailerListSelected.size());
+                });
+            }else {
+                selectedTrailersRecyclerView.setVisibility(View.GONE);
+            }
+        });
 
     }
 
@@ -177,39 +209,37 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
 
 //        addUnit.setOnClickListener(v -> createDialog(context,"Add Unit","Create unit",1));
         units.setOnClickListener(v -> {
-
             Dialog dialog = new Dialog(this);
-            dialog.setContentView(R.layout.custom_list_dialog);
+            dialog.setContentView(R.layout.custom_vehicles_dialog);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-            TextView unitText = dialog.findViewById(R.id.idHeaderTv);
-            RecyclerView recyclerView = dialog.findViewById(R.id.idRecyclerViewUnit);
-            TextView cancel = dialog.findViewById(R.id.idDialogCancel);
-            TextView idGeneralTrailerText = dialog.findViewById(R.id.idGeneralTrailerText);
-            idGeneralTrailerText.setVisibility(View.GONE);
-
-            userViewModel.getGetAllVehicles().observe(this,vehiclesEntities -> {
-                UnitListAdapter unitListAdapter = new UnitListAdapter(this,vehiclesEntities);
-                recyclerView.setAdapter(unitListAdapter);
-                unitListAdapter.setListener(s -> {
-                    idSelectedUnitLayout.setVisibility(View.VISIBLE);
-                    idSelectedUnitText.setText(s);
-                    dialog.dismiss();
-                });
-            });
-
-            unitText.setText("Add Vehicle");
-            cancel.setOnClickListener(view -> {
+            RecyclerView vehicleListRv = dialog.findViewById(R.id.idVehicleRecyclerview);
+            TextView cancel = dialog.findViewById(R.id.idVehicleCancel);
+            VehiclesListAdapter vehiclesListAdapter = new VehiclesListAdapter(this,vehicleList);
+            vehicleListRv.setAdapter(vehiclesListAdapter);
+            vehiclesListAdapter.setListener(s -> {
+                if (!vehicleListSelected.contains(s)){
+                    vehicleListSelected.add(s);
+                    dvirViewModel.getVehiclesMutableLiveData().postValue(vehicleListSelected.size());
+                }
                 dialog.dismiss();
             });
-
+            cancel.setOnClickListener(view1->{
+                dialog.dismiss();
+            });
             dialog.show();
 
         });
 
-        idSelectedUnitDelete.setOnClickListener(v->{
-            idSelectedUnitLayout.setVisibility(View.GONE);
-            idSelectedUnitText.setText("");
+        dvirViewModel.getVehiclesMutableLiveData().observe(this,size ->{
+            if (size > 0){
+                idSelectedUnitLayout.setVisibility(View.VISIBLE);
+                idSelectedUnitText.setText(vehicleListSelected.get(vehicleListSelected.size()-1));
+                idSelectedUnitDelete.setOnClickListener(view -> {
+                    dvirViewModel.getVehiclesMutableLiveData().postValue(0);
+                });
+            }else {
+                idSelectedUnitLayout.setVisibility(View.GONE);
+            }
         });
 
         addTrailer.setOnClickListener(v -> createDialog(context, "Add Trailer", "Add Trailer", 2));
@@ -217,42 +247,6 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
         addTime.setOnClickListener(v -> {
             DialogFragment timeFragment = new TimePickerFragment();
             timeFragment.show(getSupportFragmentManager(), "time picker");
-        });
-
-        trailers.setOnClickListener(v -> {
-
-            Dialog dialog = new Dialog(this);
-            dialog.setContentView(R.layout.custom_list_dialog);
-
-            TextView unitText = dialog.findViewById(R.id.idHeaderTv);
-            RecyclerView recyclerView = dialog.findViewById(R.id.idRecyclerViewUnit);
-            TextView cancel = dialog.findViewById(R.id.idDialogCancel);
-            TextView idGeneralTrailerText = dialog.findViewById(R.id.idGeneralTrailerText);
-            idGeneralTrailerText.setVisibility(View.GONE);
-
-//            userViewModel.getGetAllTrailers().observe(this,trailersEntities -> {
-//                TrailerListAdapter trailerListAdapter = new TrailerListAdapter(this,trailersEntities);
-//                recyclerView.setAdapter(trailerListAdapter);
-//                trailerListAdapter.setUpdateListener(position ->{
-//                    dialog.dismiss();
-//                    int n = 0;
-//                    for (int i = 0; i < selectedTrailers.size(); i++) {
-//                        if (trailersEntities.get(position).equals(selectedTrailers.get(i))){
-//                            n++;
-//                        }
-//                    }
-//                    if (n == 0){
-//                        selectedTrailers.add(trailersEntities.get(position));
-//                    }
-//                });
-//            });
-
-            unitText.setText("Add Trailer");
-            cancel.setOnClickListener(view -> {
-                dialog.dismiss();
-            });
-
-            dialog.show();
         });
 
         backView.setOnClickListener(v -> onBackPressed());
@@ -348,6 +342,8 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
 
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.custom_dialog);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         TextView header = dialog.findViewById(R.id.idHeaderTv);
         EditText editText =  dialog.findViewById(R.id.idDialogEdit);
         TextView save = dialog.findViewById(R.id.idDialogSave);
@@ -360,22 +356,9 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
         save.setOnClickListener(view -> {
             if (!editText.getText().toString().equalsIgnoreCase("")){
                 dialog.dismiss();
-                apiInterface.sendTrailer(new TrailNubmer(editText.getText().toString())).enqueue(new Callback<TrailersEntity>() {
-                    @Override
-                    public void onResponse(Call<TrailersEntity> call, Response<TrailersEntity> response) {
-                        if (response.isSuccessful()){
-                            try {
-                                userViewModel.insertTrailer(new TrailersEntity(response.body().getTrailer_id(),response.body().getNumber()));
-                            } catch (ExecutionException | InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<TrailersEntity> call, Throwable t) {
-                    }
-                });
+                trailerListSelected.add(editText.getText().toString());
+                dvirViewModel.getTrailersMutableLiveData().postValue(trailerListSelected.size());
+                eldJsonViewModel.sendTrailer(new TrailNubmer(editText.getText().toString()));
             }else {
                 Toast.makeText(this, "Insert Trailer Number!!!", Toast.LENGTH_SHORT).show();
             }

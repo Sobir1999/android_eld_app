@@ -15,7 +15,7 @@ import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
 import java.util.ArrayList;
 
 public class TrailerRecyclerAdapter extends RecyclerView.Adapter<TrailerRecyclerAdapter.TrailerHolder> {
-    private ArrayList<TrailersEntity> trailers;
+    private ArrayList<String> trailers;
     private onTrailerUpdateListener updateListener;
     private onTrailerDeleteListener deleteListener;
 
@@ -27,7 +27,7 @@ public class TrailerRecyclerAdapter extends RecyclerView.Adapter<TrailerRecycler
         this.deleteListener = deleteListener;
     }
 
-    public TrailerRecyclerAdapter(ArrayList<TrailersEntity> trailers) {
+    public TrailerRecyclerAdapter(ArrayList<String> trailers) {
         this.trailers = new ArrayList<>();
         if (trailers.size() != 0){
         this.trailers = trailers;
@@ -67,8 +67,8 @@ public class TrailerRecyclerAdapter extends RecyclerView.Adapter<TrailerRecycler
             imageView = itemView.findViewById(R.id.idTrailerDelete);
         }
 
-        void onBind(TrailersEntity s) {
-            textView.setText(s.getNumber());
+        void onBind(String s) {
+            textView.setText(s);
 
             textView.setOnClickListener(v -> {
                 if (updateListener != null) {
@@ -86,6 +86,6 @@ public class TrailerRecyclerAdapter extends RecyclerView.Adapter<TrailerRecycler
     }
 
     public interface onTrailerDeleteListener {
-        void onClick(TrailersEntity trailersEntity);
+        void onClick(String trailersEntity);
     }
 }
