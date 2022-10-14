@@ -1,11 +1,7 @@
 package com.iosix.eldblesample.fragments;
 
 import static com.iosix.eldblesample.enums.Day.dateToString;
-import static com.iosix.eldblesample.enums.Day.getCurrentSeconds;
-import static com.iosix.eldblesample.utils.Utils.getDateFormat;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -21,7 +17,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,32 +30,25 @@ import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.adapters.InspectionLogAdapter;
 import com.iosix.eldblesample.customViews.CustomLiveRulerChart;
 import com.iosix.eldblesample.customViews.CustomStableRulerChart;
-import com.iosix.eldblesample.enums.EnumsConstants;
-import com.iosix.eldblesample.models.Status;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.GeneralEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
-import com.iosix.eldblesample.roomDatabase.entities.SignatureEntity;
 import com.iosix.eldblesample.shared_prefs.DriverSharedPrefs;
 import com.iosix.eldblesample.utils.UploadRequestBody;
-import com.iosix.eldblesample.utils.Utils;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
 import com.iosix.eldblesample.viewModel.GeneralViewModel;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
 import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.TimeZone;
 
 import okhttp3.MediaType;
@@ -308,19 +296,34 @@ public class SendLogFragment extends Fragment implements UploadRequestBody.Uploa
     }
 
     private void savePdfToFile(String email) throws IOException {
-        String fileName = "LogReports" + new Date().getTime() + ".pdf";
-        File path = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOCUMENTS);
-        File filepath = new File(path, "logReports.pdf");
-        pdfDocument.writeTo(new FileOutputStream(filepath));
-        pdfDocument.close();
-        Log.d("Adverse Diving",filepath.getAbsolutePath());
-//        File file = new File(getPathFromURI(Uri.parse(filepath.getAbsolutePath())));
-        RequestBody requestFile = RequestBody.create(MediaType.parse("*/*"), filepath);
-        MultipartBody.Part body = MultipartBody.Part.createFormData("pdf_file", filepath.getName(), requestFile);
-        RequestBody mail = RequestBody.create(MediaType.parse("text/plain"), email);
-        eldJsonViewModel.sendPdf(mail,body);
+        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
 
+        File filepath = new File(path, "logReports.pdf");
+//        pdfDocument.writeTo(new FileOutputStream(filepath));
+//        pdfDocument.close();
+
+        Log.d("Adverse Diving", filepath.getAbsolutePath());
+//        File file = new File(getPathFromURI(Uri.parse(filepath.getAbsolutePath())));
+//        RequestBody requestFile = RequestBody.create(MediaType.parse("*/*"), filepath);
+//        MultipartBody.Part body = MultipartBody.Part.createFormData("pdf_file", filepath.getName(), requestFile);
+//
+//        RequestBody mail = RequestBody.create(MediaType.parse("text/plain"), email);
+//        eldJsonViewModel.sendPdf(mail, body);
+
+
+        RequestBody fileBody = RequestBody.Companion.create(
+                filepath,
+                MediaType.parse("application/octet-stream")
+        );
+
+        RequestBody body2 = new MultipartBody
+                .Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("body", email)
+                .addFormDataPart("upload_file", filepath.getName(), fileBody)
+                .build();
+
+        eldJsonViewModel.sendPdf(body2);
     }
 
     public String getPathFromURI(Uri contentUri) {

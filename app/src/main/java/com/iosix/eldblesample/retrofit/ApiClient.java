@@ -1,12 +1,12 @@
 package com.iosix.eldblesample.retrofit;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.chuckerteam.chucker.api.ChuckerInterceptor;
 import com.iosix.eldblesample.MyApplication;
 import com.iosix.eldblesample.shared_prefs.LastStopSharedPrefs;
 import com.iosix.eldblesample.shared_prefs.SessionManager;
-import com.iosix.eldbluetooth.BuildConfig;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -47,9 +48,9 @@ public class ApiClient {
         TokenAuthenticator authenticator = new TokenAuthenticator(lastStopSharedPrefs, myServiceHolder, sessionManager);
 
         OkHttpClient.Builder okHttpBuilder = new OkHttpClient.Builder()
-                .connectTimeout(20, TimeUnit.SECONDS)
-                .writeTimeout(20, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(5, TimeUnit.MINUTES)
+                .writeTimeout(5, TimeUnit.MINUTES)
+                .readTimeout(5, TimeUnit.MINUTES)
                 .authenticator(authenticator);
 
         if (sessionManager.fetchAccessToken() != null) {
@@ -64,8 +65,14 @@ public class ApiClient {
             okHttpBuilder.addInterceptor(tokenRefreshInterceptor);
         }
 
-        if (BuildConfig.DEBUG) {
+        if (com.iosix.eldblesample.BuildConfig.DEBUG) {
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(message -> {
+                Log.d("NETWORK", message);
+            });
+
+            loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
             okHttpBuilder.addInterceptor(createChucker(context));
+            okHttpBuilder.addInterceptor(loggingInterceptor);
         }
 
         retrofit = new Retrofit.Builder()

@@ -10,7 +10,6 @@ import com.iosix.eldblesample.models.ApkVersion;
 import com.iosix.eldblesample.models.Data;
 import com.iosix.eldblesample.models.LoginResponse;
 import com.iosix.eldblesample.models.SendDvir;
-import com.iosix.eldblesample.models.SendPdf;
 import com.iosix.eldblesample.models.Status;
 import com.iosix.eldblesample.models.Student;
 import com.iosix.eldblesample.models.TrailNubmer;
@@ -25,8 +24,10 @@ import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
 
 import java.io.IOException;
 
+import io.reactivex.rxjava3.core.Single;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -65,27 +66,8 @@ public class ApiRepository {
         });
     }
 
-    public void sendPdf(RequestBody mail, MultipartBody.Part pdf) {
-        apiInterface.sendPdf(mail, pdf).enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                if (!response.isSuccessful()) {
-                    try {
-                        Log.d("Adverse Diving", response.errorBody().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    Log.d("Adverse Diving", response.body().toString());
-                    Log.d("Adverse Diving", "response is successfull");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Log.d("Adverse Diving", t.getMessage());
-            }
-        });
+    public Single<String> sendPdf(RequestBody body) {
+        return apiInterface.sendPdf(body);
     }
 
     public void getLoginResponse(Student student) {

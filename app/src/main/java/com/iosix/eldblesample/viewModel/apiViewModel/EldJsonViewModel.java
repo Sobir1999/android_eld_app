@@ -12,7 +12,6 @@ import com.iosix.eldblesample.models.ApkVersion;
 import com.iosix.eldblesample.models.Data;
 import com.iosix.eldblesample.models.LoginResponse;
 import com.iosix.eldblesample.models.SendDvir;
-import com.iosix.eldblesample.models.SendPdf;
 import com.iosix.eldblesample.models.Status;
 import com.iosix.eldblesample.models.Student;
 import com.iosix.eldblesample.models.TrailNubmer;
@@ -26,19 +25,24 @@ import com.iosix.eldblesample.roomDatabase.entities.GeneralEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LiveDataEntitiy;
 import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
 
-import java.io.IOException;
-
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import retrofit2.HttpException;
 
 public class EldJsonViewModel extends AndroidViewModel {
+
     private final ApiRepository repository;
+    private final CompositeDisposable disposables;
+
     private StateLiveData<LoginResponse> stateLiveData;
 
     public EldJsonViewModel(@NonNull Application application) {
         super(application);
         repository = new ApiRepository();
+        disposables = new CompositeDisposable();
     }
 
     public void sendLive(LiveDataRecord data) {
@@ -101,15 +105,32 @@ public class EldJsonViewModel extends AndroidViewModel {
         return repository.sendEldNum(eld);
     }
 
-    public MutableLiveData<LiveDataEntitiy> sendLocalData(LiveDataEntitiy liveDataEntitiy){
+    public MutableLiveData<LiveDataEntitiy> sendLocalData(LiveDataEntitiy liveDataEntitiy) {
         return repository.sendLocalData(liveDataEntitiy);
     }
 
-    public MutableLiveData<ApkVersion> sendApkVersion(ApkVersion apkVersion){
+    public MutableLiveData<ApkVersion> sendApkVersion(ApkVersion apkVersion) {
         return repository.sendApkVersion(apkVersion);
     }
 
-    public void sendPdf(RequestBody mail,MultipartBody.Part pdf){
-        repository.sendPdf(mail,pdf);
+    public void sendPdf(RequestBody body) {
+        Disposable disposable = repository
+                .sendPdf(body)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(s -> {
+                    Log.d("PDF_LOG", String.format("Success with response %s", s));
+                    // TODO on success
+                }, throwable -> {
+                    Log.d("PDF_LOG", "Failure with", throwable);
+                });
+
+        disposables.add(disposable);
+    }
+
+    @Override
+    protected void onCleared() {
+        disposables.clear();
+        super.onCleared();
     }
 }
