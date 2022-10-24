@@ -5,16 +5,20 @@ import android.content.SharedPreferences;
 
 public class DriverSharedPrefs {
 
-    private SharedPreferences userPref;
+    private final SharedPreferences userPref;
     private SharedPreferences.Editor editor;
-    private static DriverSharedPrefs instance;
+    private static volatile DriverSharedPrefs instance;
     public Context appContext;
+    private static final Object LOCK = new Object();
+
 
     public static final String DRIVER_PREF_NAME = "driverdata";
 
-    public static synchronized DriverSharedPrefs getInstance(Context applicationContext){
+    public static DriverSharedPrefs getInstance(Context applicationContext){
         if (instance == null){
-            instance = new DriverSharedPrefs(applicationContext);
+            synchronized (LOCK){
+                instance = new DriverSharedPrefs(applicationContext);
+            }
         }
         return instance;
     }

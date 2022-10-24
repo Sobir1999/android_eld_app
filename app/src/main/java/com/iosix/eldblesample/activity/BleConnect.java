@@ -742,46 +742,6 @@ public class BleConnect extends BaseActivity {
                     arrayList.add(((EldDataRecord) dataRec).getLatitude());
 
                     mDataView.append("Cooordinates:" + Utils.hasCoordinates(((EldDataRecord) dataRec).getLongitude(),((EldDataRecord) dataRec).getLatitude()) + "\n");
-                    if (((EldDataRecord)dataRec).getSequence() % 30 == 1){
-
-                        apiInterface.sendLive(new LiveDataRecord(
-                                Utils.engineState(((EldDataRecord) dataRec).getEngineState()),
-                                Utils.hasVin(((EldDataRecord) dataRec).getVin()),
-                                ((EldDataRecord) dataRec).getSpeed(),
-                                ((EldDataRecord) dataRec).getOdometer(),
-                                ((EldDataRecord) dataRec).getTripDistance(),
-                                ((EldDataRecord) dataRec).getEngineHours(),
-                                ((EldDataRecord) dataRec).getTripHours(),
-                                ((EldDataRecord) dataRec).getVoltage(),
-                                dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime()),
-                                new Point("Point",arrayList),
-                                ((EldDataRecord) dataRec).getGpsSpeed(),
-                                ((EldDataRecord) dataRec).getCourse(),
-                                ((EldDataRecord) dataRec).getNumSats(),
-                                ((EldDataRecord) dataRec).getMslAlt(),
-                                ((EldDataRecord) dataRec).getDop(),
-                                ((EldDataRecord) dataRec).getSequence(),
-                                ((EldDataRecord) dataRec).getFirmwareVersion()
-                        )).enqueue(new Callback<LiveDataRecord>() {
-                            @Override
-                            public void onResponse(Call<LiveDataRecord> call, Response<LiveDataRecord> response) {
-                                if (!response.isSuccessful()){
-                                    runOnUiThread(() ->{
-                                        try {
-                                            mDataView.append(response.errorBody().string() + "\n");
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                    });
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<LiveDataRecord> call, Throwable t) {
-
-                            }
-                        });
-                    }
 //                        mDataView.append("RPM: " + Double.toString(((EldDataRecord) (dataRec)).getRpm()));
 //                        mDataView.append(" Satellites: " + Double.toString(((EldDataRecord) (dataRec)).getNumSats()));
 //                        mDataView.append(" Latitude: " + Double.toString(((EldDataRecord) (dataRec)).getLatitude()));

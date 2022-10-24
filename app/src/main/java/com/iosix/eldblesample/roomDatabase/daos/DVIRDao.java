@@ -2,6 +2,7 @@ package com.iosix.eldblesample.roomDatabase.daos;
 
 
 import androidx.lifecycle.LiveData;
+import androidx.room.ColumnInfo;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 36,
-    "identityHash": "237fefc5dae7be806c293e14c78adbb3",
+    "identityHash": "a0d0273e4d7160ffd12f52b33ec303a9",
     "entities": [
       {
         "tableName": "log_table",
@@ -109,13 +109,19 @@
       },
       {
         "tableName": "dvir_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `unit` TEXT, `trailer` TEXT, `unitDefect` TEXT, `trailerDefect` TEXT, `hasMechanicSignature` INTEGER NOT NULL, `time` TEXT, `location` TEXT, `note` TEXT, `day` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `driver_id` TEXT, `unit` TEXT, `trailer` TEXT, `unitDefect` TEXT, `trailerDefect` TEXT, `hasMechanicSignature` INTEGER NOT NULL, `time` TEXT, `location` TEXT, `note` TEXT, `day` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "driverId",
+            "columnName": "driver_id",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "unit",
@@ -192,13 +198,19 @@
       },
       {
         "tableName": "general",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `distance` TEXT, `shipping_docs` TEXT, `vehicles` TEXT, `trailers` TEXT, `carrier` TEXT, `main_office` TEXT, `home_terminal_address` TEXT, `co_driver` TEXT, `from_address` TEXT, `to_address` TEXT, `notes` TEXT, `day` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `driver_id` TEXT, `distance` TEXT, `shipping_docs` TEXT, `vehicles` TEXT, `trailers` TEXT, `carrier` TEXT, `main_office` TEXT, `home_terminal_address` TEXT, `co_driver` TEXT, `from_address` TEXT, `to_address` TEXT, `notes` TEXT, `day` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "driverId",
+            "columnName": "driver_id",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "distance",
@@ -474,13 +486,19 @@
       },
       {
         "tableName": "signature_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`signature_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `signature` BLOB, `day` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`signature_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `driver_id` TEXT, `signature` BLOB, `day` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "signature_id",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "driverId",
+            "columnName": "driver_id",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "signatureBitmap",
@@ -779,7 +797,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"237fefc5dae7be806c293e14c78adbb3\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"a0d0273e4d7160ffd12f52b33ec303a9\")"
     ]
   }
 }

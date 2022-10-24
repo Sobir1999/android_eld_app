@@ -120,10 +120,10 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void observeHandlers(){
-        eldJsonViewModel.getLoginResponse().observe(this,this::handleBooks);
+        eldJsonViewModel.getLoginResponse().observe(this,this::handleDatas);
     }
 
-    private void handleBooks(@NonNull StateData<LoginResponse> response) {
+    private void handleDatas(@NonNull StateData<LoginResponse> response) {
         switch (response.getStatus()) {
             case SUCCESS:
                 assert response.getData() != null;
@@ -264,7 +264,8 @@ public class LoginActivity extends BaseActivity {
     private void getUSerInfo() {
 
         userViewModel.deleteUser();
-        eldJsonViewModel.getUser().observe(this, user -> {
+        eldJsonViewModel.getUser();
+        eldJsonViewModel.getUserMutableLiveData().observe(this, user -> {
             if (user != null) {
                 driverSharedPrefs.saveLastUsername(user.getName());
                 driverSharedPrefs.saveLastSurname(user.getLastName());

@@ -10,6 +10,8 @@ public class DvirEntity {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private int id;
+    @ColumnInfo(name = "driver_id")
+    private String driverId;
     @ColumnInfo(name = "unit")
     private String unit;
     @ColumnInfo(name = "trailer")
@@ -29,7 +31,7 @@ public class DvirEntity {
     @ColumnInfo(name = "day")
     private String day;
 
-    public DvirEntity(String unit,String trailer,String unitDefect,String trailerDefect,boolean hasMechanicSignature, String time, String location, String note, String day) {
+    public DvirEntity(String driverId,String unit,String trailer,String unitDefect,String trailerDefect,boolean hasMechanicSignature, String time, String location, String note, String day) {
         this.unit = unit;
         this.trailer = trailer;
         this.unitDefect = unitDefect;
@@ -39,6 +41,7 @@ public class DvirEntity {
         this.location = location;
         this.note = note;
         this.day = day;
+        this.driverId = driverId;
     }
 
     public int getId() {
@@ -47,6 +50,14 @@ public class DvirEntity {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getDriverId() {
+        return driverId;
+    }
+
+    public void setDriverId(String driverId) {
+        this.driverId = driverId;
     }
 
     public String getUnit() {

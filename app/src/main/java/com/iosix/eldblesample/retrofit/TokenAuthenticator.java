@@ -7,10 +7,15 @@ import androidx.annotation.NonNull;
 import com.iosix.eldblesample.models.LoginResponse;
 import com.iosix.eldblesample.shared_prefs.LastStopSharedPrefs;
 import com.iosix.eldblesample.shared_prefs.SessionManager;
+import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
 
 import java.io.IOException;
 import java.util.Calendar;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.Authenticator;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -21,6 +26,8 @@ public class TokenAuthenticator implements Authenticator {
     private final LastStopSharedPrefs lastStopSharedPrefs;
     private final TokenServiceHolder tokenServiceHolder;
     private final SessionManager sessionManager;
+    private final CompositeDisposable disposables;
+    private LoginResponse loginResponse = null;
 
     private final String time = "" + Calendar.getInstance().getTime();
     private final String today = time.split(" ")[1] + " " + time.split(" ")[2];
@@ -29,6 +36,7 @@ public class TokenAuthenticator implements Authenticator {
         this.sessionManager = sessionManager;
         this.tokenServiceHolder = tokenServiceHolder;
         this.lastStopSharedPrefs = lastStopSharedPrefs;
+        disposables = new CompositeDisposable();
     }
 
     @Override
@@ -40,16 +48,27 @@ public class TokenAuthenticator implements Authenticator {
 
 
         if (sessionManager.fetchToken() != null) {
-            retrofit2.Response<LoginResponse> bodyResponse = service.refreshToken(sessionManager.fetchToken()).execute();
-            sessionManager.saveAccessToken(bodyResponse.body().getAccessToken());
-            sessionManager.saveToken(bodyResponse.body().getrefreshToken());
-            lastStopSharedPrefs.saveLastStopTime(getCurrentSeconds());
-            lastStopSharedPrefs.saveLastStopDate(today);
+            Disposable disposable = service
+                    .refreshToken(sessionManager.fetchToken())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(s ->{
+                        loginResponse = s;
+                        sessionManager.saveAccessToken(s.getAccessToken());
+                        sessionManager.saveToken(s.getrefreshToken());
+                        lastStopSharedPrefs.saveLastStopTime(getCurrentSeconds());
+                        lastStopSharedPrefs.saveLastStopDate(today);
+                    }, throwable -> {
+
+                    });
+
+            disposables.add(disposable);
+
 
             return response
                     .request()
                     .newBuilder()
-                    .header("Authorization", "Bearer " + bodyResponse.body().getAccessToken())
+                    .header("Authorization", "Bearer " + loginResponse.getAccessToken())
                     .build();
         }
         return null;

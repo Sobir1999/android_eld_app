@@ -359,6 +359,7 @@ public class GeneralFragment extends Fragment {
                 try {
                     eldJsonViewModel.sendGeneralInfo(new GeneralEntity(
                             "0",
+                            driverSharedPrefs.getDriverId(),
                             shippingDocsListSelected,
                             vehicleListSelected,
                             trailerListSelected,
@@ -369,14 +370,11 @@ public class GeneralFragment extends Fragment {
                             idFromText.getText().toString(),
                             idToText.getText().toString(),
                             idNotesText.getText().toString(),
-                            stringToDate(currDay))).observe(getViewLifecycleOwner(),general ->{
-                        if (general != null){
-                        }else {
-                        }
-                    });
+                            stringToDate(currDay)));
 
 
                     generalViewModel.insertGeneral(new GeneralEntity("0",
+                            driverSharedPrefs.getDriverId(),
                             shippingDocsListSelected,
                             vehicleListSelected,
                             trailerListSelected,

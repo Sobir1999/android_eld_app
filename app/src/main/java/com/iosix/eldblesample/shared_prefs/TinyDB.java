@@ -10,12 +10,13 @@ import java.util.Arrays;
 
 public class TinyDB{
 
-    private Context context;
-    private SharedPreferences preferences;
+    private final SharedPreferences preferences;
+    private static final Object LOCK = new Object();
 
     public TinyDB(Context appContext){
-        preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
-        context = appContext;
+        synchronized (LOCK){
+            preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
+        }
     }
     public void putListString(int key, ArrayList<String> stringList) {
         String[] myStringList = stringList.toArray(new String[stringList.size()]);

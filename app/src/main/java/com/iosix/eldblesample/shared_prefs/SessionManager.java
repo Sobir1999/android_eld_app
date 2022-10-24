@@ -15,7 +15,7 @@ public class SessionManager {
     public static final String USER_ACCESS_TOKEN = "user_access_token";
     public static final String USER_TOKEN = "user_token";
 
-    public static synchronized SessionManager getInstance(Context applicationContext) {
+    public static SessionManager getInstance(Context applicationContext) {
         if (INSTANCE == null) {
             synchronized (LOCK) {
                 if (INSTANCE == null) {

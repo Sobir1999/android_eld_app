@@ -7,16 +7,20 @@ import java.util.Calendar;
 
 public class LastStatusData {
 
-    private SharedPreferences userPref;
+    private final SharedPreferences userPref;
     private SharedPreferences.Editor editor;
     public Context appContext;
-    public static LastStatusData instance;
+    private static volatile LastStatusData instance;
+    private static final Object LOCK = new Object();
+
 
     public static final String PREF_NAME = "userData";
 
-    public static synchronized LastStatusData getInstance(Context applicationContext){
+    public static LastStatusData getInstance(Context applicationContext){
         if (instance == null){
-            instance = new LastStatusData(applicationContext);
+            synchronized (LOCK){
+                instance = new LastStatusData(applicationContext);
+            }
         }
         return instance;
     }

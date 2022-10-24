@@ -36,6 +36,7 @@ import com.iosix.eldblesample.roomDatabase.entities.DvirEntity;
 import com.iosix.eldblesample.roomDatabase.entities.MechanicSignatureEntity;
 import com.iosix.eldblesample.roomDatabase.entities.SignatureEntity;
 import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
+import com.iosix.eldblesample.shared_prefs.DriverSharedPrefs;
 import com.iosix.eldblesample.shared_prefs.SessionManager;
 import com.iosix.eldblesample.shared_prefs.SignaturePrefs;
 import com.iosix.eldblesample.shared_prefs.UserData;
@@ -73,6 +74,7 @@ public class SignatureActivity extends BaseActivity implements Communicator {
     private ResultReceiver resultReceiver;
     private Bitmap bitmap,mechanicBitmap;
     private boolean isChecked;
+    private DriverSharedPrefs driverSharedPrefs;
 
     @Override
     protected int getLayoutId() {
@@ -102,6 +104,8 @@ public class SignatureActivity extends BaseActivity implements Communicator {
         signaturePrefs = new SignaturePrefs(this);
 
         eldJsonViewModel = ViewModelProviders.of(this).get(EldJsonViewModel.class);
+
+        driverSharedPrefs = DriverSharedPrefs.getInstance(getApplicationContext());
 
         verifyStoragePermissions(this);
 
@@ -149,7 +153,7 @@ public class SignatureActivity extends BaseActivity implements Communicator {
 
                     }else {
                         try {
-                            signatureViewModel.insertSignature(new SignatureEntity(bitmap,day));
+                            signatureViewModel.insertSignature(new SignatureEntity(driverSharedPrefs.getDriverId(),bitmap,day));
                         } catch (ExecutionException | InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -162,7 +166,7 @@ public class SignatureActivity extends BaseActivity implements Communicator {
                         String currDay;
                         currDay = mParams.get(4);
                         try {
-                            dvirViewModel.insertDvir(new DvirEntity(
+                            dvirViewModel.insertDvir(new DvirEntity(driverSharedPrefs.getDriverId(),
                                     mParams.get(0),getString(selectedTrailers),defects(unitDefects),defects(trailerDefects),true,
                                     mParams.get(1),mParams.get(2),mParams.get(2), day
                             ));
@@ -203,7 +207,7 @@ public class SignatureActivity extends BaseActivity implements Communicator {
                     alert.show();
                 }else{
                     try {
-                        signatureViewModel.insertSignature(new SignatureEntity(bitmap,day));
+                        signatureViewModel.insertSignature(new SignatureEntity(driverSharedPrefs.getDriverId(),bitmap,day));
                     } catch (ExecutionException | InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -211,7 +215,7 @@ public class SignatureActivity extends BaseActivity implements Communicator {
                     currDay = mParams.get(4);
                     try {
                         if (!mParams.get(1).equals("No unit selected") || !mParams.get(2).equals("No trailer selected")){
-                            dvirViewModel.insertDvir(new DvirEntity(
+                            dvirViewModel.insertDvir(new DvirEntity(driverSharedPrefs.getDriverId(),
                                     mParams.get(0),getString(selectedTrailers),defects(unitDefects),defects(trailerDefects),false,
                                     mParams.get(1),mParams.get(2),mParams.get(2), day
                             ));
@@ -237,7 +241,7 @@ public class SignatureActivity extends BaseActivity implements Communicator {
                             }
 
                         }else {
-                            dvirViewModel.insertDvir(new DvirEntity(
+                            dvirViewModel.insertDvir(new DvirEntity(driverSharedPrefs.getDriverId(),
                                     mParams.get(0),getString(selectedTrailers),defects(unitDefects),defects(trailerDefects),true,
                                     mParams.get(1),mParams.get(2),mParams.get(3), day
                             ));

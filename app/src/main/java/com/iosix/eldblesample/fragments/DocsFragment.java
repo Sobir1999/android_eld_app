@@ -156,7 +156,7 @@ public class DocsFragment extends Fragment implements UploadRequestBody.UploadCa
                     eldJsonViewModel.sendSignature(MultipartBody.Part.createFormData("sign",file.getName(),body));
                     Objects.requireNonNull(outputStream);
 
-                    signatureViewModel.insertSignature(new SignatureEntity(idSignature.getSignatureBitmap(),day));
+                    signatureViewModel.insertSignature(new SignatureEntity(driverSharedPrefs.getDriverId(),idSignature.getSignatureBitmap(),day));
                     eldJsonViewModel.postStatus(new Status(Utils.getStatus(EnumsConstants.CERTIFIED),null,null,getDateFormat(Calendar.getInstance().getTime())));
                     statusDaoViewModel.insertStatus(new LogEntity(driverSharedPrefs.getDriverId(),EnumsConstants.CERTIFIED,null,null,null,day,getCurrentSeconds()));
                 }catch (Exception e){

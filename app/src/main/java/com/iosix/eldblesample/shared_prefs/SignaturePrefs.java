@@ -14,12 +14,15 @@ public class SignaturePrefs {
 
     Context context;
     private static SharedPreferences sharedPreferences;
-    public static SharedPreferences.Editor editor;
-    public static SignaturePrefs instance;
+    private static volatile SignaturePrefs instance;
+    private static final Object LOCK = new Object();
 
-    public static synchronized SignaturePrefs getInstance(Context applicationContext){
+
+    public static SignaturePrefs getInstance(Context applicationContext){
         if (instance == null){
-            instance = new SignaturePrefs(applicationContext);
+            synchronized (LOCK){
+                instance = new SignaturePrefs(applicationContext);
+            }
         }
         return instance;
     }

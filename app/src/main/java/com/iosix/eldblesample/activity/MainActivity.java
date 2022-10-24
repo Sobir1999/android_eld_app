@@ -15,7 +15,6 @@ import static com.iosix.eldblesample.enums.HOSConstants.mCycle;
 import static com.iosix.eldblesample.enums.HOSConstants.mDriving;
 import static com.iosix.eldblesample.enums.HOSConstants.mDrivingCurr;
 import static com.iosix.eldblesample.enums.HOSConstants.mShift;
-import static com.iosix.eldblesample.utils.Utils.BLUETOOTH_PERMISSIONS_S;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -109,8 +108,6 @@ import com.iosix.eldblesample.models.User;
 import com.iosix.eldblesample.models.eld_records.Eld;
 import com.iosix.eldblesample.models.eld_records.LiveDataRecord;
 import com.iosix.eldblesample.models.eld_records.Point;
-import com.iosix.eldblesample.retrofit.APIInterface;
-import com.iosix.eldblesample.retrofit.ApiClient;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.roomDatabase.entities.DvirEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LiveDataEntitiy;
@@ -139,15 +136,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends BaseActivity implements TimePickerDialog.OnTimeSetListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
@@ -425,11 +416,7 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
                                 dop,
                                 sequence_number,
                                 firmware_version
-                        )).observe(this,liveDataEntitiy -> {
-                            if (liveDataEntitiy != null){
-                                userViewModel.deleteLocalData();
-                            }
-                        });
+                        ));
                     }
                 });
             }
@@ -438,49 +425,51 @@ public class MainActivity extends BaseActivity implements TimePickerDialog.OnTim
 
     private void getAllDrivers() {
 
-        eldJsonViewModel.getAllDrivers().observe(this, users -> {
+        eldJsonViewModel.getAllDrivers();
+        eldJsonViewModel.getDriverMutableLiveData().observe(this,users ->{
             if (users != null) {
                 if (this.users.size() != 0) {
                     int count = 0;
-                    for (int i = 0; i < users.getDriver().getUser().size(); i++) {
+                    for (int i = 0; i < users.size(); i++) {
                         for (int j = 0; j < this.users.size(); j++) {
-                            if (users.getDriver().getUser().get(i).getName().equals(this.users.get(j).getName())) {
+                            if (users.get(i).getName().equals(this.users.get(j).getName())) {
                                 count++;
                             }
                         }
                         if (count == 0) {
-                            userViewModel.insertUser(users.getDriver().getUser().get(i));
+                            userViewModel.insertUser(users.get(i));
                         } else {
                             count = 0;
                         }
                     }
                 } else {
-                    for (int i = 0; i < users.getDriver().getUser().size(); i++) {
-                        userViewModel.insertUser(users.getDriver().getUser().get(i));
+                    for (int i = 0; i < users.size(); i++) {
+                        userViewModel.insertUser(users.get(i));
                     }
                 }
             }
         });
 
-        eldJsonViewModel.getAllVehicles().observe(this, vehicleData -> {
-            if (vehicleData != null) {
+        eldJsonViewModel.getAllVehicles();
+        eldJsonViewModel.getVehicleLiveData().observe(this,vehicleLists -> {
+            if (vehicleLists != null) {
                 if (vehiclesEntities.size() != 0) {
                     int count = 0;
-                    for (int i = 0; i < vehicleData.getVehicle().getVehicleList().size(); i++) {
+                    for (int i = 0; i < vehicleLists.size(); i++) {
                         for (int j = 0; j < vehiclesEntities.size(); j++) {
-                            if (vehicleData.getVehicle().getVehicleList().get(i).getVehicle_id().equals(vehiclesEntities.get(j).getName())) {
+                            if (vehicleLists.get(i).getVehicle_id().equals(vehiclesEntities.get(j).getName())) {
                                 count++;
                             }
                         }
                         if (count == 0) {
-                            userViewModel.insertVehicle(new VehiclesEntity(vehicleData.getVehicle().getVehicleList().get(i).getVehicle_id()));
+                            userViewModel.insertVehicle(new VehiclesEntity(vehicleLists.get(i).getVehicle_id()));
                         } else {
                             count = 0;
                         }
                     }
                 } else {
-                    for (int i = 0; i < vehicleData.getVehicle().getVehicleList().size(); i++) {
-                        userViewModel.insertVehicle(new VehiclesEntity(vehicleData.getVehicle().getVehicleList().get(i).getVehicle_id()));
+                    for (int i = 0; i < vehicleLists.size(); i++) {
+                        userViewModel.insertVehicle(new VehiclesEntity(vehicleLists.get(i).getVehicle_id()));
                     }
                 }
             }

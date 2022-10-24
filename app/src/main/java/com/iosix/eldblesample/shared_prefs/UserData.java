@@ -7,12 +7,16 @@ public class UserData {
     public static SharedPreferences userPref;
     public static SharedPreferences.Editor editor;
     public Context _context;
+    private static final Object LOCK = new Object();
+
 
     public static final String PREF_NAME = "userData";
 
     public UserData(Context context) {
         this._context = context;
-        userPref = _context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        synchronized (LOCK){
+            userPref = _context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        }
     }
 
     public Object getByKey(String key){

@@ -19,6 +19,8 @@ public class GeneralEntity {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private int id;
+    @ColumnInfo(name = "driver_id")
+    private String driverId;
     @SerializedName("distance")
     @ColumnInfo(name = "distance")
     private String distance;
@@ -59,7 +61,8 @@ public class GeneralEntity {
 //    private Bitmap signature;
 
 
-    public GeneralEntity(String distance, ArrayList<String> shippingDocs, ArrayList<String> vehicle, ArrayList<String> trailers, String carrier, String mainOffice, String homrTerminalAddress, ArrayList<String> co_driver_name, String from_info, String to_info, String note, String day) {
+    public GeneralEntity(String driverId,String distance, ArrayList<String> shippingDocs, ArrayList<String> vehicle, ArrayList<String> trailers, String carrier, String mainOffice, String homrTerminalAddress, ArrayList<String> co_driver_name, String from_info, String to_info, String note, String day) {
+        this.driverId = driverId;
         this.distance = distance;
         this.shippingDocs = shippingDocs;
         this.vehicle = vehicle;
@@ -80,6 +83,14 @@ public class GeneralEntity {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getDriverId() {
+        return driverId;
+    }
+
+    public void setDriverId(String driverId) {
+        this.driverId = driverId;
     }
 
     public String getDistance() {
