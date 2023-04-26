@@ -11,59 +11,66 @@ import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.models.eld_records.Point;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 
 public class Utils {
 
-    public static Point hasCoordinates(Double latitude,Double longtitude){
+    public static String hasCoordinates(Double latitude,Double longtitude){
         if (latitude == -1 || longtitude == -1 || latitude == 0 || longtitude == 0){
             return null;
         }else {
-            ArrayList<Double> arrayList = new ArrayList<>();
-            arrayList.add(longtitude);
-            arrayList.add(latitude);
-            return new Point("Point",arrayList);
+            return "SRID=4326;POINT(" + longtitude + " " + latitude + ")";
         }
     }
 
-    public static String getStatus(int status){
-        if (status == EnumsConstants.STATUS_OFF){
-            return "OFF";
-        }else if (status == EnumsConstants.STATUS_SB){
-            return "SB";
-        }else if (status == EnumsConstants.STATUS_DR){
-            return "D";
-        }else if (status == EnumsConstants.STATUS_ON){
-            return "ON";
+    public static int getStatus(String status){
+        if (Objects.equals(status, EnumsConstants.STATUS_OFF)){
+            return 0;
+        }else if (Objects.equals(status, EnumsConstants.STATUS_SB)){
+            return 1;
+        }else if (Objects.equals(status, EnumsConstants.STATUS_DR)){
+            return 2;
+        }else if (Objects.equals(status, EnumsConstants.STATUS_ON)){
+            return 3;
         }
-        else if (status == EnumsConstants.STATUS_OF_PC){
-            return "PC";
+        else if (Objects.equals(status, EnumsConstants.STATUS_OF_PC)){
+            return 4;
         }
-        else if (status == EnumsConstants.STATUS_ON_YM){
-            return "YM";
+        else if (Objects.equals(status, EnumsConstants.STATUS_ON_YM)){
+            return 5;
         }
-        else if (status == EnumsConstants.POWER_UP){
-            return "POWERUP";
+        else if (Objects.equals(status, EnumsConstants.POWER_UP)){
+            return 6;
         }
-        else if (status == EnumsConstants.POWER_DOWN){
-            return "POWERDOW";
+        else if (Objects.equals(status, EnumsConstants.POWER_DOWN)){
+            return 7;
         }
-        else if (status == EnumsConstants.LOGIN){
-            return "LOGIN";
-        }else if (status == EnumsConstants.LOGOUT){
-            return "LOGOUT";
+        else if (Objects.equals(status, EnumsConstants.LOGIN)){
+            return 8;
+        }else if (Objects.equals(status, EnumsConstants.LOGOUT)){
+            return 9;
         }else {
-            return "CERTIFIED";
+            return 10;
         }
     }
 
     public static String getDateFormat(Date date){
         return (new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault())).format(date);
+    };
+
+    public static Date getDate(String s) throws ParseException {
+        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",Locale.getDefault()).parse(s);
+    };
+
+    public static Date getTime(String s) throws ParseException {
+        return new SimpleDateFormat("HH:mm",Locale.getDefault()).parse(s);
     };
 
     public static String hasVin(String value){

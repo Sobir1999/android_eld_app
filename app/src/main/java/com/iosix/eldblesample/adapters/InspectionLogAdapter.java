@@ -1,13 +1,21 @@
 package com.iosix.eldblesample.adapters;
 
-import static com.iosix.eldblesample.enums.Day.getCurrentSeconds;
+import static com.iosix.eldblesample.enums.Day.getCurrentMillis;
 import static com.iosix.eldblesample.enums.Day.getCurrentTime;
+import static com.iosix.eldblesample.enums.Day.getDayFormat;
+import static com.iosix.eldblesample.enums.Day.intToTime;
+import static com.iosix.eldblesample.enums.Day.stringToDate;
+import static com.iosix.eldblesample.utils.Utils.getStatus;
 import static com.iosix.eldblesample.utils.Utils.pointToString;
 
+import static java.lang.String.format;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,217 +25,155 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.enums.EnumsConstants;
-import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
+import com.iosix.eldblesample.models.Status;
+
+import org.threeten.bp.ZonedDateTime;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
-public class InspectionLogAdapter extends RecyclerView.Adapter<InspectionLogAdapter.InspectionLogViewHolder> {
+public class InspectionLogAdapter extends BaseAdapter {
 
-    private final ArrayList<LogEntity> logEntitiesCurr = new ArrayList<>();
-    private final ArrayList<LogEntity> logEntities = new ArrayList<>();
     private final Context context;
+    private final Status lastActionS;
     private final String day;
-    String time = "" + Calendar.getInstance().getTime();
-    String today = time.split(" ")[1] + " " + time.split(" ")[2];
+    private final List<Status> statuses;
+    private final List<Status> actionStatuses = new ArrayList<>();
+    LayoutInflater inflater;
 
     TextView logNumber,dr_text,logStartTime,logDuration,logLocation,logNotes;
     CardView dr_button;
 
-    public InspectionLogAdapter(Context context, List<LogEntity> arrayList, String day){
+    public InspectionLogAdapter(Context context,List<Status> statuses,Status lastActionS, String day){
         this.context = context;
-        this.logEntities.addAll(arrayList);
-        logEntitiesCurr.clear();
-        for (int i = 0; i < arrayList.size(); i++) {
-            if (arrayList.get(i).getTime().equals(day)){
-                logEntitiesCurr.add(arrayList.get(i));
-            }
-        }
+        this.statuses = statuses;
+        this.lastActionS = lastActionS;
         this.day = day;
+        inflater = LayoutInflater.from(context);
+        for (Status status:
+                statuses) {
+            if (getStatus(status.getStatus()) < 6){
+                actionStatuses.add(status);
+            }
+        }
     }
 
-    @NonNull
     @Override
-    public InspectionLogViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.inspection_log_item,parent,false);
-        return new InspectionLogViewHolder(view);
+    public int getCount() {
+        return statuses.size() + 1;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull InspectionLogViewHolder holder, int position) {
-        logNumber.setText(String.valueOf(position+1));
-        int time = 0;
-        if (day.equals(today)){
-            if (logEntitiesCurr.size() > 0){
-                if (position == logEntitiesCurr.size()-1){
-                    if (logEntitiesCurr.get(position).getTo_status() <= 5) {
-                        time = getCurrentSeconds() - logEntitiesCurr.get(position).getSeconds();
-                    }
+    public Object getItem(int i) {
+        return null;
+    }
+
+    @Override
+    public long getItemId(int i) {
+        return 0;
+    }
+
+    @SuppressLint("ViewHolder")
+    @Override
+    public View getView(int i, View view, ViewGroup viewGroup) {
+
+        view = inflater.inflate(R.layout.inspection_log_item,viewGroup,false);
+
+        logNumber = view.findViewById(R.id.idLogNumber);
+        dr_button = view.findViewById(R.id.dr_button);
+        dr_text = view.findViewById(R.id.dr_text);
+        logStartTime = view.findViewById(R.id.idLogStartTime);
+        logDuration = view.findViewById(R.id.idLogDuration);
+        logLocation = view.findViewById(R.id.idLogLocation);
+        logNotes = view.findViewById(R.id.idLogNotes);
+
+        logNumber.setText(format(Locale.getDefault(),"%d", i + 1));
+        if (i == 0){
+            dr_text.setText(lastActionS.getStatus());
+            getStatusColor(lastActionS.getStatus(),dr_text,dr_button);
+            logStartTime.setText(getCurrentTime(0));
+            logNotes.setText(lastActionS.getNote());
+        }else {
+            dr_text.setText(statuses.get(i-1).getStatus());
+            logNotes.setText(statuses.get(i-1).getNote());
+            getStatusColor(statuses.get(i-1).getStatus(),dr_text,dr_button);
+            logStartTime.setText(getCurrentTime(stringToDate(statuses.get(i-1).getTime()).toLocalTime().toSecondOfDay()));
+        }
+        if (i == 0){
+            if (actionStatuses.size() > 0){
+                logDuration.setText(intToTime(stringToDate(actionStatuses.get(0).getTime()).toLocalTime().toSecondOfDay()));
+            }else {
+                if (day.equals(getDayFormat(ZonedDateTime.now()))){
+                    logDuration.setText(intToTime(getCurrentMillis()));
                 }else {
-                    if (logEntitiesCurr.get(position).getTo_status() <= 5) {
-                        for (int i = position + 1; i < logEntitiesCurr.size(); i++) {
-                            if (logEntitiesCurr.get(i).getTo_status() < 6){
-                                time = logEntitiesCurr.get(i).getSeconds() - logEntitiesCurr.get(position).getSeconds();
-                                break;
-                            }if (i == logEntitiesCurr.size() - 1){
-                                time = getCurrentSeconds() - logEntitiesCurr.get(position).getSeconds();
-                                break;
+                    logDuration.setText(intToTime(86400));
+                }
+            }
+        }else {
+            if (getStatus(statuses.get(i-1).getStatus()) < 6){
+                for (int j = 0; j < actionStatuses.size(); j++) {
+                    if (statuses.get(i-1).getTime().equals(actionStatuses.get(j).getTime())){
+                        if (j < actionStatuses.size()-1){
+                            logDuration.setText(intToTime(stringToDate(actionStatuses.get(j+1).getTime()).toLocalTime().toSecondOfDay() - stringToDate(actionStatuses.get(j).getTime()).toLocalTime().toSecondOfDay()));
+                        }else {
+                            if (day.equals(getDayFormat(ZonedDateTime.now()))){
+                                logDuration.setText(intToTime(getCurrentMillis()-stringToDate(actionStatuses.get(actionStatuses.size()-1).getTime()).toLocalTime().toSecondOfDay()));
+                            }else {
+                                logDuration.setText(intToTime(86400 - stringToDate(actionStatuses.get(actionStatuses.size()-1).getTime()).toLocalTime().toSecondOfDay()));
                             }
                         }
                     }
                 }
             }else {
-                time = 86400;
-            }
-        }else {
-            if (logEntitiesCurr.size() > 0){
-                if (position == logEntitiesCurr.size()-1){
-                    if (logEntitiesCurr.get(position).getTo_status() <= 5) {
-                        time = getCurrentSeconds() - logEntitiesCurr.get(position).getSeconds();
-                    }
-                }else {
-                    if (logEntitiesCurr.get(position).getTo_status() <= 5) {
-                        for (int i = position + 1; i < logEntitiesCurr.size(); i++) {
-                            if (logEntitiesCurr.get(i).getTo_status() < 6){
-                                time = logEntitiesCurr.get(i).getSeconds() - logEntitiesCurr.get(position).getSeconds();
-                                break;
-                            }if (i == logEntitiesCurr.size() - 1){
-                                time = 86400 - logEntitiesCurr.get(position).getSeconds();
-                                break;
-                            }
-                        }
-                    }
-                }
-            }else {
-                time = 86400;
+                logDuration.setText(intToTime(0));
             }
         }
-
-
-        int hour = time/3600;
-        int minut = (time - hour*3600)/60;
-        if (hour<10){
-            if (minut < 10){
-                logDuration.setText(String.format("0%sh 0%sm",hour,minut));
-            }else {
-                logDuration.setText(String.format("0%sh %sm",hour,minut));
-            }
-        }else {
-            if (minut < 10){
-                logDuration.setText(String.format("%sh 0%sm",hour,minut));
-            }else {
-                logDuration.setText(String.format("%sh %sm",hour,minut));
-            }
-        }
-        try {
-            if (logEntitiesCurr.size() > 0){
-                holder.onBind(logEntitiesCurr.get(position));
-            }else {
-                holder.onBind(new LogEntity(logEntities.get(0).getDriverId(),EnumsConstants.STATUS_OFF,null,null,null,day,0));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        return view;
     }
 
-    @Override
-    public int getItemCount() {
-        if (logEntitiesCurr.size() == 0){
-            return 1;
-        }else
-            return logEntitiesCurr.size();
-    }
-
-    public class InspectionLogViewHolder extends RecyclerView.ViewHolder{
-
-        public InspectionLogViewHolder(@NonNull View itemView) {
-            super(itemView);
-            logNumber = itemView.findViewById(R.id.idLogNumber);
-            dr_button = itemView.findViewById(R.id.dr_button);
-            dr_text = itemView.findViewById(R.id.dr_text);
-            logStartTime = itemView.findViewById(R.id.idLogStartTime);
-            logDuration = itemView.findViewById(R.id.idLogDuration);
-            logLocation = itemView.findViewById(R.id.idLogLocation);
-            logNotes = itemView.findViewById(R.id.idLogNotes);
-        }
-
-        public void onBind(LogEntity logEntity) throws IOException {
-            logStartTime.setText(getCurrentTime(logEntity.getSeconds()));
-            if (logEntity.getLocation() != null){
-                logLocation.setText(pointToString(context,logEntity.getLocation()));
-            }else {
-                logLocation.setText("");
-            }
-            logNotes.setText(logEntity.getNote());
-            switch (logEntity.getTo_status()){
-                case EnumsConstants.STATUS_OFF :
-                    dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusOFF));
-                    dr_text.setText(R.string.off);
-                    dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusOFFBold));
-                    break;
-
-                case EnumsConstants.STATUS_SB :
-                    dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusSB));
-                    dr_text.setText(R.string.sb);
-                    dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusSBBold));
-                    break;
-
-                case EnumsConstants.STATUS_DR :
-                    dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusDR));
-                    dr_text.setText(R.string.dr);
-                    dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusDRBold));
-                    break;
-
-                case EnumsConstants.STATUS_ON :
-                    dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusON));
-                    dr_text.setText(R.string.on);
-                    dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusONBold));
-                    break;
-
-                case EnumsConstants.STATUS_OF_PC :
-                    dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusOFF));
-                    dr_text.setText(R.string.off_pc);
-                    dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusOFFBold));
-                    break;
-
-                case EnumsConstants.STATUS_ON_YM :
-                    dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusON));
-                    dr_text.setText(R.string.on_ym);
-                    dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorStatusONBold));
-                    break;
-
-                case EnumsConstants.POWER_UP :
-                    dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorPowerUp));
-                    dr_text.setText(R.string.power_up);
-                    dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorPowerUpBold));
-                    break;
-
-                case EnumsConstants.POWER_DOWN :
-                    dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorPowerDown));
-                    dr_text.setText(R.string.power_down);
-                    dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorPowerDownBold));
-                    break;
-
-                case EnumsConstants.LOGIN :
-                    dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorLogin));
-                    dr_text.setText(R.string.login);
-                    dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorLoginBold));
-                    break;
-
-                case EnumsConstants.LOGOUT :
-                    dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorLogout));
-                    dr_text.setText(R.string.logout);
-                    dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorLogoutBold));
-                    break;
-
-                case EnumsConstants.CERTIFIED :
-                    dr_button.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorCertified));
-                    dr_text.setText(R.string.certified);
-                    dr_text.setTextColor(ContextCompat.getColor(context,R.color.colorCertifiedBold));
-                    break;
-            }
+    private void getStatusColor(String status1,TextView status,CardView statusBac){
+        switch (status1){
+            case EnumsConstants.STATUS_OFF:
+            case EnumsConstants.STATUS_OF_PC:
+                status.setTextColor(ContextCompat.getColor(context,R.color.colorStatusOFFBold));
+                statusBac.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusOFF));
+                break;
+            case EnumsConstants.STATUS_SB:
+                status.setTextColor(ContextCompat.getColor(context,R.color.colorStatusSBBold));
+                statusBac.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusSB));
+                break;
+            case EnumsConstants.STATUS_DR:
+                status.setTextColor(ContextCompat.getColor(context,R.color.colorStatusDRBold));
+                statusBac.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusDR));
+                break;
+            case EnumsConstants.STATUS_ON:
+            case EnumsConstants.STATUS_ON_YM:
+                status.setTextColor(ContextCompat.getColor(context,R.color.colorStatusONBold));
+                statusBac.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorStatusON));
+                break;
+            case EnumsConstants.LOGIN:
+                status.setTextColor(ContextCompat.getColor(context,R.color.colorLoginBold));
+                statusBac.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorLogin));
+                break;
+            case EnumsConstants.LOGOUT:
+                status.setTextColor(ContextCompat.getColor(context,R.color.colorLogoutBold));
+                statusBac.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorLogout));
+                break;
+            case EnumsConstants.POWER_UP:
+                status.setTextColor(ContextCompat.getColor(context,R.color.colorPowerUpBold));
+                statusBac.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorPowerUp));
+                break;
+            case EnumsConstants.POWER_DOWN:
+                status.setTextColor(ContextCompat.getColor(context,R.color.colorPowerDownBold));
+                statusBac.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorPowerDown));
+                break;
+            case EnumsConstants.CERTIFIED:
+                status.setTextColor(ContextCompat.getColor(context,R.color.colorCertifiedBold));
+                statusBac.setCardBackgroundColor(ContextCompat.getColor(context,R.color.colorCertified));
+                break;
         }
     }
 }

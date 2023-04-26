@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -27,6 +28,8 @@ import com.iosix.eldblesample.fragments.AddDefectFragment;
 import com.iosix.eldblesample.shared_prefs.TinyDB;
 import com.iosix.eldblesample.shared_prefs.UserData;
 
+import java.util.ArrayList;
+
 public class AddDefectActivity extends BaseActivity {
 
     private TabLayout tabLayout;
@@ -45,6 +48,8 @@ public class AddDefectActivity extends BaseActivity {
 
         boolean isTruckSelected = getIntent().getBooleanExtra("isTruckSelected", false);
         boolean isUnitSelected = getIntent().getBooleanExtra("isUnitSelected", false);
+        ArrayList<String> unitDefects = getIntent().getStringArrayListExtra("unitDefects");
+        ArrayList<String> trailerDefects = getIntent().getStringArrayListExtra("trailerDefects");
 
         tinyDB = new TinyDB(this);
         userData = new UserData(this);
@@ -57,7 +62,7 @@ public class AddDefectActivity extends BaseActivity {
         save.setOnClickListener(v -> createDialog(v.getContext()));
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        DefectsFragmentAdapter adapter = new DefectsFragmentAdapter(fragmentManager, getLifecycle(), isTruckSelected,isUnitSelected);
+        DefectsFragmentAdapter adapter = new DefectsFragmentAdapter(fragmentManager, getLifecycle(), isTruckSelected,isUnitSelected,unitDefects,trailerDefects);
         viewPager.setAdapter(adapter);
 
         if (isUnitSelected) tabLayout.addTab(tabLayout.newTab().setText("Unit"));
@@ -141,11 +146,15 @@ public class AddDefectActivity extends BaseActivity {
 class DefectsFragmentAdapter extends FragmentStateAdapter {
     boolean isTruckSelected;
     boolean isUnitSelected;
+    ArrayList<String> unit;
+    ArrayList<String> trailer;
 
-    public DefectsFragmentAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, boolean isTruckSelected,boolean isUnitSelected) {
+    public DefectsFragmentAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, boolean isTruckSelected,boolean isUnitSelected,ArrayList<String> unit,ArrayList<String> trailer) {
         super(fragmentManager, lifecycle);
         this.isTruckSelected = isTruckSelected;
         this.isUnitSelected = isUnitSelected;
+        this.unit = unit;
+        this.trailer = trailer;
     }
 
     @NonNull
@@ -153,10 +162,10 @@ class DefectsFragmentAdapter extends FragmentStateAdapter {
     public Fragment createFragment(int position) {
         if (position == 0) {
             if (isUnitSelected){
-                return new AddDefectFragment(1);
-            }else return new AddDefectFragment(2);
+                return new AddDefectFragment(1,unit);
+            }else return new AddDefectFragment(2,trailer);
         }
-        return new AddDefectFragment(2);
+        return new AddDefectFragment(2,trailer);
 
     }
 

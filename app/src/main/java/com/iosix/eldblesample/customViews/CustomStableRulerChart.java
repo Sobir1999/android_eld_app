@@ -1,37 +1,40 @@
 package com.iosix.eldblesample.customViews;
 
-import static com.iosix.eldblesample.enums.Day.getCurrentSeconds;
+
+import static com.iosix.eldblesample.enums.Day.stringToDate;
+import static com.iosix.eldblesample.utils.Utils.getStatus;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.res.ResourcesCompat;
 
-import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.enums.TableConstants;
-import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
-import com.iosix.eldblesample.shared_prefs.DriverSharedPrefs;
+import com.iosix.eldblesample.models.Status;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class CustomStableRulerChart extends CustomRulerChart {
-    private float START_POINT_X = TableConstants.START_POINT_X;
-    private float START_POINT_Y = TableConstants.START_POINT_Y;
-    private int last_status;
+    private final float START_POINT_X = TableConstants.START_POINT_X;
+    private final float START_POINT_Y = TableConstants.START_POINT_Y;
     private int off = 0, sb = 0, dr = 0, on = 0;
+    float startX;
+    float startPointxX;
+    float startY;
+    float endX;
+    float endY;
+    float CUSTOM_TABLE_HEIGHT;
+    int start = 0;
 
-    private ArrayList<LogEntity> arrayList = new ArrayList<>();
-    private ArrayList<LogEntity> arrayList1 = new ArrayList<>();
-    private DriverSharedPrefs driverSharedPrefs;
+    private List<Status> arrayList = new ArrayList<>();
+    Status firstStatus = new Status(EnumsConstants.STATUS_OFF,null,null,"");
 
     private final ArrayList<Paint> paintArray = new ArrayList<Paint>() {{
         add(TableConstants.getOFFPaint(getContext()));
@@ -49,195 +52,168 @@ public class CustomStableRulerChart extends CustomRulerChart {
 
     public CustomStableRulerChart(Context context) {
         super(context);
-        init(context);
+        init();
     }
 
     public CustomStableRulerChart(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init(context);
+        init();
     }
 
     public CustomStableRulerChart(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context);
+        init();
     }
 
-    private void init(Context context) {
-        SharedPreferences pref = context
-                .getSharedPreferences("MyPref", Context.MODE_PRIVATE);
-        last_status = pref.getInt("last_P", 0);
-        driverSharedPrefs = DriverSharedPrefs.getInstance(context);
+    private void init() {
     }
 
-    public void setArrayList(ArrayList<LogEntity> arrayList,ArrayList<LogEntity> arrayList1) {
+    public void setArrayList(List<Status> arrayList, Status firstStatus) {
         this.arrayList = arrayList;
-        this.arrayList1 = arrayList1;
+        this.firstStatus = firstStatus;
     }
 
     @Override
     public void drawLineProgress(Canvas canvas, float CUSTOM_TABLE_WIDTH) {
-        float CUSTOM_TABLE_HEIGHT = 0;
         if (getContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
             CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 6;
         }else if (getContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
             CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 8;
         }
-        float startX = START_POINT_X+CUSTOM_TABLE_WIDTH / 14;
-        float startPointX = START_POINT_X+CUSTOM_TABLE_WIDTH / 14;
-        float startY = 0;
-        float endX = 0;
-        float endY = 0;
+        startX = START_POINT_X+CUSTOM_TABLE_WIDTH / 14;
+        startPointxX = START_POINT_X+CUSTOM_TABLE_WIDTH / 14;
+        startY = 0;
+        endX = 0;
+        endY = 0;
         int off = 0, sb = 0, dr = 0, on = 0;
+        start = 0;
 
-        int start = 0;
+        for (int i = -1; i < arrayList.size() -1; i++) {
 
-        for (int i = 0; i < arrayList.size() - 1; i++) {
+            if (i == -1){
+                drawChart(firstStatus,arrayList.get(0),canvas,CUSTOM_TABLE_WIDTH);
 
-            if (arrayList.get(i).getTo_status() == EnumsConstants.STATUS_OF_PC){
-                if (arrayList.get(i+1).getTo_status() == EnumsConstants.STATUS_ON_YM){
-                    startY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (arrayList.get(i).getTo_status()-4)) / 4;
-                    endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (arrayList.get(i+1).getTo_status()-2)) / 4;
-                    endX = startPointX + (arrayList.get(i+1).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28);
-                    canvas.drawLine(startX, startY, endX, startY, paintArray.get(arrayList.get(i).getTo_status()));
-                    canvas.drawLine(endX, startY, endX, endY, paintArray.get(arrayList.get(i).getTo_status()));
-                    startX = endX;
-                }else if (arrayList.get(i+1).getTo_status() <4){
-                    startY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (arrayList.get(i).getTo_status()-4)) / 4;
-                    endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (arrayList.get(i+1).getTo_status())) / 4;
-                    endX = startPointX + (arrayList.get(i+1).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28);
-                    canvas.drawLine(startX, startY, endX, startY, paintArray.get(arrayList.get(i).getTo_status()));
-                    canvas.drawLine(endX, startY, endX, endY, paintArray.get(arrayList.get(i).getTo_status()));
-                    startX = endX;
+                if (Objects.equals(firstStatus.getStatus(), EnumsConstants.STATUS_OFF) || Objects.equals(firstStatus.getStatus(), EnumsConstants.STATUS_OF_PC)) {
+                    off += (stringToDate(arrayList.get(0).getTime()).toLocalTime().toSecondOfDay()- start);
                 }
-            }else if (arrayList.get(i).getTo_status() == EnumsConstants.STATUS_ON_YM){
-                if (arrayList.get(i+1).getTo_status() == EnumsConstants.STATUS_OF_PC){
-                    startY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (arrayList.get(i).getTo_status()-2)) / 4;
-                    endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (arrayList.get(i+1).getTo_status()-4)) / 4;
-                    endX = startPointX + (arrayList.get(i+1).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28);
-                    canvas.drawLine(startX, startY, endX, startY, paintArray.get(arrayList.get(i).getTo_status()));
-                    canvas.drawLine(endX, startY, endX, endY, paintArray.get(arrayList.get(i).getTo_status()));
-                    startX = endX;
-                }  else if (arrayList.get(i+1).getTo_status() < 4){
-                    startY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (arrayList.get(i).getTo_status()-2)) / 4;
-                    endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (arrayList.get(i+1).getTo_status())) / 4;
-                    endX = startPointX + (arrayList.get(i+1).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28);
-                    canvas.drawLine(startX, startY, endX, startY, paintArray.get(arrayList.get(i).getTo_status()));
-                    canvas.drawLine(endX, startY, endX, endY, paintArray.get(arrayList.get(i).getTo_status()));
-                    startX = endX;
+                else if (Objects.equals(firstStatus.getStatus(), EnumsConstants.STATUS_SB)) {
+                    sb += (stringToDate(arrayList.get(0).getTime()).toLocalTime().toSecondOfDay() - start);
                 }
-            }else if (arrayList.get(i).getTo_status() < 4){
-                if (arrayList.get(i+1).getTo_status() == EnumsConstants.STATUS_OF_PC){
-                    startY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * arrayList.get(i).getTo_status()) / 4;
-                    endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (arrayList.get(i+1).getTo_status()-4)) / 4;
-                    endX = startPointX + (arrayList.get(i+1).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28);
-                    canvas.drawLine(startX, startY, endX, startY, paintArray.get(arrayList.get(i).getTo_status()));
-                    canvas.drawLine(endX, startY, endX, endY, paintArray.get(arrayList.get(i).getTo_status()));
-                    startX = endX;
-                }else if (arrayList.get(i+1).getTo_status() == EnumsConstants.STATUS_ON_YM){
-                    startY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * arrayList.get(i).getTo_status()) / 4;
-                    endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (arrayList.get(i+1).getTo_status()-2)) / 4;
-                    endX = startPointX + (arrayList.get(i+1).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28);
-                    canvas.drawLine(startX, startY, endX, startY, paintArray.get(arrayList.get(i).getTo_status()));
-                    canvas.drawLine(endX, startY, endX, endY, paintArray.get(arrayList.get(i).getTo_status()));
-                    startX = endX;
-                }else if (arrayList.get(i+1).getTo_status() < 4){
-                    startY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * arrayList.get(i).getTo_status()) / 4;
-                    endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (arrayList.get(i+1).getTo_status())) / 4;
-                    endX = startPointX + (arrayList.get(i+1).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28);
-                    canvas.drawLine(startX, startY, endX, startY, paintArray.get(arrayList.get(i).getTo_status()));
-                    canvas.drawLine(endX, startY, endX, endY, paintArray.get(arrayList.get(i).getTo_status()));
-                    startX = endX;
+                else if (Objects.equals(firstStatus.getStatus(), EnumsConstants.STATUS_DR)) {
+                    dr += (stringToDate(arrayList.get(0).getTime()).toLocalTime().toSecondOfDay() - start);
                 }
-            }
+                else if (Objects.equals(firstStatus.getStatus(), EnumsConstants.STATUS_ON) || Objects.equals(firstStatus.getStatus(), EnumsConstants.STATUS_ON_YM)) {
+                    on += (stringToDate(arrayList.get(0).getTime()).toLocalTime().toSecondOfDay() - start);
+                }
+                start = stringToDate(arrayList.get(0).getTime()).toLocalTime().toSecondOfDay();
+            }else {
+                drawChart(arrayList.get(i),arrayList.get(i+1),canvas,CUSTOM_TABLE_WIDTH);
 
-
-            if (arrayList.get(i).getTo_status() == EnumsConstants.STATUS_OFF || arrayList.get(i).getTo_status() == EnumsConstants.STATUS_OF_PC) {
-                off += (arrayList.get(i+1).getSeconds() - start);
-            }
-            else if (arrayList.get(i).getTo_status() == EnumsConstants.STATUS_SB) {
-                sb += (arrayList.get(i+1).getSeconds() - start);
-            }
-            else if (arrayList.get(i).getTo_status() == EnumsConstants.STATUS_DR) {
-                dr += (arrayList.get(i+1).getSeconds() - start);
-            }
-            else if (arrayList.get(i).getTo_status() == EnumsConstants.STATUS_ON || arrayList.get(i).getTo_status() == EnumsConstants.STATUS_ON_YM) {
-                on += (arrayList.get(i+1).getSeconds() - start);
-            }
-            start = arrayList.get(i+1).getSeconds();
-        }
-
-        for (int i = 0; i < arrayList1.size(); i++) {
-            if (arrayList1.get(i).getTo_status() == EnumsConstants.LOGIN){
-                canvas.drawLine(startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28),START_POINT_Y,startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28),START_POINT_Y + CUSTOM_TABLE_HEIGHT + 20f,paintArray.get(arrayList1.get(i).getTo_status()));
-                Drawable icon = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_login_circle_svgrepo_com,null);
-                icon.setBounds(Math.round((startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28))- 15f),Math.round(START_POINT_Y + CUSTOM_TABLE_HEIGHT + 20f),Math.round((startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28))+ 15f),Math.round(START_POINT_Y + CUSTOM_TABLE_HEIGHT + 50f));
-                icon.setTint(Color.parseColor("#1B5E20"));
-                icon.draw(canvas);
-            }else if (arrayList1.get(i).getTo_status() == EnumsConstants.LOGOUT){
-                canvas.drawLine(startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28),START_POINT_Y,startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28),START_POINT_Y + CUSTOM_TABLE_HEIGHT + 20f,paintArray.get(arrayList1.get(i).getTo_status()));
-                Drawable icon = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_circle_logout_svgrepo_com,null);
-                icon.setBounds(Math.round((startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28))- 15f),Math.round(START_POINT_Y + CUSTOM_TABLE_HEIGHT + 15f),Math.round((startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28))+ 20f),Math.round(START_POINT_Y + CUSTOM_TABLE_HEIGHT + 50f));
-                icon.setTint(Color.parseColor("#C2185B"));
-                icon.draw(canvas);
-            }else if (arrayList1.get(i).getTo_status() == EnumsConstants.CERTIFIED){
-                canvas.drawLine(startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28),START_POINT_Y,startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28),START_POINT_Y + CUSTOM_TABLE_HEIGHT + 20f,paintArray.get(arrayList1.get(i).getTo_status()));
-                Drawable icon = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_check_circle_8,null);
-                icon.setBounds(Math.round((startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28))- 15f),Math.round(START_POINT_Y + CUSTOM_TABLE_HEIGHT + 20f),Math.round((startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28))+ 15f),Math.round(START_POINT_Y + CUSTOM_TABLE_HEIGHT + 50f));
-                icon.setTint(Color.parseColor("#00C853"));
-                icon.draw(canvas);
-            }else if (arrayList1.get(i).getTo_status() == EnumsConstants.POWER_UP){
-                canvas.drawLine(startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28),START_POINT_Y,startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28),START_POINT_Y + CUSTOM_TABLE_HEIGHT + 20f,paintArray.get(arrayList1.get(i).getTo_status()));
-                Drawable icon = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_power_sign_in_a_circle_svgrepo_com,null);
-                icon.setBounds(Math.round((startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28))- 15f),Math.round(START_POINT_Y + CUSTOM_TABLE_HEIGHT + 20f),Math.round((startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28))+ 15f),Math.round(START_POINT_Y + CUSTOM_TABLE_HEIGHT + 50f));
-                icon.setTint(Color.parseColor("#33691E"));
-                icon.draw(canvas);
-            }else if (arrayList1.get(i).getTo_status() == EnumsConstants.POWER_DOWN){
-                canvas.drawLine(startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/26),START_POINT_Y,startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28),START_POINT_Y + CUSTOM_TABLE_HEIGHT + 20f,paintArray.get(arrayList1.get(i).getTo_status()));
-                Drawable icon = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_power_sign_in_a_circle_svgrepo_com,null);
-                icon.setBounds(Math.round((startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28))- 15f),Math.round(START_POINT_Y + CUSTOM_TABLE_HEIGHT + 20f),Math.round((startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28))+ 15f),Math.round(START_POINT_Y + CUSTOM_TABLE_HEIGHT + 50f));
-                icon.setTint(Color.parseColor("#D32F2F"));
-                icon.draw(canvas);
+                if (Objects.equals(arrayList.get(i).getStatus(), EnumsConstants.STATUS_OFF) || Objects.equals(arrayList.get(i).getStatus(), EnumsConstants.STATUS_OF_PC)) {
+                    off += (stringToDate(arrayList.get(i+1).getTime()).toLocalTime().toSecondOfDay()- start);
+                }
+                else if (Objects.equals(arrayList.get(i).getStatus(), EnumsConstants.STATUS_SB)) {
+                    sb += (stringToDate(arrayList.get(i+1).getTime()).toLocalTime().toSecondOfDay() - start);
+                }
+                else if (Objects.equals(arrayList.get(i).getStatus(), EnumsConstants.STATUS_DR)) {
+                    dr += (stringToDate(arrayList.get(i+1).getTime()).toLocalTime().toSecondOfDay() - start);
+                }
+                else if (Objects.equals(arrayList.get(i).getStatus(), EnumsConstants.STATUS_ON) || Objects.equals(arrayList.get(i).getStatus(), EnumsConstants.STATUS_ON_YM)) {
+                    on += (stringToDate(arrayList.get(i+1).getTime()).toLocalTime().toSecondOfDay() - start);
+                }
+                start = stringToDate(arrayList.get(i+1).getTime()).toLocalTime().toSecondOfDay();
             }
         }
-
-
+//
+//        for (int i = 0; i < arrayList1.size(); i++) {
+//            if (arrayList1.get(i).getTo_status() == EnumsConstants.LOGIN){
+//                canvas.drawLine(startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28),START_POINT_Y,startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28),START_POINT_Y + CUSTOM_TABLE_HEIGHT + 20f,paintArray.get(arrayList1.get(i).getTo_status()));
+//                Drawable icon = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_login_circle_svgrepo_com,null);
+//                icon.setBounds(Math.round((startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28))- 15f),Math.round(START_POINT_Y + CUSTOM_TABLE_HEIGHT + 20f),Math.round((startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28))+ 15f),Math.round(START_POINT_Y + CUSTOM_TABLE_HEIGHT + 50f));
+//                icon.setTint(Color.parseColor("#1B5E20"));
+//                icon.draw(canvas);
+//            }else if (arrayList1.get(i).getTo_status() == EnumsConstants.LOGOUT){
+//                canvas.drawLine(startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28),START_POINT_Y,startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28),START_POINT_Y + CUSTOM_TABLE_HEIGHT + 20f,paintArray.get(arrayList1.get(i).getTo_status()));
+//                Drawable icon = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_circle_logout_svgrepo_com,null);
+//                icon.setBounds(Math.round((startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28))- 15f),Math.round(START_POINT_Y + CUSTOM_TABLE_HEIGHT + 15f),Math.round((startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28))+ 20f),Math.round(START_POINT_Y + CUSTOM_TABLE_HEIGHT + 50f));
+//                icon.setTint(Color.parseColor("#C2185B"));
+//                icon.draw(canvas);
+//            }else if (arrayList1.get(i).getTo_status() == EnumsConstants.CERTIFIED){
+//                canvas.drawLine(startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28),START_POINT_Y,startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28),START_POINT_Y + CUSTOM_TABLE_HEIGHT + 20f,paintArray.get(arrayList1.get(i).getTo_status()));
+//                Drawable icon = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_check_circle_8,null);
+//                icon.setBounds(Math.round((startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28))- 15f),Math.round(START_POINT_Y + CUSTOM_TABLE_HEIGHT + 20f),Math.round((startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28))+ 15f),Math.round(START_POINT_Y + CUSTOM_TABLE_HEIGHT + 50f));
+//                icon.setTint(Color.parseColor("#00C853"));
+//                icon.draw(canvas);
+//            }else if (arrayList1.get(i).getTo_status() == EnumsConstants.POWER_UP){
+//                canvas.drawLine(startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28),START_POINT_Y,startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28),START_POINT_Y + CUSTOM_TABLE_HEIGHT + 20f,paintArray.get(arrayList1.get(i).getTo_status()));
+//                Drawable icon = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_power_sign_in_a_circle_svgrepo_com,null);
+//                icon.setBounds(Math.round((startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28))- 15f),Math.round(START_POINT_Y + CUSTOM_TABLE_HEIGHT + 20f),Math.round((startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28))+ 15f),Math.round(START_POINT_Y + CUSTOM_TABLE_HEIGHT + 50f));
+//                icon.setTint(Color.parseColor("#33691E"));
+//                icon.draw(canvas);
+//            }else if (arrayList1.get(i).getTo_status() == EnumsConstants.POWER_DOWN){
+//                canvas.drawLine(startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/26),START_POINT_Y,startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28),START_POINT_Y + CUSTOM_TABLE_HEIGHT + 20f,paintArray.get(arrayList1.get(i).getTo_status()));
+//                Drawable icon = ResourcesCompat.getDrawable(getResources(),R.drawable.ic_power_sign_in_a_circle_svgrepo_com,null);
+//                icon.setBounds(Math.round((startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28))- 15f),Math.round(START_POINT_Y + CUSTOM_TABLE_HEIGHT + 20f),Math.round((startPointX + (arrayList1.get(i).getSeconds() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28))+ 15f),Math.round(START_POINT_Y + CUSTOM_TABLE_HEIGHT + 50f));
+//                icon.setTint(Color.parseColor("#D32F2F"));
+//                icon.draw(canvas);
+//            }
+//        }
+//
+//
         if (!arrayList.isEmpty()) {
-            if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_OF_PC){
-                endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (arrayList.get(arrayList.size()-1).getTo_status()-4)) / 4;
-                canvas.drawLine(startX, endY, startPointX + ((getCurrentSeconds() / (3600*24f)) * CUSTOM_TABLE_WIDTH*24/28), endY, paintArray.get(arrayList.get(arrayList.size() - 1).getTo_status()));
-            }else if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_ON_YM){
-                endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (arrayList.get(arrayList.size()-1).getTo_status()-2)) / 4;
-                canvas.drawLine(startX, endY, startPointX + ((getCurrentSeconds() / (3600*24f)) * CUSTOM_TABLE_WIDTH*24/28), endY, paintArray.get(arrayList.get(arrayList.size() - 1).getTo_status()));
-            }else if (arrayList.get(arrayList.size()-1).getTo_status() < 4){
-                endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (arrayList.get(arrayList.size()-1).getTo_status())) / 4;
-                canvas.drawLine(startX, endY, startPointX + CUSTOM_TABLE_WIDTH*24/28, endY, paintArray.get(arrayList.get(arrayList.size() - 1).getTo_status()));
+            if (Objects.equals(arrayList.get(arrayList.size() - 1).getStatus(), EnumsConstants.STATUS_OF_PC)){
+                endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (getStatus(arrayList.get(arrayList.size()-1).getStatus())-4)) / 4;
+                canvas.drawLine(startX, endY, startPointxX + CUSTOM_TABLE_WIDTH*24/28, endY, paintArray.get(getStatus(arrayList.get(arrayList.size() - 1).getStatus())));
+            }else if (Objects.equals(arrayList.get(arrayList.size() - 1).getStatus(), EnumsConstants.STATUS_ON_YM)){
+                endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (getStatus(arrayList.get(arrayList.size()-1).getStatus())-2)) / 4;
+                canvas.drawLine(startX, endY, startPointxX + CUSTOM_TABLE_WIDTH*24/28, endY, paintArray.get(getStatus(arrayList.get(arrayList.size() - 1).getStatus())));
+            }else if (getStatus(arrayList.get(arrayList.size()-1).getStatus()) < 4){
+                endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (getStatus(arrayList.get(arrayList.size()-1).getStatus()))) / 4;
+                canvas.drawLine(startX, endY, startPointxX + CUSTOM_TABLE_WIDTH*24/28, endY, paintArray.get(getStatus(arrayList.get(arrayList.size() - 1).getStatus())));
             }
 
-            if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_OFF) {
+            if (Objects.equals(arrayList.get(arrayList.size() - 1).getStatus(), EnumsConstants.STATUS_OFF) || Objects.equals(arrayList.get(arrayList.size() - 1).getStatus(), EnumsConstants.STATUS_OF_PC)) {
                 off += (86400 - start);
             }
-            if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_SB) {
+            if (Objects.equals(arrayList.get(arrayList.size() - 1).getStatus(), EnumsConstants.STATUS_SB)) {
                 sb += (86400 - start);
             }
-            if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_DR) {
+            if (Objects.equals(arrayList.get(arrayList.size() - 1).getStatus(), EnumsConstants.STATUS_DR)) {
                 dr += (86400 - start);
             }
-            if (arrayList.get(arrayList.size()-1).getTo_status() == EnumsConstants.STATUS_ON) {
+            if (Objects.equals(arrayList.get(arrayList.size() - 1).getStatus(), EnumsConstants.STATUS_ON) || Objects.equals(arrayList.get(arrayList.size() - 1).getStatus(), EnumsConstants.STATUS_ON_YM)) {
                 on += (86400 - start);
             }
-            driverSharedPrefs.saveWorkingHours(arrayList.get(0).getDriverId() + " " + arrayList.get(0).getTime(),dr + on);
 
         } else {
-            endY = TableConstants.START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * EnumsConstants.STATUS_OFF) / 4;
-            canvas.drawLine(startX, endY, startPointX + CUSTOM_TABLE_WIDTH*24/28, endY, paintArray.get(EnumsConstants.STATUS_OFF));
+            if (Objects.equals(firstStatus.getStatus(), EnumsConstants.STATUS_OF_PC)){
+                endY = TableConstants.START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (getStatus(firstStatus.getStatus())-4)) / 4;
+            }else if(Objects.equals(firstStatus.getStatus(), EnumsConstants.STATUS_ON_YM)){
+                endY = TableConstants.START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (getStatus(firstStatus.getStatus()))-2) / 4;
+            }else {
+                endY = TableConstants.START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * getStatus(firstStatus.getStatus())) / 4;
+            }
+            canvas.drawLine(startX, endY, startPointxX + CUSTOM_TABLE_WIDTH*24/28, endY, paintArray.get(getStatus(firstStatus.getStatus())));
 
+            if (Objects.equals(firstStatus.getStatus(), EnumsConstants.STATUS_OFF) || Objects.equals(firstStatus.getStatus(), EnumsConstants.STATUS_OF_PC)) {
                 off = 86400;
+            }
+            if (Objects.equals(firstStatus.getStatus(), EnumsConstants.STATUS_SB)) {
+                sb = 86400;
+            }
+            if (Objects.equals(firstStatus.getStatus(), EnumsConstants.STATUS_DR)) {
+                dr = 86400;
+            }
+            if (Objects.equals(firstStatus.getStatus(), EnumsConstants.STATUS_ON) || Objects.equals(firstStatus.getStatus(), EnumsConstants.STATUS_ON_YM)) {
+                on = 86400;
+            }
         }
 
         this.off = off;
         this.sb = sb;
         this.dr = dr;
         this.on = on;
+
     }
 
     @Override
@@ -278,10 +254,70 @@ public class CustomStableRulerChart extends CustomRulerChart {
 
     @SuppressLint("DefaultLocale")
     private String getTime(int sum) {
-        String s = "";
+        String s;
         int hour = sum / 3600;
         int min = (sum % 3600) / 60;
         s = String.format("%02d:%02d", hour, min);
         return s;
+    }
+
+    private void drawChart(Status status,Status nextStatus,Canvas canvas,float CUSTOM_TABLE_WIDTH){
+
+        if (getStatus(status.getStatus()) < 4){
+            if (getStatus(nextStatus.getStatus()) <4){
+                startY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * getStatus(status.getStatus())) / 4;
+                endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (getStatus(nextStatus.getStatus()))) / 4;
+                endX = startPointxX + (stringToDate(nextStatus.getTime()).toLocalTime().toSecondOfDay() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28);
+                canvas.drawLine(startX, startY, endX, startY, paintArray.get(getStatus(status.getStatus())));
+                canvas.drawLine(endX, startY, endX, endY, paintArray.get(getStatus(status.getStatus())));
+                startX = endX;
+            }else if (Objects.equals(nextStatus.getStatus(), EnumsConstants.STATUS_OF_PC)){
+                startY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * getStatus(status.getStatus())) / 4;
+                endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (getStatus(nextStatus.getStatus())-4)) / 4;
+                endX = startPointxX + (stringToDate(nextStatus.getTime()).toLocalTime().toSecondOfDay() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28);
+                canvas.drawLine(startX, startY, endX, startY, paintArray.get(getStatus(status.getStatus())));
+                canvas.drawLine(endX, startY, endX, endY, paintArray.get(getStatus(status.getStatus())));
+                startX = endX;
+            }else if (Objects.equals(nextStatus.getStatus(), EnumsConstants.STATUS_ON_YM)){
+                startY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * getStatus(status.getStatus())) / 4;
+                endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (getStatus(nextStatus.getStatus())-2)) / 4;
+                endX = startPointxX + (stringToDate(nextStatus.getTime()).toLocalTime().toSecondOfDay() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28);
+                canvas.drawLine(startX, startY, endX, startY, paintArray.get(getStatus(status.getStatus())));
+                canvas.drawLine(endX, startY, endX, endY, paintArray.get(getStatus(status.getStatus())));
+                startX = endX;
+            }
+        }else if (Objects.equals(status.getStatus(), EnumsConstants.STATUS_OF_PC)){
+            if (Objects.equals(nextStatus.getStatus(), EnumsConstants.STATUS_ON_YM)){
+                startY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (getStatus(status.getStatus())-4)) / 4;
+                endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (getStatus(nextStatus.getStatus())-2)) / 4;
+                endX = startPointxX + (stringToDate(nextStatus.getTime()).toLocalTime().toSecondOfDay() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28);
+                canvas.drawLine(startX, startY, endX, startY, paintArray.get(getStatus(status.getStatus())));
+                canvas.drawLine(endX, startY, endX, endY, paintArray.get(getStatus(nextStatus.getStatus())));
+                startX = endX;
+            }else if (getStatus(nextStatus.getStatus()) <4){
+                startY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (getStatus(status.getStatus())-4)) / 4;
+                endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (getStatus(nextStatus.getStatus()))) / 4;
+                endX = startPointxX + (stringToDate(nextStatus.getTime()).toLocalTime().toSecondOfDay() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28);
+                canvas.drawLine(startX, startY, endX, startY, paintArray.get(getStatus(status.getStatus())));
+                canvas.drawLine(endX, startY, endX, endY, paintArray.get(getStatus(status.getStatus())));
+                startX = endX;
+            }
+        }else if (Objects.equals(status.getStatus(), EnumsConstants.STATUS_ON_YM)){
+            if (Objects.equals(nextStatus.getStatus(), EnumsConstants.STATUS_OF_PC)){
+                startY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (getStatus(status.getStatus())-2)) / 4;
+                endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (getStatus(nextStatus.getStatus())-4)) / 4;
+                endX = startPointxX + (stringToDate(nextStatus.getTime()).toLocalTime().toSecondOfDay() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28);
+                canvas.drawLine(startX, startY, endX, startY, paintArray.get(getStatus(status.getStatus())));
+                canvas.drawLine(endX, startY, endX, endY, paintArray.get(getStatus(status.getStatus())));
+                startX = endX;
+            }  else if (getStatus(nextStatus.getStatus()) < 4){
+                startY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (getStatus(status.getStatus())-2)) / 4;
+                endY = START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (getStatus(nextStatus.getStatus()))) / 4;
+                endX = startPointxX + (stringToDate(nextStatus.getTime()).toLocalTime().toSecondOfDay() / (3600*24f))*(CUSTOM_TABLE_WIDTH*24/28);
+                canvas.drawLine(startX, startY, endX, startY, paintArray.get(getStatus(status.getStatus())));
+                canvas.drawLine(endX, startY, endX, endY, paintArray.get(getStatus(status.getStatus())));
+                startX = endX;
+            }
+        }
     }
 }

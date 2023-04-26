@@ -65,4 +65,6 @@ public class Constants {
             "Wheels and Rims",
             "Other",
     };
+
+    public static String token = "";
 }

@@ -14,7 +14,6 @@ import android.os.ResultReceiver;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -29,15 +28,9 @@ import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.base.BaseActivity;
 import com.iosix.eldblesample.fragments.SignatureFragment;
 import com.iosix.eldblesample.interfaces.Communicator;
-import com.iosix.eldblesample.models.SendDvir;
-import com.iosix.eldblesample.retrofit.APIInterface;
-import com.iosix.eldblesample.retrofit.ApiClient;
-import com.iosix.eldblesample.roomDatabase.entities.DvirEntity;
-import com.iosix.eldblesample.roomDatabase.entities.MechanicSignatureEntity;
+import com.iosix.eldblesample.models.Dvir;
 import com.iosix.eldblesample.roomDatabase.entities.SignatureEntity;
-import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
 import com.iosix.eldblesample.shared_prefs.DriverSharedPrefs;
-import com.iosix.eldblesample.shared_prefs.SessionManager;
 import com.iosix.eldblesample.shared_prefs.SignaturePrefs;
 import com.iosix.eldblesample.shared_prefs.UserData;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
@@ -46,27 +39,25 @@ import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
 
 import static android.os.Build.VERSION.SDK_INT;
 
+import static com.iosix.eldblesample.enums.Day.stringToDay;
 import static com.iosix.eldblesample.utils.Utils.defects;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class SignatureActivity extends BaseActivity implements Communicator {
 
-    private ArrayList<String> mParams;
     private ArrayList<String> selectedTrailers;
     private ArrayList<String> unitDefects;
     private ArrayList<String> trailerDefects;
     private String day;
+    private String notes;
+    private String time;
+    private String location;
+    private String vehicle;
     private DvirViewModel dvirViewModel;
     private SignatureViewModel signatureViewModel;
     private SignaturePrefs signaturePrefs;
@@ -94,13 +85,18 @@ public class SignatureActivity extends BaseActivity implements Communicator {
         TextView save = findViewById(R.id.idAddDvirSave);
         ViewPager2 viewPager = findViewById(R.id.viewpager);
 
-        boolean mParam1 = getIntent().getBooleanExtra("isTruckSelected", false);
-        mParams = getIntent().getStringArrayListExtra("arrayList");
         selectedTrailers = getIntent().getStringArrayListExtra("selectedTrailers");
         unitDefects = getIntent().getStringArrayListExtra("unitDefects");
         trailerDefects = getIntent().getStringArrayListExtra("trailerDefects");
         resultReceiver = getIntent().getParcelableExtra("finisher");
         day = getIntent().getStringExtra("day");
+        notes = getIntent().getStringExtra("notes");
+        time = getIntent().getStringExtra("time");
+        location = getIntent().getStringExtra("location");
+        vehicle = getIntent().getStringExtra("unit");
+        unitDefects.addAll(trailerDefects);
+
+        boolean mParam1 = unitDefects.size() > 0;
         signaturePrefs = new SignaturePrefs(this);
 
         eldJsonViewModel = ViewModelProviders.of(this).get(EldJsonViewModel.class);
@@ -112,167 +108,40 @@ public class SignatureActivity extends BaseActivity implements Communicator {
         img.setOnClickListener(v -> onBackPressed());
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        SignatureFragmentAdapter adapter = new SignatureFragmentAdapter(fragmentManager, getLifecycle(), mParam1,mParams,day);
+        SignatureFragmentAdapter adapter = new SignatureFragmentAdapter(fragmentManager, getLifecycle(), mParam1,day);
         viewPager.setAdapter(adapter);
 
         signatureViewModel = new SignatureViewModel(this.getApplication());
         signatureViewModel = ViewModelProviders.of(this).get(SignatureViewModel.class);
-        signatureViewModel.getMgetAllSignatures().observe(this, signatureEntities -> {
-        });
 
         dvirViewModel = ViewModelProviders.of(this).get(DvirViewModel.class);
-        dvirViewModel.getMgetDvirs().observe(this, dvirEntities -> {
-        });
 
         save.setOnClickListener(v -> {
-            if(isChecked){
-                if (bitmap == null){
-                    if (signaturePrefs.fetchMechanicSignature() == null){
-                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-                        alertDialog.setTitle("Signature missed")
-                                .setMessage("Mechanic must sign")
-                                .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
-                        AlertDialog alert = alertDialog.create();
-                        alert.show();
-                    }else {
-                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-                        alertDialog.setTitle("Signature missed")
-                                .setMessage("Sign or take your saved signatures")
-                                .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
-                        AlertDialog alert = alertDialog.create();
-                        alert.show();
-                    }
-                }else{
-                    if (mechanicBitmap == null){
-                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-                        alertDialog.setTitle("Signature missed")
-                                .setMessage("Mechanic must sign")
-                                .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
-                        AlertDialog alert = alertDialog.create();
-                        alert.show();
+            if (bitmap == null){
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+                alertDialog.setTitle("Signature missed")
+                        .setMessage("Sign or take your saved signatures")
+                        .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
+                AlertDialog alert = alertDialog.create();
+                alert.show();
+            } else {
+                signatureViewModel.insertSignature(new SignatureEntity(bitmap,stringToDay(day)));
 
-                    }else {
-                        try {
-                            signatureViewModel.insertSignature(new SignatureEntity(driverSharedPrefs.getDriverId(),bitmap,day));
-                        } catch (ExecutionException | InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                        try {
-                            signatureViewModel.insertMechanicSignature(new MechanicSignatureEntity(mechanicBitmap,day));
-                        } catch (ExecutionException | InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        String currDay;
-                        currDay = mParams.get(4);
-                        try {
-                            dvirViewModel.insertDvir(new DvirEntity(driverSharedPrefs.getDriverId(),
-                                    mParams.get(0),getString(selectedTrailers),defects(unitDefects),defects(trailerDefects),true,
-                                    mParams.get(1),mParams.get(2),mParams.get(2), day
-                            ));
-                            Intent intent = new Intent(SignatureActivity.this, LGDDActivity.class);
-                            intent.putExtra("position", 3);
-                            intent.putExtra("currDay",currDay);
-                            startActivity(intent);
-                            finish();
-                            resultReceiver.send(2,new Bundle());
-
-                            if (unitDefects.size() == 0 && trailerDefects.size() == 0){
-                                if (selectedTrailers.size() == 0){
-                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),null,null,"null",mParams.get(1),null));
-                                }else {
-                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),selectedTrailers,null,"null",mParams.get(1),null));
-                                }
-                            }else {
-                                trailerDefects.addAll(unitDefects);
-                                if (selectedTrailers.size() == 0){
-                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),null,trailerDefects,mParams.get(3),mParams.get(1),null));
-                                }else {
-                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),selectedTrailers,trailerDefects,mParams.get(3),mParams.get(1),null));
-                                }
-                            }
-
-                        } catch (ExecutionException | InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                Intent intent = new Intent(SignatureActivity.this, LGDDActivity.class);
+                intent.putExtra("position", 3);
+                intent.putExtra("currDay",day);
+                if (!mParam1 || isChecked){
+                    intent.putExtra("isSatisfactory",true);
+                }else {
+                    intent.putExtra("isSatisfactory",false);
                 }
-            }else{
-                if (bitmap == null){
-                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-                    alertDialog.setTitle("Signature missed")
-                            .setMessage("Sign or take your saved signatures")
-                            .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
-                    AlertDialog alert = alertDialog.create();
-                    alert.show();
-                }else{
-                    try {
-                        signatureViewModel.insertSignature(new SignatureEntity(driverSharedPrefs.getDriverId(),bitmap,day));
-                    } catch (ExecutionException | InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    String currDay;
-                    currDay = mParams.get(4);
-                    try {
-                        if (!mParams.get(1).equals("No unit selected") || !mParams.get(2).equals("No trailer selected")){
-                            dvirViewModel.insertDvir(new DvirEntity(driverSharedPrefs.getDriverId(),
-                                    mParams.get(0),getString(selectedTrailers),defects(unitDefects),defects(trailerDefects),false,
-                                    mParams.get(1),mParams.get(2),mParams.get(2), day
-                            ));
-                            Intent intent = new Intent(this, LGDDActivity.class);
-                            intent.putExtra("position", 3);
-                            intent.putExtra("currDay",currDay);
-                            startActivity(intent);
-                            finish();
-                            resultReceiver.send(2,new Bundle());
-                            if (unitDefects.size() == 0 && trailerDefects.size() == 0){
-                                if (selectedTrailers.size() == 0){
-                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),null,null,"null",mParams.get(1),null));
-                                }else {
-                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),selectedTrailers,null,"null",mParams.get(1),null));
-                                }
-                            }else {
-                                trailerDefects.addAll(unitDefects);
-                                if (selectedTrailers.size() == 0){
-                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),null,trailerDefects,mParams.get(3),mParams.get(1),null));
-                                }else {
-                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),selectedTrailers,trailerDefects,mParams.get(3),mParams.get(1),null));
-                                }
-                            }
 
-                        }else {
-                            dvirViewModel.insertDvir(new DvirEntity(driverSharedPrefs.getDriverId(),
-                                    mParams.get(0),getString(selectedTrailers),defects(unitDefects),defects(trailerDefects),true,
-                                    mParams.get(1),mParams.get(2),mParams.get(3), day
-                            ));
-                            Intent intent = new Intent(this, LGDDActivity.class);
-                            intent.putExtra("position", 3);
-                            intent.putExtra("currDay",currDay);
-                            startActivity(intent);
-                            finish();
-                            resultReceiver.send(2,new Bundle());
+                startActivity(intent);
+                finish();
+                resultReceiver.send(2,new Bundle());
 
-                            if (unitDefects.size() == 0 && trailerDefects.size() == 0){
-                                if (selectedTrailers.size() == 0){
-                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),null,null,"null",mParams.get(1),null));
-                                }else {
-                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),selectedTrailers,null,"null",mParams.get(1),null));
-                                }
-                            }else {
-                                trailerDefects.addAll(unitDefects);
-                                if (selectedTrailers.size() == 0){
-                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),null,trailerDefects,mParams.get(3),mParams.get(1),null));
-                                }else {
-                                    eldJsonViewModel.sendDvir(new SendDvir(mParams.get(0),selectedTrailers,trailerDefects,mParams.get(3),mParams.get(1),null));
-                                }
-                            }
-
-                        }
-                    } catch (ExecutionException | InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                }
+                eldJsonViewModel.sendDvir(new Dvir((!mParam1 || isChecked),vehicle,selectedTrailers,unitDefects,notes,time,location,stringToDay(day)));
+                dvirViewModel.insertDvir(new Dvir((!mParam1 || isChecked),vehicle,selectedTrailers,unitDefects,notes,time,location,stringToDay(day)));
             }
         });
     }
@@ -340,12 +209,6 @@ public class SignatureActivity extends BaseActivity implements Communicator {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        this.getViewModelStore().clear();
-    }
-
-    @Override
     public void sendBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
     }
@@ -364,22 +227,19 @@ public class SignatureActivity extends BaseActivity implements Communicator {
 class SignatureFragmentAdapter extends FragmentStateAdapter {
 
     private final boolean mParam1;
-    private final ArrayList<String> mParams;
     private final String day;
 
     public SignatureFragmentAdapter(@NonNull FragmentManager fragmentManager,
-                                    @NonNull Lifecycle lifecycle,boolean mParam1,
-                                    ArrayList<String> mParams,String day) {
+                                    @NonNull Lifecycle lifecycle,boolean mParam1, String day) {
         super(fragmentManager, lifecycle);
         this.mParam1 = mParam1;
-        this.mParams = mParams;
         this.day = day;
     }
 
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-            return SignatureFragment.newInstance(mParam1,mParams,day);
+            return SignatureFragment.newInstance(mParam1,day);
         }
 
     @Override

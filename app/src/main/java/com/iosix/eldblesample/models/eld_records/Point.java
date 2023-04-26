@@ -6,23 +6,18 @@ import java.util.ArrayList;
 
 public class Point {
 
-    @SerializedName("type")
-    String type;
+    @SerializedName("SRID")
+    final String type = "4326";
 
     @SerializedName("coordinates")
     ArrayList<Double> arrayList;
 
-    public Point(String type, ArrayList<Double> arrayList) {
-        this.type = type;
+    public Point(ArrayList<Double> arrayList) {
         this.arrayList = arrayList;
     }
 
     public String getType() {
         return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public ArrayList<Double> getArrayList() {

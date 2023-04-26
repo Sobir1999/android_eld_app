@@ -1,46 +1,107 @@
 package com.iosix.eldblesample.viewModel;
 
+import static com.iosix.eldblesample.enums.Day.stringToDay;
+
 import android.app.Application;
+import android.content.Context;
+import android.graphics.Color;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
 
-import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
-import com.iosix.eldblesample.roomDatabase.entities.MechanicSignatureEntity;
+import com.github.gcacace.signaturepad.views.SignaturePad;
+import com.google.android.material.color.MaterialColors;
+import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.roomDatabase.entities.SignatureEntity;
-import com.iosix.eldblesample.roomDatabase.repository.DayDaoRepository;
 import com.iosix.eldblesample.roomDatabase.repository.SignatureRepository;
 
-import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.net.ContentHandler;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class SignatureViewModel extends AndroidViewModel {
 
-    private SignatureRepository repository;
-    private LiveData<List<SignatureEntity>> mgetAllSignatures;
-    private LiveData<List<MechanicSignatureEntity>> mgetAllMechanicSignatures;
+    private final SignatureRepository repository;
+    private final CompositeDisposable disposables;
 
     public SignatureViewModel(@NonNull Application application) {
         super(application);
         repository = new SignatureRepository(application);
-        mgetAllSignatures = repository.getGetAllSignatures();
-        mgetAllMechanicSignatures = repository.getGetAllMechanicSignatures();
+        disposables = new CompositeDisposable();
     }
 
-    public LiveData<List<SignatureEntity>> getMgetAllSignatures() {
-        return mgetAllSignatures;
+    public void getMgetAllSignatures(Context context,String currDay, SignaturePad signaturePad) {
+        Disposable disposable = repository.getGetAllSignatures()
+                .flattenAsObservable(signatureEntities -> signatureEntities)
+                .filter(signatureEntity -> signatureEntity.getDay().equals(stringToDay(currDay)))
+                .toList()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(signatureEntities->{
+                    if (signatureEntities.size()>0){
+                        signaturePad.setBackgroundColor(MaterialColors.getColor(context, R.attr.customBgColor,Color.WHITE));
+                        signaturePad.setSignatureBitmap(signatureEntities.get(signatureEntities.size()-1).getSignatureBitmap());
+                    }else {
+                        signaturePad.clear();
+                    }
+                }, throwable -> {
+
+                });
+        disposables.add(disposable);
     }
 
-    public LiveData<List<MechanicSignatureEntity>> getMgetAllMechanicSignatures() {
-        return mgetAllMechanicSignatures;
+    public void getLastSignatures(String currDay,ImageView imageView) {
+        Disposable disposable = repository.getGetAllSignatures()
+                .flattenAsObservable(signatureEntities -> signatureEntities)
+                .filter(signatureEntity -> signatureEntity.getDay().equals(stringToDay(currDay)))
+                .toList()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(signatureEntities->{
+                    if (signatureEntities.size()>0){
+                        imageView.setImageBitmap(signatureEntities.get(signatureEntities.size()-1).getSignatureBitmap());
+                    }else {
+                        imageView.setImageBitmap(null);
+                    }
+                }, throwable -> {
+
+                });
+        disposables.add(disposable);
     }
 
-    public Long insertSignature(SignatureEntity entity) throws ExecutionException, InterruptedException {
-        return repository.insertSignature(entity);
+    public void getLastSign(Context context,TextView textView,SignaturePad signaturePad) {
+        Disposable disposable = repository.getGetAllSignatures()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(signatureEntities->{
+                   if (signatureEntities.size()>0){
+                       textView.setOnClickListener(view -> {
+                           signaturePad.setBackgroundColor(MaterialColors.getColor(context, R.attr.customBgColor,Color.WHITE));
+                           signaturePad.setSignatureBitmap(signatureEntities.get(signatureEntities.size()-1).getSignatureBitmap());
+                       });
+                   }
+                }, throwable -> {
+
+                });
+        disposables.add(disposable);
     }
 
-    public Long insertMechanicSignature(MechanicSignatureEntity mechanicSignatureEntity) throws ExecutionException, InterruptedException {
-        return repository.insertMechanicSignature(mechanicSignatureEntity);
+    public void insertSignature(SignatureEntity entity){
+        Completable.fromAction(() -> repository.insertSignature(entity)).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+    }
+
+    @Override
+    protected void onCleared() {
+        disposables.dispose();
+        disposables.clear();
+        super.onCleared();
     }
 }

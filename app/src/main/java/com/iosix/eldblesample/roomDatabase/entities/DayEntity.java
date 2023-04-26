@@ -5,6 +5,10 @@ import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
+import org.threeten.bp.ZonedDateTime;
+
+import java.util.Date;
+
 @Entity(tableName = "day_table", indices = {@Index(value = {"day"}, unique = true)})
 public class DayEntity {
     @PrimaryKey(autoGenerate = true)
@@ -12,12 +16,9 @@ public class DayEntity {
     private int id;
     @ColumnInfo(name = "day")
     private String day;
-    @ColumnInfo(name = "day_name")
-    private String day_name;
 
-    public DayEntity(String day, String day_name) {
+    public DayEntity(String day) {
         this.day = day;
-        this.day_name = day_name;
     }
 
     public int getId() {
@@ -36,11 +37,4 @@ public class DayEntity {
         this.day = day;
     }
 
-    public String getDay_name() {
-        return day_name;
-    }
-
-    public void setDay_name(String day_name) {
-        this.day_name = day_name;
-    }
 }

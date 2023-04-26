@@ -23,10 +23,10 @@ public class ApiClient {
 
     private static final Object LOCK = new Object();
 
-    public static final String BASE_URL = "https://fastlogz.herokuapp.com/";
-    private static volatile Retrofit retrofit = null;
+    public static final String BASE_URL = "http://api.v2.fastlogz.com/";
+    private volatile Retrofit retrofit = null;
 
-    public static Retrofit getClient() {
+    public Retrofit getClient() {
         if (retrofit == null) {
             synchronized (LOCK) {
                 if (retrofit == null) {
@@ -38,14 +38,13 @@ public class ApiClient {
         return retrofit;
     }
 
-    private static Retrofit creteInstance() {
+    private Retrofit creteInstance() {
         final Context context = MyApplication.instance;
 
         SessionManager sessionManager = SessionManager.getInstance(context);
-        LastStopSharedPrefs lastStopSharedPrefs = LastStopSharedPrefs.getInstance(context);
 
         TokenServiceHolder myServiceHolder = new TokenServiceHolder();
-        TokenAuthenticator authenticator = new TokenAuthenticator(lastStopSharedPrefs, myServiceHolder, sessionManager);
+        TokenAuthenticator authenticator = new TokenAuthenticator(myServiceHolder, sessionManager);
 
         OkHttpClient.Builder okHttpBuilder = new OkHttpClient.Builder()
                 .connectTimeout(5, TimeUnit.MINUTES)
@@ -65,15 +64,13 @@ public class ApiClient {
             okHttpBuilder.addInterceptor(tokenRefreshInterceptor);
         }
 
-        if (com.iosix.eldblesample.BuildConfig.DEBUG) {
-            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(message -> {
-                Log.d("NETWORK", message);
-            });
-
-            loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
-            okHttpBuilder.addInterceptor(createChucker(context));
-            okHttpBuilder.addInterceptor(loggingInterceptor);
-        }
+//        if (com.iosix.eldblesample.BuildConfig.DEBUG) {
+//            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(message -> {
+//            });
+//            loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
+//            okHttpBuilder.addInterceptor(createChucker(context));
+//            okHttpBuilder.addInterceptor(loggingInterceptor);
+//        }
 
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)

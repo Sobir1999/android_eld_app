@@ -1,16 +1,20 @@
 package com.iosix.eldblesample.roomDatabase.database;
 
 import android.content.Context;
-import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.room.Database;
+import androidx.room.DatabaseConfiguration;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
-import androidx.sqlite.db.SupportSQLiteDatabase;
+import androidx.sqlite.db.SupportSQLiteOpenHelper;
+import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory;
 
+import com.iosix.eldblesample.models.Dvir;
+import com.iosix.eldblesample.models.Status;
 import com.iosix.eldblesample.models.User;
+import com.iosix.eldblesample.models.VehicleList;
 import com.iosix.eldblesample.models.eld_records.LiveDataRecord;
 import com.iosix.eldblesample.roomDatabase.converter.Converter;
 import com.iosix.eldblesample.roomDatabase.converter.TrailerConverter;
@@ -22,9 +26,7 @@ import com.iosix.eldblesample.roomDatabase.daos.SignatureDao;
 import com.iosix.eldblesample.roomDatabase.daos.StatusTruckDao;
 import com.iosix.eldblesample.roomDatabase.daos.UserDao;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
-import com.iosix.eldblesample.roomDatabase.entities.DvirEntity;
 import com.iosix.eldblesample.roomDatabase.entities.GeneralEntity;
-import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 import com.iosix.eldblesample.roomDatabase.entities.MainOfficeEntity;
 import com.iosix.eldblesample.roomDatabase.entities.MechanicSignatureEntity;
 import com.iosix.eldblesample.roomDatabase.entities.SignatureEntity;
@@ -32,14 +34,13 @@ import com.iosix.eldblesample.roomDatabase.entities.TrailerDefectsEntity;
 import com.iosix.eldblesample.roomDatabase.entities.TrailerId;
 import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
 import com.iosix.eldblesample.roomDatabase.entities.UnitDefectsEntity;
-import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 
-@Database(entities = {LogEntity.class, DayEntity.class, DvirEntity.class, GeneralEntity.class,
+@Database(entities = {Status.class, DayEntity.class, Dvir.class, GeneralEntity.class,
         TrailersEntity.class, TrailerDefectsEntity.class,
-        UnitDefectsEntity.class, VehiclesEntity.class,
+        UnitDefectsEntity.class, VehicleList.class,
         MainOfficeEntity.class, SignatureEntity.class,
         MechanicSignatureEntity.class, User.class, TrailerId.class, LiveDataRecord.class,
-}, version = 36)
+},exportSchema = false, version = 50)
 @TypeConverters({Converter.class, TrailerConverter.class,TrailerConverterString.class})
 public abstract class StatusTruckRoomDatabase extends RoomDatabase {
 
@@ -57,34 +58,10 @@ public abstract class StatusTruckRoomDatabase extends RoomDatabase {
             if (INSTANCE == null) {
                 INSTANCE = Room.databaseBuilder(context.getApplicationContext(), StatusTruckRoomDatabase.class, "status_database")
                         .fallbackToDestructiveMigration()
-                        .addCallback(roomCallback)
                         .build();
             }
         }
         return INSTANCE;
-    }
-
-    private static RoomDatabase.Callback roomCallback = new RoomDatabase.Callback() {
-        @Override
-        public void onCreate(@NonNull SupportSQLiteDatabase db) {
-            super.onCreate(db);
-            new PopulateDBAsyncTask(INSTANCE).execute();
-        }
-    };
-
-    private static class PopulateDBAsyncTask extends AsyncTask<Void, Void, Void> {
-        private StatusTruckDao dao;
-        private DayDao dayAndStatusDao;
-
-        private PopulateDBAsyncTask(StatusTruckRoomDatabase db) {
-            dao = db.statusTruckDao();
-            dayAndStatusDao = db.dayDao();
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            return null;
-        }
     }
 
 }

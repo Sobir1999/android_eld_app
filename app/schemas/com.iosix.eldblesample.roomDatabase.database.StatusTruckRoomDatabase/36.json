@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 36,
-    "identityHash": "a0d0273e4d7160ffd12f52b33ec303a9",
+    "identityHash": "63d0acb1fe0c964c0525a85d6cb68cea",
     "entities": [
       {
         "tableName": "log_table",
@@ -58,10 +58,10 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [],
         "foreignKeys": []
@@ -90,10 +90,10 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [
           {
@@ -102,7 +102,8 @@
             "columnNames": [
               "day"
             ],
-            "createSql": "CREATE UNIQUE INDEX `index_day_table_day` ON `${TABLE_NAME}` (`day`)"
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_day_table_day` ON `${TABLE_NAME}` (`day`)"
           }
         ],
         "foreignKeys": []
@@ -179,10 +180,10 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [
           {
@@ -191,7 +192,8 @@
             "columnNames": [
               "day"
             ],
-            "createSql": "CREATE UNIQUE INDEX `index_dvir_table_day` ON `${TABLE_NAME}` (`day`)"
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_dvir_table_day` ON `${TABLE_NAME}` (`day`)"
           }
         ],
         "foreignKeys": []
@@ -286,10 +288,10 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [],
         "foreignKeys": []
@@ -312,10 +314,10 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": false,
           "columnNames": [
             "trailer_id"
-          ],
-          "autoGenerate": false
+          ]
         },
         "indices": [],
         "foreignKeys": []
@@ -344,10 +346,10 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [],
         "foreignKeys": []
@@ -376,17 +378,17 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [],
         "foreignKeys": []
       },
       {
         "tableName": "vehicles",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `vehicle_id` TEXT, `make` TEXT, `model` TEXT, `year` TEXT, `license_plate_num` TEXT, `license_plate_issue_state` TEXT, `vin` TEXT, `notes_vehicle` TEXT, `eld_id` TEXT, `company` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -395,17 +397,71 @@
             "notNull": true
           },
           {
-            "fieldPath": "name",
-            "columnName": "name",
+            "fieldPath": "vehicle_id",
+            "columnName": "vehicle_id",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "make",
+            "columnName": "make",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "model",
+            "columnName": "model",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "year",
+            "columnName": "year",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "license_plate_num",
+            "columnName": "license_plate_num",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "license_plate_issue_state",
+            "columnName": "license_plate_issue_state",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "vin",
+            "columnName": "vin",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "notes_vehicle",
+            "columnName": "notes_vehicle",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "eld_id",
+            "columnName": "eld_id",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "company",
+            "columnName": "company",
             "affinity": "TEXT",
             "notNull": false
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [],
         "foreignKeys": []
@@ -476,10 +532,10 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [],
         "foreignKeys": []
@@ -514,10 +570,10 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
             "signature_id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [],
         "foreignKeys": []
@@ -546,10 +602,10 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [],
         "foreignKeys": []
@@ -644,10 +700,10 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [],
         "foreignKeys": []
@@ -664,10 +720,10 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": false,
           "columnNames": [
             "trailer_id"
-          ],
-          "autoGenerate": false
+          ]
         },
         "indices": [],
         "foreignKeys": []
@@ -786,18 +842,19 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": true,
           "columnNames": [
             "id"
-          ],
-          "autoGenerate": true
+          ]
         },
         "indices": [],
         "foreignKeys": []
       }
     ],
+    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"a0d0273e4d7160ffd12f52b33ec303a9\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '63d0acb1fe0c964c0525a85d6cb68cea')"
     ]
   }
 }

@@ -14,54 +14,31 @@ import com.iosix.eldblesample.roomDatabase.entities.GeneralEntity;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
+
 public class GeneralRepository {
 
-    private final GeneralDao generalDao;
-    private final LiveData<List<GeneralEntity>> getGeneral;
+    private final StatusTruckRoomDatabase db;
 
 
     public GeneralRepository(Application application) {
-        StatusTruckRoomDatabase db = StatusTruckRoomDatabase.getINSTANCE(application);
-        generalDao = db.generalDao();
-        getGeneral = generalDao.getGenerals();
+        db = StatusTruckRoomDatabase.getINSTANCE(application);
     }
 
-    public LiveData<List<GeneralEntity>> getGeneral() {
-        return getGeneral;
+    public Single<List<GeneralEntity>> getGeneral() {
+        return db.generalDao().getGenerals();
     }
 
-    public Long insertGeneral(GeneralEntity generalEntity) throws ExecutionException, InterruptedException {
-        return new GeneralRepository.insertGeneralAsync(generalDao).execute(generalEntity).get();
+    public Single<List<GeneralEntity>> getCurrDayGeneral(String day) {
+        return db.generalDao().getCurDayGenerals(day);
+    }
+
+    public void insertGeneral(GeneralEntity generalEntity){
+        db.generalDao().insertGeneral(generalEntity);
     }
 
     public void deleteGeneral(GeneralEntity generalEntity) {
-        new GeneralRepository.deleteGeneralAsync(generalDao).execute();
-    }
-
-    private static class insertGeneralAsync extends AsyncTask<GeneralEntity, Void, Long> {
-        private GeneralDao generalDao;
-
-        insertGeneralAsync(GeneralDao generalDao) {
-            this.generalDao = generalDao;
-        }
-
-        @Override
-        protected Long doInBackground(GeneralEntity... generalEntities) {
-            return generalDao.insertGeneral(generalEntities[0]);
-        }
-    }
-
-    private static class deleteGeneralAsync extends AsyncTask<GeneralEntity, Void, Void> {
-        private GeneralDao generalDao;
-
-        deleteGeneralAsync(GeneralDao generalDao) {
-            this.generalDao = generalDao;
-        }
-
-        @Override
-        protected Void doInBackground(GeneralEntity... generalEntities) {
-            generalDao.deleteGeneral(generalEntities[0]);
-            return null;
-        }
+        db.generalDao().deleteGeneral(generalEntity);
     }
 }

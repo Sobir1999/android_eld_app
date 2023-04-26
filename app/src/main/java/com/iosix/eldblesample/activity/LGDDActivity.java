@@ -32,11 +32,11 @@ import java.util.List;
 public class LGDDActivity extends BaseActivity{
 
     private TextView textFrag;
+    private TextView prev, next;
     private int index = 0;
     private DvirViewModel dvirViewModel;
     private List<DayEntity> dayEntities = new ArrayList<>();
     private String currDay;
-    private String mParams;
     private DayDaoViewModel dayDaoViewModel;
     ViewPager2 viewPager;
 
@@ -56,29 +56,21 @@ public class LGDDActivity extends BaseActivity{
     public void initView() {
         super.initView();
 
-        dvirViewModel = ViewModelProviders.of(this).get(DvirViewModel.class);
+        prev = findViewById(R.id.idPreviewLog);
+        next = findViewById(R.id.idNextLog);
+        textFrag = findViewById(R.id.idTextFrag);
 
+        dvirViewModel = ViewModelProviders.of(this).get(DvirViewModel.class);
         dayDaoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
 
-        dayDaoViewModel.getMgetAllDays().observe(this, dayEntities -> {
-            LGDDActivity.this.dayEntities = dayEntities;
-            dvirViewModel.getCurrentName().postValue(mParams);
-            for (int i = 0; i < dayEntities.size(); i++) {
-                if (dayEntities.get(i).getDay().equals(mParams)){
-                     index = i;
-                }
-            }
-            textFrag.setText(currDay);
-        });
-
         int pos = getIntent().getIntExtra("position", 4);
-            mParams = getIntent().getStringExtra("currDay");
-            currDay = mParams;
+        currDay = getIntent().getStringExtra("currDay");
+        boolean isSatisfactory = getIntent().getBooleanExtra("isSatisfactory",false);
+        dayDaoViewModel.getDaysforLGDD(currDay,dvirViewModel,textFrag);
 
         findViewById(R.id.idImageBack).setOnClickListener(v -> onBackPressed());
 
-        textFrag = findViewById(R.id.idTextFrag);
-        LGDDFragmentAdapter adapter = new LGDDFragmentAdapter(getSupportFragmentManager(),getLifecycle());
+        LGDDFragmentAdapter adapter = new LGDDFragmentAdapter(getSupportFragmentManager(),isSatisfactory,getLifecycle());
         int limit = (adapter.getItemCount() > 1 ? adapter.getItemCount() - 1 : 1);
 
         TabLayout tabLayout = findViewById(R.id.tab_layout);
@@ -97,7 +89,6 @@ public class LGDDActivity extends BaseActivity{
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
-                dvirViewModel.getCurrentName().postValue(currDay);
             }
 
             @Override
@@ -115,7 +106,6 @@ public class LGDDActivity extends BaseActivity{
             @Override
             public void onPageSelected(int position) {
                 tabLayout.selectTab(tabLayout.getTabAt(position));
-                dvirViewModel.getCurrentName().postValue(currDay);
             }
         });
 
@@ -129,39 +119,11 @@ public class LGDDActivity extends BaseActivity{
         next = findViewById(R.id.idNextLog);
 
         prev.setOnClickListener(v12 -> {
-            if (index > 0) {
-                index--;
-                currDay = dayEntities.get(index).getDay();
-                textFrag.setText(currDay);
-                dvirViewModel.getCurrentName().postValue(currDay);
-
-            }
+            dayDaoViewModel.clickPrevButton(textFrag,dvirViewModel);
         });
 
         next.setOnClickListener(v1 -> {
-            if (index < dayEntities.size()-1) {
-                index++;
-                currDay = dayEntities.get(index).getDay();
-                textFrag.setText(currDay);
-                dvirViewModel.getCurrentName().postValue(currDay);
-            }
+            dayDaoViewModel.clickNextButton(textFrag,dvirViewModel);
         });
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        this.getViewModelStore().clear();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        this.getViewModelStore().clear();
     }
 }

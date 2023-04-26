@@ -8,11 +8,17 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.iosix.eldblelib.EldBleDataCallback;
+import com.iosix.eldblelib.EldBroadcast;
+import com.iosix.eldblelib.EldBroadcastTypes;
+import com.iosix.eldblelib.EldDataRecord;
+import com.iosix.eldblelib.EldEngineStates;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.interfaces.AlertDialogItemClickInterface;
 import com.iosix.eldblesample.shared_prefs.LastStatusData;
@@ -23,10 +29,13 @@ public class ConnectToEldDialog extends Dialog {
     private TextView connect, cancel,idEldConnection,idIsConnected,idEngineState,disconnect;
     private AlertDialogItemClickInterface alerrtDialogItemClickInterface;
     private final int eldConnectionState;
+    private TextView gpsConnect;
+    boolean isConnectedToGps;
 
-    public ConnectToEldDialog(@NonNull Context context,int eldConnectionState) {
+    public ConnectToEldDialog(@NonNull Context context,boolean isConnectedToGps,int eldConnectionState) {
         super(context);
         this.eldConnectionState = eldConnectionState;
+        this.isConnectedToGps = isConnectedToGps;
     }
 
     public void setAlerrtDialogItemClickInterface(AlertDialogItemClickInterface alerrtDialogItemClickInterface) {
@@ -46,8 +55,26 @@ public class ConnectToEldDialog extends Dialog {
         connect = findViewById(R.id.idEldDialConnect);
         idEngineState = findViewById(R.id.idEngineState);
         disconnect = findViewById(R.id.idEldDialDisconnect);
+        gpsConnect = findViewById(R.id.idGpsConnect);
 
+        if (isConnectedToGps) {
+            gpsConnect.setText(R.string.on);
+        } else {
+            gpsConnect.setText(R.string.off);
+        }
 
+        new EldBleDataCallback(){
+            @Override
+            public void OnDataRecord(EldBroadcast dataRec, EldBroadcastTypes RecordType) {
+                if (RecordType == EldBroadcastTypes.ELD_DATA_RECORD){
+                    if (((EldDataRecord)dataRec).getEngineState() == EldEngineStates.ENGINE_ON){
+                        idEngineState.setText("ON");
+                    }else {
+                        idEngineState.setText("OFF");
+                    }
+                }
+            }
+        };
 
         if (eldConnectionState == 0){
             idIsConnected.setText("DISCONNECTED");

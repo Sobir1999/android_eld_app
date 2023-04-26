@@ -43,30 +43,9 @@ public class SessionManager {
         editor.apply();
     }
 
-    public void saveEmail(String email) {
-        Editor editor = sharedPreferences.edit();
-        editor.putString("Email", email);
-        editor.apply();
-    }
-
-    public void savePassword(String password) {
-        Editor editor = sharedPreferences.edit();
-        editor.putString("Password", password);
-        editor.apply();
-    }
-
-    public String getemail() {
-        return sharedPreferences.getString("Email", "");
-    }
-
-    public String getPassword() {
-        return sharedPreferences.getString("Password", "");
-    }
-
     public String fetchAccessToken() {
         return sharedPreferences.getString(USER_ACCESS_TOKEN, null);
     }
-
     public String fetchToken() {
         return sharedPreferences.getString(USER_TOKEN, null);
     }
@@ -74,12 +53,12 @@ public class SessionManager {
     public void clearAccessToken() {
         Editor editor = sharedPreferences.edit();
         editor.remove(USER_ACCESS_TOKEN);
-        editor.commit();
+        editor.apply();
     }
 
     public void clearToken() {
         Editor editor = sharedPreferences.edit();
         editor.remove(USER_TOKEN);
-        editor.commit();
+        editor.apply();
     }
 }

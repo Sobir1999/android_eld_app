@@ -1,6 +1,7 @@
 package com.iosix.eldblesample.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.iosix.eldblesample.R;
-import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
+import com.iosix.eldblesample.models.VehicleList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,14 +19,13 @@ import java.util.List;
 public class VehiclesListAdapter extends RecyclerView.Adapter<VehiclesListAdapter.VehiclesViewHolder> {
 
     Context context;
-    ArrayList<VehiclesEntity> arrayList;
+    List<VehicleList> arrayList = new ArrayList<>();
     TextView textView;
     VehiclesRecyclerViewItemClickListener listener;
 
-    public VehiclesListAdapter(Context context, List<VehiclesEntity> arrayList){
-        this.arrayList = new ArrayList<>();
+    public VehiclesListAdapter(Context context, List<VehicleList> arrayList){
         this.context = context;
-        this.arrayList.addAll(arrayList);
+        this.arrayList = arrayList;
     }
 
     public void setListener(VehiclesRecyclerViewItemClickListener listener) {
@@ -41,7 +41,7 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<VehiclesListAdapte
 
     @Override
     public void onBindViewHolder(@NonNull VehiclesViewHolder holder, int position) {
-        holder.onBind(position);
+        holder.onBind(arrayList.get(position));
     }
 
     @Override
@@ -56,10 +56,10 @@ public class VehiclesListAdapter extends RecyclerView.Adapter<VehiclesListAdapte
             textView = itemView.findViewById(R.id.idUnitItem);
         }
 
-        void onBind(int i){
-            textView.setText(arrayList.get(i).getName());
+        void onBind(VehicleList vehicleList){
+            textView.setText(vehicleList.getModel());
             textView.setOnClickListener(view -> {
-                listener.onclickItem(arrayList.get(i).getName());
+                listener.onclickItem(vehicleList.getModel());
             });
         }
     }

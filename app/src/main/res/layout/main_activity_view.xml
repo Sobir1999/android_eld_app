@@ -2,7 +2,9 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/idScrollview"
     android:layout_width="match_parent"
+    android:fillViewport="true"
     android:background="?attr/customBgViewColor"
     android:layout_height="match_parent">
 
@@ -469,6 +471,7 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/quarter_vertical_margin"
                         android:id="@+id/idConstraintPC"
                         android:visibility="gone">
 
@@ -511,6 +514,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/idConstraintYM"
+                        android:layout_marginVertical="@dimen/quarter_vertical_margin"
                         android:visibility="gone">
 
                         <TextView
@@ -701,8 +705,8 @@
             android:layout_height="wrap_content"
             android:background="@drawable/background_main_view"
             android:clickable="true"
-            android:focusable="true"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:focusable="true">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -737,11 +741,13 @@
                 android:id="@+id/idRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingVertical="@dimen/button_radius"
-                android:nestedScrollingEnabled="false" />
+                android:nestedScrollingEnabled="false"
+                android:divider="?attr/customBgViewColor"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:dividerHeight="@dimen/button_stroke_with"
+                android:paddingVertical="@dimen/button_radius"/>
 
         </LinearLayout>
-
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

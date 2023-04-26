@@ -233,4 +233,5 @@
     <string name="status">status</string>
     <string name="start_edt">Start(EDT)</string>
     <string name="duration">Duration</string>
+    <string name="todo">TODO</string>
 </resources>

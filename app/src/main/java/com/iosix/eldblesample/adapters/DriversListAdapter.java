@@ -26,7 +26,7 @@ public class DriversListAdapter extends RecyclerView.Adapter<DriversListAdapter.
         this.arrayList = new ArrayList<>();
         this.context = context;
         this.arrayList.addAll(arrayList);
-        this.arrayList.add(new User("None","","","","","","",new ArrayList<>(),"","","","",""));
+//        this.arrayList.add(new User("None","","","","","","",new ArrayList<>(),"","","","",""));
     }
 
     public void setListener(DriverRecyclerViewItemClickListener listener) {

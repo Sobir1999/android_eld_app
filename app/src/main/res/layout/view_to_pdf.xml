@@ -849,13 +849,11 @@
 
             </LinearLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
+            <com.iosix.eldblesample.customViews.MyListView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/idInspectionRv"
-                android:layout_marginVertical="@dimen/half_vertical_margin"
-                tools:listitem="@layout/inspection_log_item"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+                android:layout_marginVertical="@dimen/half_vertical_margin"/>
 
 
             <View
@@ -959,160 +957,6 @@
                 android:layout_marginHorizontal="12dp"
                 android:layout_marginTop="8dp"
                 android:background="@color/black"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="12dp"
-                android:orientation="horizontal"
-                android:padding="4dp"
-                android:background="@drawable/table_item_border">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/mm_dd"
-                        android:textStyle="bold"
-                        android:layout_gravity="center_horizontal"
-                        android:textColor="@color/black"
-                        android:textSize="6.5sp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/_00h_00m"
-                        android:layout_gravity="center_horizontal"
-                        android:textSize="6.5sp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/mm_dd"
-                        android:textStyle="bold"
-                        android:layout_gravity="center_horizontal"
-                        android:textColor="@color/black"
-                        android:textSize="6.5sp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/_00h_00m"
-                        android:layout_gravity="center_horizontal"
-                        android:textSize="6.5sp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/mm_dd"
-                        android:textStyle="bold"
-                        android:layout_gravity="center_horizontal"
-                        android:textColor="@color/black"
-                        android:textSize="6.5sp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/_00h_00m"
-                        android:layout_gravity="center_horizontal"
-                        android:textSize="6.5sp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/mm_dd"
-                        android:textStyle="bold"
-                        android:layout_gravity="center_horizontal"
-                        android:textColor="@color/black"
-                        android:textSize="6.5sp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/_00h_00m"
-                        android:layout_gravity="center_horizontal"
-                        android:textSize="6.5sp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/mm_dd"
-                        android:textStyle="bold"
-                        android:layout_gravity="center_horizontal"
-                        android:textColor="@color/black"
-                        android:textSize="6.5sp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/_00h_00m"
-                        android:layout_gravity="center_horizontal"
-                        android:textSize="6.5sp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/mm_dd"
-                        android:textStyle="bold"
-                        android:layout_gravity="center_horizontal"
-                        android:textColor="@color/black"
-                        android:textSize="6.5sp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/_00h_00m"
-                        android:layout_gravity="center_horizontal"
-                        android:textSize="6.5sp" />
-
-                </LinearLayout>
-
-            </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

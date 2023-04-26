@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="@dimen/card_padding_size"
+    android:paddingVertical="@dimen/quarter_vertical_margin"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
@@ -15,18 +15,21 @@
         android:layout_height="wrap_content"
         tools:ignore="MissingConstraints">
 
-        <ImageView
+        <ImageButton
             android:id="@+id/idTableSignature"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/card_image_size"
+            android:layout_height="@dimen/card_image_size"
+            android:background="@drawable/button_bg_mini"
+            android:contentDescription="@string/todo"
             android:src="@drawable/ic_pencil_svgrepo_com"
+            app:layout_constraintEnd_toStartOf="@id/idTableDay"
             app:layout_constraintLeft_toLeftOf="parent"
             app:tint="@color/colorPrimary"
-            app:layout_constraintEnd_toStartOf="@id/idTableDay"/>
+            tools:ignore="TouchTargetSizeCheck" />
 
         <TextView
             android:id="@+id/idTableDay"
-            android:text="Sun"
+            android:text="@string/weekdays"
             android:gravity="center_vertical"
             android:textSize="@dimen/mini_text_size"
             android:textStyle="bold"
@@ -36,7 +39,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@id/idTableSignature"
-            android:layout_width="@dimen/card_image_size"
+            android:layout_width="@dimen/drawer_avatar_size"
             android:layout_marginStart="@dimen/card_padding_size"
             android:layout_height="wrap_content"/>
 
@@ -55,7 +58,7 @@
 
         <TextView
             android:id="@+id/idTableTime"
-            android:text="00h 00m"
+            android:text="@string/_00h_00m"
             android:textSize="@dimen/mini_text_size"
             android:drawablePadding="@dimen/card_padding_size"
             android:fontFamily="@font/montserrat"
@@ -69,21 +72,24 @@
             tools:ignore="MissingConstraints"
             app:drawableLeftCompat="@drawable/ic_baseline_access_time_24" />
 
-        <TextView
+        <Button
             android:id="@+id/idTableDvir"
-            android:text="@string/no_dvir"
-            android:textSize="@dimen/mini_text_size"
+            style="@style/TextAppearance.AppCompat.Subhead"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/card_image_size"
+            android:background="@drawable/button_bg_mini"
+            android:drawableStart="@drawable/ic__b74e24a497d9fa32d2c7d4acf314b81"
             android:drawablePadding="@dimen/card_padding_size"
             android:fontFamily="@font/montserrat"
+            android:padding="@dimen/quarter_vertical_margin"
+            android:text="@string/no_dvir"
+            android:textAllCaps="false"
             android:textColor="?attr/customTextHintColor"
-            style="@style/TextAppearance.AppCompat.Subhead"
-            app:layout_constraintTop_toTopOf="parent"
+            android:textSize="@dimen/mini_text_size"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints"
-            app:drawableLeftCompat="@drawable/ic__b74e24a497d9fa32d2c7d4acf314b81" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints,TouchTargetSizeCheck,TextContrastCheck" />
 
         <View
             android:id="@+id/idCLickableView"

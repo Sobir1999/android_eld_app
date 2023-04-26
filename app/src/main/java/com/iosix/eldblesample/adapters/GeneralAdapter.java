@@ -105,7 +105,7 @@ public class GeneralAdapter extends RecyclerView.Adapter<GeneralAdapter.GeneralV
 
             textView.setOnClickListener(v -> {
                 if (updateListener != null) {
-                    updateListener.onClick(getAbsoluteAdapterPosition());
+                    updateListener.onClick(getAdapterPosition());
                 }
             });
             imageView.setOnClickListener(v -> {

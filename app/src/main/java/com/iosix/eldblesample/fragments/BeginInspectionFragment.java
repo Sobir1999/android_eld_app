@@ -1,11 +1,11 @@
 package com.iosix.eldblesample.fragments;
 
-import static com.iosix.eldblesample.enums.Day.dateToString;
+import static com.iosix.eldblesample.enums.Day.getDayFormat;
 import static com.iosix.eldblesample.enums.Day.intToTime;
+import static com.iosix.eldblesample.enums.Day.stringToDay;
 import static com.iosix.eldblesample.enums.HOSConstants.SHIFTLIMIT;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,21 +17,20 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.iosix.eldblesample.R;
-import com.iosix.eldblesample.adapters.InspectionLogAdapter;
 import com.iosix.eldblesample.customViews.CustomLiveRulerChart;
 import com.iosix.eldblesample.customViews.CustomStableRulerChart;
-import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
-import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
+import com.iosix.eldblesample.customViews.MyListView;
+import com.iosix.eldblesample.interfaces.FetchStatusCallback;
+import com.iosix.eldblesample.models.Status;
 import com.iosix.eldblesample.shared_prefs.DriverSharedPrefs;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
 import com.iosix.eldblesample.viewModel.GeneralViewModel;
+import com.iosix.eldblesample.viewModel.SignatureViewModel;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
-import com.iosix.eldblesample.viewModel.UserViewModel;
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Calendar;
+import org.threeten.bp.ZonedDateTime;
+
 import java.util.List;
 import java.util.TimeZone;
 
@@ -42,30 +41,22 @@ public class BeginInspectionFragment extends Fragment {
     private DayDaoViewModel dayDaoViewModel;
     private DriverSharedPrefs driverSharedPrefs;
     private StatusDaoViewModel statusDaoViewModel;
-    private int index = 1;
-    private List<DayEntity> dayEntities = new ArrayList<>();
-    private String currDay;
-    private String time = "" + Calendar.getInstance().getTime();
-    public String today = time.split(" ")[1] + " " + time.split(" ")[2];
+    private SignatureViewModel signatureViewModel;
     private CustomStableRulerChart idCustomChart;
     private CustomLiveRulerChart idCustomChartLive;
-    List<LogEntity> truckStatusEntities = new ArrayList<>();
-    ArrayList<LogEntity> truckStatusEntitiesCurr = new ArrayList<>();
-    ArrayList<LogEntity> otherStatusEntities = new ArrayList<>();
 
     ImageView idSignatureReport;
     TextView idDateReport,idDriverName,idCoDriver,idDriverID,idTimeZone,idTimeZoneOffset,idDistance,idCarrier,
             idTruckTracktorId,idTrailerID,idTruckTracktorVIN,idELDProvider,idMainOffice,idHomeTerminal,
             idShippingID,idFrom,idTo,idCurrentLocation,idNotes,idTotalHoursSinceRestart,idHrsAvailableToday,idHrsWorkedToday;
-    RecyclerView inspectionRv;
+    MyListView inspectionRv;
 
     public BeginInspectionFragment() {
         // Required empty public constructor
     }
 
     public static BeginInspectionFragment newInstance() {
-        BeginInspectionFragment fragment = new BeginInspectionFragment();
-        return fragment;
+        return new BeginInspectionFragment();
     }
 
     @Override
@@ -76,6 +67,7 @@ public class BeginInspectionFragment extends Fragment {
         dayDaoViewModel = ViewModelProviders.of(requireActivity()).get(DayDaoViewModel.class);
         driverSharedPrefs = DriverSharedPrefs.getInstance(requireContext());
         statusDaoViewModel = ViewModelProviders.of(requireActivity()).get(StatusDaoViewModel.class);
+        signatureViewModel = ViewModelProviders.of(requireActivity()).get(SignatureViewModel.class);
     }
 
     @Override
@@ -129,27 +121,22 @@ public class BeginInspectionFragment extends Fragment {
 
     private void setUpViewModels(){
 
-        dayDaoViewModel.getMgetAllDays().observe(getViewLifecycleOwner(), dayEntities -> {
-            this.dayEntities = dayEntities;
-            dvirViewModel.getCurrentName().postValue(today);
-            for (int i = 0; i < dayEntities.size(); i++) {
-                if (dayEntities.get(i).getDay().equals(today)){
-                    index = i;
-                }
-            }
-            idDateReport.setText(today + "," + Calendar.getInstance().get(Calendar.YEAR));
-        });
-
-        statusDaoViewModel.getmAllStatus().observe(getViewLifecycleOwner(),logEntities -> {
-            for (int i = 0; i < logEntities.size(); i++) {
-                if (logEntities.get(i).getDriverId().equals(driverSharedPrefs.getDriverId())){
-                    truckStatusEntities.add(logEntities.get(i));
-                }
-            }
-        });
+        dayDaoViewModel.getDaysforInspection(getDayFormat(ZonedDateTime.now()),dvirViewModel,idDateReport);
 
         dvirViewModel.getCurrentName().observe(getViewLifecycleOwner(),day ->{
+            signatureViewModel.getLastSignatures(day,idSignatureReport);
 
+            statusDaoViewModel.inspectionLogList(getContext(),day,inspectionRv);
+
+            if(day.equals(getDayFormat(ZonedDateTime.now()))){
+                idCustomChart.setVisibility(View.GONE);
+                idCustomChartLive.setVisibility(View.VISIBLE);
+                statusDaoViewModel.getCurDateStatus(idCustomChartLive,idCustomChart,day);
+            }else {
+                idCustomChartLive.setVisibility(View.GONE);
+                idCustomChart.setVisibility(View.VISIBLE);
+                statusDaoViewModel.getCurDateStatus(idCustomChartLive,idCustomChart,day);
+            }
             idHrsWorkedToday.setText(intToTime(driverSharedPrefs.getWorkingHours(driverSharedPrefs.getDriverId()+ " " + day)));
             if (SHIFTLIMIT - driverSharedPrefs.getWorkingHours(driverSharedPrefs.getDriverId()+ " " + day) >= 0){
                 idHrsAvailableToday.setText(intToTime(SHIFTLIMIT - driverSharedPrefs.getWorkingHours(driverSharedPrefs.getDriverId()+ " " + day)));
@@ -157,61 +144,58 @@ public class BeginInspectionFragment extends Fragment {
                 idHrsAvailableToday.setText(intToTime(0));
             }
 
-            generalViewModel.getMgetGenerals().observe(getViewLifecycleOwner(),generalEntities -> {
-                int j = 0;
-                for (int i = generalEntities.size()-1; i >=0; i--) {
-                    try {
-                        if (dateToString(generalEntities.get(i).getDay()).equals(day)){
-                            j++;
-                            idTrailerID.setText(getString(generalEntities.get(i).getTrailers()));
-                            idShippingID.setText(getString(generalEntities.get(i).getShippingDocs()));
-                            idCoDriver.setText(getString(generalEntities.get(i).getCo_driver_name()));
-                            idTruckTracktorId.setText(getString(generalEntities.get(i).getVehicle()));
-                            idFrom.setText(generalEntities.get(i).getFrom_info());
-                            idTo.setText(generalEntities.get(i).getTo_info());
-                            idNotes.setText(generalEntities.get(i).getNote());
-                            break;
-                        }
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (j == 0){
+            generalViewModel.getCurrDayGenerals(stringToDay(day), (vehicles, trailersEntities, co_drivers, shippingDocs, from, to, notes) -> {
+                if (trailersEntities != null) {
+                    idTrailerID.setText(getString(trailersEntities));
+                } else {
                     idTrailerID.setText("");
+                }
+                if (shippingDocs != null) {
+                    idShippingID.setText(getString(shippingDocs));
+                } else {
                     idShippingID.setText("");
+                }
+                if (co_drivers != null) {
+                    idCoDriver.setText(getString(co_drivers));
+                } else {
                     idCoDriver.setText("");
+                }
+                if (vehicles != null) {
+                    idTruckTracktorId.setText(getString(vehicles));
+                } else {
                     idTruckTracktorId.setText("");
+                }
+                if (!from.equals("")) {
+                    idFrom.setText(from);
+                } else {
                     idFrom.setText("");
+                }
+                if (!to.equals("")) {
+                    idTo.setText(to);
+                } else {
                     idTo.setText("");
+                }
+                if (!notes.equals("")) {
+                    idNotes.setText(notes);
+                } else {
                     idNotes.setText("");
-                }
+                };
             });
+        });
+    }
 
-            InspectionLogAdapter inspectionLogAdapter = new InspectionLogAdapter(requireContext(),truckStatusEntities,day);
-            inspectionRv.setAdapter(inspectionLogAdapter);
-
-            truckStatusEntitiesCurr.clear();
-            otherStatusEntities.clear();
-            for (int i = 0; i < truckStatusEntities.size(); i++) {
-                if (truckStatusEntities.get(i).getTime().equals(day)){
-                    if (truckStatusEntities.get(i).getTo_status() < 6){
-                        truckStatusEntitiesCurr.add(truckStatusEntities.get(i));
-                    }else {
-                        otherStatusEntities.add(truckStatusEntities.get(i));
-                    }
+    private String getString(List<String> arrayList){
+        if (arrayList.size() > 0){
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < arrayList.size(); i++) {
+                if (i == arrayList.size() -1){
+                    stringBuilder.append(arrayList.get(i));
+                }else {
+                    stringBuilder.append(arrayList.get(i)).append(",");
                 }
             }
-
-            if(day.equals(today)){
-                idCustomChart.setVisibility(View.GONE);
-                idCustomChartLive.setVisibility(View.VISIBLE);
-                idCustomChartLive.setArrayList(truckStatusEntitiesCurr,otherStatusEntities);
-            }else {
-                idCustomChartLive.setVisibility(View.GONE);
-                idCustomChart.setVisibility(View.VISIBLE);
-                idCustomChart.setArrayList(truckStatusEntitiesCurr,otherStatusEntities);
-            }
-        });
+            return stringBuilder.toString();
+        }else return "";
     }
 
     private void clickPrevOrNext(View view){
@@ -219,32 +203,8 @@ public class BeginInspectionFragment extends Fragment {
         prev = view.findViewById(R.id.idPreviousInsp);
         next = view.findViewById(R.id.idNextInsp);
 
-        prev.setOnClickListener(v12 -> {
-            if (index > 0) {
-                index--;
-                currDay = dayEntities.get(index).getDay();
-                idDateReport.setText(currDay + "," + Calendar.getInstance().get(Calendar.YEAR));
-                dvirViewModel.getCurrentName().postValue(currDay);
-            }
-        });
+        prev.setOnClickListener(v12 -> dayDaoViewModel.clickPrevButtonForIns(idDateReport,dvirViewModel));
 
-        next.setOnClickListener(v1 -> {
-            if (index < dayEntities.size()-1) {
-                index++;
-                currDay = dayEntities.get(index).getDay();
-                idDateReport.setText(currDay + "," + Calendar.getInstance().get(Calendar.YEAR));
-                dvirViewModel.getCurrentName().postValue(currDay);
-            }
-        });
-    }
-
-    private String getString(ArrayList<String> arrayList){
-        if (arrayList.size() > 0){
-            StringBuilder stringBuilder = new StringBuilder();
-            for (int i = 0; i < arrayList.size(); i++) {
-                stringBuilder.append(arrayList.get(i)).append(",");
-            }
-            return stringBuilder.toString();
-        }else return "";
+        next.setOnClickListener(v1 -> dayDaoViewModel.clickNextButtonForIns(idDateReport,dvirViewModel));
     }
 }

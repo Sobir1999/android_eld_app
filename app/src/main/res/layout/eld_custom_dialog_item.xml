@@ -47,25 +47,34 @@
 
     <LinearLayout
         android:id="@+id/idGPSConnection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/half_vertical_margin"
         android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:orientation="horizontal">
 
         <ImageView
-            android:src="@drawable/ic_baseline_gps_fixed_24"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_gps_fixed_24" />
 
         <TextView
-
-            android:textColor="?attr/customTextHintColor"
-            android:text="GPS Connection"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/half_vertical_margin"
-            android:textSize="@dimen/normal_text_size"
+            android:layout_weight="1"
+            android:text="GPS Connection"
+            android:textColor="?attr/customTextHintColor"
+            android:textSize="@dimen/normal_text_size" />
+
+        <TextView
+            android:id="@+id/idGpsConnect"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/half_vertical_margin"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/normal_text_size"
+            tools:ignore="MissingConstraints,UseSwitchCompatOrMaterialXml" />
     </LinearLayout>
 
     <View

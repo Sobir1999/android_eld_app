@@ -35,7 +35,7 @@ public class LiveDataEntitiy {
     private ArrayList<String> date;
 
     @SerializedName("point")
-    private ArrayList<Point> point;
+    private ArrayList<String> point;
 
     @SerializedName("gps_speed")
     private ArrayList<Integer> gps_speed;
@@ -58,7 +58,7 @@ public class LiveDataEntitiy {
     @SerializedName("firmware_version")
     private ArrayList<String> firmware_version;
 
-    public LiveDataEntitiy(ArrayList<Boolean> engine_state, ArrayList<String> vin, ArrayList<Double> speed, ArrayList<Double> odometer, ArrayList<Double> trip_distance, ArrayList<Double> engine_hours, ArrayList<Double> trip_hours, ArrayList<Double> battery_voltage, ArrayList<String> date, ArrayList<Point> point, ArrayList<Integer> gps_speed, ArrayList<Integer> course, ArrayList<Integer> number_of_satellites, ArrayList<Integer> altitude, ArrayList<Double> dop, ArrayList<Integer> sequence_number, ArrayList<String> firmware_version) {
+    public LiveDataEntitiy(ArrayList<Boolean> engine_state, ArrayList<String> vin, ArrayList<Double> speed, ArrayList<Double> odometer, ArrayList<Double> trip_distance, ArrayList<Double> engine_hours, ArrayList<Double> trip_hours, ArrayList<Double> battery_voltage, ArrayList<String> date, ArrayList<String> point, ArrayList<Integer> gps_speed, ArrayList<Integer> course, ArrayList<Integer> number_of_satellites, ArrayList<Integer> altitude, ArrayList<Double> dop, ArrayList<Integer> sequence_number, ArrayList<String> firmware_version) {
         this.engine_state = engine_state;
         this.vin = vin;
         this.speed = speed;
@@ -151,11 +151,11 @@ public class LiveDataEntitiy {
         this.date = date;
     }
 
-    public ArrayList<Point> getPoint() {
+    public ArrayList<String> getPoint() {
         return point;
     }
 
-    public void setPoint(ArrayList<Point> point) {
+    public void setPoint(ArrayList<String> point) {
         this.point = point;
     }
 

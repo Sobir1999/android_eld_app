@@ -21,7 +21,6 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
                 tools:ignore="MissingConstraints">
 
                 <ImageView
@@ -87,58 +86,61 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="@dimen/half_vertical_margin"
         app:layout_constraintTop_toBottomOf="@id/idBeginInspectionCons">
 
         <LinearLayout
+            android:id="@+id/idPrintView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginVertical="@dimen/half_vertical_margin"
             android:layout_marginHorizontal="@dimen/half_vertical_margin"
+            android:layout_marginVertical="@dimen/half_vertical_margin"
             android:background="@drawable/background_main_view"
-            android:id="@+id/idPrintView">
+            android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginHorizontal="12dp">
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginTop="16dp">
 
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/idDailyLog"
-                        android:text="@string/driver_s_daily_log"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/use_70_hours_8_days"
-                        android:textSize="7sp"
-                        android:textColor="?attr/customTextHintColor"
-                        app:layout_constraintTop_toBottomOf="@id/idDailyLog"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"/>
+                <TextView
+                    android:id="@+id/idDailyLog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/driver_s_daily_log"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/normal_text_size"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/idDateReport"
-                    android:textSize="7sp"
+                    android:text="@string/use_70_hours_8_days"
                     android:textColor="?attr/customTextHintColor"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:textSize="@dimen/mini_text_size"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/idDailyLog" />
+
+                <TextView
+                    android:id="@+id/idDateReport"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/customTextHintColor"
+                    android:textSize="@dimen/custom_table_text_size_land"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"/>
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -146,63 +148,63 @@
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:layout_marginTop="8dp"
-                android:background="?attr/customBgViewColor"/>
+                android:background="?attr/customBgViewColor" />
 
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginHorizontal="12dp"
+                android:layout_marginTop="16dp"
                 android:background="@drawable/table_item_border">
 
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="0.2dp"
                     android:layout_marginTop="0.2dp"
-                    android:layout_marginStart="0.2dp"
                     android:layout_marginEnd="0.2dp">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
                         android:text="@string/driver_name"
-                        android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:background="@drawable/table_item_border"
-                        android:padding="3dp"/>
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
                         android:id="@+id/idDriverName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
                         android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
                         android:text="@string/co_drivers"
-                        android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
                         android:id="@+id/idCoDriver"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:background="@drawable/table_item_border"
-                        android:padding="3dp"/>
+                        android:padding="3dp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
 
                 </TableRow>
 
@@ -216,43 +218,43 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
                         android:text="@string/driver_id"
-                        android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:background="@drawable/table_item_border"
-                        android:padding="3dp"/>
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
                         android:id="@+id/idDriverID"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
                         android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
                         android:text="@string/time_zone"
-                        android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
                         android:id="@+id/idTimeZone"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:background="@drawable/table_item_border"
-                        android:padding="3dp"/>
+                        android:padding="3dp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
 
                 </TableRow>
 
@@ -266,43 +268,43 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
                         android:text="@string/eld_id"
-                        android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:background="@drawable/table_item_border"
-                        android:padding="3dp"/>
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
                         android:id="@+id/idEldId"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
                         android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
                         android:text="@string/time_zone_offset"
-                        android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
                         android:id="@+id/idTimeZoneOffset"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:background="@drawable/table_item_border"
-                        android:padding="3dp"/>
+                        android:padding="3dp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
 
                 </TableRow>
 
@@ -316,45 +318,44 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
                         android:text="@string/eld_provider"
-                        android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
                         android:id="@+id/idELDProvider"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:background="@drawable/table_item_border"
-                        android:padding="3dp"/>
-
+                        android:padding="3dp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
 
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
                         android:text="@string/_24_period_starting_time"
-                        android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
                         android:id="@+id/idStartingTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:background="@drawable/table_item_border"
-                        android:padding="3dp"/>
+                        android:padding="3dp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
 
                 </TableRow>
 
@@ -368,43 +369,44 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
                         android:text="@string/carrier"
-                        android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
                         android:id="@+id/idCarrier"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:background="@drawable/table_item_border"
-                        android:padding="3dp"/>
+                        android:padding="3dp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
                         android:text="@string/vehicles_vin"
-                        android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
                         android:id="@+id/idVehicleVin"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:background="@drawable/table_item_border"
-                        android:padding="3dp"/>
+                        android:padding="3dp"
+                        android:text=""
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
 
                 </TableRow>
 
@@ -418,43 +420,43 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
                         android:text="@string/usdot"
-                        android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:background="@drawable/table_item_border"
-                        android:padding="3dp"/>
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
                         android:id="@+id/idUsDots"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
                         android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
                         android:text="@string/exemp_driver_status"
-                        android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
                         android:id="@+id/ExempDriverStatus"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:background="@drawable/table_item_border"
-                        android:padding="3dp"/>
+                        android:padding="3dp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
 
                 </TableRow>
 
@@ -468,43 +470,43 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
                         android:text="@string/main_office"
-                        android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:background="@drawable/table_item_border"
-                        android:padding="3dp"/>
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
                         android:id="@+id/idMainOffice"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
                         android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
                         android:text="@string/trailers"
-                        android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:background="@drawable/table_item_border"
-                        android:padding="3dp"/>
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
                         android:id="@+id/idTrailers"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
                         android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
 
 
                 </TableRow>
@@ -519,44 +521,44 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
                         android:text="@string/home_terminal_address"
-                        android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
                         android:id="@+id/idHomeTerminal"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:background="@drawable/table_item_border"
-                        android:padding="3dp"/>
+                        android:padding="3dp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
 
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
                         android:text="@string/distance"
-                        android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:background="@drawable/table_item_border"
-                        android:padding="3dp"/>
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
                         android:id="@+id/idDistance"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
                         android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
 
                 </TableRow>
 
@@ -570,43 +572,43 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
                         android:text="@string/from"
-                        android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:background="@drawable/table_item_border"
-                        android:padding="3dp"/>
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
                         android:id="@+id/idFrom"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
                         android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
                         android:text="@string/to"
-                        android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
                         android:id="@+id/idTo"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:background="@drawable/table_item_border"
-                        android:padding="3dp"/>
+                        android:padding="3dp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
 
                 </TableRow>
 
@@ -620,318 +622,257 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
                         android:text="@string/shipping_docs"
-                        android:textSize="6.5sp"
                         android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="3"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
                         android:id="@+id/idShippingID"
-                        android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
-
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="0.2dp"
-                    android:layout_marginEnd="0.2dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/start_end_engine_hours"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:background="@drawable/table_item_border"
-                        android:padding="3dp"/>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
-                        android:id="@+id/idStartEndHours"
-                        android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/start_end_odometr"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
-                        android:id="@+id/idStartEndOdometr"
-                        android:background="@drawable/table_item_border"
-                        android:padding="3dp"/>
-
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="0.2dp"
-                    android:layout_marginEnd="0.2dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/malfunction_indicators"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:background="@drawable/table_item_border"
-                        android:padding="3dp"/>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
-                        android:id="@+id/idIndicators"
-                        android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/data_diagnostic_indicators"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
-                        android:id="@+id/idDiagnosticIndicators"
-                        android:background="@drawable/table_item_border"
-                        android:padding="3dp"/>
-
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="0.2dp"
-                    android:layout_marginEnd="0.2dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/current_location"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
-                        android:id="@+id/idCurrentLocation"
-                        android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/unidentified_driver_records"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
-                        android:id="@+id/idUnidentifiedDriverRecords"
-                        android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
-
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="0.2dp"
-                    android:layout_marginStart="0.2dp"
-                    android:layout_marginEnd="0.2dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/notes"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextColor"
-                        android:textStyle="bold"
-                        android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
-
-                    <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3"
-                        android:textSize="6.5sp"
-                        android:textColor="?attr/customTextHintColor"
-                        android:id="@+id/idNotes"
+                        android:background="@drawable/table_item_border"
                         android:padding="3dp"
-                        android:background="@drawable/table_item_border"/>
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0.2dp"
+                    android:layout_marginEnd="0.2dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
+                        android:text="@string/start_end_engine_hours"
+                        android:textColor="?attr/customTextColor"
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/idStartEndHours"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
+                        android:text="@string/start_end_odometr"
+                        android:textColor="?attr/customTextColor"
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/idStartEndOdometr"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0.2dp"
+                    android:layout_marginEnd="0.2dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
+                        android:text="@string/malfunction_indicators"
+                        android:textColor="?attr/customTextColor"
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/idIndicators"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
+                        android:text="@string/data_diagnostic_indicators"
+                        android:textColor="?attr/customTextColor"
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/idDiagnosticIndicators"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0.2dp"
+                    android:layout_marginEnd="0.2dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
+                        android:text="@string/current_location"
+                        android:textColor="?attr/customTextColor"
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/idCurrentLocation"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
+                        android:text="@string/unidentified_driver_records"
+                        android:textColor="?attr/customTextColor"
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/idUnidentifiedDriverRecords"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="0.2dp"
+                    android:layout_marginEnd="0.2dp"
+                    android:layout_marginBottom="0.2dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
+                        android:text="@string/notes"
+                        android:textColor="?attr/customTextColor"
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/idNotes"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:background="@drawable/table_item_border"
+                        android:padding="3dp"
+                        android:textColor="?attr/customTextHintColor"
+                        android:textSize="6.5sp" />
 
                 </TableRow>
 
             </TableLayout>
 
-            <com.iosix.eldblesample.customViews.CustomLiveRulerChart
-                android:id="@+id/idCustomLiveChart"
+            <com.iosix.eldblesample.customViews.CustomStableRulerChart
+                android:id="@+id/idCustomChart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="MissingConstraints" />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <com.iosix.eldblesample.customViews.CustomLiveRulerChart
+                android:id="@+id/idCustomChartLive"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Total:"
-                android:textSize="10sp"
-                android:textColor="?attr/customTextColor"
-                android:layout_gravity="end"
-                android:layout_marginEnd="60dp"
-                android:id="@+id/idTotalTime"/>
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="20dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="MissingConstraints" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.2dp"
                 android:layout_marginHorizontal="12dp"
                 android:layout_marginTop="8dp"
-                android:background="?attr/customTextColor"/>
+                android:background="?attr/customTextColor" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/half_vertical_margin"
-                android:layout_marginEnd="@dimen/activity_padding_size"
-                android:orientation="horizontal"
-                android:padding="4dp"
-                android:background="@drawable/table_item_border">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="@string/numbers"
-                    android:textSize="7sp"
-                    android:textColor="?attr/customTextColor"
-                    android:textStyle="bold"/>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="@string/status"
-                    android:textSize="7sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"/>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="@string/start_edt"
-                    android:textSize="7sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"/>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="@string/duration"
-                    android:textSize="7sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"/>
-
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="@string/location"
-                    android:textSize="7sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"/>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="@string/notes"
-                    android:textSize="7sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"/>
-
-            </LinearLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <com.iosix.eldblesample.customViews.MyListView
                 android:id="@+id/idInspectionRv"
-                android:layout_marginVertical="@dimen/half_vertical_margin"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
-
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/half_vertical_margin" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.2dp"
                 android:layout_marginHorizontal="12dp"
                 android:layout_marginTop="8dp"
-                android:background="@color/black"/>
+                android:background="@color/black" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="12dp"
+                android:background="@drawable/table_item_border"
                 android:orientation="horizontal"
-                android:padding="4dp"
-                android:background="@drawable/table_item_border">
+                android:padding="4dp">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -942,20 +883,20 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
                         android:text="@string/total_hours_since_restart"
-                        android:textStyle="bold"
-                        android:layout_gravity="center_horizontal"
                         android:textColor="?attr/customTextColor"
-                        android:textSize="6.5sp"/>
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/idTotalHoursSinceRestart"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/_00h_00m"
                         android:layout_gravity="center_horizontal"
-                        android:textSize="6.5sp"
+                        android:text="@string/_00h_00m"
                         android:textColor="?attr/customTextHintColor"
-                        android:id="@+id/idTotalHoursSinceRestart"/>
+                        android:textSize="6.5sp" />
 
                 </LinearLayout>
 
@@ -968,20 +909,20 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
                         android:text="@string/hrs_available_today"
-                        android:textStyle="bold"
-                        android:layout_gravity="center_horizontal"
                         android:textColor="?attr/customTextColor"
-                        android:textSize="6.5sp"/>
+                        android:textSize="6.5sp"
+                        android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/idHrsAvailableToday"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/_00h_00m"
                         android:layout_gravity="center_horizontal"
-                        android:textSize="6.5sp"
+                        android:text="@string/_00h_00m"
                         android:textColor="?attr/customTextHintColor"
-                        android:id="@+id/idHrsAvailableToday"/>
+                        android:textSize="6.5sp" />
 
                 </LinearLayout>
 
@@ -994,180 +935,19 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
                         android:text="@string/hrs_worked_today"
-                        android:textStyle="bold"
-                        android:layout_gravity="center_horizontal"
                         android:textColor="?attr/customTextColor"
-                        android:textSize="6.5sp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/_00h_00m"
-                        android:layout_gravity="center_horizontal"
                         android:textSize="6.5sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/idHrsWorkedToday"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="@string/_00h_00m"
                         android:textColor="?attr/customTextHintColor"
-                        android:id="@+id/idHrsWorkedToday"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.2dp"
-                android:layout_marginHorizontal="12dp"
-                android:layout_marginTop="8dp"
-                android:background="@color/black"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="12dp"
-                android:orientation="horizontal"
-                android:padding="4dp"
-                android:background="@drawable/table_item_border">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/mm_dd"
-                        android:textStyle="bold"
-                        android:layout_gravity="center_horizontal"
-                        android:textColor="@color/black"
-                        android:textSize="6.5sp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/_00h_00m"
-                        android:layout_gravity="center_horizontal"
-                        android:textSize="6.5sp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/mm_dd"
-                        android:textStyle="bold"
-                        android:layout_gravity="center_horizontal"
-                        android:textColor="@color/black"
-                        android:textSize="6.5sp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/_00h_00m"
-                        android:layout_gravity="center_horizontal"
-                        android:textSize="6.5sp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/mm_dd"
-                        android:textStyle="bold"
-                        android:layout_gravity="center_horizontal"
-                        android:textColor="@color/black"
-                        android:textSize="6.5sp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/_00h_00m"
-                        android:layout_gravity="center_horizontal"
-                        android:textSize="6.5sp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/mm_dd"
-                        android:textStyle="bold"
-                        android:layout_gravity="center_horizontal"
-                        android:textColor="@color/black"
-                        android:textSize="6.5sp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/_00h_00m"
-                        android:layout_gravity="center_horizontal"
-                        android:textSize="6.5sp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/mm_dd"
-                        android:textStyle="bold"
-                        android:layout_gravity="center_horizontal"
-                        android:textColor="@color/black"
-                        android:textSize="6.5sp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/_00h_00m"
-                        android:layout_gravity="center_horizontal"
-                        android:textSize="6.5sp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/mm_dd"
-                        android:textStyle="bold"
-                        android:layout_gravity="center_horizontal"
-                        android:textColor="@color/black"
-                        android:textSize="6.5sp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/_00h_00m"
-                        android:layout_gravity="center_horizontal"
                         android:textSize="6.5sp" />
 
                 </LinearLayout>
@@ -1178,48 +958,48 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="12dp"
-                android:layout_marginTop="32dp">
+                android:layout_marginTop="@dimen/card_image_size">
 
                 <TextView
+                    android:id="@+id/idTVsignature"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="6.5sp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    android:id="@+id/idTVsignature"
                     android:padding="5dp"
+                    android:text="@string/i_certify_that_these_entries_are_true_and_correct"
                     android:textColor="?attr/customTextColor"
-                    android:text="@string/i_certify_that_these_entries_are_true_and_correct"/>
+                    android:textSize="6.5sp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:id="@+id/idSignatureReport"
-                    app:layout_constraintRight_toRightOf="@id/idView"
+                    android:layout_marginTop="@dimen/mini_margin_size"
+                    android:layout_width="@dimen/card_image_size"
+                    android:layout_height="@dimen/card_image_size"
+                    app:layout_constraintBottom_toTopOf="@id/idView"
                     app:layout_constraintLeft_toLeftOf="@id/idView"
-                    app:layout_constraintBottom_toTopOf="@id/idView"/>
+                    app:layout_constraintRight_toRightOf="@id/idView" />
 
                 <View
-                    android:layout_width="100dp"
+                    android:id="@+id/idView"
+                    android:layout_width="@dimen/login_icon_size"
                     android:layout_height="0.3dp"
-                    app:layout_constraintTop_toBottomOf="@id/idTVsignature"
-                    app:layout_constraintLeft_toRightOf="@id/idTVsignature"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="@dimen/half_vertical_margin"
                     android:background="?attr/customTextColor"
-                    android:id="@+id/idView"/>
+                    app:layout_constraintLeft_toRightOf="@id/idTVsignature"
+                    app:layout_constraintTop_toBottomOf="@id/idTVsignature" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@id/idView"
-                    app:layout_constraintLeft_toLeftOf="@id/idView"
-                    app:layout_constraintRight_toRightOf="@id/idView"
                     android:text="@string/s_signature"
                     android:textColor="?attr/customTextColor"
-                    android:textSize="6.5sp"/>
+                    android:textSize="6.5sp"
+                    app:layout_constraintLeft_toLeftOf="@id/idView"
+                    app:layout_constraintRight_toRightOf="@id/idView"
+                    app:layout_constraintTop_toBottomOf="@id/idView" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
 
         </LinearLayout>
 

@@ -10,19 +10,18 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.iosix.eldblesample.R;
-import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
+import com.iosix.eldblesample.models.VehicleList;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.Inflater;
 
 public class UnitListAdapter extends RecyclerView.Adapter<UnitListAdapter.UnitListViewHolder> {
 
     Context context;
-    ArrayList<VehiclesEntity> arrayList;
+    ArrayList<VehicleList> arrayList;
     UnitListListener listener;
 
-    public UnitListAdapter(Context context, List<VehiclesEntity> vehiclesEntities) {
+    public UnitListAdapter(Context context, List<VehicleList> vehiclesEntities) {
         this.context = context;
         arrayList = new ArrayList<>();
         arrayList.addAll(vehiclesEntities);
@@ -59,10 +58,10 @@ public class UnitListAdapter extends RecyclerView.Adapter<UnitListAdapter.UnitLi
         }
 
         void onBind(int i){
-            unitItem.setText(arrayList.get(i).getName());
+            unitItem.setText(arrayList.get(i).getModel());
             unitItem.setOnClickListener(view -> {
                 if (listener != null){
-                    listener.onItemClick(arrayList.get(i).getName());
+                    listener.onItemClick(arrayList.get(i).getModel());
                 }
             });
 

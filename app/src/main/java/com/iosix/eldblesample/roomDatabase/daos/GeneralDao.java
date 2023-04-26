@@ -7,20 +7,25 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.iosix.eldblesample.roomDatabase.entities.DvirEntity;
 import com.iosix.eldblesample.roomDatabase.entities.GeneralEntity;
 
 import java.util.List;
+
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
 
 @Dao
 public interface GeneralDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public Long insertGeneral(GeneralEntity generalEntity);
+    void insertGeneral(GeneralEntity generalEntity);
 
 
     @Query("SELECT * FROM general")
-    public LiveData<List<GeneralEntity>> getGenerals();
+    Single<List<GeneralEntity>> getGenerals();
+
+    @Query("SELECT * FROM general WHERE day LIKE :day")
+    Single<List<GeneralEntity>> getCurDayGenerals(String day);
 
     @Delete
     void deleteGeneral(GeneralEntity generalEntity);

@@ -1,7 +1,8 @@
 package com.iosix.eldblesample.fragments;
 
 import static com.iosix.eldblesample.activity.SignatureActivity.verifyStoragePermissions;
-import static com.iosix.eldblesample.enums.Day.getCurrentSeconds;
+import static com.iosix.eldblesample.enums.Day.stringToDateTime;
+import static com.iosix.eldblesample.enums.Day.stringToDay;
 import static com.iosix.eldblesample.utils.Utils.getDateFormat;
 
 import android.app.AlertDialog;
@@ -13,6 +14,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -27,7 +30,6 @@ import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.models.Status;
-import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 import com.iosix.eldblesample.roomDatabase.entities.SignatureEntity;
 import com.iosix.eldblesample.shared_prefs.DriverSharedPrefs;
 import com.iosix.eldblesample.shared_prefs.SessionManager;
@@ -42,7 +44,6 @@ import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
@@ -120,21 +121,11 @@ public class DocsFragment extends Fragment implements UploadRequestBody.UploadCa
 
         dvirViewModel.getCurrentName().observe(getViewLifecycleOwner(),currDay ->{
             day = currDay;
-            signatureViewModel.getMgetAllSignatures().observe(getViewLifecycleOwner(),signatureEntities -> {
-                ArrayList<SignatureEntity> arrayList= new ArrayList<>();
-                for (int i = 0; i < signatureEntities.size(); i++) {
-                    if (signatureEntities.get(i).getDay().equals(currDay)){
-                        arrayList.add(signatureEntities.get(i));
-                    }
-                }if (arrayList.size() != 0){
-                    idSignature.setSignatureBitmap(arrayList.get(arrayList.size()-1).getSignatureBitmap());
-                }else {
-                    idSignature.clear();
-                }
-            });
+            signatureViewModel.getMgetAllSignatures(getContext(),currDay,idSignature);
         });
 
         idClearSignature.setOnClickListener(v1 -> {
+            idSignature.setBackground(AppCompatResources.getDrawable(requireContext(),R.drawable.add_defect_sign_background));
             idSignature.clear();
         });
 
@@ -142,6 +133,7 @@ public class DocsFragment extends Fragment implements UploadRequestBody.UploadCa
             if (!idSignature.isEmpty()){
                 String fileName = "DriverSignature" + new Date().getTime() + ".png";
                 OutputStream outputStream;
+
                 try {
                     ContentResolver resolver = getContext().getContentResolver();
                     ContentValues values = new ContentValues();
@@ -155,12 +147,13 @@ public class DocsFragment extends Fragment implements UploadRequestBody.UploadCa
                     RequestBody body = new UploadRequestBody(file,"image",this);
                     eldJsonViewModel.sendSignature(MultipartBody.Part.createFormData("sign",file.getName(),body));
                     Objects.requireNonNull(outputStream);
-
-                    signatureViewModel.insertSignature(new SignatureEntity(driverSharedPrefs.getDriverId(),idSignature.getSignatureBitmap(),day));
-                    eldJsonViewModel.postStatus(new Status(Utils.getStatus(EnumsConstants.CERTIFIED),null,null,getDateFormat(Calendar.getInstance().getTime())));
-                    statusDaoViewModel.insertStatus(new LogEntity(driverSharedPrefs.getDriverId(),EnumsConstants.CERTIFIED,null,null,null,day,getCurrentSeconds()));
                 }catch (Exception e){
+                    Log.d("Adverse",e.getMessage());
                 }
+
+                signatureViewModel.insertSignature(new SignatureEntity(idSignature.getSignatureBitmap(),stringToDay(day)));
+                eldJsonViewModel.postStatus(new Status(EnumsConstants.CERTIFIED,null,null,stringToDateTime(day)));
+                statusDaoViewModel.insertStatus(new Status(EnumsConstants.CERTIFIED,null,null,stringToDateTime(day)));
 
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(requireContext());
                 alertDialog.setTitle("Signature Submitted")
@@ -200,24 +193,8 @@ public class DocsFragment extends Fragment implements UploadRequestBody.UploadCa
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
     public void onProgressUpdate(int percentage) {
 
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        requireActivity().getViewModelStore().clear();
-        this.getViewModelStore().clear();
-    }
 }

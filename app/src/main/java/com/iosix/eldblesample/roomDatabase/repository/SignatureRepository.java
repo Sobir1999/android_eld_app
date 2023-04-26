@@ -15,58 +15,23 @@ import com.iosix.eldblesample.roomDatabase.entities.SignatureEntity;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
+
 public class SignatureRepository {
 
-    private SignatureDao signatureDao;
-    private LiveData<List<SignatureEntity>> getAllSignatures;
-    private LiveData<List<MechanicSignatureEntity>> getAllMechanicSignatures;
+    private final StatusTruckRoomDatabase db;
 
     public SignatureRepository(Application application) {
-        StatusTruckRoomDatabase db = StatusTruckRoomDatabase.getINSTANCE(application);
-        signatureDao = db.getSignatureDao();
-        getAllSignatures = signatureDao.getSignature();
-        getAllMechanicSignatures = signatureDao.getMechanicSignature();
+        db = StatusTruckRoomDatabase.getINSTANCE(application);
     }
 
-    public LiveData<List<SignatureEntity>> getGetAllSignatures() {
-        return getAllSignatures;
+    public Single<List<SignatureEntity>> getGetAllSignatures() {
+        return db.getSignatureDao().getSignature();
     }
 
-    public LiveData<List<MechanicSignatureEntity>> getGetAllMechanicSignatures() {
-        return getAllMechanicSignatures;
-    }
-
-    public Long insertSignature(SignatureEntity signatureEntity) throws ExecutionException, InterruptedException {
-        return new SignatureRepository.insertSignatureAsync(signatureDao).execute(signatureEntity).get();
-    }
-
-    public Long insertMechanicSignature(MechanicSignatureEntity mechanicSignatureEntity) throws ExecutionException, InterruptedException {
-        return new SignatureRepository.insertMechanicSignatureAsync(signatureDao).execute(mechanicSignatureEntity).get();
-    }
-
-    private static class insertSignatureAsync extends AsyncTask<SignatureEntity, Void, Long> {
-        private SignatureDao dao;
-
-        insertSignatureAsync(SignatureDao signatureDao) {
-            this.dao = signatureDao;
-        }
-
-        @Override
-        protected Long doInBackground(SignatureEntity... signatureEntities) {
-
-            return dao.insertSignature(signatureEntities[0]);
-        }
-    }
-
-    private static class insertMechanicSignatureAsync extends AsyncTask<MechanicSignatureEntity,Void,Long>{
-        private SignatureDao dao;
-
-        insertMechanicSignatureAsync(SignatureDao signatureDao){this.dao = signatureDao;}
-
-        @Override
-        protected Long doInBackground(MechanicSignatureEntity... mechanicSignatureEntities) {
-            return dao.insertMechanicSignature(mechanicSignatureEntities[0]);
-        }
+    public void insertSignature(SignatureEntity signatureEntity){
+        db.getSignatureDao().insertSignature(signatureEntity);
     }
 }
 

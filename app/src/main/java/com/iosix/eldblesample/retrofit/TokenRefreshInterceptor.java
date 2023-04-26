@@ -1,5 +1,7 @@
 package com.iosix.eldblesample.retrofit;
 
+import android.os.Build;
+
 import androidx.annotation.NonNull;
 
 import com.iosix.eldblesample.shared_prefs.SessionManager;
@@ -11,6 +13,7 @@ import java.util.Map;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class TokenRefreshInterceptor implements Interceptor {
 
@@ -28,11 +31,14 @@ public class TokenRefreshInterceptor implements Interceptor {
     @NonNull
     @Override
     public Response intercept(@NonNull Chain chain) throws IOException {
+
+        final Request request = chain.request();
+        final Response response = chain.proceed(request);
+        final ResponseBody responseBody = response.body();
         // Add default headers
+
         Request.Builder requestBuilder = chain.request()
-                .newBuilder()
-                .addHeader("accept", "*/*")
-                .addHeader("accept-encoding", "gzip, deflate");
+                .newBuilder();
 
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             if (entry.getKey() != null && entry.getValue() != null) {
@@ -43,6 +49,7 @@ public class TokenRefreshInterceptor implements Interceptor {
         if (sessionManager.fetchAccessToken() != null) {
             requestBuilder.addHeader("www-authenticate", "Bearer realm=" + sessionManager.fetchAccessToken());
         }
+        response.close();
 
         return chain.proceed(requestBuilder.build());
     }

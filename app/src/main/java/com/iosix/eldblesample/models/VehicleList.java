@@ -1,39 +1,56 @@
 package com.iosix.eldblesample.models;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import com.google.gson.annotations.SerializedName;
 
+@Entity(tableName = "vehicles")
 public class VehicleList {
 
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
     @SerializedName("id")
     int id;
 
+    @ColumnInfo(name = "vehicle_id")
     @SerializedName("vehicle_id")
     String vehicle_id;
 
+    @ColumnInfo(name = "make")
     @SerializedName("make")
     String make;
 
+    @ColumnInfo(name = "model")
     @SerializedName("model")
     String model;
 
+    @ColumnInfo(name = "year")
     @SerializedName("year")
     String year;
 
+    @ColumnInfo(name = "license_plate_num")
     @SerializedName("license_plate_num")
     String license_plate_num;
 
+    @ColumnInfo(name = "license_plate_issue_state")
     @SerializedName("license_plate_issue_state")
     String license_plate_issue_state;
 
+    @ColumnInfo(name = "vin")
     @SerializedName("vin")
     String vin;
 
+    @ColumnInfo(name = "notes_vehicle")
     @SerializedName("notes_vehicle")
     String notes_vehicle;
 
+    @ColumnInfo(name = "eld_id")
     @SerializedName("eld_id")
     String eld_id;
 
+    @ColumnInfo(name = "company")
     @SerializedName("company")
     String company;
 

@@ -3,6 +3,8 @@ package com.iosix.eldblesample.shared_prefs;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.iosix.eldblesample.enums.EnumsConstants;
+
 import java.util.Calendar;
 
 public class LastStatusData {
@@ -30,9 +32,10 @@ public class LastStatusData {
         userPref = appContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
 
-    public void saveLasStatus(int status, int second){
+    public void saveLasStatus(String status, int second,String day){
         editor = userPref.edit();
-        editor.putInt("status", status);
+        editor.putString("status", status);
+        editor.putString("day", day);
         editor.putInt("second", second);
         editor.apply();
     }
@@ -42,23 +45,26 @@ public class LastStatusData {
         editor.putString("date",date);
     }
 
-    public void saveLastEldState(String state){
+    public void saveLastInspectionLockPassword(String password){
         editor = userPref.edit();
-        editor.putString("state",state);
+        editor.putString("password",password);
     }
+
+    public String getLastInspectionLockPassword(){
+        return userPref.getString("password","");
+    }
+
 
     public String getLastEldState(){
         return userPref.getString("state","Not Connected");
     }
 
-    public int getLastStatus() {
-        return userPref.getInt("status", 0);
+    public String getLastStatus() {
+        return userPref.getString("status", EnumsConstants.STATUS_OFF);
     }
 
-
-
-    public String getLastDate(){
-        return userPref.getString("date","");
+    public String getLastDay(){
+        return userPref.getString("day","");
     }
 
     public int getLasStatSecond() {

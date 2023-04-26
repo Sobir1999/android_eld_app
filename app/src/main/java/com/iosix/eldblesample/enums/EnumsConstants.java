@@ -1,15 +1,26 @@
 package com.iosix.eldblesample.enums;
 
+import java.util.List;
+
 public class EnumsConstants {
-    public static final int STATUS_OFF = 0;
-    public static final int STATUS_SB = 1;
-    public static final int STATUS_DR = 2;
-    public static final int STATUS_ON = 3;
-    public static final int STATUS_OF_PC = 4;
-    public static final int STATUS_ON_YM = 5;
-    public static final int POWER_UP = 6;
-    public static final int POWER_DOWN = 7;
-    public static final int LOGIN = 8;
-    public static final int LOGOUT = 9;
-    public static final int CERTIFIED = 10;
+    public static final String STATUS_OFF = "OFF";
+    public static final String STATUS_SB = "SB";
+    public static final String STATUS_DR = "D";
+    public static final String STATUS_ON = "ON";
+    public static final String STATUS_OF_PC = "PC";
+    public static final String STATUS_ON_YM = "YM";
+    public static final String POWER_UP = "POWERUP";
+    public static final String POWER_DOWN = "POWERDOW";
+    public static final String LOGIN = "LOGIN";
+    public static final String LOGOUT = "LOGOUT";
+    public static final String CERTIFIED = "CERTIFIED";
+
+    public static final String[] statuses = {
+    "OFF",
+    "SB",
+    "D",
+    "ON",
+    "PC",
+    "YM"
+    };
 }

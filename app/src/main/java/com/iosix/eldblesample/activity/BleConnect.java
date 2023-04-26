@@ -115,7 +115,7 @@ public class BleConnect extends BaseActivity {
         mDataView = (TextView) findViewById(R.id.eldData);
         mScrollView = (ScrollView) findViewById(R.id.scrollView3);
 
-        apiInterface = ApiClient.getClient().create(APIInterface.class);
+//        apiInterface = ApiClient.getClient().create(APIInterface.class);
 
         //Required to allow bluetooth scanning
         requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);

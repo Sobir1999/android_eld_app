@@ -1,68 +1,181 @@
 package com.iosix.eldblesample.viewModel;
 
 import android.app.Application;
+import android.app.Dialog;
+import android.content.Context;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.iosix.eldblesample.R;
+import com.iosix.eldblesample.adapters.VehiclesListAdapter;
 import com.iosix.eldblesample.models.User;
+import com.iosix.eldblesample.models.VehicleList;
 import com.iosix.eldblesample.models.eld_records.LiveDataRecord;
-import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
+import com.iosix.eldblesample.models.eld_records.Point;
 import com.iosix.eldblesample.roomDatabase.entities.LiveDataEntitiy;
-import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
-import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 import com.iosix.eldblesample.roomDatabase.repository.UserRepository;
+import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicReference;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.CompletableObserver;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.functions.Action;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class UserViewModel extends AndroidViewModel {
 
     private final UserRepository repository;
-    private final LiveData<User> mgetUser;
-    private final LiveData<List<User>> mgetDrivers;
-    private final LiveData<List<LiveDataRecord>> mgetLocalDatas;
-    private final LiveData<List<VehiclesEntity>> getAllVehicles;
-    private final LiveData<List<TrailersEntity>> getAllTrailers;
+    private final CompositeDisposable disposables;
 
     public UserViewModel(Application application) {
         super(application);
         repository = new UserRepository(application);
-        mgetUser = repository.getUser();
-        mgetDrivers = repository.getDrivers();
-        getAllVehicles = repository.getGetAllVehicles();
-        getAllTrailers = repository.getGetAllTrailers();
-        mgetLocalDatas = repository.getLocalDatas();
+        disposables = new CompositeDisposable();
     }
 
-    public LiveData<User> getMgetUser() {
-        return mgetUser;
-    }
-    public LiveData<List<User>> getMgetDrivers() {
-        return mgetDrivers;
-    }
-
-    public LiveData<List<LiveDataRecord>> getMgetLocalDatas(){return mgetLocalDatas;}
-
-    public void insertUser(User user) {
-        repository.insertUser(user);
-    }
-
-    public void insertLocalData(LiveDataRecord liveDataRecord){repository.insertLocalData(liveDataRecord);}
-
-    public void deleteUser() {
-        repository.deleteUser();
+    public MutableLiveData<List<User>> getMgetDrivers() {
+        MutableLiveData<List<User>> users = new MutableLiveData<>();
+        Disposable disposable = repository.getDrivers()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(users::postValue,
+                        throwable -> {
+                        });
+        disposables.add(disposable);
+        return users;
     }
 
-    public void deleteLocalData(){repository.deleteLocalData();}
-
-    public void insertVehicle(VehiclesEntity vehiclesEntity) {
-        repository.insertVehicle(vehiclesEntity);
+    public void insertUser(User user){
+        Completable.fromAction(() -> repository.insertUser(user)).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
     }
 
-    public LiveData<List<VehiclesEntity>> getGetAllVehicles() {return getAllVehicles;}
+    public void getMgetLocalDatas(EldJsonViewModel eldJsonViewModel){
+        Disposable disposable = repository.getLocalDatas()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(liveDataRecords -> {
+                if (liveDataRecords.size() > 0){
+                    ArrayList<Boolean> engine_state = new ArrayList<>();
+                    ArrayList<String> vin = new ArrayList<>();
+                    ArrayList<Double> speed = new ArrayList<>();
+                    ArrayList<Double> odometer = new ArrayList<>();
+                    ArrayList<Double> trip_distance = new ArrayList<>();
+                    ArrayList<Double> engine_hours = new ArrayList<>();
+                    ArrayList<Double> trip_hours = new ArrayList<>();
+                    ArrayList<Double> battery_voltage = new ArrayList<>();
+                    ArrayList<String> date = new ArrayList<>();
+                    ArrayList<String> point = new ArrayList<>();
+                    ArrayList<Integer> gps_speed = new ArrayList<>();
+                    ArrayList<Integer> course = new ArrayList<>();
+                    ArrayList<Integer> number_of_satellites = new ArrayList<>();
+                    ArrayList<Integer> altitude = new ArrayList<>();
+                    ArrayList<Double> dop = new ArrayList<>();
+                    ArrayList<Integer> sequence_number = new ArrayList<>();
+                    ArrayList<String> firmware_version = new ArrayList<>();
 
-    public void insertTrailer(TrailersEntity entity) throws ExecutionException, InterruptedException {
-        repository.insertTrailer(entity);
+                    for (int i = 0; i < liveDataRecords.size(); i++) {
+                        engine_state.add(liveDataRecords.get(i).getEngine_state());
+                        vin.add(liveDataRecords.get(i).getVin());
+                        speed.add(liveDataRecords.get(i).getSpeed());
+                        odometer.add(liveDataRecords.get(i).getOdometer());
+                        trip_distance.add(liveDataRecords.get(i).getTrip_distance());
+                        engine_hours.add(liveDataRecords.get(i).getEngine_hours());
+                        trip_hours.add(liveDataRecords.get(i).getTrip_hours());
+                        battery_voltage.add(liveDataRecords.get(i).getBattery_voltage());
+                        point.add(liveDataRecords.get(i).getPoint());
+                        date.add(liveDataRecords.get(i).getDate());
+                        gps_speed.add(liveDataRecords.get(i).getGps_speed());
+                        course.add(liveDataRecords.get(i).getCourse());
+                        number_of_satellites.add(liveDataRecords.get(i).getNumber_of_satellites());
+                        altitude.add(liveDataRecords.get(i).getAltitude());
+                        dop.add(liveDataRecords.get(i).getDop());
+                        sequence_number.add(liveDataRecords.get(i).getSequence_number());
+                        firmware_version.add(liveDataRecords.get(i).getFirmware_version());
+                    }
+
+                    if (engine_state.size() > 0) {
+                        eldJsonViewModel.sendLocalData(new LiveDataEntitiy(
+                                engine_state,
+                                vin,
+                                speed,
+                                odometer,
+                                trip_distance,
+                                engine_hours,
+                                trip_hours,
+                                battery_voltage,
+                                date,
+                                point,
+                                gps_speed,
+                                course,
+                                number_of_satellites,
+                                altitude,
+                                dop,
+                                sequence_number,
+                                firmware_version
+                        ));
+                    }
+                }
+            },throwable -> {
+
+            });
+        disposables.add(disposable);
+    }
+//
+//
+    public void insertLocalData(LiveDataRecord liveDataRecord){Completable.fromAction(() -> repository.insertLocalData(liveDataRecord)).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe();}
+//
+//    public void deleteUser() {
+//        repository.deleteUser();
+//    }
+//
+//    public void deleteLocalData(){repository.deleteLocalData();}
+//
+    public void insertVehicle(VehicleList vehiclesEntity) {
+        Completable.fromAction(() -> repository.insertVehicle(vehiclesEntity)).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+    }
+
+    public MutableLiveData<List<VehicleList>> getGetAllVehicles() {
+        MutableLiveData<List<VehicleList>> vehicleLists = new MutableLiveData<>();
+        Disposable disposable = repository.getGetAllVehicles()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(vehicleLists::postValue,
+                        throwable -> {
+                        });
+        disposables.add(disposable);
+        return vehicleLists;
+    }
+//
+//    public void insertTrailer(TrailersEntity entity) throws ExecutionException, InterruptedException {
+//        repository.insertTrailer(entity);
+//    }
+
+
+    @Override
+    protected void onCleared() {
+        disposables.dispose();
+        disposables.clear();
+        super.onCleared();
     }
 }

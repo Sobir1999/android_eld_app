@@ -11,19 +11,16 @@ import com.iosix.eldblesample.roomDatabase.entities.SignatureEntity;
 
 import java.util.List;
 
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
+
 @Dao
 public interface SignatureDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public Long insertSignature(SignatureEntity signature);
+    void insertSignature(SignatureEntity signature);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public Long insertMechanicSignature(MechanicSignatureEntity mechanicSignature);
-
-    @Query("SELECT * FROM signature_table")
-    public LiveData<List<SignatureEntity>> getSignature();
-
-    @Query("SELECT * FROM mechanic_signature_table")
-    public LiveData<List<MechanicSignatureEntity>> getMechanicSignature();
+    @Query("SELECT * FROM signature_table GROUP BY signature")
+    Single<List<SignatureEntity>> getSignature();
 
 }

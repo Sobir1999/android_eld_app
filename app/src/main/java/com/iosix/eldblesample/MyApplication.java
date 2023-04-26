@@ -8,6 +8,8 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
 
+import com.jakewharton.threetenabp.AndroidThreeTen;
+
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 
 import java.security.Security;
@@ -23,6 +25,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        AndroidThreeTen.init(this);
         Security.insertProviderAt(
                 new BouncyCastleProvider(),1
         );

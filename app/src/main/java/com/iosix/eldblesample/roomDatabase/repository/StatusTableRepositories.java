@@ -1,46 +1,38 @@
 package com.iosix.eldblesample.roomDatabase.repository;
 
 import android.app.Application;
-import android.os.AsyncTask;
 
-import androidx.lifecycle.LiveData;
-
-import com.iosix.eldblesample.roomDatabase.daos.StatusTruckDao;
+import com.iosix.eldblesample.models.Status;
 import com.iosix.eldblesample.roomDatabase.database.StatusTruckRoomDatabase;
-import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 
 import java.util.List;
 
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
+
+
 public class StatusTableRepositories {
 
-    private StatusTruckDao mStatusDao;
-    private LiveData<List<LogEntity>> mAllStatus;
+    private StatusTruckRoomDatabase db;
 
     public StatusTableRepositories(Application application) {
-        StatusTruckRoomDatabase db = StatusTruckRoomDatabase.getINSTANCE(application);
-        mStatusDao = db.statusTruckDao();
-        mAllStatus = mStatusDao.getAllStatus();
+        db = StatusTruckRoomDatabase.getINSTANCE(application);
     }
 
-    public LiveData<List<LogEntity>> getmAllStatus() {
-        return mAllStatus;
+    public Single<List<Status>> getmAllStatus(String day) {
+        return db.statusTruckDao().getAllStatus(day);
     }
 
-    public void insertStatus(LogEntity entity) {
-        new insertStatusAsync(mStatusDao).execute(entity);
+    public Single<List<Status>> getmActionStatus(List<String> statuses) {
+        return db.statusTruckDao().getActionStatus(statuses);
     }
 
-    private static class insertStatusAsync extends AsyncTask<LogEntity, Void, Void> {
-        private StatusTruckDao dao;
+    public Single<List<Status>> getCurrDateStatuses(List<String> statuses,String day) {
+        return db.statusTruckDao().getCurrDAteList(statuses,day);
+    }
 
-        insertStatusAsync(StatusTruckDao statusTruckDao) {
-            dao = statusTruckDao;
-        }
-
-        @Override
-        protected Void doInBackground(LogEntity... truckStatusEntities) {
-            dao.insertStatus(truckStatusEntities[0]);
-            return null;
-        }
+    public Completable insertStatus(Status entity) {
+        return db.statusTruckDao().insertStatus(entity);
     }
 }

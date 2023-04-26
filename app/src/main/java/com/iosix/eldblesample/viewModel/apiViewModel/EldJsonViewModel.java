@@ -1,19 +1,28 @@
 package com.iosix.eldblesample.viewModel.apiViewModel;
 
+import static com.iosix.eldblesample.enums.Day.getCalculatedDate;
+import static com.iosix.eldblesample.enums.Day.getDayFormat;
+import static com.iosix.eldblesample.enums.Day.getDayTime1;
+import static com.iosix.eldblesample.enums.Day.getDayTimeFromZ;
+import static com.iosix.eldblesample.enums.Day.stringToDate;
+import static com.iosix.eldblesample.utils.Utils.getStatus;
+
 import android.app.Application;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.iosix.eldblesample.enums.StateLiveData;
+import com.iosix.eldblesample.enums.Day;
 import com.iosix.eldblesample.models.ApkVersion;
-import com.iosix.eldblesample.models.LoginResponse;
-import com.iosix.eldblesample.models.SendDvir;
+import com.iosix.eldblesample.models.Data;
+import com.iosix.eldblesample.models.Dvir;
+import com.iosix.eldblesample.models.Signature;
 import com.iosix.eldblesample.models.Status;
-import com.iosix.eldblesample.models.Student;
 import com.iosix.eldblesample.models.TrailNubmer;
 import com.iosix.eldblesample.models.User;
 import com.iosix.eldblesample.models.VehicleData;
@@ -21,16 +30,25 @@ import com.iosix.eldblesample.models.VehicleList;
 import com.iosix.eldblesample.models.eld_records.Eld;
 import com.iosix.eldblesample.models.eld_records.LiveDataRecord;
 import com.iosix.eldblesample.retrofit.ApiRepository;
-import com.iosix.eldblesample.roomDatabase.entities.DvirEntity;
 import com.iosix.eldblesample.roomDatabase.entities.GeneralEntity;
 import com.iosix.eldblesample.roomDatabase.entities.LiveDataEntitiy;
-import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 import com.iosix.eldblesample.roomDatabase.entities.SignatureEntity;
+import com.iosix.eldblesample.shared_prefs.DriverSharedPrefs;
+import com.iosix.eldblesample.shared_prefs.LastStatusData;
+import com.iosix.eldblesample.viewModel.DvirViewModel;
+import com.iosix.eldblesample.viewModel.GeneralViewModel;
+import com.iosix.eldblesample.viewModel.SignatureViewModel;
+import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
+import com.iosix.eldblesample.viewModel.UserViewModel;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -41,19 +59,31 @@ public class EldJsonViewModel extends AndroidViewModel {
 
     private final ApiRepository repository;
     private final CompositeDisposable disposables;
-    private final StateLiveData<LoginResponse> studentMutableLiveData = new StateLiveData<>();
-    private final MutableLiveData<List<User>> driverMutableLiveData = new MutableLiveData<>();
-    private final MutableLiveData<List<VehicleList>> vehicleMutableLiveData = new MutableLiveData<>();
-    private final MutableLiveData<User> userMutableLiveData = new MutableLiveData<>();
-    private final MutableLiveData<List<LogEntity>> logsMutableLiveData = new MutableLiveData<>();
-    private final MutableLiveData<List<DvirEntity>> dvirsMutableLiveData = new MutableLiveData<>();
-    private final MutableLiveData<List<SignatureEntity>> signaturesMutableLiveData = new MutableLiveData<>();
-    private final MutableLiveData<List<GeneralEntity>> generalsMutableLiveData = new MutableLiveData<>();
 
     public EldJsonViewModel(@NonNull Application application) {
         super(application);
         repository = new ApiRepository();
         disposables = new CompositeDisposable();
+    }
+
+    public void getUser(DriverSharedPrefs driverSharedPrefs){
+        Disposable disposable = repository
+                .getUser()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(user -> {
+                    driverSharedPrefs.saveLastUsername(user.getName());
+                    driverSharedPrefs.saveLastSurname(user.getLastName());
+                    driverSharedPrefs.saveCompany(user.getCompany());
+                    driverSharedPrefs.saveLastHomeTerAdd(user.getHomeTerminalAddress());
+                    driverSharedPrefs.saveLastMainOffice(user.getMainOffice());
+                    driverSharedPrefs.saveLastHomeTerTimeZone(user.getTimeZone());
+                    driverSharedPrefs.saveLastPhoneNumber(user.getPhone());
+                    driverSharedPrefs.saveLastDriverId(user.getDriverId());
+                }, throwable -> {
+                });
+
+        disposables.add(disposable);
     }
 
     public void sendLive(LiveDataRecord data) {
@@ -70,77 +100,35 @@ public class EldJsonViewModel extends AndroidViewModel {
         disposables.add(disposable);
     }
 
-    public void makeLoginRequest(Student student) {
-        studentMutableLiveData.postLoading();
-        Disposable disposable = repository
-                .getLoginResponse(student)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(data -> {
-                    if (data.isSuccessful()){
-                        studentMutableLiveData.postSuccess(data.body());
-                    }else {
-                        studentMutableLiveData.postStatusCode(data.code());
-                    }
-                }, studentMutableLiveData::postError);
-
-        disposables.add(disposable);
-    }
-
-    public StateLiveData<LoginResponse> getLoginResponse(){
-        return studentMutableLiveData;
-    }
-
-    public void getUser(){
-        Disposable disposable = repository
-                .getUser()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(userMutableLiveData::postValue, throwable -> {
-
-                });
-
-        disposables.add(disposable);
-    }
-
-   public MutableLiveData<User> getUserMutableLiveData(){
-        return userMutableLiveData;
-   }
-
-    public void getAllDrivers(){
+    public void getAllDrivers(UserViewModel userViewModel){
         Disposable disposable = repository
                 .getAllDrivers()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(users ->{
-                    driverMutableLiveData.postValue(users.getDriver().getUser());
+                    for (User user: users.getDriver().getUser()) {
+                        userViewModel.insertUser(user);
+                    }
                 }, throwable -> {
-
                 });
-
         disposables.add(disposable);
     }
 
-    public MutableLiveData<List<User>> getDriverMutableLiveData() {
-        return driverMutableLiveData;
-    }
-
-    public void getAllVehicles(){
-        Disposable disposable = repository
+    public void getAllVehicles(UserViewModel userViewModel){
+        Disposable disposable2 = repository
                 .getAllVehicles()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s ->{
-                    vehicleMutableLiveData.postValue(s.getVehicle().getVehicleList());
+//                    if (s != null){
+//                        for (VehicleList vehicle: s.getVehicle().getVehicleList()) {
+//                            userViewModel.insertVehicle(vehicle);
+//                        }
+//                    }
                 }, throwable -> {
 
                 });
-
-        disposables.add(disposable);
-    }
-
-    public MutableLiveData<List<VehicleList>> getVehicleLiveData() {
-        return vehicleMutableLiveData;
+        disposables.add(disposable2);
     }
 
     public void postStatus(Status status){
@@ -149,9 +137,7 @@ public class EldJsonViewModel extends AndroidViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s ->{
-
                 }, throwable -> {
-
                 });
 
         disposables.add(disposable);
@@ -163,9 +149,7 @@ public class EldJsonViewModel extends AndroidViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s ->{
-
                 }, throwable -> {
-
                 });
 
         disposables.add(disposable);
@@ -204,10 +188,8 @@ public class EldJsonViewModel extends AndroidViewModel {
                 .sendApkVersion(apkVersion)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(s ->{
-
+                .subscribe(s -> {
                 }, throwable -> {
-
                 });
 
         disposables.add(disposable);
@@ -221,9 +203,7 @@ public class EldJsonViewModel extends AndroidViewModel {
                 .subscribe(s -> {
                     Log.d("PDF_LOG", String.format("Success with response %s", s));
                     // TODO on success
-                }, throwable -> {
-                    Log.d("PDF_LOG", "Failure with", throwable);
-                });
+                }, throwable -> Log.d("PDF_LOG", "Failure with" + throwable.getMessage()));
 
         disposables.add(disposable);
     }
@@ -236,9 +216,7 @@ public class EldJsonViewModel extends AndroidViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s ->{
-
                 }, throwable -> {
-
                 });
 
         disposables.add(disposable);
@@ -258,7 +236,7 @@ public class EldJsonViewModel extends AndroidViewModel {
         disposables.add(disposable);
     }
 
-    public void sendDvir(SendDvir sendDvir){
+    public void sendDvir(Dvir sendDvir){
         Disposable disposable = repository
                 .sendDvir(sendDvir)
                 .subscribeOn(Schedulers.io())
@@ -300,74 +278,99 @@ public class EldJsonViewModel extends AndroidViewModel {
         disposables.add(disposable);
     }
 
-    public void getAllLogs(){
+    public void getAllLogs(StatusDaoViewModel statusDaoViewModel, LastStatusData lastStatusData,String today){
         Disposable disposable = repository
                 .getAllLogs()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(logsMutableLiveData::postValue, throwable -> {
-
+                .subscribe(statuses -> {
+                    List<Status> filteredStatuses = new ArrayList<>();
+                    if (!statuses.isEmpty()){
+                        for (Status status: statuses) {
+                            if (stringToDate(status.getTime()).compareTo(getCalculatedDate(9)) > 0){
+                                if (getStatus(status.getStatus()) < 6){
+                                    filteredStatuses.add(status);
+                                }
+                                statusDaoViewModel.insertStatus(status);
+                            }
+                        }
+                        if (!filteredStatuses.isEmpty()){
+                            if (getDayTimeFromZ(stringToDate(filteredStatuses.get(filteredStatuses.size()-1).getTime())).equals(today)){
+                                lastStatusData.saveLasStatus(filteredStatuses.get(filteredStatuses.size()-1).getStatus(),stringToDate(filteredStatuses.get(filteredStatuses.size()-1).getTime()).toLocalTime().toSecondOfDay(),today);
+                            }
+                        }
+                    }
+                }, throwable -> {
                 });
 
         disposables.add(disposable);
     }
 
-    public MutableLiveData<List<LogEntity>> getLogsMutableLiveData(){
-        return logsMutableLiveData;
-    }
-
-    public void getAllDvirs(){
+    public void getAllDvirs(DvirViewModel dvirViewModel){
         Disposable disposable = repository
                 .getAllDvirs()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(dvirsMutableLiveData::postValue, throwable -> {
-
+                .subscribe(dvirs -> {
+                    for (Dvir dvir: dvirs) {
+                        dvirViewModel.insertDvir(dvir);
+                    }
+                }, throwable -> {
                 });
 
         disposables.add(disposable);
     }
 
-    public MutableLiveData<List<DvirEntity>> getDvirsMutableLiveData(){
-        return dvirsMutableLiveData;
-    }
-
-    public void getAllSignatures(){
+    public void getAllSignatures(SignatureViewModel signatureViewModel){
         Disposable disposable = repository
                 .getAllSignatures()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(signaturesMutableLiveData::postValue, throwable -> {
+                .subscribe(signatureEntities -> {
+                    for (Signature entity: signatureEntities) {
+                        Picasso.get().load(entity.getSignatureBitmap()).into(new Target() {
+                            @Override
+                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                signatureViewModel.insertSignature(new SignatureEntity(bitmap,entity.getDay().toString()));
+                            }
 
+                            @Override
+                            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                            }
+
+                            @Override
+                            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                            }
+                        });
+                    }
+                }, throwable -> {
                 });
 
         disposables.add(disposable);
+
     }
 
-    public MutableLiveData<List<SignatureEntity>> getSignaturesMutableLiveData(){
-        return signaturesMutableLiveData;
-    }
-
-    public void getAllGenerals(){
+    public void getAllGenerals(GeneralViewModel generalViewModel){
+        List<GeneralEntity> allGenEnteties = new ArrayList<>();
         Disposable disposable = repository
                 .getAllGenerals()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(generalsMutableLiveData::postValue, throwable -> {
+                .subscribe(generalEntities -> {
+                    for (GeneralEntity generalEntity:generalEntities) {
+                        generalViewModel.insertGeneral(generalEntity);
+                    }
+                }, throwable -> {
 
                 });
 
         disposables.add(disposable);
     }
-
-    public MutableLiveData<List<GeneralEntity>> getGeneralsMutableLiveData(){
-        return generalsMutableLiveData;
-    }
-
-
     @Override
     protected void onCleared() {
         disposables.clear();
+        disposables.dispose();
         super.onCleared();
     }
 }

@@ -5,7 +5,12 @@ import android.graphics.BitmapFactory;
 
 import androidx.room.TypeConverter;
 
+import org.threeten.bp.Instant;
+import org.threeten.bp.ZoneId;
+import org.threeten.bp.ZonedDateTime;
+
 import java.io.ByteArrayOutputStream;
+import java.util.Date;
 
 public class Converter {
 
@@ -17,7 +22,19 @@ public class Converter {
     @TypeConverter
     public byte[] fromBitmap(Bitmap bitmap){
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG,80,outputStream);
+        if (bitmap != null){
+            bitmap.compress(Bitmap.CompressFormat.JPEG,80,outputStream);
+        }
         return outputStream.toByteArray();
+    }
+
+    @TypeConverter
+    public static ZonedDateTime toDate(Long dateLong){
+        return dateLong == null ? null: ZonedDateTime.ofInstant(Instant.ofEpochSecond(dateLong),ZoneId.systemDefault());
+    }
+
+    @TypeConverter
+    public static Long fromDate(ZonedDateTime date){
+        return date == null ? null : date.toInstant().getEpochSecond();
     }
 }

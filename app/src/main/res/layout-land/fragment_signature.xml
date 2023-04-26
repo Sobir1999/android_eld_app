@@ -130,7 +130,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/signature_height_size"
                         android:layout_marginHorizontal="@dimen/signature_margin_size"
-                        android:background="@drawable/add_defect_text_background"
+                        android:background="@drawable/add_defect_sign_background"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

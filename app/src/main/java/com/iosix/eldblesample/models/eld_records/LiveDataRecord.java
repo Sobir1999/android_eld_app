@@ -51,7 +51,7 @@ public class LiveDataRecord {
 
     @SerializedName("point")
     @ColumnInfo(name = "point")
-    private Point point;
+    private String point;
 
     @SerializedName("gps_speed")
     @ColumnInfo(name = "gps_speed")
@@ -81,7 +81,7 @@ public class LiveDataRecord {
     @ColumnInfo(name = "firmware_version")
     private String firmware_version;
 
-    public LiveDataRecord(Boolean engine_state, String vin, double speed, double odometer, double trip_distance, double engine_hours, double trip_hours, double battery_voltage, String date, Point point, int gps_speed, int course, int number_of_satellites, int altitude, double dop, int sequence_number, String firmware_version) {
+    public LiveDataRecord(Boolean engine_state, String vin, double speed, double odometer, double trip_distance, double engine_hours, double trip_hours, double battery_voltage, String date, String point, int gps_speed, int course, int number_of_satellites, int altitude, double dop, int sequence_number, String firmware_version) {
         this.engine_state = engine_state;
         this.vin = vin;
         this.speed = speed;
@@ -180,11 +180,11 @@ public class LiveDataRecord {
         this.date = date;
     }
 
-    public Point getPoint() {
+    public String getPoint() {
         return point;
     }
 
-    public void setPoint(Point point) {
+    public void setPoint(String point) {
         this.point = point;
     }
 

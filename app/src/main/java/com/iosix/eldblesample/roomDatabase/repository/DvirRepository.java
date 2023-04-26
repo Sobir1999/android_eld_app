@@ -1,70 +1,40 @@
 package com.iosix.eldblesample.roomDatabase.repository;
 
+import static com.iosix.eldblesample.enums.Day.stringToDay;
+
 import android.app.Application;
-import android.os.AsyncTask;
+import android.util.Log;
 
-import androidx.lifecycle.LiveData;
-
-import com.iosix.eldblesample.roomDatabase.daos.DVIRDao;
-import com.iosix.eldblesample.roomDatabase.daos.DayDao;
-import com.iosix.eldblesample.roomDatabase.daos.SignatureDao;
+import com.iosix.eldblesample.models.Dvir;
 import com.iosix.eldblesample.roomDatabase.database.StatusTruckRoomDatabase;
-import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
-import com.iosix.eldblesample.roomDatabase.entities.DvirEntity;
-import com.iosix.eldblesample.roomDatabase.entities.SignatureEntity;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
 
 public class DvirRepository {
 
-    private DVIRDao dvirDao;
-    private LiveData<List<DvirEntity>> getDvirs;
+    private StatusTruckRoomDatabase db;
 
     public DvirRepository(Application application){
-        StatusTruckRoomDatabase db = StatusTruckRoomDatabase.getINSTANCE(application);
-        dvirDao = db.dvirDao();
-        getDvirs = dvirDao.getDvirs();
+        db = StatusTruckRoomDatabase.getINSTANCE(application);
     }
 
-    public LiveData<List<DvirEntity>> getAllDvirs(){
-        return getDvirs;
+    public Single<List<Dvir>> getAllDvirs() {
+        return db.dvirDao().getDvirs();
     }
 
-    public Long insertDvir(DvirEntity dvirEntity) throws ExecutionException, InterruptedException {
-        return new DvirRepository.insertDvirAsync(dvirDao).execute(dvirEntity).get();
+    public Single<List<Dvir>> getCurrDateDvirs(){
+        return db.dvirDao().getCurrDateDvirs();
     }
 
-    private static class insertDvirAsync extends AsyncTask<DvirEntity, Void, Long> {
-        private DVIRDao dao;
-
-        insertDvirAsync(DVIRDao dvirDao) {
-            this.dao = dvirDao;
-        }
-
-
-        @Override
-        protected Long doInBackground(DvirEntity... dvirEntities) {
-            return dao.insertDvir(dvirEntities[0]);
-        }
+    public void insertDvir(Dvir dvirEntity) {
+         db.dvirDao().insertDvir(dvirEntity);
     }
 
-    public void deleteDvir(DvirEntity entity) {
-        new DvirRepository.deleteDvirAsync(dvirDao).execute(entity);
-    }
-
-    private static class deleteDvirAsync extends AsyncTask<DvirEntity, Void, Long> {
-        private DVIRDao dao;
-
-        deleteDvirAsync(DVIRDao dvirDao) {
-            this.dao = dvirDao;
-        }
-
-        @Override
-        protected Long doInBackground(DvirEntity... dvirEntities) {
-            dao.deleteDvir(dvirEntities[0]);
-            return null;
-        }
+    public Completable deleteDvir(Dvir entity) {
+        return db.dvirDao().deleteDvir(entity);
     }
 
 }

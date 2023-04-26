@@ -11,11 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
-import com.iosix.eldblesample.roomDatabase.entities.VehiclesEntity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.TrailerListViewHolder> {
 
@@ -68,7 +66,7 @@ public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.
             unitItem.setText(arrayList.get(i).getNumber());
             unitItem.setOnClickListener(view -> {
                 if (updateListener != null) {
-                    updateListener.onClick(getAbsoluteAdapterPosition());
+                    updateListener.onClick(getAdapterPosition());
                 }
             });
 

@@ -1,6 +1,5 @@
 package com.iosix.eldblesample.dialogs;
 
-import static com.iosix.eldblesample.enums.Day.getCurrentSeconds;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -18,7 +17,6 @@ import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.models.Status;
 import com.iosix.eldblesample.models.eld_records.Point;
-import com.iosix.eldblesample.roomDatabase.entities.LogEntity;
 import com.iosix.eldblesample.shared_prefs.DriverSharedPrefs;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
 import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
@@ -74,11 +72,11 @@ public class ManageStatusDialog extends Dialog {
             }else {
                 handler.removeCallbacks(runnable);
                 cancel();
-                eldJsonViewModel.postStatus(new Status("ON",new Point("Point",arrayList)
-                        ,"on", format.format(Calendar.getInstance().getTime())));
+//                eldJsonViewModel.postStatus(new Status("ON",new Point("Point",arrayList)
+//                        ,"on", format.format(Calendar.getInstance().getTime())));
 
-                statusDaoViewModel.insertStatus(new LogEntity(driverSharedPrefs.getDriverId(),EnumsConstants.STATUS_ON,new Point("Point",arrayList),
-                        "on", null, today, getCurrentSeconds()));
+//                statusDaoViewModel.insertStatus(new LogEntity(driverSharedPrefs.getDriverId(),EnumsConstants.STATUS_ON,new Point("Point",arrayList),
+//                        "on", null, today, getCurrentSeconds()));
             }
         };
         runnable.run();
@@ -89,11 +87,11 @@ public class ManageStatusDialog extends Dialog {
         });
 
         go.setOnClickListener(view -> {
-            eldJsonViewModel.postStatus(new Status("OFF",new Point("Point",arrayList)
-                    ,"off", format.format(Calendar.getInstance().getTime())));
+//            eldJsonViewModel.postStatus(new Status("OFF",new Point("Point",arrayList)
+//                    ,"off", format.format(Calendar.getInstance().getTime())));
 
-            statusDaoViewModel.insertStatus(new LogEntity(driverSharedPrefs.getDriverId(),EnumsConstants.STATUS_OFF,new Point("Point",arrayList),
-                    "off", null, today, getCurrentSeconds()));
+//            statusDaoViewModel.insertStatus(new LogEntity(driverSharedPrefs.getDriverId(),EnumsConstants.STATUS_OFF,new Point("Point",arrayList),
+//                    "off", null, today, getCurrentSeconds()));
 
             cancel();
             handler.removeCallbacks(runnable);

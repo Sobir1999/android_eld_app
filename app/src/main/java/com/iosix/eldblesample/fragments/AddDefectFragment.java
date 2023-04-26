@@ -1,9 +1,11 @@
 package com.iosix.eldblesample.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -15,6 +17,7 @@ import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.shared_prefs.TinyDB;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static com.iosix.eldblesample.utils.Constants.trailerDefects;
 import static com.iosix.eldblesample.utils.Constants.unitDefects;
@@ -27,10 +30,11 @@ public class AddDefectFragment extends Fragment {
     TinyDB tinyDB;
     RadioButton radioButton;
 
-    public AddDefectFragment(int defectType) {
+    public AddDefectFragment(int defectType,ArrayList<String> defects) {
         this.defectType = defectType;
         if(defectType == 1) defectsList = unitDefects;
         else defectsList = trailerDefects;
+        selectedList.addAll(defects);
     }
 
     @Override
@@ -57,6 +61,13 @@ public class AddDefectFragment extends Fragment {
         ListView list = view.findViewById(R.id.listView);
         list.setAdapter(adapter);
         list.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+
+        for (String t : selectedList) {
+            int index = Arrays.asList(defectsList).indexOf(t);
+            if (index >= 0) {
+                list.setItemChecked(index,true);
+            }
+        }
 
         list.setOnItemClickListener((parent, view1, position, id) -> {
                     selectedItems(defectsList[position]);

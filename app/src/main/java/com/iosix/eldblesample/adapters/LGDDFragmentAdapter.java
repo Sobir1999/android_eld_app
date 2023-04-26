@@ -18,9 +18,11 @@ import java.util.ArrayList;
 
 public class LGDDFragmentAdapter extends FragmentStateAdapter {
     private final String[] tabs = new String[]{"Log", "General", "Sign", "DVIR"};
+    private boolean isStatisfactory;
 
-    public LGDDFragmentAdapter(@NonNull FragmentManager fm, Lifecycle lifecycle) {
+    public LGDDFragmentAdapter(@NonNull FragmentManager fm,boolean isStatisfactory, Lifecycle lifecycle) {
         super(fm,lifecycle);
+        this.isStatisfactory=isStatisfactory;
     }
 
     @NonNull
@@ -33,7 +35,7 @@ public class LGDDFragmentAdapter extends FragmentStateAdapter {
         else if (position == 2)
             return DocsFragment.newInstance();
         else
-            return DVIRFragment.newInstance();
+            return DVIRFragment.newInstance(isStatisfactory);
     }
 
     @Override
