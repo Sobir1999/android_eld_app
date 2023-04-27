@@ -23,6 +23,11 @@ import com.iosix.eldblesample.customViews.CustomStableRulerChart;
 import com.iosix.eldblesample.customViews.MyListView;
 import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.interfaces.FetchStatusCallback;
+import com.iosix.eldblesample.interfaces.GetAllDrivingTimeCallback;
+import com.iosix.eldblesample.interfaces.GetBreakTimeCallBack;
+import com.iosix.eldblesample.interfaces.GetCurrDayDrivingTime;
+import com.iosix.eldblesample.interfaces.GetCurrDayShiftCallback;
+import com.iosix.eldblesample.interfaces.GetLastDrivingTime;
 import com.iosix.eldblesample.models.Status;
 import com.iosix.eldblesample.roomDatabase.repository.StatusTableRepositories;
 
@@ -50,7 +55,124 @@ public class StatusDaoViewModel extends AndroidViewModel implements Serializable
         disposables = new CompositeDisposable();
     }
 
-    public void getAllDrivingStatusTime(String day, TextView textView){
+    public void getBreakTime(GetBreakTimeCallBack callBack){
+        Disposable disposable = repository.getmActionStatus(Arrays.asList(EnumsConstants.statuses))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(statuses -> {
+                    int n = 0;
+                    for (int i = statuses.size() - 1; i >=0 ; i--) {
+                        if (statuses.get(i).getStatus().equals(EnumsConstants.STATUS_OFF) || statuses.get(i).getStatus().equals(EnumsConstants.STATUS_SB)){
+                            if (i == statuses.size()-1){
+                                n += ZonedDateTime.now().toEpochSecond() - stringToDate(statuses.get(i).getTime()).toEpochSecond();
+                            }else {
+                                n += stringToDate(statuses.get(i+1).getTime()).toEpochSecond() - stringToDate(statuses.get(i).getTime()).toEpochSecond();
+                            }
+                        }else break;
+                    }
+                    callBack.getBreakTime(n);
+                }, throwable -> {
+                });
+        disposables.add(disposable);
+    }
+
+    public void getAllDringTime(GetAllDrivingTimeCallback callBack){
+        Disposable disposable = repository.getmActionStatus(Arrays.asList(EnumsConstants.statuses))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(statuses -> {
+                    int n = 0;
+                    Log.d("Adverse",statuses.size() +"");
+                    for (int i = statuses.size() - 1; i >=0 ; i--) {
+                        if (statuses.get(i).getStatus().equals(EnumsConstants.STATUS_DR) && (stringToDate(statuses.get(i).getTime()).compareTo(getCalculatedDate(8))>0)){
+                            Log.d("Adverse",statuses.get(i).getStatus());
+                            if (i == statuses.size()-1){
+                                n += ZonedDateTime.now().toEpochSecond() - stringToDate(statuses.get(i).getTime()).toEpochSecond();
+                            }else {
+                                n += stringToDate(statuses.get(i+1).getTime()).toEpochSecond() - stringToDate(statuses.get(i).getTime()).toEpochSecond();
+                            }
+                        }
+                    }
+                    callBack.getAllDrivingTime(n);
+                }, throwable -> {
+                });
+        disposables.add(disposable);
+    }
+
+    public void getLastDrivingTime(String day, GetLastDrivingTime lastDrivingTime){
+        Disposable disposable = repository.getCurrDateStatuses(Arrays.asList(EnumsConstants.statuses),changeFormat(day))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(statuses -> {
+                    int n = 0;
+                    if (statuses.size() == 0){
+                        if (status.getStatus().equals(EnumsConstants.STATUS_DR)){
+                            n += getCurrentMillis();
+                        }
+                    }else {
+                        for (int i = statuses.size() - 1; i >=0 ; i--) {
+                            if (statuses.get(i).getStatus().equals(EnumsConstants.STATUS_DR) || statuses.get(i).getStatus().equals(EnumsConstants.STATUS_ON)){
+                                if (i == statuses.size()-1){
+                                    n += getCurrentMillis() - stringToDate(statuses.get(i).getTime()).toLocalTime().toSecondOfDay();
+                                }else {
+                                    n += stringToDate(statuses.get(i+1).getTime()).toLocalTime().toSecondOfDay() - stringToDate(statuses.get(i).getTime()).toLocalTime().toSecondOfDay();
+                                }
+                            }
+                        }
+                    }
+                    lastDrivingTime.getLastDrivingTime(n);
+                }, throwable -> {
+                });
+        disposables.add(disposable);
+    }
+
+    public void getCurrDayShiftTime(String day, GetCurrDayShiftCallback callback){
+        Disposable disposable = repository.getCurrDateStatuses(Arrays.asList(EnumsConstants.statuses),changeFormat(day))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(statuses -> {
+                    int n = 0;
+                    if ((status.getStatus().equals(EnumsConstants.STATUS_DR) || status.getStatus().equals(EnumsConstants.STATUS_ON)) && statuses.size() > 0) {
+                        int currTime = 0;
+                        int nextTime = statuses.get(0).getTime().equals(status.getTime()) ? currTime : stringToDate(statuses.get(0).getTime()).toLocalTime().toSecondOfDay();
+                        n += nextTime - currTime;
+                        for (int i = 0; i < statuses.size() - 1; i++) {
+                            if (statuses.get(i).getStatus().equals(EnumsConstants.STATUS_DR) || statuses.get(i).getStatus().equals(EnumsConstants.STATUS_ON)) {
+                                int currStatusTime = stringToDate(statuses.get(i).getTime()).toLocalTime().toSecondOfDay();
+                                int nextStatusTime = stringToDate(statuses.get(i+1).getTime()).toLocalTime().toSecondOfDay();
+                                n += nextStatusTime - currStatusTime;
+                            }
+                        }
+                        if (statuses.get(statuses.size() - 1).getStatus().equals(EnumsConstants.STATUS_DR) || statuses.get(statuses.size() - 1).getStatus().equals(EnumsConstants.STATUS_ON)) {
+                            int lastTime = stringToDate(statuses.get(statuses.size() - 1).getTime()).toLocalTime().toSecondOfDay();
+                            int endTime = day.equals(getDayFormat(ZonedDateTime.now())) ? getCurrentMillis() : 86400;
+                            n += endTime - lastTime;
+                        }
+                    } else if (status.getStatus().equals(EnumsConstants.STATUS_DR) || status.getStatus().equals(EnumsConstants.STATUS_ON)) {
+                        int startTime = 0;
+                        int endTime = day.equals(getDayFormat(ZonedDateTime.now())) ? getCurrentMillis() : 86400;
+                        n += endTime - startTime;
+                    }else if (statuses.size() > 0){
+                        for (int i = 0; i < statuses.size() - 1; i++) {
+                            if (statuses.get(i).getStatus().equals(EnumsConstants.STATUS_DR) || statuses.get(i).getStatus().equals(EnumsConstants.STATUS_ON)) {
+                                int currStatusTime = stringToDate(statuses.get(i).getTime()).toLocalTime().toSecondOfDay();
+                                int nextStatusTime = stringToDate(statuses.get(i+1).getTime()).toLocalTime().toSecondOfDay();
+                                n += nextStatusTime - currStatusTime;
+                            }
+                        }
+                        if (statuses.get(statuses.size() - 1).getStatus().equals(EnumsConstants.STATUS_DR) || statuses.get(statuses.size() - 1).getStatus().equals(EnumsConstants.STATUS_ON)) {
+                            int lastTime = stringToDate(statuses.get(statuses.size() - 1).getTime()).toLocalTime().toSecondOfDay();
+                            int endTime = day.equals(getDayFormat(ZonedDateTime.now())) ? getCurrentMillis() : 86400;
+                            n += endTime - lastTime;
+                        }
+                    }
+                    callback.getCurrDayShiftTime(n);
+                }, throwable -> {
+                });
+        disposables.add(disposable);
+    }
+
+    public void getAllDrivingStatusTime(String day, GetCurrDayDrivingTime currDayDrivingTime){
         Disposable disposable = repository.getCurrDateStatuses(Arrays.asList(EnumsConstants.statuses),changeFormat(day))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -93,7 +215,7 @@ public class StatusDaoViewModel extends AndroidViewModel implements Serializable
                                     drivingTime += endTime - lastTime;
                                 }
                             }
-                            textView.setText(intToTime(drivingTime));
+                            currDayDrivingTime.getDrivingTime(drivingTime);
                         }
 
                         @Override
@@ -111,14 +233,19 @@ public class StatusDaoViewModel extends AndroidViewModel implements Serializable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(statuses -> {
+                    int n = 0;
                     for (int i = 0; i < 9; i++) {
                         if (getDayFormat(getCalculatedDate(i)).equals(s)) {
                             for (int j = statuses.size() - 1; j >= 0; j--) {
                                 if (stringToDate(statuses.get(j).getTime()).toLocalDate().compareTo(getCalculatedDate(i).toLocalDate()) < 0) {// status date is before s date
                                     status = statuses.get(j);
+                                    n++;
                                     break;
                                 }
                             }
+                        }
+                        if (n == 0){
+                            status = new Status(EnumsConstants.STATUS_OFF,null,null,"");
                         }
                     }
                     callback.onSuccess(status,statuses);

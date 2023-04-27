@@ -3,6 +3,7 @@ package com.iosix.eldblesample.adapters;
 import static com.iosix.eldblesample.enums.Day.getDayFormat;
 import static com.iosix.eldblesample.enums.Day.getDayTime1;
 import static com.iosix.eldblesample.enums.Day.getDayTimeFromZ;
+import static com.iosix.eldblesample.enums.Day.intToTime;
 import static com.iosix.eldblesample.enums.HOSConstants.mCycle;
 
 import android.annotation.SuppressLint;
@@ -28,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.customViews.CustomStableRulerChart;
+import com.iosix.eldblesample.interfaces.GetCurrDayDrivingTime;
 import com.iosix.eldblesample.models.Dvir;
 import com.iosix.eldblesample.models.Status;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
@@ -97,7 +99,9 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
         void onBind(DayEntity dayEntity,StatusDaoViewModel statusDaoViewModel,DvirViewModel dvirViewModel,Context ctx,LastDaysRecyclerViewItemClickListener listener){
             day.setText(getDayTime1(dayEntity.getDay()));
 
-            statusDaoViewModel.getAllDrivingStatusTime(dayEntity.getDay(),workedTime);
+            statusDaoViewModel.getAllDrivingStatusTime(dayEntity.getDay(), n -> {
+                workedTime.setText(intToTime(n));
+            });
 
             clickable.setOnClickListener(v -> customRulerChart.setVisibility(customRulerChart.getVisibility() == View.GONE ? View.VISIBLE : View.GONE));
 

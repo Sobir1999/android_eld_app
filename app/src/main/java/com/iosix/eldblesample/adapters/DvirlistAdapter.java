@@ -76,7 +76,7 @@ public class DvirlistAdapter extends BaseAdapter {
         }else {
             vehicleName.setText(dvirEntities.get(i).getUnit());
         }
-        time.setText(dvirEntities.get(i).getTime());
+        time.setText(dvirEntities.get(i).getTime().substring(0,8));
         location.setText(dvirEntities.get(i).getPoint());
 
         if (dvirEntities.get(i).getDefects().size()>0){

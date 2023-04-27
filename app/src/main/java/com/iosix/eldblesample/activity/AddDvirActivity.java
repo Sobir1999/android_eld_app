@@ -233,7 +233,14 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
         backView.setOnClickListener(v -> onBackPressed());
 
         nextText.setOnClickListener(v1 -> {
-            if(addTime.getText().toString().equals("")){
+            if(vehicleListSelected.isEmpty()){
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+                alertDialog.setTitle("Vehicle missed")
+                        .setMessage("Vehicle field is empty!")
+                        .setPositiveButton("OK", (dialog, which) -> alertDialog.setCancelable(true));
+                AlertDialog alert = alertDialog.create();
+                alert.show();
+            }else if(addTime.getText().toString().equals("")){
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
                 alertDialog.setTitle("Time missed")
                         .setMessage("Time not created!")

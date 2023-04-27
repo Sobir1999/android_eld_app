@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
@@ -78,6 +79,9 @@ public class LogRecyclerViewAdapter extends BaseAdapter {
         TextView time = view.findViewById(R.id.tv_timer_log);
         TextView dateTime = view.findViewById(R.id.tv_time_log);
         CardView statusBac = view.findViewById(R.id.dr_button);
+        ImageView idLogBottomArrow = view.findViewById(R.id.idLogBottomArrow);
+
+        idLogBottomArrow.setTag(i);
 
         id.setText(format(Locale.getDefault(),"%d", i + 1));
         if (i == 0){

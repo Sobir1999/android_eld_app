@@ -71,7 +71,6 @@
             android:id="@+id/idGpsConnect"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/half_vertical_margin"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/normal_text_size"
             tools:ignore="MissingConstraints,UseSwitchCompatOrMaterialXml" />
@@ -214,7 +213,6 @@
             android:textColor="@color/colorPrimary"
             android:fontFamily="@font/montserrat"
             android:textAllCaps="true"
-            app:font = "@font/montserrat"
             app:layout_constraintRight_toLeftOf="@id/idEldDialConnect"
             android:layout_marginHorizontal="@dimen/drawer_padding_size"
             android:layout_width="wrap_content"

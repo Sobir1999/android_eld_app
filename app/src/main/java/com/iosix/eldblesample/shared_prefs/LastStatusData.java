@@ -3,6 +3,7 @@ package com.iosix.eldblesample.shared_prefs;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.enums.EnumsConstants;
 
 import java.util.Calendar;
@@ -45,6 +46,18 @@ public class LastStatusData {
         editor.putString("date",date);
     }
 
+    public void saveLastConnState(String state){
+        editor = userPref.edit();
+        editor.putString("state",state);
+        editor.apply();
+    }
+
+    public void saveLastEngineState(String state){
+        editor = userPref.edit();
+        editor.putString("engine",state);
+        editor.apply();
+    }
+
     public void saveLastInspectionLockPassword(String password){
         editor = userPref.edit();
         editor.putString("password",password);
@@ -54,13 +67,15 @@ public class LastStatusData {
         return userPref.getString("password","");
     }
 
-
-    public String getLastEldState(){
-        return userPref.getString("state","Not Connected");
-    }
-
     public String getLastStatus() {
         return userPref.getString("status", EnumsConstants.STATUS_OFF);
+    }
+    public String getLastConnState() {
+        return userPref.getString("state", String.valueOf(R.string.not_connected));
+    }
+
+    public String getLastEngineState() {
+        return userPref.getString("engine", String.valueOf(R.string.off));
     }
 
     public String getLastDay(){

@@ -1,7 +1,6 @@
 package com.iosix.eldblesample.activity;
 
 import static androidx.lifecycle.ProcessLifecycleOwner.get;
-import static com.iosix.eldblesample.enums.Day.getCalculatedDate;
 import static com.iosix.eldblesample.enums.Day.getCurrentMillis;
 import static com.iosix.eldblesample.enums.Day.getDayFormat;
 import static com.iosix.eldblesample.utils.Utils.getDateFormat;
@@ -55,7 +54,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.multidex.BuildConfig;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -84,20 +82,16 @@ import com.iosix.eldblesample.broadcasts.ChangeDateTimeBroadcast;
 import com.iosix.eldblesample.broadcasts.NetworkConnectionLiveData;
 import com.iosix.eldblesample.customViews.CustomLiveRulerChart;
 import com.iosix.eldblesample.customViews.CustomStableRulerChart;
-import com.iosix.eldblesample.customViews.MyListView;
 import com.iosix.eldblesample.dialogs.ConnectToEldDialog;
 import com.iosix.eldblesample.dialogs.ManageStatusDialog;
 import com.iosix.eldblesample.dialogs.SearchEldDeviceDialog;
 import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.enums.GPSTracker;
 import com.iosix.eldblesample.interfaces.AlertDialogItemClickInterface;
-import com.iosix.eldblesample.interfaces.AllDaysAdd;
-import com.iosix.eldblesample.models.ApkVersion;
 import com.iosix.eldblesample.models.MessageModel;
 import com.iosix.eldblesample.models.Status;
 import com.iosix.eldblesample.models.eld_records.Eld;
 import com.iosix.eldblesample.models.eld_records.LiveDataRecord;
-import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.shared_prefs.DriverSharedPrefs;
 import com.iosix.eldblesample.shared_prefs.LastStatusData;
 import com.iosix.eldblesample.shared_prefs.SessionManager;
@@ -808,7 +802,7 @@ public class MainActivity extends BaseActivity {
         final SearchEldDeviceDialog searchEldDeviceDialog = new SearchEldDeviceDialog(MainActivity.this);
         searchEldDeviceDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        final ConnectToEldDialog dialog = new ConnectToEldDialog(this,isGpsEnabled(), getEldConnectionState);
+        final ConnectToEldDialog dialog = new ConnectToEldDialog(this,isGpsEnabled(),lastStatusData);
         dialog.setCancelable(false);
 
         dialog.setAlerrtDialogItemClickInterface(new AlertDialogItemClickInterface() {
@@ -822,7 +816,13 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void onClickDisCocnnect() {
-                mEldManager.DisconnectEld();
+                EldBleError eldBleError = mEldManager.DisconnectEld();
+                if (eldBleError == EldBleError.ELD_NOT_CONNECTED){
+                    Toast.makeText(MainActivity.this,"Device is not connected!",Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(MainActivity.this,"Device is disconnected successfully!",Toast.LENGTH_SHORT).show();
+                }
+                lastStatusData.saveLastConnState(String.valueOf(R.string.not_connected));
                 dialog.cancel();
             }
 
@@ -858,7 +858,6 @@ public class MainActivity extends BaseActivity {
         @Override
         public void onConnectionStateChange(final int newState) {
             runOnUiThread(() -> {
-                getEldConnectionState = newState;
                 //todo mDataView.append("New State of connection" + Integer.toString(newState, 10) + "\n");
                 EventBus.getDefault().postSticky(new MessageModel(newState + "", ""));
             });
@@ -891,7 +890,7 @@ public class MainActivity extends BaseActivity {
                 if (((EldDataRecord) dataRec).getSpeed() > 5 && !isDriving && getStatus(lastStatusData.getLastStatus()) < 4 && !Objects.equals(lastStatusData.getLastStatus(), EnumsConstants.STATUS_ON)) {
                     isDriving = true;
                     runOnUiThread(() -> {
-                        if (mHandler != null && mRunnable != null) {
+                        if (mRunnable != null) {
                             mHandler.removeCallbacks(mRunnable);
                         }
                         if (manageStatusDialog != null) {
@@ -919,8 +918,10 @@ public class MainActivity extends BaseActivity {
                 if (((EldDataRecord) dataRec).getSequence() % 30 == 1) {
                     Boolean b = null;
                     if (((EldDataRecord) dataRec).getEngineState() == EldEngineStates.ENGINE_OFF) {
+                        lastStatusData.saveLastEngineState(String.valueOf(R.string.off));
                         b = false;
                     } else if (((EldDataRecord) dataRec).getEngineState() == EldEngineStates.ENGINE_ON) {
+                        lastStatusData.saveLastEngineState(String.valueOf(R.string.on));
                         b = true;
                     }
                     if (isConnected) {
@@ -985,12 +986,11 @@ public class MainActivity extends BaseActivity {
 
                 EldBleError res = mEldManager.ConnectToEld(bleDataCallback, subscribedRecords, bleConnectionStateChangeCallback);
 
-                if (res != EldBleError.SUCCESS) {
-                    runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("Connection Failed\n", "")));
-                } else {
+                if (res == EldBleError.SUCCESS) {
                     runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("Conncected to Eld\n", "")));
+                } if (res == EldBleError.ELD_CONNECTED){
+                    runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("Already Connected\n", "")));
                 }
-
             } else {
                 runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("No ELD found\n", "")));
             }
@@ -1010,12 +1010,12 @@ public class MainActivity extends BaseActivity {
                 runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("ELD " + strDevice + " found, now connecting...\n", "")));
 
                 EldBleError res = mEldManager.ConnectToEld(bleDataCallback, subscribedRecords, bleConnectionStateChangeCallback, strDevice);
-                if (res != EldBleError.SUCCESS) {
-                    runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("Connection Failed\n", "")));
-                } else {
+                if (res == EldBleError.SUCCESS) {
                     runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("Conncected to Eld\n", "")));
+                } if (res == EldBleError.ELD_CONNECTED){
+                    runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("Already Connected\n", "")));
                 }
-
+                lastStatusData.saveLastConnState(String.valueOf(R.string.connected));
             } else {
                 runOnUiThread(() -> EventBus.getDefault().postSticky(new MessageModel("No ELD found\n", "")));
             }
@@ -1069,42 +1069,6 @@ public class MainActivity extends BaseActivity {
         this.registerReceiver(changeDateTimeBroadcast, ChangeDateTimeBroadcast.getIntentFilter());
     }
 
-    /**
-     * f
-     * Stop service method
-     */
-//    public void stopService() {
-//        Intent intent = new Intent(this, ForegroundService.class);
-//        stopService(intent);
-//    }
-
-//    private void calculateTimeLimits(){
-//        Runnable runnable = () -> {
-//            if (last_status == EnumsConstants.STATUS_OFF || last_status == EnumsConstants.STATUS_SB){
-//                mBreak++;
-//                if (mBreak >= 1800){
-//                    BREAK = 28800;
-//                }
-//            }
-//            if (last_status == EnumsConstants.STATUS_DR || last_status == EnumsConstants.STATUS_ON){
-//                BREAK--;
-//                mBreak = 0;
-//            }
-//            if (last_status == EnumsConstants.STATUS_DR){
-//                mDriving++;
-//                mDrivingCurr++;
-//            }
-//            DRIVING = DRIVINGLIMIT - mDriving;
-//
-//            if (last_status == EnumsConstants.STATUS_ON){
-//                mShift++;
-//            }
-//            SHIFT = SHIFTLIMIT - (mDriving + mShift);
-//            CYCLE = CYCLELIMIT - (mDriving + mShift + mCycle);
-//        };
-//
-//        executorService.scheduleAtFixedRate(runnable,3,1,TimeUnit.SECONDS);
-//    }
     @Override
     protected void onResume() {
         daoViewModel.getMgetAllDays(MainActivity.this, last_recycler_view, dvirViewModel, statusDaoViewModel);
