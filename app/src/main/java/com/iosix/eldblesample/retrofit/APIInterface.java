@@ -91,7 +91,8 @@ public interface APIInterface {
     @Multipart
     @POST("api/event/inspect/")
     Single<String> sendPdf(
-            @Body RequestBody body
+            @Part("email") RequestBody email,
+            @Part MultipartBody.Part body
     );
 
     @GET("/api/event/general_last/")

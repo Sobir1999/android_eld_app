@@ -24,7 +24,7 @@
         android:id="@+id/idTrailerRecyclerItemText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/charm_bold"
+        android:fontFamily="@font/tomorrow_italic"
         android:gravity="center_vertical"
         android:text="@string/uzbek"
         android:textColor="?attr/customTextColor"

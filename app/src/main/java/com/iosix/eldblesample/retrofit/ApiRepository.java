@@ -44,8 +44,8 @@ public class ApiRepository {
         return apiInterface.sendLive(record);
     }
 
-    public Single<String> sendPdf(RequestBody body) {
-        return apiInterface.sendPdf(body);
+    public Single<String> sendPdf(RequestBody email,MultipartBody.Part body) {
+        return apiInterface.sendPdf(email,body);
     }
 
 

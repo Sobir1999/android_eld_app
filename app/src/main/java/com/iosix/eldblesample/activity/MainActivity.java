@@ -92,6 +92,7 @@ import com.iosix.eldblesample.models.MessageModel;
 import com.iosix.eldblesample.models.Status;
 import com.iosix.eldblesample.models.eld_records.Eld;
 import com.iosix.eldblesample.models.eld_records.LiveDataRecord;
+import com.iosix.eldblesample.models.eld_records.Point;
 import com.iosix.eldblesample.shared_prefs.DriverSharedPrefs;
 import com.iosix.eldblesample.shared_prefs.LastStatusData;
 import com.iosix.eldblesample.shared_prefs.SessionManager;
@@ -179,6 +180,8 @@ public class MainActivity extends BaseActivity {
     private static final int REQUEST_BT_ENABLE = REQUEST_BASE + 1;
 
     private boolean exit = false;
+
+    private ArrayList<Double> point = new ArrayList<>();
 
     private StatusDaoViewModel statusDaoViewModel;
     private DayDaoViewModel daoViewModel;
@@ -272,8 +275,8 @@ public class MainActivity extends BaseActivity {
         startService();
         update();
         getAllDrivers();
-//        calculateTimeLimits();
         sendLocalData();
+        automateConnectToEld();
 
         statusDaoViewModel.getCurDateStatus(customLiveRulerChart, customRulerChart, getDayFormat(ZonedDateTime.now()));
     }
@@ -524,6 +527,8 @@ public class MainActivity extends BaseActivity {
             Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
             try {
                 if (latitude != 0 && longtitude != 0) {
+                    point.add(longtitude);
+                    point.add(latitude);
                     List<Address> addresses = geocoder.getFromLocation(latitude, longtitude, 1);
                     Address obj = addresses.get(0);
                     String add = obj.getAddressLine(0);
@@ -570,24 +575,46 @@ public class MainActivity extends BaseActivity {
 
             if (!current_status.equals(lastStatusData.getLastStatus())) {
 
-                if (idRadioPC.isChecked()) {
-                    lastStatusData.saveLasStatus(EnumsConstants.STATUS_OF_PC, LocalTime.now().toSecondOfDay(), today);
-                    eldJsonViewModel.postStatus(new Status(EnumsConstants.STATUS_OF_PC, hasCoordinates(longtitude, latitude), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
-                    statusDaoViewModel.insertStatus(new Status(EnumsConstants.STATUS_OF_PC, hasCoordinates(longtitude, latitude), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
-                    idRadioPC.setChecked(false);
-                    idRadioYM.setChecked(false);
-                } else if (idRadioYM.isChecked()) {
-                    lastStatusData.saveLasStatus(EnumsConstants.STATUS_ON_YM, LocalTime.now().toSecondOfDay(), today);
-                    eldJsonViewModel.postStatus(new Status(EnumsConstants.STATUS_ON_YM, hasCoordinates(longtitude, latitude), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
-                    statusDaoViewModel.insertStatus(new Status(EnumsConstants.STATUS_ON_YM, hasCoordinates(longtitude, latitude), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
-                    idRadioPC.setChecked(false);
-                    idRadioYM.setChecked(false);
-                } else {
-                    lastStatusData.saveLasStatus(current_status, LocalTime.now().toSecondOfDay(), today);
-                    eldJsonViewModel.postStatus(new Status(current_status, hasCoordinates(longtitude, latitude), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
-                    statusDaoViewModel.insertStatus(new Status(current_status, hasCoordinates(longtitude, latitude), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
-                    idRadioPC.setChecked(false);
-                    idRadioYM.setChecked(false);
+                if (latitude != 0 && longtitude != 0){
+                    if (idRadioPC.isChecked()) {
+                        lastStatusData.saveLasStatus(EnumsConstants.STATUS_OF_PC, LocalTime.now().toSecondOfDay(), today);
+                        eldJsonViewModel.postStatus(new Status(EnumsConstants.STATUS_OF_PC, new Point(point), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
+                        statusDaoViewModel.insertStatus(new Status(EnumsConstants.STATUS_OF_PC, new Point(point), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
+                        idRadioPC.setChecked(false);
+                        idRadioYM.setChecked(false);
+                    } else if (idRadioYM.isChecked()) {
+                        lastStatusData.saveLasStatus(EnumsConstants.STATUS_ON_YM, LocalTime.now().toSecondOfDay(), today);
+                        eldJsonViewModel.postStatus(new Status(EnumsConstants.STATUS_ON_YM, new Point(point), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
+                        statusDaoViewModel.insertStatus(new Status(EnumsConstants.STATUS_ON_YM, new Point(point), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
+                        idRadioPC.setChecked(false);
+                        idRadioYM.setChecked(false);
+                    } else {
+                        lastStatusData.saveLasStatus(current_status, LocalTime.now().toSecondOfDay(), today);
+                        eldJsonViewModel.postStatus(new Status(current_status, new Point(point), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
+                        statusDaoViewModel.insertStatus(new Status(current_status, new Point(point), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
+                        idRadioPC.setChecked(false);
+                        idRadioYM.setChecked(false);
+                    }
+                }else {
+                    if (idRadioPC.isChecked()) {
+                        lastStatusData.saveLasStatus(EnumsConstants.STATUS_OF_PC, LocalTime.now().toSecondOfDay(), today);
+                        eldJsonViewModel.postStatus(new Status(EnumsConstants.STATUS_OF_PC, null, note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
+                        statusDaoViewModel.insertStatus(new Status(EnumsConstants.STATUS_OF_PC, null, note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
+                        idRadioPC.setChecked(false);
+                        idRadioYM.setChecked(false);
+                    } else if (idRadioYM.isChecked()) {
+                        lastStatusData.saveLasStatus(EnumsConstants.STATUS_ON_YM, LocalTime.now().toSecondOfDay(), today);
+                        eldJsonViewModel.postStatus(new Status(EnumsConstants.STATUS_ON_YM, null, note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
+                        statusDaoViewModel.insertStatus(new Status(EnumsConstants.STATUS_ON_YM, null, note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
+                        idRadioPC.setChecked(false);
+                        idRadioYM.setChecked(false);
+                    } else {
+                        lastStatusData.saveLasStatus(current_status, LocalTime.now().toSecondOfDay(), today);
+                        eldJsonViewModel.postStatus(new Status(current_status, null, note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
+                        statusDaoViewModel.insertStatus(new Status(current_status, null, note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
+                        idRadioPC.setChecked(false);
+                        idRadioYM.setChecked(false);
+                    }
                 }
             }
             statusDaoViewModel.getCurDateStatus(customLiveRulerChart, customRulerChart, getDayFormat(ZonedDateTime.now()));
@@ -796,6 +823,13 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    private void automateConnectToEld(){
+        final SearchEldDeviceDialog searchEldDeviceDialog = new SearchEldDeviceDialog(MainActivity.this);
+        searchEldDeviceDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        ScanForEld();
+        searchEldDeviceDialog.show();
+    }
+
     //ELD functions
     private void connectToEld() {
 
@@ -874,18 +908,25 @@ public class MainActivity extends BaseActivity {
             } else if (RecordType != EldBroadcastTypes.ELD_DATA_RECORD) {
             } else {
                 DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
+                ArrayList<Double> points = new ArrayList<>();
+                points.add(((EldDataRecord) dataRec).getLongitude());
+                points.add(((EldDataRecord) dataRec).getLatitude());
                 if ((((EldDataRecord) dataRec).getEngineState() == EldEngineStates.ENGINE_OFF || ((EldDataRecord) dataRec).getEngineState() == EldEngineStates.ENGINE_INVALID) && engineState && !Objects.equals(lastStatusData.getLastStatus(), EnumsConstants.STATUS_OFF)) {
                     engineState = false;
-                    statusDaoViewModel.insertStatus(new Status(EnumsConstants.POWER_DOWN, Utils.hasCoordinates(((EldDataRecord) dataRec).getLongitude(), ((EldDataRecord) dataRec).getLatitude()), null, dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime())));
-                    statusDaoViewModel.insertStatus(new Status(EnumsConstants.STATUS_OFF, Utils.hasCoordinates(((EldDataRecord) dataRec).getLongitude(), ((EldDataRecord) dataRec).getLatitude()), null, dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime())));
-                    eldJsonViewModel.postStatus(new Status(EnumsConstants.STATUS_OFF, Utils.hasCoordinates(((EldDataRecord) dataRec).getLongitude(), ((EldDataRecord) dataRec).getLatitude()), "off", dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime())));
-                    eldJsonViewModel.postStatus(new Status(EnumsConstants.POWER_DOWN, Utils.hasCoordinates(((EldDataRecord) dataRec).getLongitude(), ((EldDataRecord) dataRec).getLatitude()), "power down", dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime())));
+                    lastStatusData.saveLasStatus(EnumsConstants.STATUS_OFF,LocalTime.now().toSecondOfDay(), today);
+                    statusDaoViewModel.getCurDateStatus(customLiveRulerChart, customRulerChart, getDayFormat(ZonedDateTime.now()));
+                    statusDaoViewModel.insertStatus(new Status(EnumsConstants.POWER_DOWN, new Point(points), null, dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime())));
+                    statusDaoViewModel.insertStatus(new Status(EnumsConstants.STATUS_OFF, new Point(points), null, dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime())));
+                    eldJsonViewModel.postStatus(new Status(EnumsConstants.STATUS_OFF, new Point(points), "off", dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime())));
+                    eldJsonViewModel.postStatus(new Status(EnumsConstants.POWER_DOWN, new Point(points), "power down", dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime())));
                 } else if (((EldDataRecord) dataRec).getEngineState() == EldEngineStates.ENGINE_ON && !engineState && !Objects.equals(lastStatusData.getLastStatus(), EnumsConstants.STATUS_ON)) {
                     engineState = true;
-                    statusDaoViewModel.insertStatus(new Status(EnumsConstants.POWER_UP, Utils.hasCoordinates(((EldDataRecord) dataRec).getLongitude(), ((EldDataRecord) dataRec).getLatitude()), null, dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime())));
-                    statusDaoViewModel.insertStatus(new Status(EnumsConstants.STATUS_ON, Utils.hasCoordinates(((EldDataRecord) dataRec).getLongitude(), ((EldDataRecord) dataRec).getLatitude()), null, dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime())));
-                    eldJsonViewModel.postStatus(new Status(EnumsConstants.STATUS_ON, Utils.hasCoordinates(((EldDataRecord) dataRec).getLongitude(), ((EldDataRecord) dataRec).getLatitude()), "on", dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime())));
-                    eldJsonViewModel.postStatus(new Status(EnumsConstants.POWER_UP, Utils.hasCoordinates(((EldDataRecord) dataRec).getLongitude(), ((EldDataRecord) dataRec).getLatitude()), "power up", dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime())));
+                    statusDaoViewModel.getCurDateStatus(customLiveRulerChart, customRulerChart, getDayFormat(ZonedDateTime.now()));
+                    lastStatusData.saveLasStatus(EnumsConstants.STATUS_ON,LocalTime.now().toSecondOfDay(), today);
+                    statusDaoViewModel.insertStatus(new Status(EnumsConstants.POWER_UP, new Point(points), null, dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime())));
+                    statusDaoViewModel.insertStatus(new Status(EnumsConstants.STATUS_ON, new Point(points), null, dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime())));
+                    eldJsonViewModel.postStatus(new Status(EnumsConstants.STATUS_ON, new Point(points), "on", dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime())));
+                    eldJsonViewModel.postStatus(new Status(EnumsConstants.POWER_UP, new Point(points), "power up", dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime())));
                 }
                 if (((EldDataRecord) dataRec).getSpeed() > 5 && !isDriving && getStatus(lastStatusData.getLastStatus()) < 4 && !Objects.equals(lastStatusData.getLastStatus(), EnumsConstants.STATUS_ON)) {
                     isDriving = true;
@@ -899,8 +940,10 @@ public class MainActivity extends BaseActivity {
                         Intent intent = new Intent(MainActivity.this, RecapActivity.class);
                         startActivity(intent);
                     });
-                    statusDaoViewModel.insertStatus(new Status(EnumsConstants.STATUS_DR, hasCoordinates(((EldDataRecord) dataRec).getLongitude(), ((EldDataRecord) dataRec).getLatitude()), "dr", getDateFormat(Calendar.getInstance().getTime())));
-                    eldJsonViewModel.postStatus(new Status(EnumsConstants.STATUS_DR, Utils.hasCoordinates(((EldDataRecord) dataRec).getLongitude(), ((EldDataRecord) dataRec).getLatitude()), "dr", dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime())));
+                    statusDaoViewModel.getCurDateStatus(customLiveRulerChart, customRulerChart, getDayFormat(ZonedDateTime.now()));
+                    lastStatusData.saveLasStatus(EnumsConstants.STATUS_DR,LocalTime.now().toSecondOfDay(), today);
+                    statusDaoViewModel.insertStatus(new Status(EnumsConstants.STATUS_DR, new Point(points), "dr", getDateFormat(Calendar.getInstance().getTime())));
+                    eldJsonViewModel.postStatus(new Status(EnumsConstants.STATUS_DR, new Point(points), "dr", dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime())));
                 } else if (((EldDataRecord) dataRec).getSpeed() == 0 && isDriving && getStatus(lastStatusData.getLastStatus()) < 4) {
                     isDriving = false;
                     runOnUiThread(() -> {
@@ -936,7 +979,7 @@ public class MainActivity extends BaseActivity {
                                 ((EldDataRecord) dataRec).getTripHours(),
                                 ((EldDataRecord) dataRec).getVoltage(),
                                 dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime()),
-                                hasCoordinates(((EldDataRecord) dataRec).getLongitude(), ((EldDataRecord) dataRec).getLatitude()),
+                                new Point(points),
                                 ((EldDataRecord) dataRec).getGpsSpeed(),
                                 ((EldDataRecord) dataRec).getCourse(),
                                 ((EldDataRecord) dataRec).getNumSats(),
@@ -956,7 +999,7 @@ public class MainActivity extends BaseActivity {
                                 ((EldDataRecord) dataRec).getTripHours(),
                                 ((EldDataRecord) dataRec).getVoltage(),
                                 dateFormat.format(((EldDataRecord) dataRec).getGpsDateTime()),
-                                hasCoordinates(((EldDataRecord) dataRec).getLongitude(), ((EldDataRecord) dataRec).getLatitude()),
+                                new Point(points),
                                 ((EldDataRecord) dataRec).getGpsSpeed(),
                                 ((EldDataRecord) dataRec).getCourse(),
                                 ((EldDataRecord) dataRec).getNumSats(),

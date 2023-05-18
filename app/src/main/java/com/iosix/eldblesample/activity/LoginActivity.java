@@ -1,8 +1,12 @@
 package com.iosix.eldblesample.activity;
 
+import static com.iosix.eldblesample.utils.Utils.getDateFormat;
+
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,13 +22,17 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.multidex.BuildConfig;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.base.BaseActivity;
 import com.iosix.eldblesample.broadcasts.NetworkConnectionLiveData;
+import com.iosix.eldblesample.enums.EnumsConstants;
 import com.iosix.eldblesample.enums.StateData;
 import com.iosix.eldblesample.models.ApkVersion;
 import com.iosix.eldblesample.models.LoginResponse;
+import com.iosix.eldblesample.models.Status;
 import com.iosix.eldblesample.models.Student;
+import com.iosix.eldblesample.models.eld_records.Point;
 import com.iosix.eldblesample.shared_prefs.DriverSharedPrefs;
 import com.iosix.eldblesample.shared_prefs.LastStatusData;
 import com.iosix.eldblesample.shared_prefs.SessionManager;
@@ -46,6 +54,8 @@ public class LoginActivity extends BaseActivity {
     private SessionManager sessionManager;
     private ProgressDialog mProgress;
     private EditText password;
+    private TextInputLayout idEmailLayout;
+    private TextInputLayout idPasswordLayout;
     private EditText login;
     private Button button;
     private boolean isConnected;
@@ -75,7 +85,11 @@ public class LoginActivity extends BaseActivity {
         button = findViewById(R.id.idLoginButton);
         login = findViewById(R.id.idEditTextLogin);
         password = findViewById(R.id.idEditTextPassword);
-
+        idEmailLayout = findViewById(R.id.idEmailLayout);
+        idPasswordLayout = findViewById(R.id.idPasswordLayout);
+        idEmailLayout.setTypeface(ResourcesCompat.getFont(this,R.font.montserrat));
+        idPasswordLayout.setTypeface(ResourcesCompat.getFont(this,R.font.montserrat));
+        idEmailLayout.setForegroundTintList(ColorStateList.valueOf(Color.GRAY));
         loginViewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
 
         sessionManager = SessionManager.getInstance(getApplicationContext());
@@ -118,19 +132,21 @@ public class LoginActivity extends BaseActivity {
                     assert response.getData() != null;
                     sessionManager.saveAccessToken(response.getData().getAccessToken());
                     sessionManager.saveToken(response.getData().getrefreshToken());
+                    eldJsonViewModel = ViewModelProviders.of(this).get(EldJsonViewModel.class);
+                    eldJsonViewModel.getAllDvirs(dvirViewModel);
+                    eldJsonViewModel.getAllLogs(statusDaoViewModel,lastStatusData,today);
+                    eldJsonViewModel.getAllSignatures(signatureViewModel);
+                    eldJsonViewModel.getAllGenerals(generalViewModel);
+                    eldJsonViewModel.getUser(driverSharedPrefs);
+                    eldJsonViewModel.sendApkVersion(new ApkVersion(BuildConfig.BUILD_TYPE, Build.VERSION.RELEASE));
+                    eldJsonViewModel.postStatus(new Status(EnumsConstants.LOGIN, null, "login", getDateFormat(Calendar.getInstance().getTime())));
+                    statusDaoViewModel.insertStatus(new Status(EnumsConstants.LOGIN, null, "login", getDateFormat(Calendar.getInstance().getTime())));
                     new Handler().postDelayed(() ->{
-                        eldJsonViewModel = ViewModelProviders.of(this).get(EldJsonViewModel.class);
-                        eldJsonViewModel.getAllDvirs(dvirViewModel);
-                        eldJsonViewModel.getAllLogs(statusDaoViewModel,lastStatusData,today);
-                        eldJsonViewModel.getAllSignatures(signatureViewModel);
-                        eldJsonViewModel.getAllGenerals(generalViewModel);
-                        eldJsonViewModel.getUser(driverSharedPrefs);
-                        eldJsonViewModel.sendApkVersion(new ApkVersion(BuildConfig.BUILD_TYPE, Build.VERSION.RELEASE));
                         mProgress.cancel();
                     Intent intent = new Intent(LoginActivity.this,MainActivity.class);
                     startActivity(intent);
                     finish();
-                    },7000);
+                    },5000);
                     break;
                 case ERROR:
                     Throwable e = response.getError();

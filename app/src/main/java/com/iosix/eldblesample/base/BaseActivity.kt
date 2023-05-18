@@ -50,9 +50,10 @@ abstract class BaseActivity : AppCompatActivity() {
         val runnable = Runnable {
             if (userData!!.autoSwitch) {
                 if (userData!!.mode){
-                    if (Calendar.getInstance().time
-                            .hours >= userData!!.startTime || Calendar.getInstance().time
-                            .hours <= userData!!.endTime
+                    if ((Calendar.getInstance().time.hours >= userData!!.startTime
+                        && Calendar.getInstance().time.minutes >= userData!!.startMin) ||
+                        (Calendar.getInstance().time.hours <= userData!!.endTime
+                                && Calendar.getInstance().time.minutes <= userData!!.endMin)
                     ) {
                         runOnUiThread { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES) }
                     } else {

@@ -6,6 +6,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.iosix.eldblesample.models.Dvir;
 
@@ -27,6 +28,9 @@ public interface DVIRDao {
 
     @Query("SELECT * FROM dvir_table")
     Single<List<Dvir>> getCurrDateDvirs();
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    Completable update(Dvir dvir);
 
     @Delete
     Completable deleteDvir(Dvir dvirEntity);

@@ -1,7 +1,6 @@
 package com.iosix.eldblesample.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +12,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.models.VehicleList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class VehiclesListAdapter extends RecyclerView.Adapter<VehiclesListAdapter.VehiclesViewHolder> {
 
     Context context;
-    List<VehicleList> arrayList = new ArrayList<>();
+    List<VehicleList> arrayList;
     TextView textView;
     VehiclesRecyclerViewItemClickListener listener;
 

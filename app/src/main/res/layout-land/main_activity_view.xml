@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:fillViewport="true"
+    android:background="?attr/customBgViewColor"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -750,6 +751,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:divider="?attr/customBgViewColor"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:nestedScrollingEnabled="false"
                 android:dividerHeight="@dimen/button_stroke_with"
                 android:paddingVertical="@dimen/button_radius"/>

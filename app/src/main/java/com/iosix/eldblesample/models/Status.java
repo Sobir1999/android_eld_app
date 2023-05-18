@@ -27,7 +27,7 @@ public class Status {
 
     @ColumnInfo(name = "location")
     @SerializedName("point")
-    String location;
+    Point location;
 
     @ColumnInfo(name = "note")
     @SerializedName("note")
@@ -37,7 +37,7 @@ public class Status {
     @SerializedName("cr_time")
     String time;
 
-    public Status(String status,String location,String note,String time){
+    public Status(String status,Point location,String note,String time){
         this.status = status;
         this.location = location;
         this.note = note;
@@ -60,11 +60,11 @@ public class Status {
         this.status = status;
     }
 
-    public String getLocation() {
+    public Point getLocation() {
         return location;
     }
 
-    public void setLocation(String location) {
+    public void setLocation(Point location) {
         this.location = location;
     }
 

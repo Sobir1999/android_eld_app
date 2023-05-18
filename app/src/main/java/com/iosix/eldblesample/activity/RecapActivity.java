@@ -124,7 +124,6 @@ public class RecapActivity extends BaseActivity {
                     breakTv.setText(intToTime(HOSConstants.BREAK));
                 }else {
                     statusDaoViewModel.getLastDrivingTime(getDayFormat(Day.getCalculatedDate(0)), n1 -> {
-                        Log.d("Adverse",n1 + "n1");
                         break1 = HOSConstants.BREAK - n1;
                         if (n1 > HOSConstants.BREAK){
                             breakTv.setText(intToTime(0));

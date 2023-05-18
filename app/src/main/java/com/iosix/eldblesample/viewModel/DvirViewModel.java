@@ -90,8 +90,8 @@ public class DvirViewModel extends AndroidViewModel {
     }
 
     public MutableLiveData<String> getVehicleMutableLiveData() {
-        if (vehiclesMutableLiveData == null) {
-            vehiclesMutableLiveData = new MutableLiveData<>();
+        if (vehicleMutableLiveData == null) {
+            vehicleMutableLiveData = new MutableLiveData<>();
         }
         return vehicleMutableLiveData;
     }
@@ -225,6 +225,15 @@ public class DvirViewModel extends AndroidViewModel {
                      getMgetDvirs(context,day,dvir_recyclerview,container1);
                      getDvirMutableLiveData().postValue(entity);
                  })
+                .subscribe();
+    }
+
+    public void updateDvir(Dvir entity) {
+        dvirRepository.updateDvir(entity).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnComplete(()->{
+                    
+                })
                 .subscribe();
     }
 

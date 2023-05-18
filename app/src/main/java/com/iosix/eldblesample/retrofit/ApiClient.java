@@ -23,7 +23,7 @@ public class ApiClient {
 
     private static final Object LOCK = new Object();
 
-    public static final String BASE_URL = "http://api.v2.fastlogz.com/";
+    public static final String BASE_URL = "https://api.v2.fastlogz.com/";
     private volatile Retrofit retrofit = null;
 
     public Retrofit getClient() {

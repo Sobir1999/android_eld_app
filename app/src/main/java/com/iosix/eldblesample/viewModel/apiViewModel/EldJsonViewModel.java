@@ -94,7 +94,7 @@ public class EldJsonViewModel extends AndroidViewModel {
                 .subscribe(s ->{
 
                 }, throwable -> {
-
+                    Log.d("Adverse",throwable.getMessage());
                 });
 
         disposables.add(disposable);
@@ -120,11 +120,11 @@ public class EldJsonViewModel extends AndroidViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s ->{
-//                    if (s != null){
-//                        for (VehicleList vehicle: s.getVehicle().getVehicleList()) {
-//                            userViewModel.insertVehicle(vehicle);
-//                        }
-//                    }
+                    if (s != null){
+                        for (VehicleList vehicle: s.getVehicle().getVehicleList()) {
+                            userViewModel.insertVehicle(vehicle);
+                        }
+                    }
                 }, throwable -> {
 
                 });
@@ -137,7 +137,9 @@ public class EldJsonViewModel extends AndroidViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s ->{
+                    Log.d("Adverse",status.getStatus());
                 }, throwable -> {
+                    Log.d("Adverse",throwable.getMessage());
                 });
 
         disposables.add(disposable);
@@ -195,9 +197,9 @@ public class EldJsonViewModel extends AndroidViewModel {
         disposables.add(disposable);
     }
 
-    public void sendPdf(RequestBody body) {
+    public void sendPdf(RequestBody email,MultipartBody.Part body) {
         Disposable disposable = repository
-                .sendPdf(body)
+                .sendPdf(email,body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> {
@@ -242,9 +244,10 @@ public class EldJsonViewModel extends AndroidViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s ->{
-
+                    Log.d("Adverse",s.getUnit());
                 }, throwable -> {
-
+                    Log.d("Adverse",throwable.getMessage());
+                    Log.d("Adverse",throwable.getLocalizedMessage());
                 });
 
         disposables.add(disposable);

@@ -380,11 +380,7 @@ public class GeneralFragment extends Fragment {
 
     private void setupViewModelObservers(){
 
-        userViewModel.getGetAllVehicles().observe(getViewLifecycleOwner(),vehiclesEntities -> {
-            if (vehicleList.isEmpty()){
-                vehicleList.addAll(vehiclesEntities);
-            }
-        });
+        userViewModel.getGetAllVehiclesGen(vehicleList);
 
         userViewModel.getMgetDrivers().observe(getViewLifecycleOwner(),users -> {
             for (int i = 0; i < users.size(); i++) {

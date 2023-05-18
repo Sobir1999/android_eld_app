@@ -37,4 +37,8 @@ public class DvirRepository {
         return db.dvirDao().deleteDvir(entity);
     }
 
+    public Completable updateDvir(Dvir entity) {
+        return db.dvirDao().update(entity);
+    }
+
 }

@@ -6,8 +6,8 @@ import java.util.ArrayList;
 
 public class Point {
 
-    @SerializedName("SRID")
-    final String type = "4326";
+    @SerializedName("type")
+    final String type = "Point";
 
     @SerializedName("coordinates")
     ArrayList<Double> arrayList;

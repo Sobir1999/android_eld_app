@@ -3,6 +3,8 @@ package com.iosix.eldblesample.viewModel;
 import android.app.Application;
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
@@ -24,6 +26,7 @@ import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -81,7 +84,7 @@ public class UserViewModel extends AndroidViewModel {
                     ArrayList<Double> trip_hours = new ArrayList<>();
                     ArrayList<Double> battery_voltage = new ArrayList<>();
                     ArrayList<String> date = new ArrayList<>();
-                    ArrayList<String> point = new ArrayList<>();
+                    ArrayList<Point> point = new ArrayList<>();
                     ArrayList<Integer> gps_speed = new ArrayList<>();
                     ArrayList<Integer> course = new ArrayList<>();
                     ArrayList<Integer> number_of_satellites = new ArrayList<>();
@@ -133,38 +136,62 @@ public class UserViewModel extends AndroidViewModel {
                     }
                 }
             },throwable -> {
-
+                Log.d("Adverse",throwable.getMessage());
+                Log.d("Adverse", Objects.requireNonNull(throwable.getCause()).getMessage());
             });
         disposables.add(disposable);
     }
-//
-//
+
     public void insertLocalData(LiveDataRecord liveDataRecord){Completable.fromAction(() -> repository.insertLocalData(liveDataRecord)).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe();}
-//
-//    public void deleteUser() {
-//        repository.deleteUser();
-//    }
-//
-//    public void deleteLocalData(){repository.deleteLocalData();}
-//
+
     public void insertVehicle(VehicleList vehiclesEntity) {
         Completable.fromAction(() -> repository.insertVehicle(vehiclesEntity)).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
     }
 
-    public MutableLiveData<List<VehicleList>> getGetAllVehicles() {
-        MutableLiveData<List<VehicleList>> vehicleLists = new MutableLiveData<>();
+    public void getGetAllVehicles(Context context,String vehicleListSelected,DvirViewModel dvirViewModel) {
         Disposable disposable = repository.getGetAllVehicles()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(vehicleLists::postValue,
+                .subscribe(vehicleLists ->{
+                            Dialog dialog = new Dialog(context);
+                            dialog.setContentView(R.layout.custom_vehicles_dialog);
+                            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            RecyclerView vehicleListRv = dialog.findViewById(R.id.idVehicleRecyclerview);
+                            TextView cancel = dialog.findViewById(R.id.idVehicleCancel);
+                            VehiclesListAdapter vehiclesListAdapter = new VehiclesListAdapter(context,vehicleLists);
+                            vehicleListRv.setAdapter(vehiclesListAdapter);
+                            vehiclesListAdapter.setListener(s -> {
+                                if (!vehicleListSelected.equals(s)){
+                                    dvirViewModel.getVehicleMutableLiveData().postValue(s);
+                                }
+                                dialog.dismiss();
+                            });
+                            cancel.setOnClickListener(view1->{
+                                dialog.dismiss();
+                            });
+                            dialog.show();
+                        },
                         throwable -> {
                         });
         disposables.add(disposable);
-        return vehicleLists;
+    }
+
+    public void getGetAllVehiclesGen(ArrayList<VehicleList> vehicleList) {
+        Disposable disposable = repository.getGetAllVehicles()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(vehicleLists ->{
+                            if (vehicleList.isEmpty()){
+                                vehicleList.addAll(vehicleLists);
+                            }
+                        },
+                        throwable -> {
+                        });
+        disposables.add(disposable);
     }
 //
 //    public void insertTrailer(TrailersEntity entity) throws ExecutionException, InterruptedException {

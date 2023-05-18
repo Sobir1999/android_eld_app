@@ -82,10 +82,8 @@ public class StatusDaoViewModel extends AndroidViewModel implements Serializable
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(statuses -> {
                     int n = 0;
-                    Log.d("Adverse",statuses.size() +"");
                     for (int i = statuses.size() - 1; i >=0 ; i--) {
                         if (statuses.get(i).getStatus().equals(EnumsConstants.STATUS_DR) && (stringToDate(statuses.get(i).getTime()).compareTo(getCalculatedDate(8))>0)){
-                            Log.d("Adverse",statuses.get(i).getStatus());
                             if (i == statuses.size()-1){
                                 n += ZonedDateTime.now().toEpochSecond() - stringToDate(statuses.get(i).getTime()).toEpochSecond();
                             }else {
@@ -258,23 +256,21 @@ public class StatusDaoViewModel extends AndroidViewModel implements Serializable
         Disposable disposable = repository.getCurrDateStatuses(Arrays.asList(EnumsConstants.statuses),changeFormat(day))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(arrayList -> {
-                    getLastActonStatus(day, new FetchStatusCallback() {
-                        @Override
-                        public void onSuccess(Status status, List<Status> statuses) {
-                            if (day.equals(getDayFormat(ZonedDateTime.now()))){
-                                customLiveRulerChart.setArrayList(arrayList, status);
-                            }else {
-                                customRulerChart.setArrayList(arrayList,status);
-                            }
+                .subscribe(arrayList -> getLastActonStatus(day, new FetchStatusCallback() {
+                    @Override
+                    public void onSuccess(Status status, List<Status> statuses) {
+                        if (day.equals(getDayFormat(ZonedDateTime.now()))){
+                            customLiveRulerChart.setArrayList(arrayList, status);
+                        }else {
+                            customRulerChart.setArrayList(arrayList,status);
                         }
+                    }
 
-                        @Override
-                        public void onError(Throwable throwable) {
+                    @Override
+                    public void onError(Throwable throwable) {
 
-                        }
-                    });
-                }, throwable -> {
+                    }
+                }), throwable -> {
 
                 });
         disposables.add(disposable);

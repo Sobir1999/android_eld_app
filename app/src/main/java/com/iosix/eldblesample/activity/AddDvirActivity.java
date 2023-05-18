@@ -18,11 +18,13 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -40,6 +42,7 @@ import com.iosix.eldblesample.fragments.TimePickerFragment;
 import com.iosix.eldblesample.models.TrailNubmer;
 import com.iosix.eldblesample.retrofit.APIInterface;
 import com.iosix.eldblesample.roomDatabase.entities.TrailersEntity;
+import com.iosix.eldblesample.shared_prefs.TinyDB;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
 import com.iosix.eldblesample.viewModel.UserViewModel;
@@ -65,6 +68,8 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
     private TextView idDefectLocationText;
     private ImageView backView,idVehicleImage,idSelectedUnitDelete;
     private EditText locationEditText;
+    private CardView idCardVehicles;
+    private RelativeLayout idAddTrailer;
     private ConstraintLayout idSelectedUnitLayout;
     String time,location,mNotes;
     private LinearLayout defects, addDefect;
@@ -82,6 +87,7 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
     private EldJsonViewModel eldJsonViewModel;
     RecyclerView selectedTrailersRecyclerView;
     private UserViewModel userViewModel;
+    private TinyDB tinyDB;
     private String timeString = "";
 
     @Override
@@ -119,6 +125,8 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
         idVehicleImage = findViewById(R.id.idVehicleImage);
         idSelectedUnitDelete = findViewById(R.id.idSelectedUnitDelete);
         idSelectedUnitLayout = findViewById(R.id.idSelectedUnitLayout);
+        idCardVehicles = findViewById(R.id.idCardVehicles);
+        idAddTrailer = findViewById(R.id.idAddTrailer);
 
 
         day = getIntent().getStringExtra("currDay");
@@ -126,6 +134,7 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
         daoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
         eldJsonViewModel = ViewModelProviders.of(this).get(EldJsonViewModel.class);
+        tinyDB = new TinyDB(this);
 
         buttonClicks(getWindow().getDecorView().findViewById(R.id.fragment_container_add_dvir));
         getCurrentLocation();
@@ -141,6 +150,10 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
                 });
             }else {
                 selectedTrailersRecyclerView.setVisibility(View.GONE);
+                trailerDefectsString.clear();
+                tinyDB.putListString(2,new ArrayList<>());
+                unitDefectsTitle.setVisibility(View.GONE);
+                unitDefects.setVisibility(View.GONE);
             }
         });
 
@@ -165,11 +178,17 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
                 if (unitDefectsString.size() == 0) {
                     unitDefectsTitle.setVisibility(View.GONE);
                     unitDefects.setVisibility(View.GONE);
+                }else {
+                    unitDefectsTitle.setVisibility(View.VISIBLE);
+                    unitDefects.setVisibility(View.VISIBLE);
                 }
 
                 if (trailerDefectsString.size() == 0) {
                     trailerDefectsTitle.setVisibility(View.GONE);
                     trailerDefects.setVisibility(View.GONE);
+                }else {
+                    trailerDefectsTitle.setVisibility(View.VISIBLE);
+                    trailerDefects.setVisibility(View.VISIBLE);
                 }
 
                 notes.setText(data.getStringExtra("notes"));
@@ -186,47 +205,35 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
     private void buttonClicks(ViewGroup context) {
         selectedTrailers = new ArrayList<>();
 
-//        addUnit.setOnClickListener(v -> createDialog(context,"Add Unit","Create unit",1));
-        units.setOnClickListener(v -> {
-            Dialog dialog = new Dialog(this);
-            dialog.setContentView(R.layout.custom_vehicles_dialog);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            RecyclerView vehicleListRv = dialog.findViewById(R.id.idVehicleRecyclerview);
-            TextView cancel = dialog.findViewById(R.id.idVehicleCancel);
-            userViewModel.getGetAllVehicles().observe(this,vehicleLists -> {
-                VehiclesListAdapter vehiclesListAdapter = new VehiclesListAdapter(this,vehicleLists);
-                vehicleListRv.setAdapter(vehiclesListAdapter);
-                vehiclesListAdapter.setListener(s -> {
-                    if (!vehicleListSelected.equals(s)){
-                        vehicleListSelected = s;
-                        dvirViewModel.getVehicleMutableLiveData().postValue(vehicleListSelected);
-                    }
-                    dialog.dismiss();
-                });
-                cancel.setOnClickListener(view1->{
-                    dialog.dismiss();
-                });
-            });
-            dialog.show();
+        idCardVehicles.setOnClickListener(v -> {
+            userViewModel.getGetAllVehicles(this,vehicleListSelected,dvirViewModel);
         });
 
-        dvirViewModel.getVehiclesMutableLiveData().observe(this,size ->{
+        dvirViewModel.getVehicleMutableLiveData().observe(this,size ->{
             if (!size.equals("")){
+                vehicleListSelected = size;
                 idSelectedUnitLayout.setVisibility(View.VISIBLE);
-                idSelectedUnitText.setText(vehicleListSelected);
+                idSelectedUnitText.setText(size);
                 idSelectedUnitDelete.setOnClickListener(view -> {
                     vehicleListSelected = "";
                     dvirViewModel.getVehicleMutableLiveData().postValue("");
+                    unitDefectsString.clear();
+                    trailerDefectsString.clear();
+                    tinyDB.putListString(1,new ArrayList<>());
+                    tinyDB.putListString(2,new ArrayList<>());
+                    notes.setText("");
                 });
             }else {
                 idSelectedUnitLayout.setVisibility(View.GONE);
+                addDefect.setVisibility(View.VISIBLE);
+                defects.setVisibility(View.GONE);
             }
         });
 
-        addTrailer.setOnClickListener(v -> createDialog(context, "Add Trailer", "Add Trailer", 2));
+        idAddTrailer.setOnClickListener(v -> createDialog(context, "Add Trailer", "Add Trailer", 2));
 
         addTime.setOnClickListener(v -> {
-            DialogFragment timeFragment = new TimePickerFragment();
+            DialogFragment timeFragment = new TimePickerFragment(this);
             timeFragment.show(getSupportFragmentManager(), "time picker");
         });
 
@@ -295,7 +302,7 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
         });
 
         addDefect.setOnClickListener(v1 -> {
-            if (vehicleListSelected.equals("") && trailerListSelected.isEmpty()){
+            if (vehicleListSelected.equals("")){
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
                 alertDialog.setTitle("Unit not created")
                         .setMessage("Select unit or create manually!")
@@ -417,17 +424,5 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
         String s = "" + digit;
         if (s.length() == 1) s = "0" + s;
         return s;
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        this.getViewModelStore().clear();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        this.getViewModelStore().clear();
     }
 }

@@ -3,6 +3,7 @@ package com.iosix.eldblesample.fragments;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -20,19 +21,12 @@ public class TimePickerFragment extends DialogFragment{
     private TimePickerDialog.OnTimeSetListener mListener;
     private Activity mActivity;
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        mActivity = activity;
-
-        // This error will remind you to implement an OnTimeSetListener
-        //   in your Activity if you forget
-        try {
-            mListener = (TimePickerDialog.OnTimeSetListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnTimeSetListener");
-        }
+    public TimePickerFragment(Activity context){
+        mActivity = context;
+        mListener = (TimePickerDialog.OnTimeSetListener) context;
     }
+
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

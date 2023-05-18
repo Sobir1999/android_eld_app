@@ -70,7 +70,7 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        holder.onBind(dayEntities.get(position),statusDaoViewModel,dvirViewModel,ctx,listener);
+        holder.onBind(dayEntities.get(position+1),statusDaoViewModel,dvirViewModel,ctx,listener);
     }
     @Override
     public int getItemCount() {

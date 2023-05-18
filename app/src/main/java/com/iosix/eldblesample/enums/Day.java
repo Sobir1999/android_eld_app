@@ -64,8 +64,10 @@ public class Day {
         String regex2 = "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}[+-]\\d{3,4}";
         if (s.matches(regex1)){
             return ZonedDateTime.parse(s, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
-        }else {
+        }else if (s.matches(regex2)){
             return ZonedDateTime.parse(s, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx"));
+        }else {
+            return ZonedDateTime.parse(s, DateTimeFormatter.ISO_DATE_TIME);
         }
     }
 

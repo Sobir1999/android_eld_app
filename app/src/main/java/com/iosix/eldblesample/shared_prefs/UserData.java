@@ -65,8 +65,18 @@ public class UserData {
         editor.apply();
     }
 
+    public void saveStartMin(int startMin){
+        editor = userPref.edit();
+        editor.putInt("startMin", startMin);
+        editor.apply();
+    }
+
     public int getStartTime(){
         return userPref.getInt("startTime",10);
+    }
+
+    public int getStartMin(){
+        return userPref.getInt("startMin",0);
     }
 
     public void saveEndTime(int endTime){
@@ -75,8 +85,18 @@ public class UserData {
         editor.apply();
     }
 
+    public void saveEndMin(int endMin){
+        editor = userPref.edit();
+        editor.putInt("endMin", endMin);
+        editor.apply();
+    }
+
     public int getEndTime(){
         return userPref.getInt("endTime",6);
+    }
+
+    public int getEndMin(){
+        return userPref.getInt("endMin",0);
     }
 
     public void saveAutoSwitch(boolean isAutoSwitch){

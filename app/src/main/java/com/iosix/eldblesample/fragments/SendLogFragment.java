@@ -297,40 +297,12 @@ public class SendLogFragment extends Fragment implements UploadRequestBody.Uploa
         pdfDocument.writeTo(new FileOutputStream(filepath));
         pdfDocument.close();
 
-//        File file = new File(getPathFromURI(Uri.parse(filepath.getAbsolutePath())));
-//        RequestBody requestFile = RequestBody.create(MediaType.parse("*/*"), filepath);
-//        MultipartBody.Part body = MultipartBody.Part.createFormData("pdf_file", filepath.getName(), requestFile);
-//
-//        RequestBody mail = RequestBody.create(MediaType.parse("text/plain"), email);
-//        eldJsonViewModel.sendPdf(mail, body);
+        RequestBody requestFile = RequestBody.create(MediaType.parse("*/*"), filepath);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("pdf_file", filepath.getName(), requestFile);
 
+        RequestBody mail = RequestBody.create(MediaType.parse("text/plain"), email);
+        eldJsonViewModel.sendPdf(mail, body);
 
-        RequestBody fileBody = RequestBody.Companion.create(
-                filepath,
-                MediaType.parse("application/*")
-        );
-
-        RequestBody body2 = new MultipartBody
-                .Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("body", email)
-                .addFormDataPart("upload_file", filepath.getName(), fileBody)
-                .build();
-
-        eldJsonViewModel.sendPdf(body2);
-    }
-
-    public String getPathFromURI(Uri contentUri) {
-        String res = null;
-        String[] proj = {MediaStore.Files.FileColumns.DISPLAY_NAME};
-        Cursor cursor = getContext().getContentResolver().query(contentUri, proj, null, null, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME);
-            res = cursor.getString(column_index);
-            cursor.close();
-        }
-
-        return res;
     }
 
     private String getString(List<String> arrayList){

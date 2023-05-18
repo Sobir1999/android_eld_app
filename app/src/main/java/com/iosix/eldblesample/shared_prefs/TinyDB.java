@@ -24,7 +24,7 @@ public class TinyDB{
     }
 
     public ArrayList<String> getListString(int key) {
-        return new ArrayList<String>(Arrays.asList(TextUtils.split(preferences.getString("defect-" + key, ""), "‚‗‚")));
+        return new ArrayList<>(Arrays.asList(TextUtils.split(preferences.getString("defect-" + key, ""), "‚‗‚")));
     }
 
 }
