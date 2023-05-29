@@ -48,8 +48,8 @@ abstract class BaseActivity : AppCompatActivity() {
         statusBar()
 
         val runnable = Runnable {
-            if (userData!!.autoSwitch) {
-                if (userData!!.mode){
+            if (userData!!.mode) {
+                if (userData!!.autoSwitch){
                     if ((Calendar.getInstance().time.hours >= userData!!.startTime
                         && Calendar.getInstance().time.minutes >= userData!!.startMin) ||
                         (Calendar.getInstance().time.hours <= userData!!.endTime
@@ -57,13 +57,11 @@ abstract class BaseActivity : AppCompatActivity() {
                     ) {
                         runOnUiThread { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES) }
                     } else {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                        runOnUiThread{AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)}
                     }
                 }else{
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    runOnUiThread { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES) }
                 }
-            }else if (userData!!.mode) {
-                runOnUiThread { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES) }
             } else {
                 runOnUiThread { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO) }
             }

@@ -1,11 +1,11 @@
 package com.iosix.eldblesample.activity;
 
+import static android.os.Build.VERSION_CODES.S;
 import static androidx.lifecycle.ProcessLifecycleOwner.get;
 import static com.iosix.eldblesample.enums.Day.getCurrentMillis;
 import static com.iosix.eldblesample.enums.Day.getDayFormat;
 import static com.iosix.eldblesample.utils.Utils.getDateFormat;
 import static com.iosix.eldblesample.utils.Utils.getStatus;
-import static com.iosix.eldblesample.utils.Utils.hasCoordinates;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -45,6 +45,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
@@ -97,11 +98,8 @@ import com.iosix.eldblesample.shared_prefs.DriverSharedPrefs;
 import com.iosix.eldblesample.shared_prefs.LastStatusData;
 import com.iosix.eldblesample.shared_prefs.SessionManager;
 import com.iosix.eldblesample.shared_prefs.UserData;
-import com.iosix.eldblesample.utils.Utils;
 import com.iosix.eldblesample.viewModel.DayDaoViewModel;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
-import com.iosix.eldblesample.viewModel.GeneralViewModel;
-import com.iosix.eldblesample.viewModel.SignatureViewModel;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
 import com.iosix.eldblesample.viewModel.UserViewModel;
 import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
@@ -157,7 +155,6 @@ public class MainActivity extends BaseActivity {
     private NetworkConnectionLiveData networkConnectionLiveData;
     boolean isPaused;
     int startseq, endseq = 31;
-    int getEldConnectionState = 0;
     private UserData userData;
     private LastStatusData lastStatusData;
     private SessionManager sessionManager;
@@ -181,14 +178,12 @@ public class MainActivity extends BaseActivity {
 
     private boolean exit = false;
 
-    private ArrayList<Double> point = new ArrayList<>();
+    private final ArrayList<Double> point = new ArrayList<>();
 
     private StatusDaoViewModel statusDaoViewModel;
     private DayDaoViewModel daoViewModel;
     private DvirViewModel dvirViewModel;
     private UserViewModel userViewModel;
-    private SignatureViewModel signatureViewModel;
-    private GeneralViewModel generalViewModel;
     private EldJsonViewModel eldJsonViewModel;
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
 
@@ -453,9 +448,7 @@ public class MainActivity extends BaseActivity {
     private void optimizeViewModels() {
 
         dvirViewModel = ViewModelProviders.of(this).get(DvirViewModel.class);
-        signatureViewModel = ViewModelProviders.of(this).get(SignatureViewModel.class);
         statusDaoViewModel = ViewModelProviders.of(this).get(StatusDaoViewModel.class);
-        generalViewModel = ViewModelProviders.of(this).get(GeneralViewModel.class);
         daoViewModel = ViewModelProviders.of(this).get(DayDaoViewModel.class);
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
         eldJsonViewModel = ViewModelProviders.of(this).get(EldJsonViewModel.class);
@@ -749,7 +742,6 @@ public class MainActivity extends BaseActivity {
 
     private void getDrawerTouchEvent() {
         nightModeSwitch = findViewById(R.id.idNightChoose);
-
         checkNightModeActivated();
         nightModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             userData.saveMode(isChecked);
@@ -906,6 +898,7 @@ public class MainActivity extends BaseActivity {
                 startseq = ((EldBufferRecord) dataRec).getStartSeqNo();
                 endseq = ((EldBufferRecord) dataRec).getEndSeqNo();
             } else if (RecordType != EldBroadcastTypes.ELD_DATA_RECORD) {
+                Log.d("Adverse","Do something!");
             } else {
                 DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
                 ArrayList<Double> points = new ArrayList<>();
@@ -1101,9 +1094,7 @@ public class MainActivity extends BaseActivity {
                 time = "" + Calendar.getInstance().getTime();
                 today = time.split(" ")[1] + " " + time.split(" ")[2];
                 lastStatusData.saveLasStatus(lastStatusData.getLastStatus(), 0, today);
-                daoViewModel.getAllDays(dayEntities -> {
-                    daoViewModel.deleteLastDay(dayEntities.get(0));
-                });
+                daoViewModel.getAllDays(dayEntities -> daoViewModel.deleteLastDay(dayEntities.get(0)));
                 last_recycler_view = findViewById(R.id.idRecyclerView);
                 daoViewModel.getMgetAllDays(MainActivity.this, last_recycler_view, dvirViewModel, statusDaoViewModel);
                 statusDaoViewModel.getCurDateStatus(customLiveRulerChart, customRulerChart, getDayFormat(ZonedDateTime.now()));
@@ -1115,19 +1106,30 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         daoViewModel.getMgetAllDays(MainActivity.this, last_recycler_view, dvirViewModel, statusDaoViewModel);
+        statusDaoViewModel.getCurDateStatus(customLiveRulerChart, customRulerChart, getDayFormat(ZonedDateTime.now()));
+        Log.d("Adverse","resume event");
         super.onResume();
         isPaused = false;
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("Adverse","start event");
+    }
+
+
+    @Override
     protected void onPause() {
         super.onPause();
+        Log.d("Adverse","pause event");
         isPaused = true;
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        Log.d("Adverse","stop event");
         isPaused = true;
     }
 
@@ -1144,6 +1146,7 @@ public class MainActivity extends BaseActivity {
             Manifest.permission.ACCESS_FINE_LOCATION,
     };
 
+    @RequiresApi(S)
     private static final String[] ANDROID_12_BLE_PERMISSIONS = new String[]{
             Manifest.permission.BLUETOOTH_SCAN,
             Manifest.permission.BLUETOOTH_CONNECT,
@@ -1151,7 +1154,7 @@ public class MainActivity extends BaseActivity {
     };
 
     public static void requestBlePermissions(Activity activity, int requestCode) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+        if (Build.VERSION.SDK_INT >= S)
             ActivityCompat.requestPermissions(activity, ANDROID_12_BLE_PERMISSIONS, requestCode);
         else
             ActivityCompat.requestPermissions(activity, BLE_PERMISSIONS, requestCode);

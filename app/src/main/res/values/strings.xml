@@ -234,4 +234,6 @@
     <string name="start_edt">Start(EDT)</string>
     <string name="duration">Duration</string>
     <string name="todo">TODO</string>
+    <string name="get_current_location">Get Current Location</string>
+    <string name="create_location">Create Location</string>
 </resources>

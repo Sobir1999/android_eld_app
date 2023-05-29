@@ -4,17 +4,12 @@ import static com.iosix.eldblesample.enums.Day.changeFormat;
 import static com.iosix.eldblesample.enums.Day.getCalculatedDate;
 import static com.iosix.eldblesample.enums.Day.getCurrentMillis;
 import static com.iosix.eldblesample.enums.Day.getDayFormat;
-import static com.iosix.eldblesample.enums.Day.intToTime;
 import static com.iosix.eldblesample.enums.Day.stringToDate;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.Log;
-import android.widget.TextView;
 
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import com.iosix.eldblesample.adapters.InspectionLogAdapter;
 import com.iosix.eldblesample.adapters.LogRecyclerViewAdapter;
@@ -35,7 +30,6 @@ import org.threeten.bp.ZonedDateTime;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -174,54 +168,52 @@ public class StatusDaoViewModel extends AndroidViewModel implements Serializable
         Disposable disposable = repository.getCurrDateStatuses(Arrays.asList(EnumsConstants.statuses),changeFormat(day))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(statuses -> {
-                    getLastActonStatus(day, new FetchStatusCallback() {
-                        @Override
-                        public void onSuccess(Status status, List<Status> statusess) {
-                            drivingTime = 0;
-                            if (status.getStatus().equals(EnumsConstants.STATUS_DR) && statuses.size() > 0) {
-                                int currTime = 0;
-                                int nextTime = statuses.get(0).getTime().equals(status.getTime()) ? currTime : stringToDate(statuses.get(0).getTime()).toLocalTime().toSecondOfDay();
-                                drivingTime += nextTime - currTime;
-                                for (int i = 0; i < statuses.size() - 1; i++) {
-                                    if (statuses.get(i).getStatus().equals(EnumsConstants.STATUS_DR)) {
-                                        int currStatusTime = stringToDate(statuses.get(i).getTime()).toLocalTime().toSecondOfDay();
-                                        int nextStatusTime = stringToDate(statuses.get(i+1).getTime()).toLocalTime().toSecondOfDay();
-                                        drivingTime += nextStatusTime - currStatusTime;
-                                    }
-                                }
-                                if (statuses.get(statuses.size() - 1).getStatus().equals(EnumsConstants.STATUS_DR)) {
-                                    int lastTime = stringToDate(statuses.get(statuses.size() - 1).getTime()).toLocalTime().toSecondOfDay();
-                                    int endTime = day.equals(getDayFormat(ZonedDateTime.now())) ? getCurrentMillis() : 86400;
-                                    drivingTime += endTime - lastTime;
-                                }
-                            } else if (status.getStatus().equals(EnumsConstants.STATUS_DR)) {
-                                int startTime = 0;
-                                int endTime = day.equals(getDayFormat(ZonedDateTime.now())) ? getCurrentMillis() : 86400;
-                                drivingTime += endTime - startTime;
-                            }else if (statuses.size() > 0){
-                                for (int i = 0; i < statuses.size() - 1; i++) {
-                                    if (statuses.get(i).getStatus().equals(EnumsConstants.STATUS_DR)) {
-                                        int currStatusTime = stringToDate(statuses.get(i).getTime()).toLocalTime().toSecondOfDay();
-                                        int nextStatusTime = stringToDate(statuses.get(i+1).getTime()).toLocalTime().toSecondOfDay();
-                                        drivingTime += nextStatusTime - currStatusTime;
-                                    }
-                                }
-                                if (statuses.get(statuses.size() - 1).getStatus().equals(EnumsConstants.STATUS_DR)) {
-                                    int lastTime = stringToDate(statuses.get(statuses.size() - 1).getTime()).toLocalTime().toSecondOfDay();
-                                    int endTime = day.equals(getDayFormat(ZonedDateTime.now())) ? getCurrentMillis() : 86400;
-                                    drivingTime += endTime - lastTime;
+                .subscribe(statuses -> getLastActonStatus(day, new FetchStatusCallback() {
+                    @Override
+                    public void onSuccess(Status status, List<Status> statusess) {
+                        drivingTime = 0;
+                        if (status.getStatus().equals(EnumsConstants.STATUS_DR) && statuses.size() > 0) {
+                            int currTime = 0;
+                            int nextTime = statuses.get(0).getTime().equals(status.getTime()) ? currTime : stringToDate(statuses.get(0).getTime()).toLocalTime().toSecondOfDay();
+                            drivingTime += nextTime - currTime;
+                            for (int i = 0; i < statuses.size() - 1; i++) {
+                                if (statuses.get(i).getStatus().equals(EnumsConstants.STATUS_DR)) {
+                                    int currStatusTime = stringToDate(statuses.get(i).getTime()).toLocalTime().toSecondOfDay();
+                                    int nextStatusTime = stringToDate(statuses.get(i+1).getTime()).toLocalTime().toSecondOfDay();
+                                    drivingTime += nextStatusTime - currStatusTime;
                                 }
                             }
-                            currDayDrivingTime.getDrivingTime(drivingTime);
+                            if (statuses.get(statuses.size() - 1).getStatus().equals(EnumsConstants.STATUS_DR)) {
+                                int lastTime = stringToDate(statuses.get(statuses.size() - 1).getTime()).toLocalTime().toSecondOfDay();
+                                int endTime = day.equals(getDayFormat(ZonedDateTime.now())) ? getCurrentMillis() : 86400;
+                                drivingTime += endTime - lastTime;
+                            }
+                        } else if (status.getStatus().equals(EnumsConstants.STATUS_DR)) {
+                            int startTime = 0;
+                            int endTime = day.equals(getDayFormat(ZonedDateTime.now())) ? getCurrentMillis() : 86400;
+                            drivingTime += endTime - startTime;
+                        }else if (statuses.size() > 0){
+                            for (int i = 0; i < statuses.size() - 1; i++) {
+                                if (statuses.get(i).getStatus().equals(EnumsConstants.STATUS_DR)) {
+                                    int currStatusTime = stringToDate(statuses.get(i).getTime()).toLocalTime().toSecondOfDay();
+                                    int nextStatusTime = stringToDate(statuses.get(i+1).getTime()).toLocalTime().toSecondOfDay();
+                                    drivingTime += nextStatusTime - currStatusTime;
+                                }
+                            }
+                            if (statuses.get(statuses.size() - 1).getStatus().equals(EnumsConstants.STATUS_DR)) {
+                                int lastTime = stringToDate(statuses.get(statuses.size() - 1).getTime()).toLocalTime().toSecondOfDay();
+                                int endTime = day.equals(getDayFormat(ZonedDateTime.now())) ? getCurrentMillis() : 86400;
+                                drivingTime += endTime - lastTime;
+                            }
                         }
+                        currDayDrivingTime.getDrivingTime(drivingTime);
+                    }
 
-                        @Override
-                        public void onError(Throwable throwable) {
+                    @Override
+                    public void onError(Throwable throwable) {
 
-                        }
-                    });
-                }, throwable -> {
+                    }
+                }), throwable -> {
                 });
         disposables.add(disposable);
     }

@@ -113,7 +113,7 @@
                             android:fontFamily="@font/montserrat"
                             android:text="@string/vehicles"
                             android:textColor="@color/colorPrimary"
-                            android:textSize="@dimen/title_text_size"
+                            android:textSize="@dimen/big_text_size"
                             android:textStyle="bold"
                             app:drawableStartCompat="@drawable/ic_truck_blue" />
 
@@ -127,7 +127,7 @@
                         android:drawablePadding="@dimen/half_vertical_margin"
                         android:gravity="center_vertical"
                         android:text="@string/select_unit"
-                        android:textSize="@dimen/card_text_size"
+                        android:textSize="@dimen/title_text_size"
                         android:textStyle="bold"
                         android:paddingBottom="@dimen/card_padding_size"
                         android:fontFamily="@font/montserrat"
@@ -239,7 +239,7 @@
                             android:gravity="center_vertical"
                             android:text="@string/trailers"
                             android:textColor="@color/colorPrimary"
-                            android:textSize="@dimen/title_text_size"
+                            android:textSize="@dimen/big_text_size"
                             android:textStyle="bold"
                             app:drawableStartCompat="@drawable/ic_trailer_svgrepo_com" />
 
@@ -255,7 +255,7 @@
                             android:gravity="center_vertical"
                             android:text="New"
                             android:textColor="@color/colorPrimary"
-                            android:textSize="@dimen/card_text_size"
+                            android:textSize="@dimen/title_text_size"
                             app:drawableStartCompat="@drawable/ic_icons8_plus__" />
 
                     </RelativeLayout>
@@ -290,7 +290,7 @@
                             android:layout_marginVertical="@dimen/activity_padding_size_land"
                             android:drawablePadding="@dimen/half_vertical_margin"
                             android:layout_marginTop="@dimen/activity_padding_size_land"
-                            android:textSize="@dimen/title_text_size"
+                            android:textSize="@dimen/big_text_size"
                             android:textStyle="bold"
                             android:gravity="center_vertical"
                             android:text="@string/no_defect_detected"
@@ -395,7 +395,7 @@
                             android:text="@string/time"
                             android:fontFamily="@font/montserrat"
                             android:textColor="?attr/customTextHintColor"
-                            android:textSize="@dimen/title_text_size" />
+                            android:textSize="@dimen/big_text_size" />
 
                         <TextView
                             android:id="@+id/idDefectTimeText"
@@ -407,7 +407,7 @@
                             android:gravity="center"
                             android:textColor="@color/colorPrimary"
                             android:textColorHint="@color/colorPrimary"
-                            android:textSize="@dimen/title_text_size"
+                            android:textSize="@dimen/big_text_size"
                             app:drawableEndCompat="@drawable/keyboard_bottom_arrow"
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -432,41 +432,40 @@
                             android:text="@string/location"
                             android:fontFamily="@font/montserrat"
                             android:textColor="?attr/customTextHintColor"
-                            android:textSize="@dimen/title_text_size"
+                            android:textSize="@dimen/big_text_size"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
-                        <EditText
-                            android:id="@+id/idDefectLocationEdit"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:background="@android:color/transparent"
-                            android:hint="@string/your_location"
-                            android:inputType="text"
-                            android:textSize="@dimen/title_text_size"
-                            android:visibility="visible"
-                            android:textStyle="bold"
-                            android:imeOptions="flagNoExtractUi"
-                            android:textAlignment="viewEnd"
-                            android:fontFamily="@font/montserrat"
-                            android:textColor="@color/colorPrimary"
-                            android:textColorHint="@color/colorPrimary"
-                            android:backgroundTint="?attr/customTextHintColor"
-                            app:drawableEndCompat="@drawable/ic_baseline_location_on_24"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintLeft_toRightOf="@id/idLocationT"
-                            app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+<!--                        <EditText-->
+<!--                            android:id="@+id/idDefectLocationEdit"-->
+<!--                            android:layout_width="0dp"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:background="@android:color/transparent"-->
+<!--                            android:hint="@string/your_location"-->
+<!--                            android:inputType="text"-->
+<!--                            android:textSize="@dimen/title_text_size"-->
+<!--                            android:visibility="visible"-->
+<!--                            android:textStyle="bold"-->
+<!--                            android:imeOptions="flagNoExtractUi"-->
+<!--                            android:textAlignment="viewEnd"-->
+<!--                            android:fontFamily="@font/montserrat"-->
+<!--                            android:textColor="@color/colorPrimary"-->
+<!--                            android:textColorHint="@color/colorPrimary"-->
+<!--                            android:backgroundTint="?attr/customTextHintColor"-->
+<!--                            app:drawableEndCompat="@drawable/ic_baseline_location_on_24"-->
+<!--                            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                            app:layout_constraintLeft_toRightOf="@id/idLocationT"-->
+<!--                            app:layout_constraintRight_toRightOf="parent"-->
+<!--                            app:layout_constraintTop_toTopOf="parent" />-->
 
                         <TextView
                             android:id="@+id/idDefectLocationText"
                             android:layout_width="0dp"
-                            android:visibility="gone"
                             android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
                             android:hint="@string/your_location"
-                            android:textSize="@dimen/title_text_size"
+                            android:textSize="@dimen/big_text_size"
                             android:textAlignment="viewEnd"
                             android:fontFamily="@font/montserrat"
                             android:textColor="@color/colorPrimary"

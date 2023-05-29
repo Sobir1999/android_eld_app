@@ -64,9 +64,9 @@ public class NightModeActivity extends BaseActivity implements TimePickerDialog.
         }
 
         if (userData.getEndTime() > 12){
-            idTvStart.setText(String.format("%s:%s %s", timeString(userData.getEndTime()-12), timeString(userData.getEndMin()),"PM"));
+            idTvEnd.setText(String.format("%s:%s %s", timeString(userData.getEndTime()-12), timeString(userData.getEndMin()),"PM"));
         }else {
-            idTvStart.setText(String.format("%s:%s %s", timeString(userData.getEndTime()), timeString(userData.getEndMin()),"AM"));
+            idTvEnd.setText(String.format("%s:%s %s", timeString(userData.getEndTime()), timeString(userData.getEndMin()),"AM"));
         }
 
         idTvStart.setOnClickListener(view -> {

@@ -2,39 +2,28 @@ package com.iosix.eldblesample.adapters;
 
 import static com.iosix.eldblesample.enums.Day.getDayFormat;
 import static com.iosix.eldblesample.enums.Day.getDayTime1;
-import static com.iosix.eldblesample.enums.Day.getDayTimeFromZ;
 import static com.iosix.eldblesample.enums.Day.intToTime;
 import static com.iosix.eldblesample.enums.HOSConstants.mCycle;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.iosix.eldblesample.R;
+import com.iosix.eldblesample.customViews.CustomLiveRulerChart;
 import com.iosix.eldblesample.customViews.CustomStableRulerChart;
-import com.iosix.eldblesample.interfaces.GetCurrDayDrivingTime;
-import com.iosix.eldblesample.models.Dvir;
-import com.iosix.eldblesample.models.Status;
 import com.iosix.eldblesample.roomDatabase.entities.DayEntity;
 import com.iosix.eldblesample.viewModel.DvirViewModel;
 import com.iosix.eldblesample.viewModel.StatusDaoViewModel;
+
+import org.threeten.bp.ZonedDateTime;
 
 import java.util.List;
 
@@ -42,11 +31,8 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
     private final List<DayEntity> dayEntities;
     private final DvirViewModel dvirViewModel;
     private final StatusDaoViewModel statusDaoViewModel;
-    private List<Dvir> dvirEntities;
-    private List<Status> truckStatusEntities;
     private LastDaysRecyclerViewItemClickListener listener;
-    private Context ctx;
-    int drivingTime = 0;
+    private final Context ctx;
 
     public void setListener(LastDaysRecyclerViewItemClickListener listener) {
         this.listener = listener;
@@ -83,6 +69,7 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
         TextView day, day_week;
         View clickable;
         CustomStableRulerChart customRulerChart;
+        CustomLiveRulerChart customLiveRulerChart;
         ImageButton imageView,idTableSignature;
         Button no_dvir;
         public MyViewHolder(@NonNull View itemView) {
@@ -99,9 +86,9 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
         void onBind(DayEntity dayEntity,StatusDaoViewModel statusDaoViewModel,DvirViewModel dvirViewModel,Context ctx,LastDaysRecyclerViewItemClickListener listener){
             day.setText(getDayTime1(dayEntity.getDay()));
 
-            statusDaoViewModel.getAllDrivingStatusTime(dayEntity.getDay(), n -> {
-                workedTime.setText(intToTime(n));
-            });
+            statusDaoViewModel.getAllDrivingStatusTime(dayEntity.getDay(), n -> workedTime.setText(intToTime(n)));
+
+            statusDaoViewModel.getCurDateStatus(customLiveRulerChart, customRulerChart, dayEntity.getDay());
 
             clickable.setOnClickListener(v -> customRulerChart.setVisibility(customRulerChart.getVisibility() == View.GONE ? View.VISIBLE : View.GONE));
 
@@ -113,9 +100,7 @@ public class RecyclerViewLastAdapter extends RecyclerView.Adapter<RecyclerViewLa
 
             dvirViewModel.getDvirCurr(ctx,dayEntity.getDay(),no_dvir);
 
-            no_dvir.setOnClickListener(view -> {
-                dvirViewModel.getCurDateDvirs(ctx,dayEntity.getDay(),no_dvir,listener);
-            });
+            no_dvir.setOnClickListener(view -> dvirViewModel.getCurDateDvirs(ctx,dayEntity.getDay(),no_dvir,listener));
         }
     }
 

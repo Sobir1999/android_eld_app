@@ -2,7 +2,7 @@
     <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">#0B0B0B</item>
-        <item name="colorPrimaryDark">#070707</item>
+        <item name="colorPrimaryDark">#0B0B0B</item>
         <item name="colorAccent">#417C83</item>
 
         <item name="customBgColor">@color/colorButtonNormal</item>

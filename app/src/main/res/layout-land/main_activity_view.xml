@@ -397,6 +397,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:paddingVertical="@dimen/half_vertical_margin"
                         android:orientation="vertical">
 
                         <LinearLayout
@@ -409,7 +410,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/notes"
                                 android:textColor="?attr/customTextColor"
-                                android:textSize="@dimen/card_text_size"
+                                android:textSize="@dimen/title_text_size"
                                 android:textStyle="bold"
                                 android:fontFamily="@font/montserrat"/>
 
@@ -420,7 +421,7 @@
                                 android:gravity="end"
                                 android:text="@string/add_notes"
                                 android:textColor="@color/colorPrimary"
-                                android:textSize="@dimen/mini_text_size"
+                                android:textSize="@dimen/normal_text_size"
                                 android:layout_marginEnd="@dimen/drawer_padding_size"
                                 android:fontFamily="@font/montserrat"
                                 android:drawablePadding="@dimen/half_vertical_margin"/>
@@ -434,10 +435,12 @@
                             android:hint="@string/enter_notes"
                             android:textColorHint="?attr/customTextColor"
                             android:background="@null"
-                            android:textSize="@dimen/mini_text_size"
+                            android:layout_marginVertical="@dimen/button_horizontal_margin"
+                            android:textSize="@dimen/normal_text_size"
                             android:fontFamily="@font/montserrat"
                             android:textColor="?attr/customTextColor"
-                            android:inputType="textNoSuggestions" />
+                            android:inputType="textNoSuggestions"
+                            android:imeOptions="flagNoExtractUi"/>
 
                     </LinearLayout>
 

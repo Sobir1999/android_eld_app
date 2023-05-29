@@ -67,7 +67,6 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
     private TextView notes;
     private TextView idDefectLocationText;
     private ImageView backView,idVehicleImage,idSelectedUnitDelete;
-    private EditText locationEditText;
     private CardView idCardVehicles;
     private RelativeLayout idAddTrailer;
     private ConstraintLayout idSelectedUnitLayout;
@@ -118,7 +117,6 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
         defects = findViewById(R.id.defects);
         backView = findViewById(R.id.idImageBack);
         nextText = findViewById(R.id.idAddDvirNext);
-        locationEditText = findViewById(R.id.idDefectLocationEdit);
         idDefectLocationText = findViewById(R.id.idDefectLocationText);
         selectedTrailersRecyclerView = findViewById(R.id.idTrailersRecyclerView);
         idSelectedUnitText = findViewById(R.id.idSelectedUnitText);
@@ -373,33 +371,26 @@ public class AddDvirActivity extends BaseActivity  implements TimePickerDialog.O
     }
 
     private String getCurrentLocation(){
-        if (true){
-            locationEditText.setVisibility(View.GONE);
-            idDefectLocationText.setVisibility(View.VISIBLE);
-            idDefectLocationText.setOnClickListener(view -> {
-                GPSTracker gpsTracker = new GPSTracker(this);
-                double longtitude = gpsTracker.getLongitude();
-                double latitude = gpsTracker.getLatitude();
-                Geocoder geocoder = new Geocoder(AddDvirActivity.this, Locale.getDefault());
-                try {
-                    if (latitude != 0 && longtitude != 0){
-                        List<Address> addresses = geocoder.getFromLocation(latitude, longtitude, 1);
-                        Address obj = addresses.get(0);
-                        String add = obj.getAddressLine(0);
+        idDefectLocationText.setOnClickListener(view -> {
 
-                        idDefectLocationText.setText(add);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Toast.makeText(AddDvirActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            GPSTracker gpsTracker = new GPSTracker(this);
+            double longtitude = gpsTracker.getLongitude();
+            double latitude = gpsTracker.getLatitude();
+            Geocoder geocoder = new Geocoder(AddDvirActivity.this, Locale.getDefault());
+            try {
+                if (latitude != 0 && longtitude != 0){
+                    List<Address> addresses = geocoder.getFromLocation(latitude, longtitude, 1);
+                    Address obj = addresses.get(0);
+                    String add = obj.getAddressLine(0);
+
+                    idDefectLocationText.setText(add);
                 }
-            });
-            return idDefectLocationText.getText().toString();
-        }else {
-            locationEditText.setVisibility(View.VISIBLE);
-            idDefectLocationText.setVisibility(View.GONE);
-            return locationEditText.getText().toString();
-        }
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(AddDvirActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        return idDefectLocationText.getText().toString();
     }
 
     @Override
