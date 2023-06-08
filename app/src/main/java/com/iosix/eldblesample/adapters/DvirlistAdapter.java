@@ -2,6 +2,7 @@ package com.iosix.eldblesample.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.iosix.eldblesample.R;
+import com.iosix.eldblesample.activity.SignatureActivity;
 import com.iosix.eldblesample.models.Dvir;
 
 import java.util.ArrayList;
@@ -109,12 +111,16 @@ public class DvirlistAdapter extends BaseAdapter {
 
         });
 
+        view.setOnClickListener(view1 -> {
+//            listener.onclickDvir();
+        });
+
         return view;
     }
 
     public interface DvirlistAdapterItemClickListener {
         void onclickDelete(Dvir dvirEntity);
 
-//        void onclickDvir(String s,List<DvirEntity> dvirEntity);
+//        void onclickDvir();
     }
 }

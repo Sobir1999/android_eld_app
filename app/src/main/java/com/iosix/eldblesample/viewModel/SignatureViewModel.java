@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.lifecycle.AndroidViewModel;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
@@ -49,6 +50,7 @@ public class SignatureViewModel extends AndroidViewModel {
                         signaturePad.setSignatureBitmap(signatureEntities.get(signatureEntities.size()-1).getSignatureBitmap());
                     }else {
                         signaturePad.clear();
+                        signaturePad.setBackground(AppCompatResources.getDrawable(context,R.drawable.add_defect_sign_background));
                     }
                 }, throwable -> {
 

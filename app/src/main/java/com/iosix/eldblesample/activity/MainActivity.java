@@ -541,7 +541,6 @@ public class MainActivity extends BaseActivity {
             imageON.setColorFilter(ContextCompat.getColor(this, R.color.colorStatusONBold));
 
             if (!current_status.equals(lastStatusData.getLastStatus())) {
-
                 if (idRadioPC.isChecked()) {
                     lastStatusData.saveLasStatus(EnumsConstants.STATUS_OF_PC, LocalTime.now().toSecondOfDay(), today);
                     eldJsonViewModel.postStatus(new Status(EnumsConstants.STATUS_OF_PC, new Point(point), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
