@@ -8,8 +8,12 @@ import static com.iosix.eldblesample.enums.Day.stringToDate;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
+import android.view.View;
+import android.widget.ListAdapter;
 
 import androidx.lifecycle.AndroidViewModel;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.iosix.eldblesample.adapters.InspectionLogAdapter;
 import com.iosix.eldblesample.adapters.LogRecyclerViewAdapter;
@@ -268,7 +272,7 @@ public class StatusDaoViewModel extends AndroidViewModel implements Serializable
         disposables.add(disposable);
     }
 
-    public void logRecyclerList(Context context,Status status, String day, MyListView listView){
+    public void logRecyclerList(Context context, Status status, String day, RecyclerView listView){
         Disposable disposable = repository.getmAllStatus(changeFormat(day))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -278,6 +282,20 @@ public class StatusDaoViewModel extends AndroidViewModel implements Serializable
                 }, throwable -> {
                 });
         disposables.add(disposable);
+    }
+
+    private int getTotalHeightofListView(MyListView listView) {
+        ListAdapter adapter = listView.getAdapter();
+
+        int totalHeight = 0;
+        for (int i = 0; i < adapter.getCount(); i++) {
+            View item = adapter.getView(i, null, listView);
+            item.measure(0, 0);
+            totalHeight += item.getMeasuredHeight();
+            Log.d("Adverse",item.getMeasuredHeight() + "");
+        }
+
+        return totalHeight;
     }
 
     public void inspectionLogList(Context context, String day, MyListView listView){

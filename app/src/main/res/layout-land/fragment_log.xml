@@ -61,7 +61,7 @@
             tools:ignore="MissingConstraints" />
 
 
-    <com.iosix.eldblesample.customViews.MyListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView_log_page"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -52,7 +52,7 @@ public abstract class   CustomRulerChart extends View {
         CUSTOM_WIDTH = context.getResources().getDisplayMetrics().widthPixels;
 
         if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
-            CUSTOM_TABLE_WIDTH = CUSTOM_WIDTH - 2f * START_POINT_X - 2f*context.getResources().getDimension(R.dimen.activity_padding_size_land);
+            CUSTOM_TABLE_WIDTH = CUSTOM_WIDTH - 2f * START_POINT_X - 2f*context.getResources().getDimension(R.dimen.half_vertical_margin);
             CUSTOM_TABLE_HEIGHT = CUSTOM_TABLE_WIDTH / 6;
         }else if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
             CUSTOM_TABLE_WIDTH = CUSTOM_WIDTH - 2f * START_POINT_X - 2f*context.getResources().getDimension(R.dimen.activity_padding_size);

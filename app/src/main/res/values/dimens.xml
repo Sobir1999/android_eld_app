@@ -38,7 +38,7 @@
     <dimen name="custom_dialog_width">400dp</dimen>
     <dimen name="dvir_margin_size">70dp</dimen>
     <dimen name="custom_table_text_size">7dsp</dimen>
-    <dimen name="custom_table_time_size">6dsp</dimen>
+    <dimen name="custom_table_time_size">6.5dsp</dimen>
     <dimen name="custom_table_text_size_land">11dsp</dimen>
     <dimen name="custom_table_time_size_land">8dsp</dimen>
     <dimen name="layout_progress_bar_size">150dp</dimen>

@@ -105,6 +105,7 @@ import com.iosix.eldblesample.viewModel.UserViewModel;
 import com.iosix.eldblesample.viewModel.apiViewModel.EldJsonViewModel;
 
 import org.greenrobot.eventbus.EventBus;
+import org.jetbrains.annotations.Nullable;
 import org.threeten.bp.LocalTime;
 import org.threeten.bp.ZonedDateTime;
 
@@ -160,9 +161,6 @@ public class MainActivity extends BaseActivity {
     private SessionManager sessionManager;
     private final Handler mHandler = new Handler();
 
-    private double latitude;
-    private double longtitude;
-
     boolean engineState;
     boolean isDriving;
     Runnable mRunnable;
@@ -195,16 +193,10 @@ public class MainActivity extends BaseActivity {
         return R.layout.activity_main;
     }
 
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
     @SuppressLint("NotifyDataSetChanged")
     @Override
     public void initView() {
         super.initView();
-
 
         networkConnectionLiveData = new NetworkConnectionLiveData(this);
 
@@ -514,25 +506,7 @@ public class MainActivity extends BaseActivity {
         });
 
         findLocation.setOnClickListener(v -> {
-            GPSTracker gpsTracker = new GPSTracker(this);
-            longtitude = gpsTracker.getLongitude();
-            latitude = gpsTracker.getLatitude();
-            Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
-            try {
-                if (latitude != 0 && longtitude != 0) {
-                    point.add(longtitude);
-                    point.add(latitude);
-                    List<Address> addresses = geocoder.getFromLocation(latitude, longtitude, 1);
-                    Address obj = addresses.get(0);
-                    String add = obj.getAddressLine(0);
-
-                    editLocation.setText(add);
-                    editLocation.setClickable(false);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+            editLocation.setText(getLocation());
         });
 
         cancel.setOnClickListener(v -> {
@@ -568,46 +542,24 @@ public class MainActivity extends BaseActivity {
 
             if (!current_status.equals(lastStatusData.getLastStatus())) {
 
-                if (latitude != 0 && longtitude != 0){
-                    if (idRadioPC.isChecked()) {
-                        lastStatusData.saveLasStatus(EnumsConstants.STATUS_OF_PC, LocalTime.now().toSecondOfDay(), today);
-                        eldJsonViewModel.postStatus(new Status(EnumsConstants.STATUS_OF_PC, new Point(point), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
-                        statusDaoViewModel.insertStatus(new Status(EnumsConstants.STATUS_OF_PC, new Point(point), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
-                        idRadioPC.setChecked(false);
-                        idRadioYM.setChecked(false);
-                    } else if (idRadioYM.isChecked()) {
-                        lastStatusData.saveLasStatus(EnumsConstants.STATUS_ON_YM, LocalTime.now().toSecondOfDay(), today);
-                        eldJsonViewModel.postStatus(new Status(EnumsConstants.STATUS_ON_YM, new Point(point), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
-                        statusDaoViewModel.insertStatus(new Status(EnumsConstants.STATUS_ON_YM, new Point(point), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
-                        idRadioPC.setChecked(false);
-                        idRadioYM.setChecked(false);
-                    } else {
-                        lastStatusData.saveLasStatus(current_status, LocalTime.now().toSecondOfDay(), today);
-                        eldJsonViewModel.postStatus(new Status(current_status, new Point(point), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
-                        statusDaoViewModel.insertStatus(new Status(current_status, new Point(point), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
-                        idRadioPC.setChecked(false);
-                        idRadioYM.setChecked(false);
-                    }
-                }else {
-                    if (idRadioPC.isChecked()) {
-                        lastStatusData.saveLasStatus(EnumsConstants.STATUS_OF_PC, LocalTime.now().toSecondOfDay(), today);
-                        eldJsonViewModel.postStatus(new Status(EnumsConstants.STATUS_OF_PC, null, note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
-                        statusDaoViewModel.insertStatus(new Status(EnumsConstants.STATUS_OF_PC, null, note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
-                        idRadioPC.setChecked(false);
-                        idRadioYM.setChecked(false);
-                    } else if (idRadioYM.isChecked()) {
-                        lastStatusData.saveLasStatus(EnumsConstants.STATUS_ON_YM, LocalTime.now().toSecondOfDay(), today);
-                        eldJsonViewModel.postStatus(new Status(EnumsConstants.STATUS_ON_YM, null, note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
-                        statusDaoViewModel.insertStatus(new Status(EnumsConstants.STATUS_ON_YM, null, note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
-                        idRadioPC.setChecked(false);
-                        idRadioYM.setChecked(false);
-                    } else {
-                        lastStatusData.saveLasStatus(current_status, LocalTime.now().toSecondOfDay(), today);
-                        eldJsonViewModel.postStatus(new Status(current_status, null, note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
-                        statusDaoViewModel.insertStatus(new Status(current_status, null, note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
-                        idRadioPC.setChecked(false);
-                        idRadioYM.setChecked(false);
-                    }
+                if (idRadioPC.isChecked()) {
+                    lastStatusData.saveLasStatus(EnumsConstants.STATUS_OF_PC, LocalTime.now().toSecondOfDay(), today);
+                    eldJsonViewModel.postStatus(new Status(EnumsConstants.STATUS_OF_PC, new Point(point), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
+                    statusDaoViewModel.insertStatus(new Status(EnumsConstants.STATUS_OF_PC, new Point(point), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
+                    idRadioPC.setChecked(false);
+                    idRadioYM.setChecked(false);
+                } else if (idRadioYM.isChecked()) {
+                    lastStatusData.saveLasStatus(EnumsConstants.STATUS_ON_YM, LocalTime.now().toSecondOfDay(), today);
+                    eldJsonViewModel.postStatus(new Status(EnumsConstants.STATUS_ON_YM, new Point(point), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
+                    statusDaoViewModel.insertStatus(new Status(EnumsConstants.STATUS_ON_YM, new Point(point), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
+                    idRadioPC.setChecked(false);
+                    idRadioYM.setChecked(false);
+                } else {
+                    lastStatusData.saveLasStatus(current_status, LocalTime.now().toSecondOfDay(), today);
+                    eldJsonViewModel.postStatus(new Status(current_status, new Point(point), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
+                    statusDaoViewModel.insertStatus(new Status(current_status, new Point(point), note.getText().toString(), getDateFormat(Calendar.getInstance().getTime())));
+                    idRadioPC.setChecked(false);
+                    idRadioYM.setChecked(false);
                 }
             }
             statusDaoViewModel.getCurDateStatus(customLiveRulerChart, customRulerChart, getDayFormat(ZonedDateTime.now()));
@@ -816,10 +768,10 @@ public class MainActivity extends BaseActivity {
     }
 
     private void automateConnectToEld(){
-        final SearchEldDeviceDialog searchEldDeviceDialog = new SearchEldDeviceDialog(MainActivity.this);
-        searchEldDeviceDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         ScanForEld();
-        searchEldDeviceDialog.show();
+//        final SearchEldDeviceDialog searchEldDeviceDialog = new SearchEldDeviceDialog(MainActivity.this);
+//        searchEldDeviceDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        searchEldDeviceDialog.show();
     }
 
     //ELD functions
@@ -944,7 +896,7 @@ public class MainActivity extends BaseActivity {
                             if (RecapActivity.instance != null) {
                                 RecapActivity.instance.finish();
                             }
-                            manageStatusDialog = new ManageStatusDialog(MainActivity.this, eldJsonViewModel, statusDaoViewModel, latitude, longtitude);
+                            manageStatusDialog = new ManageStatusDialog(MainActivity.this, eldJsonViewModel, statusDaoViewModel);
                             manageStatusDialog.show();
                         };
                         mHandler.postDelayed(mRunnable, 10000L);
@@ -1104,10 +1056,14 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     protected void onResume() {
         daoViewModel.getMgetAllDays(MainActivity.this, last_recycler_view, dvirViewModel, statusDaoViewModel);
         statusDaoViewModel.getCurDateStatus(customLiveRulerChart, customRulerChart, getDayFormat(ZonedDateTime.now()));
-        Log.d("Adverse","resume event");
         super.onResume();
         isPaused = false;
     }
@@ -1115,21 +1071,18 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d("Adverse","start event");
     }
 
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("Adverse","pause event");
         isPaused = true;
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d("Adverse","stop event");
         isPaused = true;
     }
 
@@ -1206,5 +1159,31 @@ public class MainActivity extends BaseActivity {
                         }
                     }
                 });
+    }
+
+    private String getLocation(){
+        String add = "";
+        GPSTracker gpsTracker = new GPSTracker(this);
+        double longtitude = gpsTracker.getLongitude();
+        double latitude = gpsTracker.getLatitude();
+        Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
+        try {
+            if (latitude != 0 && longtitude != 0) {
+                point.add(longtitude);
+                point.add(latitude);
+                List<Address> addresses = geocoder.getFromLocation(latitude, longtitude, 1);
+                Address obj = addresses.get(0);
+                add = obj.getAddressLine(0);
+
+                return add;
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            return e.getMessage();
+        }
+
+        return add;
     }
 }

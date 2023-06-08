@@ -25,6 +25,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 
 public class ManageStatusDialog extends Dialog {
 
@@ -33,19 +34,15 @@ public class ManageStatusDialog extends Dialog {
     private int counter = 60;
     private final EldJsonViewModel eldJsonViewModel;
     private final StatusDaoViewModel statusDaoViewModel;
-    private final double latitude;
-    private final double longtitude;
     private DateFormat format;
     private DriverSharedPrefs driverSharedPrefs;
     private String time = "" + Calendar.getInstance().getTime();
     public String today = time.split(" ")[1] + " " + time.split(" ")[2];
 
-    public ManageStatusDialog(@NonNull Context context, EldJsonViewModel eldJsonViewModel, StatusDaoViewModel statusDaoViewModel,double latitude,double longtitude) {
+    public ManageStatusDialog(@NonNull Context context, EldJsonViewModel eldJsonViewModel, StatusDaoViewModel statusDaoViewModel) {
         super(context);
         this.eldJsonViewModel = eldJsonViewModel;
         this.statusDaoViewModel = statusDaoViewModel;
-        this.latitude = latitude;
-        this.longtitude = longtitude;
         driverSharedPrefs = DriverSharedPrefs.getInstance(context);
     }
 
@@ -58,11 +55,8 @@ public class ManageStatusDialog extends Dialog {
         TextView textView = findViewById(R.id.idConfirmationTitle);
         Button stay = findViewById(R.id.idDialogStayDriving);
         Button go = findViewById(R.id.idDialogChangeStatus);
-        ArrayList<Double> arrayList = new ArrayList<>();
-        arrayList.add(longtitude);
-        arrayList.add(latitude);
 
-        format=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        format=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
 
         runnable = () -> {
             if (counter > 0){

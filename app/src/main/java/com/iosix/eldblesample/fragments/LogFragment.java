@@ -11,8 +11,10 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.iosix.eldblesample.R;
 import com.iosix.eldblesample.broadcasts.ChangeDateTimeBroadcast;
@@ -37,7 +39,7 @@ public class LogFragment extends Fragment {
     private ChangeDateTimeBroadcast changeDateTimeBroadcast;
     private String time = "" + Calendar.getInstance().getTime();
     private String today = time.split(" ")[1] + " " + time.split(" ")[2];
-    private MyListView recyclerView_log;
+    private RecyclerView recyclerView_log;
     private DvirViewModel dvirViewModel;
 
 

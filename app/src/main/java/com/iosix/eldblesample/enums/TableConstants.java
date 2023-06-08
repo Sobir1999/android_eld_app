@@ -14,8 +14,8 @@ import com.google.android.material.color.MaterialColors;
 import com.iosix.eldblesample.R;
 
 public class TableConstants {
-    public static float START_POINT_X = 25.0f;
-    public static float START_POINT_Y = 50.0f;
+    public static float START_POINT_X = 15.0f;
+    public static float START_POINT_Y = 40.0f;
     private static Paint paint;
     public static float CUSTOM_WIDTH;
 
