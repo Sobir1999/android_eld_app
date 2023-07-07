@@ -189,7 +189,7 @@ public class CustomStableRulerChart extends CustomRulerChart {
             if (Objects.equals(firstStatus.getStatus(), EnumsConstants.STATUS_OF_PC)){
                 endY = TableConstants.START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (getStatus(firstStatus.getStatus())-4)) / 4;
             }else if(Objects.equals(firstStatus.getStatus(), EnumsConstants.STATUS_ON_YM)){
-                endY = TableConstants.START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (getStatus(firstStatus.getStatus()))-2) / 4;
+                endY = TableConstants.START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * (getStatus(firstStatus.getStatus())-2)) / 4;
             }else {
                 endY = TableConstants.START_POINT_Y + CUSTOM_TABLE_HEIGHT / 8 + (CUSTOM_TABLE_HEIGHT * getStatus(firstStatus.getStatus())) / 4;
             }
