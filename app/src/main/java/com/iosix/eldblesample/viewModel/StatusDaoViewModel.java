@@ -255,10 +255,12 @@ public class StatusDaoViewModel extends AndroidViewModel implements Serializable
                 .subscribe(arrayList -> getLastActonStatus(day, new FetchStatusCallback() {
                     @Override
                     public void onSuccess(Status status, List<Status> statuses) {
-                        if (day.equals(getDayFormat(ZonedDateTime.now()))){
-                            customLiveRulerChart.setArrayList(arrayList, status);
-                        }else {
-                            customRulerChart.setArrayList(arrayList,status);
+                        if (customLiveRulerChart != null){
+                            if (day.equals(getDayFormat(ZonedDateTime.now()))){
+                                customLiveRulerChart.setArrayList(arrayList, status);
+                            }else {
+                                customRulerChart.setArrayList(arrayList,status);
+                            }
                         }
                     }
 
@@ -277,8 +279,12 @@ public class StatusDaoViewModel extends AndroidViewModel implements Serializable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(statuses -> {
-                    LogRecyclerViewAdapter logRecyclerViewAdapter = new LogRecyclerViewAdapter(context,statuses,status,day);
-                    listView.setAdapter(logRecyclerViewAdapter);
+                    if (statuses != null){
+                        LogRecyclerViewAdapter logRecyclerViewAdapter = new LogRecyclerViewAdapter(context,statuses,status,day);
+                        listView.setAdapter(logRecyclerViewAdapter);
+                    }else {
+                        Log.d("TAG-onreceive", "logRecyclerList: statuses null");
+                    }
                 }, throwable -> {
                 });
         disposables.add(disposable);

@@ -263,7 +263,7 @@ public class MainActivity extends BaseActivity {
         update();
         getAllDrivers();
         sendLocalData();
-        automateConnectToEld();
+//        automateConnectToEld();
 
         statusDaoViewModel.getCurDateStatus(customLiveRulerChart, customRulerChart, getDayFormat(ZonedDateTime.now()));
     }

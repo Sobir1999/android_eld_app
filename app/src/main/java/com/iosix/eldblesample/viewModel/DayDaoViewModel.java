@@ -56,6 +56,9 @@ public class DayDaoViewModel extends AndroidViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(dayEntities ->{
+                    for(DayEntity dayEntity: dayEntities){
+                        Log.d("DayEntities", dayEntity.getDay());
+                    }
                         RecyclerViewLastAdapter lastAdapter = new RecyclerViewLastAdapter(context, dayEntities,dvirViewModel,statusDaoViewModel);
                         last_recycler_view.setAdapter(lastAdapter);
                         lastAdapterClicked(lastAdapter,context,dvirViewModel);
@@ -158,6 +161,7 @@ public class DayDaoViewModel extends AndroidViewModel {
                 .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(() -> {
                             for (int i = 0; i < 8; i++) {
+                                Log.d("DayEntities3", getDayFormat(Day.getCalculatedDate(i)));
                                 insertDay(new DayEntity(getDayFormat(Day.getCalculatedDate(i))));
                             }
                         });

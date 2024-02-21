@@ -132,12 +132,14 @@ public class LogRecyclerViewAdapter extends RecyclerView.Adapter<LogRecyclerView
             });
 
             id.setText(format(Locale.getDefault(),"%d", i + 1));
-            if (i == 0){
+            if (i == 0 && lastActionS != null){
                 status.setText(lastActionS.getStatus());
                 getStatusColor(lastActionS.getStatus());
                 dateTime.setText(getCurrentTime(0));
-                if (!lastActionS.getNote().equals("")){
-                    notes.setText(lastActionS.getNote());
+                if (lastActionS.getNote() != null){
+                    if (!lastActionS.getNote().equals("")){
+                        notes.setText(lastActionS.getNote());
+                    }
                 }
                 location.setText(getLocation());
             }else {

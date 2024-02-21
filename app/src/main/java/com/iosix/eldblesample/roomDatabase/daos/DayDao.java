@@ -20,7 +20,7 @@ public interface DayDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable insertDay(DayEntity entity);
 
-    @Query("Select * From day_table ORDER BY CAST(day as DATETIME) ASC")
+    @Query("Select * From day_table ORDER BY day DESC")
     Single<List<DayEntity>> getAllDays();
 
     @Delete
